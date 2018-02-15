@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/app_logo_380x380" />
+
+        <TextView
+            style="@style/TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="@string/create_password"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:padding="6dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_pwd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/tvStyle"
+            app:passwordToggleEnabled="true"
+            android:textColorHint="@color/white"
+            app:errorTextAppearance="@style/txtinputError_appearance">
+
+            <EditText
+                android:id="@+id/edPwd"
+                style="@style/My_Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:maxLength="20"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_cnfPwd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            style="@style/tvStyle"
+            android:textColorHint="@color/white"
+            app:errorTextAppearance="@style/txtinputError_appearance">
+
+            <EditText
+                android:id="@+id/edConfirmPwd"
+                style="@style/My_Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/confirm_password"
+                android:inputType="textPassword"
+                android:maxLength="20"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnContinue2"
+            style="@style/My_Button"
+            android:layout_width="match_parent"
+            android:layout_height="35dip"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/button_effect"
+            android:text="@string/continue_txt"
+            android:textAllCaps="false"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:padding="10dp"
+    android:background="@color/screen_bg_color">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true"
+        >
+        <LinearLayout
+            android:id="@+id/ly_like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btnLike"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/inactive_like_ico"
+                android:tint="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tv_like_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="12"
+                android:layout_marginLeft="4dp"
+                android:textColor="@color/text_color"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="10sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/likes"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/text_color"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_comments"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/comments_icon"
+                />
+
+            <TextView
+                android:id="@+id/tv_comments_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="4dp"
+                android:text="0"
+                android:textColor="@color/text_color"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="10sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/comments"
+                android:layout_marginLeft="4dp"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/text_color"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_Dot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_toLeftOf="@+id/tv_post_time"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/tv_post_time"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:gravity="right|center"
+        android:layout_toLeftOf="@+id/iv_share"
+        android:fontFamily="@font/roboto_regular"
+        android:maxLines="1"
+        android:visibility="gone"
+        android:textSize="10sp" />
+
+    <ImageView
+        android:id="@+id/iv_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="2dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="4dp"
+        android:src="@drawable/share_ico"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/app_logo_380x380"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tvHeader"
+                style="@style/TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="@string/verify_phone_no"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="4.6">
+
+            <TextView
+                android:id="@+id/tvOtp1"
+                style="@style/TextView.Bold"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/underline_white"
+                android:gravity="center"
+                android:text="*"
+                android:textSize="18sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".2" />
+
+            <TextView
+                android:id="@+id/tvOtp2"
+                style="@style/TextView.Bold"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/underline_white"
+                android:gravity="center"
+                android:text="*"
+                android:textSize="18sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".2" />
+
+            <TextView
+                android:id="@+id/tvOtp3"
+                style="@style/TextView.Bold"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/underline_white"
+                android:gravity="center"
+                android:text="*"
+                android:textSize="18sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".2" />
+
+            <TextView
+                android:id="@+id/tvOtp4"
+                style="@style/TextView.Bold"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/underline_white"
+                android:gravity="center"
+                android:text="*"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/tv_resend_otp"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="?android:selectableItemBackground"
+            android:text="@string/resent_code"
+            android:textAllCaps="false"
+            android:textColor="@drawable/tv_selector" />
+
+        <TextView
+            style="@style/TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/need_otp_verification" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnVerifyOtp"
+            style="@style/My_Button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/submit" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/table_row_bg">
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/_1"
+                    style="@style/KeyBoardTextView" />
+
+                <TextView
+                    android:id="@+id/tv_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_2"
+                    style="@style/KeyBoardTextView"/>
+
+                <TextView
+                    android:id="@+id/tv_3"
+                    style="@style/KeyBoardTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_3" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_4"
+                    style="@style/KeyBoardTextView" />
+
+                <TextView
+                    android:id="@+id/tv_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_5"
+                    style="@style/KeyBoardTextView" />
+
+                <TextView
+                    android:id="@+id/tv_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_6"
+                    style="@style/KeyBoardTextView" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_7"
+                    style="@style/KeyBoardTextView" />
+
+                <TextView
+                    android:id="@+id/tv_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_8"
+                    style="@style/KeyBoardTextView" />
+
+                <TextView
+                    android:id="@+id/tv_9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/_9"
+                    style="@style/KeyBoardTextView" />
+
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/KeyBoardTextView"
+                    android:text="@string/blank_string"/>
+
+                <TextView
+                    android:id="@+id/tv_0"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/KeyBoardTextView"
+                    android:text="@string/_0"/>
+
+                <ImageView
+                    android:id="@+id/ivBackKeyboard"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/table_cell_bg"
+                    android:src="@drawable/delete_icon_keyboard"
+                    android:scaleType="centerInside"/>
+
+            </TableRow>
+
+        </TableLayout>
+        <!--<LinearLayout
+            android:id="@+id/ll_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        </LinearLayout>-->
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+
+

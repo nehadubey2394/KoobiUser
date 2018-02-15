@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/screen_bg_color"
+    tools:context="com.mualab.org.user.fragment.Searchboard.SearchBoardFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/lyFilter"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:weightSum="3"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        >
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="2dp"
+            android:layout_marginRight="8dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardUseCompatPadding="true"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="2"
+
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="Hair, Nails, Makeup...."
+                android:textColor="@color/text_color"
+                android:fontFamily="@font/roboto_light"
+                android:textSize="12sp"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                />
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cvFilter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="2dp"
+            android:layout_marginRight="8dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardUseCompatPadding="true"
+            android:layout_weight=".5"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/filter_ico"
+                android:layout_gravity="center"/>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cvFavourite"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardUseCompatPadding="true"
+            android:layout_weight=".5"
+            android:layout_gravity="center_vertical"
+            >
+            <ImageView
+                android:id="@+id/ivStar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/star_ico"
+                android:layout_gravity="center"/>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvSearchBoard"
+        android:layout_below="@+id/lyFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginLeft="3dp"
+        android:overScrollMode="never"
+        android:background="@color/screen_bg_color"
+        android:padding="5dp"/>
+
+</RelativeLayout>

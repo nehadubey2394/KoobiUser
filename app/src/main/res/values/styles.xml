@@ -1,0 +1,108 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
+    <style name="AppTheme.FullScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowBackground">@drawable/gradent_splash_bg</item>
+    </style>
+
+    <style name="FullScreen" parent="@style/Theme.AppCompat.Light">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
+    <style name="AppTheme.Splash" parent="AppTheme.FullScreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
+    <style name="AppTheme.DarkActionBar" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
+
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/action_bar_bg</item>
+        <!-- Support library compatibility -->
+        <item name="background">@drawable/action_bar_bg</item>
+    </style>
+
+    <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:background">@color/transparent</item>
+    </style>
+
+    <style name="TextAppearance.Widget.ActionBar.Title"
+        parent="@android:style/TextAppearance.Medium">
+    </style>
+
+    <style name="TextAppearance.Widget.ActionBar.Subtitle"
+        parent="@android:style/TextAppearance.Small">
+    </style>
+
+    <style name="FadeInPopWin">
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- <item name="@android:windowEnterAnimation">@anim/fade_in</item>
+         <item name="@android:windowExitAnimation">@anim/pop_win_content_fade_out</item>-->
+    </style>
+
+    <style name="RatingBar" parent="android:style/Widget.Material.RatingBar.Small">
+        <item name="android:progressDrawable">@drawable/ratingbar_selector</item>
+        <!-- <item name="colorAccent">#f9a825</item>
+         <item name="android:colorControlNormal">#f9a825</item>-->
+        <item name="android:minHeight">24dip</item>
+        <item name="android:minWidth">24dip</item>
+        <item name="android:maxWidth">28dip</item>
+        <item name="android:maxHeight">28dip</item>
+    </style>
+
+    <style name="RatingBarGray" parent="android:style/Widget.Material.RatingBar.Small">
+        <item name="android:progressDrawable">@drawable/ratingbar_gray_selector</item>
+        <!-- <item name="colorAccent">#f9a825</item>
+         <item name="android:colorControlNormal">#f9a825</item>-->
+        <item name="android:minHeight">24dip</item>
+        <item name="android:minWidth">24dip</item>
+        <item name="android:maxWidth">28dip</item>
+        <item name="android:maxHeight">28dip</item>
+    </style>
+
+    <style name="MyRaidoButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:textColorPrimaryDisableOnly">@color/text_color</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+        <item name="android:colorControlNormal">@color/text_color</item>
+        <item name="android:colorControlActivated">@color/colorPrimary</item>
+    </style>
+
+    <style name="MyRatingBar" parent="Widget.AppCompat.RatingBar.Small">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/dark_yellow</item>
+    </style>
+
+</resources>

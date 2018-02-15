@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <declare-styleable name="CustomEntryEdittext">
+        <attr name="entryCount" format="integer" />
+    </declare-styleable>
+
+
+    <declare-styleable name="CropImageView">
+        <attr name="cropGuidelines">
+            <enum name="off" value="0" />
+            <enum name="onTouch" value="1" />
+            <enum name="on" value="2" />
+        </attr>
+        <attr name="cropScaleType">
+            <enum name="fitCenter" value="0" />
+            <enum name="center" value="1" />
+            <enum name="centerCrop" value="2" />
+            <enum name="centerInside" value="3" />
+        </attr>
+        <attr name="cropShape">
+            <enum name="rectangle" value="0" />
+            <enum name="oval" value="1" />
+        </attr>
+        <attr name="cropAutoZoomEnabled" format="boolean" />
+        <attr name="cropMaxZoom" format="integer" />
+        <attr name="cropMultiTouchEnabled" format="boolean" />
+        <attr name="cropFixAspectRatio" format="boolean" />
+        <attr name="cropAspectRatioX" format="integer" />
+        <attr name="cropAspectRatioY" format="integer" />
+        <attr name="cropInitialCropWindowPaddingRatio" format="float" />
+        <attr name="cropBorderLineThickness" format="dimension" />
+        <attr name="cropBorderLineColor" format="color" />
+        <attr name="cropBorderCornerThickness" format="dimension" />
+        <attr name="cropBorderCornerOffset" format="dimension" />
+        <attr name="cropBorderCornerLength" format="dimension" />
+        <attr name="cropBorderCornerColor" format="color" />
+        <attr name="cropGuidelinesThickness" format="dimension" />
+        <attr name="cropGuidelinesColor" format="color" />
+        <attr name="cropBackgroundColor" format="color" />
+        <attr name="cropSnapRadius" format="dimension" />
+        <attr name="cropTouchRadius" format="dimension" />
+        <attr name="cropShowCropOverlay" format="boolean" />
+        <attr name="cropShowProgressBar" format="boolean" />
+        <attr name="cropMinCropWindowWidth" format="dimension" />
+        <attr name="cropMinCropWindowHeight" format="dimension" />
+        <attr name="cropMinCropResultWidthPX" format="float" />
+        <attr name="cropMinCropResultHeightPX" format="float" />
+        <attr name="cropMaxCropResultWidthPX" format="float" />
+        <attr name="cropMaxCropResultHeightPX" format="float" />
+    </declare-styleable>
+
+
+    <!--For image zoom gallery effect-->
+    <declare-styleable name="ZoomageView">
+        <attr name="zoomage_zoomable" format="boolean" />
+        <attr name="zoomage_translatable" format="boolean" />
+        <attr name="zoomage_restrictBounds" format="boolean" />
+        <attr name="zoomage_animateOnReset" format="boolean" />
+        <attr name="zoomage_autoCenter" format="boolean" />
+        <attr name="zoomage_minScale" format="float" />
+        <attr name="zoomage_maxScale" format="float" />
+        <attr name="zoomage_autoResetMode" format="enum">
+            <enum name="UNDER" value="0" />
+            <enum name="OVER" value="1" />
+            <enum name="ALWAYS" value="2" />
+            <enum name="NEVER" value="3" />
+        </attr>
+    </declare-styleable>
+
+
+    <!--For Status or my story Timer-->
+    <declare-styleable name="LinearTimerView">
+        <attr name="radius" format="dimension" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="initialColor" format="color" />
+        <attr name="progressColor" format="color" />
+        <attr name="startingPoint" format="integer" />
+        <attr name="preFillPoint" format="integer" />
+    </declare-styleable>
+
+
+
+    <declare-styleable name="SocialViewStyle">
+        <attr name="socialViewStyle" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="SocialView">
+        <!-- Determine whether each feature should be turned on/off.
+             Default is all true. -->
+        <attr name="socialFlags">
+            <flag name="hashtag" value="1"/>
+            <flag name="mention" value="2"/>
+            <flag name="hyperlink" value="4"/>
+        </attr>
+        <!-- Color of each feature.
+             If particular feature is not enabled, this value will be ignored.
+             Default is color accent of current theme. -->
+        <attr name="hashtagColor" format="color"/>
+        <attr name="mentionColor" format="color"/>
+        <attr name="hyperlinkColor" format="color"/>
+    </declare-styleable>
+
+
+
+    <declare-styleable name="NumberProgressBar">
+        <attr name="progress_current" format="integer"/>
+        <attr name="progress_max" format="integer"/>
+
+        <attr name="progress_unreached_color" format="color"/>
+        <attr name="progress_reached_color" format="color"/>
+
+        <attr name="progress_reached_bar_height" format="dimension"/>
+        <attr name="progress_unreached_bar_height" format="dimension"/>
+
+        <attr name="progress_text_size" format="dimension"/>
+        <attr name="progress_text_color" format="color"/>
+
+        <attr name="progress_text_offset" format="dimension"/>
+
+        <attr name="progress_text_visibility" format="enum">
+            <enum name="visible" value="0"/>
+            <enum name="invisible" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="Themes">
+        <attr name="numberProgressBarStyle" format="reference"/>
+    </declare-styleable>
+
+
+    <!--My Story-->
+    <declare-styleable name="StoriesProgressView">
+        <attr name="progressCount" format="integer|reference" />
+    </declare-styleable>
+
+
+    <declare-styleable name="CropView">
+        <attr name="cropme_result_width" format="fraction" />
+        <attr name="cropme_result_height" format="fraction" />
+        <attr name="cropme_max_scale" format="integer" />
+        <attr name="cropme_with_border" format="boolean" />
+        <attr name="cropme_background_alpha" format="fraction" />
+    </declare-styleable>
+
+    <declare-styleable name="nocropper__CropperView">
+        <attr name="nocropper__grid_color" format="color"/>
+        <attr name="nocropper__grid_thickness" format="dimension"/>
+        <attr name="nocropper__grid_opacity" format="float"/>
+        <attr name="nocropper__padding_color" format="color"/>
+        <attr name="nocropper__add_padding_to_make_square" format="boolean"/>
+        <attr name="nocropper__fit_to_center" format="boolean"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="InsLoadingViewAttr">
+        <attr name="rotate_duration" format="integer" />
+        <attr name="circle_duration" format="integer" />
+        <attr name="start_color" format="color" />
+        <attr name="end_color" format="color" />
+        <attr name="status" >
+            <enum name="loading" value="0" />
+            <enum name="clicked" value="1" />
+            <enum name="unclicked" value="2" />
+        </attr>
+    </declare-styleable>
+
+</resources>

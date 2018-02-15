@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    >
+
+    <include
+        android:id="@+id/topLayout"
+        layout="@layout/header_layout_for_allscreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_color"
+        android:layout_below="@+id/topLayout"
+        android:layout_above="@+id/lyBottom"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                >
+                <CheckBox
+                    android:id="@+id/chbOutcall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox_selector"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_out_call"
+                    android:layout_toRightOf="@+id/chbOutcall"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/roboto_regular"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="4dp"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rlRefineLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:padding="2dp"
+                >
+                <ImageView
+                    android:id="@+id/ivLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/location_ico"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_refine_loc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/text_location"
+                    android:layout_toRightOf="@+id/ivLocation"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp"
+                    android:textColorHint="@color/text_color"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/roboto_regular"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="4dp"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rlDob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:padding="2dp"
+                >
+                <ImageView
+                    android:id="@+id/ivDateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/calendar_ico"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_refine_dob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/text_date_and_time"
+                    android:layout_toRightOf="@+id/ivDateTime"
+                    android:textColorHint="@color/text_color"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/roboto_regular"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="4dp"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rlService"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:padding="2dp"
+                >
+                <ImageView
+                    android:id="@+id/ivService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/service_ico"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_service"
+                    android:layout_toRightOf="@+id/ivService"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/roboto_regular"/>
+
+                <ImageView
+                    android:id="@+id/ivServiceDropdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/down_arrow_ico"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dp"
+                    />
+
+            </RelativeLayout>
+
+            <ExpandableListView
+                android:id="@+id/lvService"
+                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:childDivider="@color/white"
+                android:dividerHeight="1dp"
+                android:divider="@null"
+                android:visibility="gone"
+                android:groupIndicator="@null" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="4dp"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rlPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:padding="2dp"
+                >
+                <ImageView
+                    android:id="@+id/ivPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/price_ico"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_price"
+                    android:layout_toRightOf="@+id/ivPrice"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/roboto_regular"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="4dp"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rlDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:padding="2dp"
+                >
+                <ImageView
+                    android:id="@+id/ivDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/active_route_ico"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_distance"
+                    android:layout_toRightOf="@+id/ivDistance"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/roboto_regular"/>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/gray"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginLeft="4dp"
+                />
+
+            <RadioGroup
+                android:id="@+id/rdgOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/rbAscending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/MyRaidoButton"
+                    android:checked="true"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/text_ascending"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+
+                <android.support.v7.widget.AppCompatRadioButton
+                    android:id="@+id/rbDescending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:theme="@style/MyRaidoButton"
+                    android:textSize="14sp"
+                    android:text="@string/text_descending"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+    <LinearLayout
+        android:id="@+id/lyBottom"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/screen_bg_color"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnClear"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_rectangle"
+            android:layout_marginRight="0.5dp"
+            android:text="@string/text_clear"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnApply"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_rectangle"
+            android:layout_marginLeft="0.5dp"
+            android:text="@string/text_apply"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="crop_image_menu_crop" type="drawable" />
+    <!--for nev menu-->
+    <item name="srn_root_layout" type="id" />
+
+</resources>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="activity.authentication.Registration2Activity">
+
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_registration2"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:id="@+id/llHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="4dp"
+        android:weightSum="4"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/progressView1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="5dp"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/progressView2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="5dp"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/progressView3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="5dp"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/progressView4"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"/>
+
+    </LinearLayout>
+
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/llHeader"
+        android:layout_marginTop="25dp"
+        android:layout_centerInParent="true">
+
+        <LinearLayout
+            android:id="@+id/vPanel1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include layout="@layout/layout_reg_view3"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/vPanel2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include layout="@layout/layout_reg_view4"/>
+
+        </LinearLayout>
+
+    </ViewSwitcher>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/snackBarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

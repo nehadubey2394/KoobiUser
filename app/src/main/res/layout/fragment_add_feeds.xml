@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg_color"
+    >
+
+    <TextView
+        style="@style/TextView.Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorPrimary"
+        android:layout_above="@+id/btnLogout"
+        android:text="@string/under_development"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnLogout"
+        style="@style/My_Button"
+        android:layout_width="match_parent"
+        android:layout_margin="50dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="60dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:text="@string/com_facebook_loginview_log_out_action" />
+
+</RelativeLayout>

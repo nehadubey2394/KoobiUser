@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/screen_bg_color"
+    android:padding="8dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_user_image"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/defoult_user_img"
+        android:background="@drawable/gradient_circle_img"
+        android:padding="1dp"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/transparent"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@+id/iv_share"
+        android:layout_toRightOf="@+id/iv_user_image"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Neha"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:layout_marginTop="5dp"
+            android:text="indore city"
+            android:fontFamily="@font/roboto_regular"
+            android:ellipsize="end"
+            android:maxWidth="210dp"
+            android:textColor="@color/grey"
+            android:maxLines="1"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/roboto_regular"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_color"
+            android:text="24/01/2018"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnFoloow"
+        style="@style/My_Button_Small.Invert"
+        android:layout_width="60dp"
+        android:layout_height="22dp"
+        android:text="@string/text_follow"
+        android:fontFamily="@font/roboto_regular"
+        android:layout_marginRight="2dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="TextView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+    <style name="TextView.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="TextView.Bold">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+    </style>
+
+    <style name="txtinputError_appearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="tvStyle" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+    </style>
+
+    <style name="KeyBoardTextView">
+        <item name="android:textColor">@drawable/tv_selector</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/table_cell_bg</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+
+    <!--EditTextView Styles-->
+
+    <!--EditText Style for Login registration page-->
+    <style name="My_Edittext">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:background">@drawable/underline_white</item>\
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
+
+    <!--Button Style-->
+
+    <style name="My_Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:background">@drawable/button_effect</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="My_Button_small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:background">@drawable/button_effect</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="My_Button.Invert" parent="My_Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/button_effect_invert</item>
+    </style>
+
+    <style name="My_Button_Small.Invert" parent="My_Button_small">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/button_effect_invert</item>
+    </style>
+
+</resources>

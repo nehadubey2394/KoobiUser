@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/screen_bg_color">
+
+    <RelativeLayout
+        android:id="@+id/lyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:padding="2dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:background="@drawable/gradient_circle_img"
+            android:padding="1dp"
+            android:src="@drawable/defoult_user_img"
+            app:civ_border_color="@color/transparent"
+            app:civ_border_width="1dp" />
+
+        <TextView
+            android:id="@+id/tvArtistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/ivProfile"
+            android:ellipsize="end"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:maxWidth="250dp"
+            android:padding="2dp"
+            android:text="Neha"
+            android:textColor="@color/text_color"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/lyDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvArtistName"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_toRightOf="@+id/ivProfile"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_light"
+                android:maxLines="1"
+                android:maxWidth="120dp"
+                android:padding="2dp"
+                android:text="40 miles away"
+                android:textColor="@color/grey"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvServices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lyDetail"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/ivProfile"
+            android:ellipsize="end"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:maxLines="1"
+            android:maxWidth="250dp"
+            android:padding="2dp"
+            android:text="Hair,Spa"
+            android:textColor="@color/text_color"
+            android:textSize="11sp" />
+
+        <LinearLayout
+            android:id="@+id/lyRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/btnBook"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RatingBar
+                android:id="@+id/rating"
+                style="@style/RatingBarGray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:rating="5"
+                android:numStars="5"
+                android:scaleX=".6"
+                android:scaleY=".6"
+                android:stepSize="0.1"
+                android:fitsSystemWindows="true"
+                android:transformPivotX="105dp"
+                android:transformPivotY="10dp"
+                android:isIndicator="true"/>
+
+            <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:padding="1dp"
+                android:text="(450000)"
+                android:textColor="@color/text_color"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnBook"
+            style="@style/My_Button_Small.Invert"
+            android:layout_width="60dp"
+            android:layout_height="22dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="2dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/btn_book" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/lyContainer"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/gray2" />
+
+</RelativeLayout>

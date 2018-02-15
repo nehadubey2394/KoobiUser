@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingRight="4dp"
+    android:paddingLeft="4dp"
+
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@color/white"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="1dp"
+        >
+        <TextView
+            android:id="@+id/tvSubSerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="250dp"
+            android:layout_gravity="center_vertical"
+            android:ellipsize="end"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:padding="5dp"
+            android:text="MakeUp"
+            android:textColor="@color/text_color"
+            android:textSize="14sp" />
+
+
+        <RelativeLayout
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="5dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bg_pink_circle_background"
+            >
+
+            <ImageView
+                android:id="@+id/ivDropDown2"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:rotation="180"
+                android:background="@drawable/white_back_ico"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

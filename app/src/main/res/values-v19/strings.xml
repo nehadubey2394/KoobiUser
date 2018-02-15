@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_searchboard">SearchBoard</string>
+    <string name="title_select_service">Select service</string>
+    <string name="btn_book">Book</string>
+    <string name="text_out_call">Out Call</string>
+    <string name="text_location">Location</string>
+    <string name="text_service">Service</string>
+    <string name="text_date_and_time">Date and Time</string>
+    <string name="titel_refine">Refine</string>
+    <string name="title_photo">Photo</string>
+    <string name="title_explore">Explore</string>
+    <string name="title_notification">Notifications</string>
+    <string name="text_price">Price</string>
+    <string name="text_distance">Distance</string>
+    <string name="text_ascending">Ascending</string>
+    <string name="text_descending">Descending</string>
+    <string name="text_clear">Clear</string>
+    <string name="text_apply">Apply</string>
+</resources>
