@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         initView();
+        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
 
     }
 
@@ -146,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.ibtnFeed :
-                MyToast.getInstance(MainActivity.this).showSmallCustomToast("Under developement");
                 if (clickedId!=2) {
                     setInactiveTab();
                     clickedId = 2;
@@ -301,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -313,8 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
                     if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         //  getDeviceLocation();
                         //    Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_LONG).show();
                     }
@@ -328,13 +328,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
-    }
+    }*/
 
     private boolean doubleBackToExitPressedOnce;
     private Runnable runnable;
 
 
-    @Override
+   /* @Override
     protected void onResume() {
         super.onResume();
         LocationDetector locationDetector = new LocationDetector();
@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
+*/
 
     @Override
     public void onBackPressed() {

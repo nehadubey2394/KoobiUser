@@ -4,26 +4,36 @@ package com.mualab.org.user.fragment.booking;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mualab.org.user.booking_calender.data.CalendarAdapter;
+import com.mualab.org.user.booking_calender.data.Day;
+import com.mualab.org.user.booking_calender.widget.FlexibleCalendar;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
-import com.mualab.org.user.adapter.booking.Booking3ServiceAdapter;
-import com.mualab.org.user.model.booking.BookinServices3;
+import com.mualab.org.user.adapter.booking.BookingInfoAdapter;
+import com.mualab.org.user.adapter.booking.TimeSlotAdapter;
+import com.mualab.org.user.model.booking.BookingInfo;
+import com.mualab.org.user.model.booking.TimeSlot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class BookingFragment4 extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private ArrayList<BookinServices3>arrayList;
-    private Booking3ServiceAdapter adapter;
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
-
+    private ArrayList<TimeSlot>timeSlots;
+    private ArrayList<BookingInfo>bookingInfos;
+    private TimeSlotAdapter listAdapter;
+    private BookingInfoAdapter bookingInfoAdapter;
 
     public BookingFragment4() {
         // Required empty public constructor
@@ -63,13 +73,149 @@ public class BookingFragment4 extends Fragment {
     }
 
     private void initView(){
-
-
+        timeSlots = new ArrayList<>();
+        bookingInfos = new ArrayList<>();
+        listAdapter = new TimeSlotAdapter(mContext, timeSlots);
+        bookingInfoAdapter = new BookingInfoAdapter(mContext, bookingInfos);
+        addItems();
+        addServices();
     }
 
     private void setViewId(View rootView){
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
+        RecyclerView rycTimeSlot = rootView.findViewById(R.id.rycTimeSlot);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL, false);
+        rycTimeSlot.setLayoutManager(layoutManager);
+        rycTimeSlot.setAdapter(listAdapter);
+
+        RecyclerView rycBookingInfo = rootView.findViewById(R.id.rycBookingInfo);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(mContext);
+        rycBookingInfo.setLayoutManager(layoutManager2);
+        rycBookingInfo.setHasFixedSize(true);
+        rycBookingInfo.setNestedScrollingEnabled(false);
+        rycBookingInfo.setAdapter(bookingInfoAdapter);
+
+        final FlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
+
+        // init calendar
+        Calendar cal = Calendar.getInstance();
+        CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
+        viewCalendar.setAdapter(adapter);
+
+        // bind events of calendar
+        viewCalendar.setCalendarListener(new FlexibleCalendar.CalendarListener() {
+            @Override
+            public void onDaySelect() {
+                Day day = viewCalendar.getSelectedDay();
+                Log.i(getClass().getName(), "Selected Day: "
+                        + day.getYear() + "/" + (day.getMonth() + 1) + "/" + day.getDay());
+            }
+
+            @Override
+            public void onItemClick(View v) {
+                Day day = viewCalendar.getSelectedDay();
+                Log.i(getClass().getName(), "The Day of Clicked View: "
+                        + day.getYear() + "/" + (day.getMonth() + 1) + "/" + day.getDay());
+            }
+
+            @Override
+            public void onDataUpdate() {
+                Log.i(getClass().getName(), "Data Updated");
+            }
+
+            @Override
+            public void onMonthChange() {
+                Log.i(getClass().getName(), "Month Changed"
+                        + ". Current Year: " + viewCalendar.getYear()
+                        + ", Current Month: " + (viewCalendar.getMonth() + 1));
+            }
+
+            @Override
+            public void onWeekChange(int position) {
+                Log.i(getClass().getName(), "Week Changed"
+                        + ". Current Year: " + viewCalendar.getYear()
+                        + ", Current Month: " + (viewCalendar.getMonth() + 1)
+                        + ", Current Week position of Month: " + position);
+            }
+        });
+
+        // use methods
+      /*  viewCalendar.addEventTag(2018, 8, 10);
+        viewCalendar.addEventTag(2018, 8, 14);
+        viewCalendar.addEventTag(2018, 8, 23);
+*/
+        viewCalendar.select(new Day(2018, 4, 22));
     }
+
+    private void addItems(){
+        TimeSlot item;
+        for(int i=0;i<6;i++) {
+            item = new TimeSlot();
+            switch (i) {
+              /*  case 0:
+                    item.itemName = "Subscription";
+                    item.itemImg = R.drawable.inactive_subscribe_icon;
+
+                    break;*/
+                case 0:
+                    item.time = "10:00";
+                    item.isSelected = "1";
+                    break;
+                case 1:
+                    item.time = "11:00";
+                    item.isSelected = "0";
+                    break;
+
+                case 2:
+                    item.time = "12:30";
+                    item.isSelected = "0";
+                    break;
+
+                case 3:
+                    item.time = "1:00";
+                    item.isSelected = "0";
+                    break;
+
+                case 4:
+                    item.time = "1:30";
+                    item.isSelected = "0";
+                    break;
+
+                case 5:
+                    item.time = "2:00";
+                    item.isSelected = "0";
+                    break;
+
+            }
+            timeSlots.add(item);
+        }
+    }
+
+    private void addServices(){
+        BookingInfo item;
+        for(int i=0;i<2;i++) {
+            item = new BookingInfo();
+            switch (i) {
+                case 0:
+                    item.time = "10:00";
+                    item.date = "Sun 10th November 2018";
+                    item.sServiceName = "Evening Make Up";
+                    item.price = "£70";
+                    break;
+                case 1:
+                    item.time = "11:00";
+                    item.date = "Mon 12th November 2018";
+                    item.sServiceName = "Hair Cut";
+                    item.price = "£60";
+                    break;
+
+            }
+            bookingInfos.add(item);
+        }
+    }
+
+
+
 
     @Override
     public void onDestroyView() {

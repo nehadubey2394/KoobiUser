@@ -236,28 +236,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void ErrorListener(VolleyError error) {
-                    try{
-                        String str = error.getMessage();
-                        if (str!=null){
-                            if(str.equals("java.net.ConnectException: Connection refused")){
-                                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
-                                        .setTitleText("Connection Error")
-                                        .setContentText("Mualab encountered an error while try to connect to the server.")
-                                        .show();
-                            }else {
-                                MyToast.getInstance(LoginActivity.this).showSmallCustomToast(error.getLocalizedMessage());
-                            }
-                        }else {
-                            MyToast.getInstance(LoginActivity.this).showSmallCustomToast("Request timeout error");
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
                 }})
-                    .setParam(params)
-                    .setMethod(Request.Method.POST)
-                    .setProgress(true)
-                    .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
+                    .setBody(params, HttpTask.ContentType.APPLICATION_JSON)
+                    .setProgress(true))
                     .execute(this.getClass().getName());
         }
     }

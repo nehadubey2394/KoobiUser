@@ -22,11 +22,11 @@
         android:id="@+id/tv_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
         android:autoLink="web|email"
-        android:textColor="@color/text_color"
+        android:ellipsize="end"
         android:fontFamily="@font/roboto_regular"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:textColor="@color/text_color" />
 
     <include layout="@layout/feed_item_footer"
         android:layout_width="match_parent"

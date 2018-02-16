@@ -58,9 +58,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         tvOpeningTime.setOnClickListener(this);
         if (mParam1.equals("1")){
-            addFragment(new BookingFragment1(), false, R.id.flBookingContainer);
-        }else {
             addFragment(new BookingFragment2(), false, R.id.flBookingContainer);
+        }else {
+            addFragment(new BookingFragment1(), false, R.id.flBookingContainer);
         }
 
         ivHeaderBack2.setOnClickListener(this);

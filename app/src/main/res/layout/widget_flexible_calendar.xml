@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:clickable="false"
+        android:layout_gravity="center_vertical">
+
+        <RelativeLayout
+            android:id="@+id/layout_btn_group_month"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:clickable="false"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:id="@+id/btn_prev_month"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/bg_pink_circle_background"
+                >
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_navigate_before_black"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/btn_next_month"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:gravity="center"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bg_pink_circle_background"
+                >
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_navigate_next_white"
+                    />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_btn_group_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:clickable="false"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:id="@+id/btn_prev_week"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/bg_pink_circle_background"
+                >
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_navigate_before_black"
+                    />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/btn_next_week"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:gravity="center"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bg_pink_circle_background"
+                >
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_navigate_next_white"
+                    />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txt_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="8dp"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="15sp"
+            android:text="Nov 2018" />
+
+        <ImageView
+            android:id="@+id/ivDropDownCal"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginLeft="4dp"
+            android:padding="2dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/txt_title"
+            android:background="@drawable/down_arrow_ico"
+            />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/picker_button_background_innactive"/>
+
+    <TableLayout
+        android:id="@+id/table_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:background="@color/white">
+
+    </TableLayout>
+
+    <com.mualab.org.user.booking_calender.view.LockScrollView
+        android:id="@+id/scroll_view_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <TableLayout
+            android:id="@+id/table_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+        </TableLayout>
+
+    </com.mualab.org.user.booking_calender.view.LockScrollView>
+
+</LinearLayout>

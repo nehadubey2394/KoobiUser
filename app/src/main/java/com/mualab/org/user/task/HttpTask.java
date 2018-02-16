@@ -1,27 +1,35 @@
 package com.mualab.org.user.task;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.application.VolleyRequest.AppHelper;
+import com.mualab.org.user.application.VolleyRequest.VolleyMultipartRequest;
+import com.mualab.org.user.application.VolleyRequest.VolleySingleton;
 import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.dialogs.ServerErrorDialog;
+import com.mualab.org.user.helper.MyToast;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mualab.org.user.application.Mualab.IS_DEBUG_MODE;
+
 /**
  * Created by dharmraj on 10/1/18.
- */
+ **/
 
 public class HttpTask {
-
     private Context context;
     private HttpResponceListner.Listener listener;
 
@@ -32,9 +40,12 @@ public class HttpTask {
     private int maxNumRetries;
     private float backoffMultiplier;
     private boolean retryPolicy;
+    private boolean shouldCache;
 
     private Map<String, String> header;
     private Map<String, String> params;
+    private Map<String, String> body;
+    private String jsonObjectString;
     private String authToken;
     private String TAG;
     private boolean progress;
@@ -48,7 +59,7 @@ public class HttpTask {
 
     public static class Builder {
 
-        private String BASE_URL = API.BASE_URL;
+        private static String BASE_URL = API.BASE_URL; //"http://koobi.co.uk/api/";
         //Required
         private String api;
         private Context context;
@@ -63,6 +74,8 @@ public class HttpTask {
 
         private Map<String, String> header;
         private Map<String, String> params;
+        private Map<String, String> body;
+        private String jsonObjectString;
         private String authToken;
         private String TAG;
         private boolean progress;
@@ -97,6 +110,23 @@ public class HttpTask {
 
         public Builder setParam(Map<String, String> params){
             this.params = params;
+            return this;
+        }
+
+        public Builder addJsonObjectString(String jsonObjectString){
+            this.jsonObjectString = jsonObjectString;
+            return this;
+        }
+
+        public Builder setBody(Map<String, String> body){
+            this.body = body;
+            return this;
+        }
+
+
+        public Builder setBody(Map<String, String> body, String contentType){
+            this.body = body;
+            this.bodyContentType = contentType;
             return this;
         }
 
@@ -135,9 +165,10 @@ public class HttpTask {
         this.maxNumRetries = builder.maxNumRetries;
         this.backoffMultiplier = builder.backoffMultiplier;
         this.retryPolicy = builder.retryPolicy;
-
         this.header = builder.header;
         this.params = builder.params;
+        this.body = builder.body;
+        this.jsonObjectString = builder.jsonObjectString;
         this.authToken = builder.authToken;
         this.progress = builder.progress;
     }
@@ -147,6 +178,9 @@ public class HttpTask {
         StringRequest request = new StringRequest(method, api, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                if(IS_DEBUG_MODE){
+                    System.out.println(api+"\n"+response);
+                }
                 listener.onResponse(response, api);
                 if(progress)
                     Progress.hide(context);
@@ -157,6 +191,7 @@ public class HttpTask {
                 listener.ErrorListener(error);
                 if(progress)
                     Progress.hide(context);
+                handleError(error);
             }
         }){
             @Override
@@ -166,15 +201,29 @@ public class HttpTask {
 
             @Override
             public byte[] getBody() throws AuthFailureError {
-                String string = new JSONObject(params).toString();
-                return string.getBytes();
+               /* if(params!=null){
+                    String string = new JSONObject(params).toString();
+                    return string.getBytes();
+                }
+               return super.getBody();*/
+
+                if(body!=null){
+                    String string = new JSONObject(body).toString();
+                    //new String(data, "UTF-8");
+                    return string.getBytes();
+                }
+
+                if(jsonObjectString!=null){
+                    return jsonObjectString.getBytes();
+                }
+                return super.getBody();
             }
 
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                if (params == null)
-                    return super.getParams();
-                else return params;
+                if (params != null)
+                    return params;
+                return super.getParams();
             }
 
             @Override
@@ -190,11 +239,84 @@ public class HttpTask {
         if(retryPolicy){
             request.setRetryPolicy(new DefaultRetryPolicy(initialTimeoutMs, maxNumRetries, backoffMultiplier));
         }
-
+        request.setShouldCache(shouldCache);
         if(progress)
             Progress.show(context);
         Mualab.getInstance().addToRequestQueue(request, TAG);
     }
 
 
+    /*post image from multipart data form*/
+    public void postImage(final String key, final Bitmap bitmap){
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, api, new Response.Listener<NetworkResponse>() {
+            @Override
+            public void onResponse(NetworkResponse response) {
+                String resultResponse = new String(response.data);
+
+                if(IS_DEBUG_MODE){
+                    System.out.println(api+"\n"+response);
+                }
+
+                listener.onResponse(resultResponse, api);
+                if(progress)
+                    Progress.hide(context);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.ErrorListener(error);
+                handleError(error);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                if(header==null) header = new HashMap<>();
+                if (authToken!=null) {
+                    header.put("authToken", authToken);
+                }
+                return header;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                if (key != null && bitmap != null) {
+                    params.put(key, new DataPart("tmpImage.jpg", AppHelper.getFileDataFromDrawable(bitmap), "image/jpeg"));
+                }
+                return params;
+            }
+        };
+
+        if(progress)
+            Progress.show(context);
+        multipartRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 0, 1f));
+        VolleySingleton.getInstance(context.getApplicationContext()).addToRequestQueue(multipartRequest);
+    }
+
+
+    private void handleError(VolleyError error){
+        if(progress)
+            Progress.hide(context);
+
+        try{
+            if (error.networkResponse != null && error.networkResponse.statusCode == 401) {
+                // HTTP Status Code: 401 Unauthorized
+                MyToast.getInstance(context).showDasuAlert("Session Expired", "please login again.");
+                Mualab.getInstance().getSessionManager().logout();
+
+            }else if(error.getMessage().contains("java.net.ConnectException")){
+                new ServerErrorDialog(context).show();
+            }else {
+                MyToast.getInstance(context).showDasuAlert("Server Error", "Looks like we are having some server issue.");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            MyToast.getInstance(context).showDasuAlert("Server Error", "Looks like we are having some server issue.");
+        }
+    }
 }

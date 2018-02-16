@@ -17,6 +17,10 @@
     <item type="dimen" name="design_snackbar_padding_vertical_2lines">@dimen/design_snackbar_padding_vertical</item>
     <dimen name="design_tab_scrollable_min_width">160.0dip</dimen>
 
+
     <dimen name="margin_left">64.0dip</dimen>
     <dimen name="margin_right">64.0dip</dimen>
+    <dimen name="button_height">45dip</dimen>
+    <dimen name="margin_left26">64.0dip</dimen>
+    <dimen name="margin_right26">64.0dip</dimen>
 </resources>

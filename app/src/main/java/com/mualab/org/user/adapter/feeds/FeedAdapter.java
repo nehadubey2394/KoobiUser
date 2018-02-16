@@ -149,13 +149,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 textHolder.tvUserName.setText(fullName);
                 textHolder.tvPostTime.setText(feeds.crd);
-                if (!feeds.city.equals("") || feeds.city!=null){
-                    textHolder.tvUserLocation.setText(feeds.city);
-                }else {
-                    textHolder.tvUserLocation.setText("NA");
-                }
-
-
+                textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
                 textHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 textHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 textHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
@@ -175,11 +169,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 imageHolder.tvUserName.setText(fullName);
                 imageHolder.tvPostTime.setText(feeds.crd);
-                if (!feeds.city.equals("") || feeds.city!=null){
-                    imageHolder.tvUserLocation.setText(feeds.city);
-                }else {
-                    imageHolder.tvUserLocation.setText("NA");
-                }
+                imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
 
 
                 imageHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
@@ -293,17 +283,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 vedioHolder.tvUserName.setText(fullName);
                 vedioHolder.tvPostTime.setText(feeds.crd);
-                if (!feeds.city.equals("") || feeds.city!=null){
-                    vedioHolder.tvUserLocation.setText(feeds.city);
-                }else {
-                    vedioHolder.tvUserLocation.setText("NA");
-                }
-
-
+                vedioHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
                 vedioHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 vedioHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 vedioHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
-
 
                 if(feeds.feedThumb!=null && feeds.feedThumb.size()>0){
                     Picasso.with(vedioHolder.ivFeedCenter.getContext())
