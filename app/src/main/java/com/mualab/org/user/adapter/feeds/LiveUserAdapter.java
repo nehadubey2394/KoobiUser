@@ -9,44 +9,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
-import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.AddStoryActivity;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
-import com.mualab.org.user.model.feeds.MyStory;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.mualab.org.user.fragment.feeds.FeedsFragment.FEED_TAB;
 import static com.mualab.org.user.fragment.feeds.FeedsFragment.SEARCH_TAB;
 
 /**
  * Created by mindiii on 9/8/17.
- */
+ **/
 
 public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHolder> {
 
     private Context mContext;
     private List<LiveUserInfo> liveUserList;
-    private List<MyStory> myStoryList;
     private int feedState;
 
     public LiveUserAdapter(Context mContext, List<LiveUserInfo> liveUserList, int feedState) {
         this.mContext = mContext;
         this.liveUserList = liveUserList;
         this.feedState = feedState;
-        myStoryList = new ArrayList<>();
     }
 
     @Override
@@ -106,13 +93,18 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-        /*    Intent intent = new Intent(mContext, StoriesActivity.class);
-            Bundle args = new Bundle();
-            args.putSerializable("ARRAYLIST", (Serializable) liveUserList);
-            args.putInt("position", getAdapterPosition());
-            intent.putExtra("BUNDLE", args);
-            mContext.startActivity(intent);
-*/
+
+             int pos = getAdapterPosition();
+
+             if(pos==0){
+                 Intent intent = new Intent(mContext, AddStoryActivity.class);
+                 Bundle args = new Bundle();
+                 args.putSerializable("ARRAYLIST", (Serializable) liveUserList);
+                 args.putInt("position", getAdapterPosition());
+                 intent.putExtra("BUNDLE", args);
+                 mContext.startActivity(intent);
+             }
+
         }
     }
 }

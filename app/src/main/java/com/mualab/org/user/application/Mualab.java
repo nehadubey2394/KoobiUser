@@ -9,6 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
+import com.mualab.org.user.BuildConfig;
 import com.mualab.org.user.session.Session;
 
 /**
@@ -18,12 +19,12 @@ import com.mualab.org.user.session.Session;
 public class Mualab extends Application {
 
     public static final String TAG = Mualab.class.getSimpleName();
-    public static final String authToken = "authToken";
-    /* @SuppressLint("StaticFieldLeak")
-     public static CoordinatorLayout snackPosition;*/
+    public static boolean IS_DEBUG_MODE = BuildConfig.DEBUG;
+
     public static Mualab mInstance;
     public static DatabaseReference ref;
-    public Session session;
+
+    private Session session;
     private RequestQueue mRequestQueue;
 
     public static Mualab getInstance() {

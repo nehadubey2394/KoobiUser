@@ -97,9 +97,10 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activity.booking.BookingActivity"
-            android:theme="@style/FullScreen">
-        </activity>
+        <activity
+            android:name=".activity.booking.BookingActivity"
+            android:theme="@style/FullScreen"></activity>
+        <activity android:name=".activity.AddStoryActivity"></activity>
     </application>
 
 </manifest>

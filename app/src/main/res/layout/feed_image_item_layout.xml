@@ -51,6 +51,17 @@
             android:visibility="invisible"
             />
 
+        <LinearLayout
+            android:id="@+id/ll_Dot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal" />
+
+
     </RelativeLayout>
 
     <com.hendraanggrian.widget.SocialTextView

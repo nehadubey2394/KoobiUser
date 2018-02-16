@@ -32,18 +32,18 @@ import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.DateDialogFragment;
 import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.helper.Constants;
 import com.mualab.org.user.helper.MyToast;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
+import com.mualab.org.user.session.SharedPreferanceUtils;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
-import com.mualab.org.user.task.WebServiceAPI;
 
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,7 +69,8 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
     private Bitmap profileImageBitmap;
 
     private Session session;
-    private WebServiceAPI api;
+    private boolean isRemind = true;
+    //private WebServiceAPI api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +84,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         }
 
         session = new Session(this);
-        api = new WebServiceAPI(this, TAG, new HttpResponceListner.LoginRegistrationListener() {
+      /*  api = new WebServiceAPI(this, TAG, new HttpResponceListner.LoginRegistrationListener() {
             @Override
             public void onResponse(String response) {
 
@@ -119,7 +120,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 findViewById(R.id.btnContinue2).setEnabled(true);
                 Log.d("ERROR:", "");
             }
-        });
+        });*/
     }
 
 
@@ -220,11 +221,9 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
                     @Override
                     public void ErrorListener(VolleyError error) {
-                        MyToast.getInstance(Registration2Activity.this).showSmallCustomToast(error.getLocalizedMessage());
-                    }}).setParam(params)
+                    }}).setBody(params, HttpTask.ContentType.APPLICATION_JSON)
                         .setMethod(Request.Method.POST)
-                        .setProgress(true)
-                        .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
+                        .setProgress(true))
                         .execute(Registration2Activity.this.getClass().getName());
             }
 
@@ -277,7 +276,6 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 params.put("countryCode", user.countryCode);
                 params.put("contactNo", user.contactNo);
                 params.put("businessName", user.businessName);
-
                 params.put("gender", user.gender);
                 params.put("dob", user.dob);
                /* params.put("address", address.stAddress1);
@@ -293,7 +291,49 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 params.put("deviceToken", deviceToken);
                 params.put("socialId", "");
                 params.put("socialType", "");
-                api.signUpTask(params, profileImageBitmap);
+                //api.signUpTask(params, profileImageBitmap);
+                HttpTask task = new HttpTask(new HttpTask.Builder(this, "artistRegistration", new HttpResponceListner.Listener() {
+                    @Override
+                    public void onResponse(String response, String apiName) {
+                        try {
+                            JSONObject js = new JSONObject(response);
+                            String status = js.getString("status");
+                            String message = js.getString("message");
+                            if (status.equalsIgnoreCase("success")) {
+                                Progress.hide(Registration2Activity.this);
+                                Gson gson = new Gson();
+                                JSONObject userObj = js.getJSONObject("users");
+                                User user = gson.fromJson(String.valueOf(userObj), User.class);
+                                session.createSession(user);
+                                session.setPassword(user.password);
+                                checkUserRember(user);
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.putExtra("user", user);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                finish();
+                            }else {
+                                showToast(message);
+                                findViewById(R.id.btnContinue2).setEnabled(true);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            findViewById(R.id.btnContinue2).setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void ErrorListener(VolleyError error) {
+                        findViewById(R.id.btnContinue2).setEnabled(true);
+                        Log.d("log", error.getLocalizedMessage());
+                    }
+                }).setParam(params)
+                        .setProgress(true));
+                task.postImage("profileImage", profileImageBitmap);
+
                 break;
         }
 
@@ -458,6 +498,15 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         } else {
             super.onBackPressed();
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
+    }
+
+
+    private void checkUserRember(User user){
+        SharedPreferanceUtils sp = new SharedPreferanceUtils(this);
+        if (isRemind) {
+            sp.setParam(Constants.isLoginReminder, true);
+            sp.setParam(Constants.USER_ID, user.userName);
         }
     }
 }

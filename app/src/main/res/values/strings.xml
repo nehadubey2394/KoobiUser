@@ -185,6 +185,27 @@
     <string name="text_select_staff">Select Staff</string>
     <string name="text_remove">Remove</string>
     <string name="text_edit">Edit</string>
+    <string name="text_select_time">Select Time</string>
+    <string name="text_booking_info">Booking Info :</string>
+    <string name="text_confirm_booking">Confirm Booking</string>
+    <string name="text_add_more_services">Add More</string>
+    <string name="text_re_book">Re-book</string>
+
+    <!--calender-->
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
+
+
+    <!--Dialog server maintenence-->
+    <string name="txt_under_maintenance">The web server koobi.com is currently undergoing some maintenance</string>
+    <string name="temporary_maintenance">Temporary Maintenance</string>
+    <string name="what_happened">What happened?</string>
+    <string name="txt_description_maintenance">Server and website need regular maintenance just like a car to keep them up and running smoothly.</string>
 
 
 </resources>

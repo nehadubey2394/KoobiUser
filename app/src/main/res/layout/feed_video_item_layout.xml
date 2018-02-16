@@ -9,11 +9,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/screen_bg_color"
+    android:layout_margin="2dp"
     android:orientation="vertical">
 
-    <RelativeLayout
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/screen_bg_color"
@@ -60,7 +60,11 @@
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </RelativeLayout>-->
+
+    <include layout="@layout/feed_item_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <RelativeLayout
         android:id="@+id/rl_imageView"
@@ -108,7 +112,12 @@
         android:textColor="@color/text_color"
         android:visibility="gone" />
 
-    <RelativeLayout
+    <include
+        layout="@layout/feed_item_footer"
+        android:layout_width="match_parent"
+        android:layout_height="55dp" />
+
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_margin="8dp">
@@ -234,7 +243,7 @@
             android:src="@drawable/share_ico"
             />
 
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <View
         android:layout_width="match_parent"

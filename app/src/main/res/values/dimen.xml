@@ -5,4 +5,20 @@
     <dimen name="view_text_size">10sp</dimen>
     <dimen name="margin_left">16.0dip</dimen>
     <dimen name="margin_right">16.0dip</dimen>
+
+    <dimen name="margin_left26">26.0dip</dimen>
+    <dimen name="margin_right26">26.0dip</dimen>
+    <dimen name="button_height">35dip</dimen>
+    <dimen name="item_width">300dp</dimen>
+    <dimen name="padding_item_width">300dp</dimen>
+
+    <!-- title bar -->
+    <dimen name="title_bar_button_width">36dp</dimen>
+    <dimen name="title_bar_button_height">36dp</dimen>
+
+    <!-- day -->
+    <dimen name="day_circle_width">25dp</dimen>
+    <dimen name="day_circle_height">25dp</dimen>
+    <dimen name="day_circle_radius">120dp</dimen>
+    <dimen name="day_circle_stroke_width">1dp</dimen>
 </resources>

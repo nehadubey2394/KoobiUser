@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:cardCornerRadius="0dp"
-    app:cardElevation="8dp"
-    >
+    app:cardElevation="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,8 +15,7 @@
         android:gravity="center_vertical"
         android:background="@color/white"
         android:orientation="horizontal"
-        android:weightSum="5"
-       >
+        android:weightSum="5">
 
         <LinearLayout
             android:layout_width="0dp"

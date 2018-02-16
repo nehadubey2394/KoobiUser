@@ -83,16 +83,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             mParam1 = getArguments().getString(ARG_PARAM1);
         }
 
-        // MainActivity.rlHeader1.setVisibility(View.VISIBLE);
-
-        LocationDetector locationDetector = new LocationDetector();
-        if ((locationDetector.checkLocationPermission(getActivity())) ){
-            if (locationDetector.isLocationEnabled(getActivity()) ) {
-                getDeviceLocation();
-            }else {
-                locationDetector.showLocationSettingDailod(getActivity());
-            }
-        }
+        apiForGetArtist(0);
     }
 
     @Override
@@ -188,9 +179,13 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         Map<String, String> params = new HashMap<>();
         params.put("latitude", lat);
         params.put("longitude", lng);
-        params.put("distance", "20");
+        params.put("distance", "10");
         params.put("page", ""+page);
-        params.put("limit", "20");
+        params.put("limit", "10");
+        params.put("service", "");
+        params.put("serviceType", "");
+        params.put("day", "");
+        params.put("time", "");
         // params.put("appType", "user");
 
         new HttpTask(new HttpTask.Builder(mContext, "artistSearch", new HttpResponceListner.Listener() {
@@ -228,54 +223,10 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void ErrorListener(VolleyError error) {
-                try{
-                    Progress.hide(mContext);
-                    Helper helper = new Helper();
-                    SweetAlertDialog dialog = new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE);
-                    dialog.setTitleText("Alert!")
-                            .setContentText(helper.error_Messages(error))
-                            .setNeutralClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sDialog) {
-                                    sDialog.dismissWithAnimation();
-                                    Mualab.getInstance().getSessionManager().logout();
-                                }
-                            })
-                            .show();
-
-                  /*  String str = error.getLocalizedMessage();
-                    if (str!=null){
-                        if(str.equals("java.net.ConnectException: Connection refused")){
-                            new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
-                                    .setTitleText("Connection Error")
-                                    .setContentText("Koobi encountered an error while try to connect to the server.")
-                                    .show();
-                        }else {
-                            MyToast.getInstance(mContext).showSmallCustomToast(error.getLocalizedMessage());
-                        }
-                    }else {
-                        new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("Alert!")
-                                .setContentText(helper.error_Messages(error))
-                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sDialog) {
-                                        sDialog.cancel();
-                                        Mualab.getInstance().getSessionManager().logout();
-                                    }
-                                })
-                                .show();
-                    }
-*/
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
             }})
                 .setAuthToken(user.authToken)
-                .setParam(params)
-                .setMethod(Request.Method.POST)
                 .setProgress(true)
-                .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON))
                 .execute(this.getClass().getName());
     }
 
@@ -299,9 +250,13 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         Map<String, String> params = new HashMap<>();
         params.put("latitude", lat);
         params.put("longitude", lng);
-        params.put("distance", "20");
+        params.put("distance", "10");
         params.put("page", ""+page);
         params.put("limit", "10");
+        params.put("service", "");
+        params.put("serviceType", "");
+        params.put("day", "");
+        params.put("time", "");
         // params.put("appType", "user");
 
         new HttpTask(new HttpTask.Builder(mContext, "artistSearch", new HttpResponceListner.Listener() {
@@ -340,30 +295,10 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void ErrorListener(VolleyError error) {
-                try{
-                    Progress.hide(mContext);
-                    Helper helper =new Helper();
-                    SweetAlertDialog dialog = new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE);
-                    dialog.setTitleText("Alert!")
-                            .setContentText(helper.error_Messages(error))
-                            .setNeutralClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sDialog) {
-                                    sDialog.cancel();
-                                    Mualab.getInstance().getSessionManager().logout();
-                                }
-                            })
-                            .show();
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
             }})
                 .setAuthToken(user.authToken)
-                .setParam(params)
-                .setMethod(Request.Method.POST)
                 .setProgress(false)
-                .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON))
                 .execute(this.getClass().getName());
     }
 

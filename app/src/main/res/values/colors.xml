@@ -94,4 +94,10 @@
 
     <color name="circle_gredient_start_color">#583272</color>
     <color name="circle_gredient_end_color">#358efc</color>
+
+    <color name="primary_blue">#3f8efc</color>
+    <color name="primary_green">#00bb27</color>
+
+    <color name="primary_pink">#F59293</color>
+    <color name="primary_orange">#FBAF3F</color>
 </resources>
