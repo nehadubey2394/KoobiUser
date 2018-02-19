@@ -32,7 +32,7 @@ import android.widget.ViewSwitcher;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.constants.Constant;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MyToast;
 import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraException;
 import com.otaliastudios.cameraview.CameraListener;

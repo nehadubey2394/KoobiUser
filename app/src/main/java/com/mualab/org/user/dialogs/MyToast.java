@@ -1,4 +1,4 @@
-package com.mualab.org.user.helper;
+package com.mualab.org.user.dialogs;
 
 import android.app.Activity;
 import android.content.Context;

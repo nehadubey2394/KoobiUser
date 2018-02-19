@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
@@ -26,8 +25,8 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.ForgotPassword;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.constants.Constant;
-import com.mualab.org.user.helper.MySnackBar;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MySnackBar;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.session.SharedPreferanceUtils;
@@ -39,7 +38,6 @@ import com.mualab.org.user.util.KeyboardUtil;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class LoginActivity extends AppCompatActivity {
 

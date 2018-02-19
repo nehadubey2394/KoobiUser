@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.mualab.org.user.booking_calender.widget.FlexibleCalendar
+                    <views.calender.widget.FlexibleCalendar
                         android:id="@+id/calendar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

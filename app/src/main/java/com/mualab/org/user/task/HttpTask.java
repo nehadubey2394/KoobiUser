@@ -16,7 +16,7 @@ import com.mualab.org.user.application.VolleyRequest.VolleyMultipartRequest;
 import com.mualab.org.user.application.VolleyRequest.VolleySingleton;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.dialogs.ServerErrorDialog;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MyToast;
 
 import org.json.JSONObject;
 

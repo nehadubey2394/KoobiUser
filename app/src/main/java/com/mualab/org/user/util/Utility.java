@@ -1,4 +1,4 @@
-package com.mualab.org.user.helper;
+package com.mualab.org.user.util;
 
 import android.content.Context;
 

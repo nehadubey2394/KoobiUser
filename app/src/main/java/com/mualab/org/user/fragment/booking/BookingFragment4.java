@@ -11,9 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.mualab.org.user.booking_calender.data.CalendarAdapter;
-import com.mualab.org.user.booking_calender.data.Day;
-import com.mualab.org.user.booking_calender.widget.FlexibleCalendar;
+import views.calender.data.CalendarAdapter;
+import views.calender.data.Day;
+import views.calender.widget.FlexibleCalendar;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.adapter.booking.BookingInfoAdapter;

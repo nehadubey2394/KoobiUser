@@ -22,7 +22,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.mualab.org.user.R;
 import com.mualab.org.user.constants.Constant;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.listner.DatePickerListener;
 import com.mualab.org.user.util.DatePickerFragment;
 

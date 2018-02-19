@@ -1,18 +1,11 @@
 package com.mualab.org.user.activity;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -35,12 +27,10 @@ import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.fragment.AddFeedFragment;
 import com.mualab.org.user.fragment.feeds.FeedsFragment;
 import com.mualab.org.user.fragment.Searchboard.SearchBoardFragment;
-import com.mualab.org.user.helper.MySnackBar;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MySnackBar;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.util.LocationDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
-
-import static com.mualab.org.user.constants.Constant.MY_PERMISSIONS_REQUEST_LOCATION;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
