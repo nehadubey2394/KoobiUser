@@ -485,10 +485,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void ErrorListener(VolleyError error) {
-                MyToast.getInstance(RegistrationActivity.this).showSmallCustomToast(error.getLocalizedMessage());
             }})
-                .setParam(header)
-                .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON)
+                .setBody(header, HttpTask.ContentType.APPLICATION_JSON)
                 .setProgress(true))
                 .execute(this.getClass().getName());
     }

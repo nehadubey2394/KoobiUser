@@ -291,8 +291,10 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 params.put("deviceToken", deviceToken);
                 params.put("socialId", "");
                 params.put("socialType", "");
+                params.put("firebaseToken", deviceToken);
+
                 //api.signUpTask(params, profileImageBitmap);
-                HttpTask task = new HttpTask(new HttpTask.Builder(this, "artistRegistration", new HttpResponceListner.Listener() {
+                HttpTask task = new HttpTask(new HttpTask.Builder(this, "userRegistration", new HttpResponceListner.Listener() {
                     @Override
                     public void onResponse(String response, String apiName) {
                         try {
@@ -300,7 +302,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                             String status = js.getString("status");
                             String message = js.getString("message");
                             if (status.equalsIgnoreCase("success")) {
-                                Progress.hide(Registration2Activity.this);
+                                //Progress.hide(Registration2Activity.this);
                                 Gson gson = new Gson();
                                 JSONObject userObj = js.getJSONObject("users");
                                 User user = gson.fromJson(String.valueOf(userObj), User.class);
@@ -328,12 +330,10 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                     @Override
                     public void ErrorListener(VolleyError error) {
                         findViewById(R.id.btnContinue2).setEnabled(true);
-                        Log.d("log", error.getLocalizedMessage());
-                    }
-                }).setParam(params)
+                    }})
+                        .setParam(params)
                         .setProgress(true));
                 task.postImage("profileImage", profileImageBitmap);
-
                 break;
         }
 
