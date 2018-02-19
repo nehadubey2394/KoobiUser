@@ -99,8 +99,9 @@
 
         <activity
             android:name=".activity.booking.BookingActivity"
-            android:theme="@style/FullScreen"></activity>
-        <activity android:name=".activity.AddStoryActivity"></activity>
+            android:theme="@style/FullScreen"/>
+        <activity android:name=".activity.AddStoryActivity"
+            android:theme="@style/AppTheme.FullScreen"/>
     </application>
 
 </manifest>

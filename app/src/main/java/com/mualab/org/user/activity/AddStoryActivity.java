@@ -33,6 +33,7 @@ import android.widget.ViewSwitcher;
 import com.mualab.org.user.R;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.helper.MyToast;
+import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraException;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraOptions;
@@ -40,7 +41,11 @@ import com.otaliastudios.cameraview.CameraUtils;
 import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.Facing;
 import com.otaliastudios.cameraview.Flash;
+import com.otaliastudios.cameraview.Gesture;
+import com.otaliastudios.cameraview.GestureAction;
 import com.otaliastudios.cameraview.SessionType;
+import com.otaliastudios.cameraview.SizeSelector;
+import com.otaliastudios.cameraview.SizeSelectors;
 import com.popup.ScreenUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -67,6 +72,7 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
     ViewSwitcher vLowerPanel;
     CameraView cameraView;
     VideoView videoPreview;
+    boolean isCameraSession;
     // RecyclerView rvFilters;
     Button btnTakePhoto;
     ImageButton btnCameraMode, btnFlashLight;
@@ -93,6 +99,21 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
         initView();
         updateStatusBarColor();
         updateState(STATE_TAKE_PHOTO);
+        cameraView.mapGesture(Gesture.PINCH, GestureAction.ZOOM); // Pinch to zoom!
+        cameraView.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER); // Tap to focus!
+        cameraView.mapGesture(Gesture.LONG_TAP, GestureAction.CAPTURE); //
+
+        SizeSelector width = SizeSelectors.minWidth(1000);
+        SizeSelector height = SizeSelectors.minHeight(2000);
+        SizeSelector dimensions = SizeSelectors.and(width, height); // Matches sizes bigger than 1000x2000.
+        SizeSelector ratio = SizeSelectors.aspectRatio(AspectRatio.of(1, 1), 0); // Matches 1:1 sizes.
+
+        SizeSelector result = SizeSelectors.or(
+                SizeSelectors.and(ratio, dimensions), // Try to match both constraints
+                ratio, // If none is found, at least try to match the aspect ratio
+                SizeSelectors.biggest() // If none is// found, take the biggest
+        );
+        cameraView.setPictureSize(result);
 
         //final GestureDetector gestureDetector = new GestureDetector(mContext, new SingleTapConfirm());
         touchListener = new View.OnTouchListener() {
@@ -226,6 +247,8 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.btnBack).setOnClickListener(this);
         findViewById(R.id.switchCamera).setOnClickListener(this);
         findViewById(R.id.btnCameraMode).setOnClickListener(this);
+        isCameraSession = true;
+
     }
 
 
@@ -335,25 +358,11 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btnFlashLight:
 
                 flashMode =  cameraView.getFlash();
-
                 if(flashMode==null){
                     flashMode = Flash.OFF;
                 }
 
-                if(currentState == STATE_SETUP_VIDEO){
-
-                    if(flashMode == Flash.TORCH || flashMode ==Flash.ON){
-                        flashMode = Flash.OFF;
-                        cameraView.setFlash(flashMode);
-                        btnFlashLight.setImageResource(R.drawable.ic_flash_off_white);
-
-                    }else if(flashMode == Flash.OFF){
-                        flashMode = Flash.TORCH;
-                        cameraView.setFlash(flashMode);
-                        btnFlashLight.setImageResource(R.drawable.ic_flash_on_white);
-                    }
-
-                }else {
+                if(isCameraSession){
 
                     if(flashMode == Flash.OFF){
                         flashMode = Flash.ON;
@@ -370,7 +379,28 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
                         cameraView.setFlash(flashMode);
                         btnFlashLight.setImageResource(R.drawable.ic_flash_off_white);
                     }
+                }else {
+
+                    if(flashMode == Flash.TORCH || flashMode ==Flash.ON){
+                        flashMode = Flash.OFF;
+                        cameraView.setFlash(flashMode);
+                        btnFlashLight.setImageResource(R.drawable.ic_flash_off_white);
+
+                    }else if(flashMode == Flash.OFF){
+                        flashMode = Flash.TORCH;
+                        cameraView.setFlash(flashMode);
+                        btnFlashLight.setImageResource(R.drawable.ic_flash_on_white);
+                    }
                 }
+
+               /* if(currentState == STATE_SETUP_VIDEO){
+
+
+
+                }else {
+
+
+                }*/
                 break;
 
             case R.id.btnCameraMode:
@@ -379,6 +409,7 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
                 btnFlashLight.setImageResource(R.drawable.ic_flash_off_white);
 
                 if(currentState == STATE_TAKE_VIDEO){
+                    isCameraSession = true;
                     btnCameraMode.setImageResource(R.drawable.ic_videocam_white);
                     currentState = STATE_TAKE_PHOTO;
                     btnTakePhoto.setText("");
@@ -388,6 +419,7 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
                     cameraView.setSessionType(SessionType.PICTURE);
 
                 }else if(currentState == STATE_TAKE_PHOTO){
+                    isCameraSession = false;
                     currentState = STATE_TAKE_VIDEO;
                     cameraView.setSessionType(SessionType.VIDEO);
                     btnTakePhoto.setText("REC");
