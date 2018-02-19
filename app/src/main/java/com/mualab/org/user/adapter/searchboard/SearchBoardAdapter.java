@@ -11,11 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.adapter.feeds.LoadingViewHolder;
-import com.mualab.org.user.fragment.booking.BookingFragmentMain;
-import com.mualab.org.user.helper.Utility;
+import com.mualab.org.user.util.Utility;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.squareup.picasso.Picasso;
 

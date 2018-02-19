@@ -1,4 +1,4 @@
-package com.mualab.org.user.booking_calender.widget;
+package views.calender.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,8 +14,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.booking_calender.data.Day;
-import com.mualab.org.user.booking_calender.view.LockScrollView;
+import views.calender.data.Day;
+import views.calender.view.LockScrollView;
 
 /**
  * Created by AzureChen on 15/8/9.

@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,17 +25,16 @@ import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.adapter.feeds.FeedAdapter;
 import com.mualab.org.user.adapter.feeds.FeedItemAnimator;
-import com.mualab.org.user.adapter.feeds.ImagesAdapter;
 import com.mualab.org.user.adapter.feeds.LiveUserAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.feeds.AllFeeds;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
-import com.mualab.org.user.pagination.EndlessRecyclerViewScrollListener;
+import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
@@ -52,8 +50,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 public class FeedsFragment extends Fragment implements View.OnClickListener,FeedAdapter.Listener {

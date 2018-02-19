@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,24 +15,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.adapter.searchboard.SearchBoardAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.helper.Helper;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
-import com.mualab.org.user.pagination.EndlessRecyclerViewScrollListener;
+import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
@@ -46,8 +42,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 public class SearchBoardFragment extends Fragment implements View.OnClickListener {

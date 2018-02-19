@@ -31,9 +31,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.DateDialogFragment;
-import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.helper.Constants;
-import com.mualab.org.user.helper.MyToast;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.session.SharedPreferanceUtils;
@@ -505,8 +503,8 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
     private void checkUserRember(User user){
         SharedPreferanceUtils sp = new SharedPreferanceUtils(this);
         if (isRemind) {
-            sp.setParam(Constants.isLoginReminder, true);
-            sp.setParam(Constants.USER_ID, user.userName);
+            sp.setParam(Constant.isLoginReminder, true);
+            sp.setParam(Constant.USER_ID, user.userName);
         }
     }
 }

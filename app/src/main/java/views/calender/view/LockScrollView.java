@@ -1,4 +1,4 @@
-package com.mualab.org.user.booking_calender.view;
+package views.calender.view;
 
 import android.content.Context;
 import android.support.v4.widget.NestedScrollView;

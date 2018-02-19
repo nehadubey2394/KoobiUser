@@ -14,10 +14,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.helper.MyToast;
 
 /**
  * Created by dharmraj on 27/12/17.

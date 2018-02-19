@@ -1,4 +1,4 @@
-package com.mualab.org.user.booking_calender.widget;
+package views.calender.widget;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,15 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.booking_calender.data.CalendarAdapter;
-import com.mualab.org.user.booking_calender.data.Day;
-import com.mualab.org.user.booking_calender.data.Event;
+import views.calender.data.CalendarAdapter;
+import views.calender.data.Day;
+import views.calender.data.Event;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

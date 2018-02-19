@@ -1,4 +1,4 @@
-package com.mualab.org.user.views;
+package views;
 
 
 import android.animation.Animator;

@@ -162,7 +162,7 @@
 
     </TableLayout>
 
-    <com.mualab.org.user.booking_calender.view.LockScrollView
+    <views.calender.view.LockScrollView
         android:id="@+id/scroll_view_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -177,6 +177,6 @@
 
         </TableLayout>
 
-    </com.mualab.org.user.booking_calender.view.LockScrollView>
+    </views.calender.view.LockScrollView>
 
 </LinearLayout>

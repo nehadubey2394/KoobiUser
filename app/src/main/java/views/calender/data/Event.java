@@ -1,4 +1,4 @@
-package com.mualab.org.user.booking_calender.data;
+package views.calender.data;
 
 public class Event {
 
