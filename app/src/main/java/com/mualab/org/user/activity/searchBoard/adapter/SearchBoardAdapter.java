@@ -1,6 +1,6 @@
 package com.mualab.org.user.activity.searchBoard.adapter;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 
 public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Activity context;
+    private Context context;
     private ArrayList<ArtistsSearchBoard> artistsList;
     private Utility utility;
     private boolean showLoader;
@@ -29,7 +29,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
     // Constructor of the class
-    public SearchBoardAdapter(Activity context, ArrayList<ArtistsSearchBoard> artistsList) {
+    public SearchBoardAdapter(Context context, ArrayList<ArtistsSearchBoard> artistsList) {
         this.context = context;
         this.artistsList = artistsList;
         utility = new Utility(context);
@@ -93,11 +93,11 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         double d = Double.parseDouble(item.distance);
         item.distance = String.format("%.2f", d);
-        holder.tvDistance.setText(item.distance+" miles away");
+        holder.tvDistance.setText(String.format("%s miles away", item.distance));
 
         long rCount = Long.parseLong(item.reviewCount);
 
-        holder.tvRating.setText("("+utility.roundRatingWithSuffix(rCount)+")");
+        holder.tvRating.setText(String.format("(%s)", utility.roundRatingWithSuffix(rCount)));
 
         //  holder.ivProfile.setImageResource(item.profilePic);
 
