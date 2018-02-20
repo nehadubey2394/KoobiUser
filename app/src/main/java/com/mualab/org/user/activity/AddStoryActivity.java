@@ -46,7 +46,7 @@ import com.otaliastudios.cameraview.GestureAction;
 import com.otaliastudios.cameraview.SessionType;
 import com.otaliastudios.cameraview.SizeSelector;
 import com.otaliastudios.cameraview.SizeSelectors;
-import com.popup.ScreenUtils;
+import views.popup.ScreenUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
