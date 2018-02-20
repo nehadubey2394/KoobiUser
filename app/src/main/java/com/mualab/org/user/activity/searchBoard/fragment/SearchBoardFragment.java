@@ -1,11 +1,19 @@
 package com.mualab.org.user.activity.searchBoard.fragment;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,12 +31,13 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.SearchBoardAdapter;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.constants.Constant;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
-import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
@@ -43,6 +51,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mualab.org.user.constants.Constant.MY_PERMISSIONS_REQUEST_LOCATION;
+
 
 public class SearchBoardFragment extends Fragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,7 +65,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     private boolean isFavClick = false;
     private Context mContext;
     private String lat = "22.757062",lng = "75.882186";
-    public static RelativeLayout rlHeader1;
+//    public static RelativeLayout rlHeader1;
 
     public SearchBoardFragment() {
         // Required empty public constructor
@@ -76,8 +86,15 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
         }
-
-        apiForGetArtist(0);
+        LocationDetector locationDetector = new LocationDetector();
+        if ((checkLocationPermission()) ){
+            if (locationDetector.isLocationEnabled(mContext) ) {
+                getDeviceLocation();
+            }else {
+                locationDetector.showLocationSettingDailod(mContext);
+            }
+        }
+        // apiForGetArtist(0);
     }
 
     @Override
@@ -298,29 +315,95 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
 
     private void getDeviceLocation() {
         LocationDetector locationDetector = new LocationDetector();
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        FusedLocationProviderClient mFusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(mContext);
 
-        if (locationDetector.isLocationEnabled(getActivity()) &&
-                locationDetector.checkLocationPermission(getActivity())) {
+        if (checkLocationPermission()) {
+            if (locationDetector.isLocationEnabled(getActivity())){
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            // locateNearByBranch(location.getLatitude(),location.getLongitude());
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            lat = String.valueOf(latitude);
+                            lng = String.valueOf(longitude);
 
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    // Got last known location. In some rare situations this can be null.
-                    if (location != null) {
-                        // Logic to handle location object
-                        // locateNearByBranch(location.getLatitude(),location.getLongitude());
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        lat = String.valueOf(latitude);
-                        lng = String.valueOf(longitude);
-
-                        // LocationRequest locationRequest = new LocationRequest();
-                        //locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                            // LocationRequest locationRequest = new LocationRequest();
+                            //locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                        }
+                        apiForGetArtist(0);
                     }
-                    apiForGetArtist(0);
+                });
+            }else {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+                dialog.setTitle(getResources().getString(R.string.gps_network_not_enabled));
+                dialog.setMessage("Please enable Location Services and GPS");
+                dialog.setPositiveButton(getResources().getString(R.string.text_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        // TODO Auto-generated method stub
+                        startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), Constant.LOCATION_SETTINGS_REQUEST);
+                        //get gps
+                    }
+                });
+                dialog.show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1 && resultCode == 0){
+            getDeviceLocation();
+        }
+    }
+
+    public boolean checkLocationPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (mContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        Constant.MY_PERMISSIONS_REQUEST_LOCATION);
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        getDeviceLocation();
+                        //          Toast.makeText(mContext, "Permission Granted", Toast.LENGTH_LONG).show();
+                    }
+
+                } else {
+                    //   Toast.makeText(mContext, "Permission Denied", Toast.LENGTH_LONG).show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
                 }
-            });
+            }
+
         }
     }
 

@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/USER.iml" filepath="$PROJECT_DIR$/USER.iml" />
+      <module fileurl="file://F:\workspace\MualabNew\koobiuser_android\USER.iml" filepath="F:\workspace\MualabNew\koobiuser_android\USER.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/koobiUser.iml" filepath="$PROJECT_DIR$/koobiUser.iml" />
+      <module fileurl="file://F:\workspace\MualabNew\koobiuser_android\koobiUser.iml" filepath="F:\workspace\MualabNew\koobiuser_android\koobiUser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/koobiuser_android.iml" filepath="$PROJECT_DIR$/koobiuser_android.iml" />
     </modules>
   </component>
 </project>

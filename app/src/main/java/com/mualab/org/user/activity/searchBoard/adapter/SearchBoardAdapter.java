@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
-import com.mualab.org.user.util.Utility;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.util.Utility;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -141,10 +141,11 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 public void onClick(View view) {
                     ArtistsSearchBoard item = artistsList.get(getAdapterPosition());
                     Intent intent = new Intent(context, BookingActivity.class);
-                    if (getAdapterPosition()==1){
+                    if (item.businessType.equals("independent")){
                         intent.putExtra("item",item);
                         intent.putExtra("mParam","1");
                         context.startActivity(intent);
+
                         //    ((MainActivity)context).addFragment(BookingFragmentMain.newInstance("1",item), true, R.id.fragment_place);
                     }else {
                         intent.putExtra("item",item);

@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.mualab.org.user.model.ArtistServices;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -30,7 +29,7 @@ public class ArtistsSearchBoard implements Parcelable {
 "title":"Hardware"
 }
 ]*/
-    public  String id,reviewCount,profileImage,userName,firstName,distance,rating;
+    public  String id,reviewCount,profileImage,userName,firstName,distance,rating,businessType;
 
     public  ArrayList<ArtistServices>service;
 
@@ -48,6 +47,7 @@ public class ArtistsSearchBoard implements Parcelable {
         parcel.writeString(firstName);
         parcel.writeString(distance);
         parcel.writeString(rating);
+        parcel.writeString(businessType);
     }
 
     private ArtistsSearchBoard(Parcel in) {
@@ -58,6 +58,7 @@ public class ArtistsSearchBoard implements Parcelable {
         firstName = in.readString();
         distance = in.readString();
         rating = in.readString();
+        businessType = in.readString();
     }
 
     public static final Creator<ArtistsSearchBoard> CREATOR = new Creator<ArtistsSearchBoard>() {
