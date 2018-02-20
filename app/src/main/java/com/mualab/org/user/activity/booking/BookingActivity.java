@@ -14,8 +14,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.fragment.booking.BookingFragment1;
-import com.mualab.org.user.fragment.booking.BookingFragment2;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.squareup.picasso.Picasso;
 
