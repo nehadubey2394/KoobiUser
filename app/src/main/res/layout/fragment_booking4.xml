@@ -93,7 +93,6 @@
                     android:layout_marginRight="6dp"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     android:overScrollMode="never"
-                    android:nestedScrollingEnabled="true"
                     android:scrollbars="none" />
 
                 <RelativeLayout

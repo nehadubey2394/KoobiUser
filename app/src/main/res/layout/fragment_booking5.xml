@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:background="@color/screen_bg_color"
+    >
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        app:cardBackgroundColor="@color/white"
+        android:layout_marginTop="5dp"
+        app:cardCornerRadius="0dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="1dp"
+        android:layout_margin="2dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            >
+            <View
+                android:id="@+id/lineView"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:background="@color/colorPrimary"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/lineView"
+                android:layout_marginLeft="8dp"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivSelectStaffProfile"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical"
+                    app:civ_border_width="1dp"
+                    android:padding="1dp"
+                    android:src="@drawable/defoult_user_img"
+                    android:background="@drawable/gradient_circle_img"
+                    app:civ_border_color="@color/transparent"
+                    />
+
+                <TextView
+                    android:id="@+id/tvStaffArtistName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:ems="10"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:maxWidth="180dp"
+                    android:padding="2dp"
+                    android:text="Jamie Bloggs"
+                    android:textColor="@color/text_color"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+            <TextView
+                android:id="@+id/tvSpaciality"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="right|center_vertical"
+                android:maxLines="2"
+                android:padding="2dp"
+                android:text="Make up Artist"
+                android:layout_marginRight="6dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:padding="4dp"
+        android:layout_margin="2dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/lyCalender"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_white_circle_gray_strock"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/ivCalender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:src="@drawable/booking_calender_ico"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lyLinear"
+            android:layout_toRightOf="@+id/lyCalender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/text_date_and_time"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="10 November 2018"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="10:00"
+                />
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            style="@style/My_Button_Small.Invert"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="@string/text_edit"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="@color/grey"
+            android:layout_toRightOf="@+id/lyCalender"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/lyLinear"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:padding="4dp"
+        android:layout_margin="2dp"
+        >
+        <LinearLayout
+            android:id="@+id/lyLoc"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_white_circle_gray_strock"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/ivLoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:src="@drawable/booking_services_ico"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lyLinear2"
+            android:layout_toRightOf="@+id/lyLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/text_location"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:ems="15"
+                android:maxLines="2"
+                android:text="The Shed Chester Street Manchester"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="M1 5GD"
+                />
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            style="@style/My_Button_Small.Invert"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="@string/text_edit"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="@color/grey"
+            android:layout_toRightOf="@+id/lyLoc"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/lyLinear2"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:padding="4dp"
+        android:layout_margin="2dp"
+        >
+        <LinearLayout
+            android:id="@+id/lyServices"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_white_circle_gray_strock"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/ivServices"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:src="@drawable/booking_location_ico"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lyLinear3"
+            android:layout_toRightOf="@+id/lyServices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/text_services"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Evening Make up"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Hair Cut"
+                />
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatButton
+            style="@style/My_Button_Small.Invert"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="@string/text_edit"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="2dp"
+            />
+
+        <View
+            android:id="@+id/vLine"
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="@color/grey"
+            android:layout_toRightOf="@+id/lyServices"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/lyLinear3"/>
+
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        >
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:textSize="16sp"
+            style="@style/TextView.Bold"
+            android:padding="4dp"
+            android:text="@string/text_total"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_blue"
+            android:textSize="16sp"
+            style="@style/TextView.Bold"
+            android:padding="4dp"
+            android:text="£130"
+            />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        >
+
+        <ImageView
+            android:id="@+id/ivAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/booking_add_ico"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_toRightOf="@+id/ivAdd"
+            style="@style/My_Button_Small.Invert"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:text="@string/text_voucher_code"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            />
+
+        <android.support.v7.widget.AppCompatButton
+            style="@style/My_Button_Small.Invert"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:text="@string/text_confirm_booking"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            />
+
+    </RelativeLayout>
+
+
+   <!-- <android.support.v7.widget.RecyclerView
+        android:id="@+id/rycSelectedServ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
+-->
+
+</LinearLayout>

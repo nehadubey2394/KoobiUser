@@ -4,6 +4,7 @@ package com.mualab.org.user.activity.booking.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class BookingFragment4 extends Fragment {
+public class BookingFragment4 extends Fragment implements View.OnClickListener{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
     // TODO: Rename and change types of parameters
@@ -83,6 +84,9 @@ public class BookingFragment4 extends Fragment {
 
     private void setViewId(View rootView){
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
+
+        AppCompatButton btnCOnfirmBooking = rootView.findViewById(R.id.btnCOnfirmBooking);
+
         RecyclerView rycTimeSlot = rootView.findViewById(R.id.rycTimeSlot);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL, false);
         rycTimeSlot.setLayoutManager(layoutManager);
@@ -91,7 +95,6 @@ public class BookingFragment4 extends Fragment {
         RecyclerView rycBookingInfo = rootView.findViewById(R.id.rycBookingInfo);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(mContext);
         rycBookingInfo.setLayoutManager(layoutManager2);
-        rycBookingInfo.setHasFixedSize(true);
         rycBookingInfo.setNestedScrollingEnabled(false);
         rycBookingInfo.setAdapter(bookingInfoAdapter);
 
@@ -144,7 +147,9 @@ public class BookingFragment4 extends Fragment {
         viewCalendar.addEventTag(2018, 8, 14);
         viewCalendar.addEventTag(2018, 8, 23);
 */
-        viewCalendar.select(new Day(2018, 4, 22));
+        // viewCalendar.select(new Day(2018, 4, 22));
+
+        btnCOnfirmBooking.setOnClickListener(this);
     }
 
     private void addItems(){
@@ -192,6 +197,7 @@ public class BookingFragment4 extends Fragment {
     }
 
     private void addServices(){
+        bookingInfos.clear();
         BookingInfo item;
         for(int i=0;i<2;i++) {
             item = new BookingInfo();
@@ -214,9 +220,6 @@ public class BookingFragment4 extends Fragment {
         }
     }
 
-
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -229,5 +232,16 @@ public class BookingFragment4 extends Fragment {
         super.onDestroy();
         BookingActivity.lyReviewPost.setVisibility(View.GONE);
         BookingActivity.title_booking.setText(mParam1);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btnCOnfirmBooking:
+                ((BookingActivity)mContext).addFragment(
+                        BookingFragment5.newInstance(""), true, R.id.flBookingContainer);
+
+                break;
+        }
     }
 }

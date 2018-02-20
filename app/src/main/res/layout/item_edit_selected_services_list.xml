@@ -8,7 +8,6 @@
     android:layout_margin="4dp"
     app:clickToClose="true">
 
-<!--
     <LinearLayout
         android:tag="side"
         android:id="@+id/left_swipe_wrapper"
@@ -99,7 +98,6 @@
         </LinearLayout>
 
     </LinearLayout>
--->
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
