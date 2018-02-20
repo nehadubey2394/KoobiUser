@@ -28,14 +28,15 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/lineView"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="8dp"
             android:gravity="center_vertical"
+            android:padding="2dp"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ivSelectStaffProfile"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center_vertical"
                 app:civ_border_width="1dp"
                 android:padding="1dp"
