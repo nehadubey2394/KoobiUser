@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -12,7 +13,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,12 +23,12 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mualab.org.user.R;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.util.LocationDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         initView();
-        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
 
     }
 
@@ -96,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ibtnLeaderBoard.setImageResource(R.drawable.active_leaderboard_ico);
         tvHeaderTitle.setText(getString(R.string.title_searchboard));
         ivHeaderBack.setVisibility(View.GONE);
+
+        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
 
        /* LocationDetector locationDetector = new LocationDetector();
         if ((locationDetector.checkLocationPermission(MainActivity.this)) ){
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
         if (!fragmentPopped) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_in,0,0);
+            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_in,0,0);
             transaction.add(containerId, fragment, backStackName);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
@@ -241,6 +242,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             transaction.commit();
         }
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+       /* if (requestCode == Constant.LOCATION_SETTINGS_REQUEST || requestCode == 131073){
+            SearchBoardFragment.newInstance("").onActivityResult(requestCode, resultCode, data);
+        }*/
+       /* else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }*/
+    }
+
+
 
     private void getDeviceLocation() {
         LocationDetector locationDetector = new LocationDetector();

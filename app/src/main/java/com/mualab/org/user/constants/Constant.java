@@ -8,6 +8,7 @@ public class Constant {
     public static final String FILE_PROVIDER_AUTHORITY = "com.app.mualab.fileprovider";
     // key for run time permissions
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    public static final int LOCATION_SETTINGS_REQUEST  = 1;
     public static final int REQUEST_CODE_PICK_CONTACTS = 100;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 101;
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 102;
@@ -43,7 +44,6 @@ public class Constant {
     public static final int INDEPENDENT = 1;
     public static final int TEXT_STATE = 0, IMAGE_STATE = 1, VIDEO_STATE = 2, FEED_STATE = 3;
 
-
     /*Geo coder */
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
@@ -51,5 +51,4 @@ public class Constant {
     public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
     public static final String RESULT_DATA_KEY = PACKAGE_NAME + ".RESULT_DATA_KEY";
     public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
-
 }
