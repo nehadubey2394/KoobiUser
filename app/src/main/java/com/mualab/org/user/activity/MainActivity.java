@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -13,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,12 +23,12 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mualab.org.user.R;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.util.LocationDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         initView();
+        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
 
     }
 
@@ -95,8 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ibtnLeaderBoard.setImageResource(R.drawable.active_leaderboard_ico);
         tvHeaderTitle.setText(getString(R.string.title_searchboard));
         ivHeaderBack.setVisibility(View.GONE);
-
-        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
 
        /* LocationDetector locationDetector = new LocationDetector();
         if ((locationDetector.checkLocationPermission(MainActivity.this)) ){
@@ -134,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(new SearchBoardFragment(), false, R.id.fragment_place);
+                    replaceFragment(SearchBoardFragment.newInstance(), false, R.id.fragment_place);
                 }
                 break;
 
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
         if (!fragmentPopped) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_in,0,0);
+            transaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_in,0,0);
             transaction.add(containerId, fragment, backStackName);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
@@ -244,116 +243,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-       /* if (requestCode == Constant.LOCATION_SETTINGS_REQUEST || requestCode == 131073){
-            SearchBoardFragment.newInstance("").onActivityResult(requestCode, resultCode, data);
-        }*/
-       /* else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }*/
-    }
-
-
-
-    private void getDeviceLocation() {
-        LocationDetector locationDetector = new LocationDetector();
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (locationDetector.checkLocationPermission(MainActivity.this)) {
-            if (locationDetector.isLocationEnabled(MainActivity.this)){
-                mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            // locateNearByBranch(location.getLatitude(),location.getLongitude());
-                            double lat = location.getLatitude();
-                            double lng = location.getLongitude();
-                            addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
-                            // LocationRequest locationRequest = new LocationRequest();
-                            //locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                        }/*else {
-                        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
-
-                    }*/
-                    }
-                });
-            }else {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-                dialog.setTitle("Please enable Location Services and GPS");
-                dialog.setMessage(getResources().getString(R.string.gps_network_not_enabled));
-                dialog.setPositiveButton(getResources().getString(R.string.text_ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        // TODO Auto-generated method stub
-                        Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-                        //get gps
-                    }
-                });
-/*                dialog.setNegativeButton(getString(R.string.text_cancel), new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });*/
-                dialog.show();
-            }
-        }
-    }
-
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        //  getDeviceLocation();
-                        //    Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_LONG).show();
-                    }
-
-                } else {
-                    // Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_LONG).show();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
-                }
-            }
-
-        }
-    }*/
-
     private boolean doubleBackToExitPressedOnce;
     private Runnable runnable;
-
-
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-        LocationDetector locationDetector = new LocationDetector();
-        if ((locationDetector.checkLocationPermission(MainActivity.this)) ){
-            if (locationDetector.isLocationEnabled(MainActivity.this) ) {
-                getDeviceLocation();
-            }else {
-                locationDetector.showLocationSettingDailod(MainActivity.this);
-            }
-        }
-    }
-*/
-
     @Override
     public void onBackPressed() {
           /* Handle double click to finish activity*/
