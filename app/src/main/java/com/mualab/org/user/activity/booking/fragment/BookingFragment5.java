@@ -38,6 +38,7 @@ public class BookingFragment5 extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BookingActivity.lyReviewPost.setVisibility(View.GONE);
+        BookingActivity.lyArtistDetail.setVisibility(View.GONE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
         }
@@ -124,11 +125,13 @@ public class BookingFragment5 extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
     }
 }

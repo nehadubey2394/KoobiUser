@@ -29,7 +29,7 @@ public class ArtistsSearchBoard implements Parcelable {
 "title":"Hardware"
 }
 ]*/
-    public  String id,reviewCount,profileImage,userName,firstName,distance,rating,businessType;
+    public  String id,reviewCount,profileImage,userName,firstName,distance,ratingCount,businessType;
 
     public  ArrayList<ArtistServices>service;
 
@@ -46,7 +46,7 @@ public class ArtistsSearchBoard implements Parcelable {
         parcel.writeString(userName);
         parcel.writeString(firstName);
         parcel.writeString(distance);
-        parcel.writeString(rating);
+        parcel.writeString(ratingCount);
         parcel.writeString(businessType);
     }
 
@@ -57,7 +57,7 @@ public class ArtistsSearchBoard implements Parcelable {
         userName = in.readString();
         firstName = in.readString();
         distance = in.readString();
-        rating = in.readString();
+        ratingCount = in.readString();
         businessType = in.readString();
     }
 

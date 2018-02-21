@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
@@ -90,6 +91,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final ArtistsSearchBoard item = artistsList.get(position);
 
         holder.tvArtistName.setText(item.userName);
+        holder.rating.setRating(Float.parseFloat(item.ratingCount));
 
         double d = Double.parseDouble(item.distance);
         item.distance = String.format("%.2f", d);
@@ -125,6 +127,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView tvDistance,tvServices,tvArtistName,tvRating;
         ImageView ivProfile;
         AppCompatButton btnBook;
+        RatingBar rating;
         private ViewHolder(View itemView)
         {
             super(itemView);
@@ -135,6 +138,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvServices = itemView.findViewById(R.id.tvServices);
             tvRating = itemView.findViewById(R.id.tvRating);
             btnBook = itemView.findViewById(R.id.btnBook);
+            rating = itemView.findViewById(R.id.rating);
 
             btnBook.setOnClickListener(new View.OnClickListener() {
                 @Override

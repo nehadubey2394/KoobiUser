@@ -24,6 +24,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private String mParam1;
     public static TextView title_booking;
     public static LinearLayout lyReviewPost;
+    public static LinearLayout lyArtistDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         title_booking = findViewById(R.id.tvHeaderTitle2);
         lyReviewPost = findViewById(R.id.lyReviewPost);
         lyReviewPost.setVisibility(View.VISIBLE);
+        lyArtistDetail = findViewById(R.id.lyArtistDetail);
+        lyArtistDetail.setVisibility(View.VISIBLE);
         TextView tvArtistName = findViewById(R.id.tvArtistName);
         TextView tvOpeningTime = findViewById(R.id.tvOpeningTime);
         RatingBar rating = findViewById(R.id.rating);

@@ -15,7 +15,7 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/screen_bg_color"
         android:layout_below="@+id/topLayout"
         android:layout_above="@+id/lyBottom"
@@ -27,6 +27,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
+
             >
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -185,14 +186,16 @@
 
             </RelativeLayout>
 
-            <ExpandableListView
+            <views.ExpandableList.NonScrollExpandableListView
                 android:id="@+id/lvService"
-                android:layout_height="match_parent"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
                 android:childDivider="@color/white"
                 android:dividerHeight="1dp"
                 android:divider="@null"
                 android:visibility="gone"
+                android:layout_marginLeft="2dp"
                 android:groupIndicator="@null" />
 
             <View
