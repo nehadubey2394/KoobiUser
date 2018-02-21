@@ -150,8 +150,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             } else {
                 LocationDetector locationDetector = new LocationDetector();
                 FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
-                if (locationDetector.isLocationEnabled(getActivity()) &&
-                        locationDetector.checkLocationPermission(getActivity())) {
+                if (locationDetector.isLocationEnabled(mContext) && locationDetector.checkLocationPermission(mContext)) {
 
                     mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                         @Override
@@ -171,6 +170,8 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                     locationDetector.showLocationSettingDailod(getActivity());
                 }
             }
+        }else {
+            apiForGetArtist(0, false);
         }
 
     }
@@ -191,7 +192,6 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                     apiForGetArtist(0,false);
                 }
             }
-
         }
     }
 

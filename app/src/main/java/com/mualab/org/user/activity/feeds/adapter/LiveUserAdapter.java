@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.AddStoryActivity;
+import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.squareup.picasso.Picasso;
 
@@ -97,7 +98,7 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
              int pos = getAdapterPosition();
 
              if(pos==0){
-                 Intent intent = new Intent(mContext, AddStoryActivity.class);
+                 Intent intent = new Intent(mContext, CameraActivity.class);
                  Bundle args = new Bundle();
                  args.putSerializable("ARRAYLIST", (Serializable) liveUserList);
                  args.putInt("position", getAdapterPosition());

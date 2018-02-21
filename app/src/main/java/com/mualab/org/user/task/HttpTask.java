@@ -20,6 +20,7 @@ import com.mualab.org.user.dialogs.MyToast;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -300,6 +301,62 @@ public class HttpTask {
         VolleySingleton.getInstance(context.getApplicationContext()).addToRequestQueue(multipartRequest);
     }
 
+
+
+
+    /*post file from multipart data form*/
+    public void postFile(final String key, final File file){
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, api, new Response.Listener<NetworkResponse>() {
+            @Override
+            public void onResponse(NetworkResponse response) {
+                String resultResponse = new String(response.data);
+
+                if(IS_DEBUG_MODE){
+                    System.out.println(api+"\n"+response);
+                }
+
+                listener.onResponse(resultResponse, api);
+                if(progress)
+                    Progress.hide(context);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.ErrorListener(error);
+                if(progress)
+                    Progress.hide(context);
+                handleError(error);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                if(header==null) header = new HashMap<>();
+                if (authToken!=null) {
+                    header.put("authToken", authToken);
+                }
+                return header;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                if (key != null && file != null) {
+                   // params.put(key, new DataPart(file.getName(), AppHelper.getFileDataFromDrawable(file), "image/jpeg"));
+                }
+                return params;
+            }
+        };
+
+        if(progress)
+            Progress.show(context);
+        multipartRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 0, 1f));
+        VolleySingleton.getInstance(context.getApplicationContext()).addToRequestQueue(multipartRequest);
+    }
 
     private void handleError(VolleyError error){
         if(progress)

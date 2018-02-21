@@ -38,14 +38,24 @@ public class Progress {
         //if(progress==null)
         progress = new Progress((Activity) context);
         progress.progressBarView.setVisibility(View.VISIBLE);
+        progress.progressBarView.findViewById(R.id.view).setVisibility(View.VISIBLE);
         //progressBarView.setVisibility(View.VISIBLE);
     }
 
     public static void hide(Context context) {
-        if(progress!=null)
+        if(progress!=null){
             progress.progressBarView.setVisibility(View.GONE);
+        }
+
         //progressBarView.setVisibility(View.GONE);
     }
+
+    public static void showProgressOnly(Context context) {
+        progress = new Progress((Activity) context);
+        progress.progressBarView.setVisibility(View.VISIBLE);
+        progress.progressBarView.findViewById(R.id.view).setVisibility(View.GONE);
+    }
+
 
     public View getProgressBarView() {
         return progressBarView;
