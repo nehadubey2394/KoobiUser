@@ -1,0 +1,216 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activity.CameraActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/vPhotoRoot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.otaliastudios.cameraview.CameraView
+                android:id="@+id/camera"
+                android:keepScreenOn="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <views.scaleview.ScaleImageView
+                android:id="@+id/ivTakenPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black" />
+
+            <VideoView
+                android:id="@+id/videoPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+            <View
+                android:id="@+id/vShutter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <ViewSwitcher
+            android:id="@+id/vUpperPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical">
+
+
+                <ImageButton
+                    android:id="@+id/ivBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_default_light"
+                    android:src="@drawable/com_facebook_close" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <Chronometer
+                    android:id="@+id/tvVideoTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:visibility="gone"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/btnFlashLight"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_default_light"
+                    android:src="@drawable/ic_flash_off_white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_default_light"
+                    android:src="@drawable/down_arrow_ico"
+                    android:tint="@color/white"
+                    android:rotation="90"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+
+                <ImageButton
+                    android:id="@+id/btnAccept"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_default_light"
+                    android:src="@drawable/down_arrow_ico"
+                    android:tint="@color/white"
+                    android:rotation="275"/>
+            </LinearLayout>
+
+        </ViewSwitcher>
+
+        <ViewSwitcher
+            android:id="@+id/vLowerPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentBottom="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/switchCamera"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_capture_options"
+                        android:src="@drawable/ic_camera_rear_white" />/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/btnTakePhoto"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/btn_capture" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/btnCameraMode"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_capture_options"
+                        android:src="@drawable/ic_videocam_white"
+                        />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+
+                <LinearLayout
+                    android:id="@+id/addStory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:background="?selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/down_arrow_ico"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/TextView"
+                        android:text="Your Story"/>
+                </LinearLayout>
+
+
+
+                <!-- <android.support.v7.widget.RecyclerView
+                     android:id="@+id/rvFilters"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:scrollbars="none" />-->
+
+            </LinearLayout>
+
+        </ViewSwitcher>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -40,7 +40,7 @@ dependencies {
     // Facebook Share only
     compile 'com.facebook.android:facebook-share:4.+'
     implementation 'com.google.code.gson:gson:2.8.0'
-    compile 'com.android.volley:volley:1.0.0'
+    compile 'com.android.volley:volley:1.1.0'
     compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
 

@@ -18,16 +18,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
     <!-- All nesassery hardware -->
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.camera.front"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <application
         android:name=".application.Mualab"
@@ -37,6 +32,7 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.FullScreen">
+
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/AppTheme.Splash">
@@ -99,9 +95,16 @@
 
         <activity
             android:name=".activity.booking.BookingActivity"
-            android:theme="@style/FullScreen"/>
-        <activity android:name=".activity.AddStoryActivity"
-            android:theme="@style/AppTheme.FullScreen"/>
+            android:theme="@style/FullScreen" />
+
+        <activity
+            android:name=".activity.AddStoryActivity"
+            android:theme="@style/AppTheme.FullScreen" />
+
+        <activity android:name=".activity.CameraActivity"
+            android:theme="@style/AppTheme.Camera"
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
