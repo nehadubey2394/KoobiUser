@@ -206,6 +206,9 @@
     <string name="temporary_maintenance">Temporary Maintenance</string>
     <string name="what_happened">What happened?</string>
     <string name="txt_description_maintenance">Server and website need regular maintenance just like a car to keep them up and running smoothly.</string>
+    <string name="text_services">Services</string>
+    <string name="text_total">Total</string>
+    <string name="text_voucher_code">Voucher Code</string>
 
 
 </resources>
