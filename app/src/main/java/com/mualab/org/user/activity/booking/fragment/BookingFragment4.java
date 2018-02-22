@@ -20,7 +20,7 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
 import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
 import com.mualab.org.user.model.booking.BookingInfo;
-import com.mualab.org.user.model.booking.TimeSlot;
+import com.mualab.org.user.model.booking.BookingTimeSlot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +31,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private ArrayList<TimeSlot>timeSlots;
+    private ArrayList<BookingTimeSlot> bookingTimeSlots;
     private ArrayList<BookingInfo>bookingInfos;
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
@@ -75,9 +75,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
     }
 
     private void initView(){
-        timeSlots = new ArrayList<>();
+        bookingTimeSlots = new ArrayList<>();
         bookingInfos = new ArrayList<>();
-        listAdapter = new TimeSlotAdapter(mContext, timeSlots);
+        listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
         bookingInfoAdapter = new BookingInfoAdapter(mContext, bookingInfos);
         addItems();
         addServices();
@@ -154,9 +154,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
     }
 
     private void addItems(){
-        TimeSlot item;
+        BookingTimeSlot item;
         for(int i=0;i<6;i++) {
-            item = new TimeSlot();
+            item = new BookingTimeSlot();
             switch (i) {
               /*  case 0:
                     item.itemName = "Subscription";
@@ -193,7 +193,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
                     break;
 
             }
-            timeSlots.add(item);
+            bookingTimeSlots.add(item);
         }
     }
 

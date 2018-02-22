@@ -39,6 +39,7 @@ public class BookingFragment5 extends Fragment {
         super.onCreate(savedInstanceState);
         BookingActivity.lyReviewPost.setVisibility(View.GONE);
         BookingActivity.lyArtistDetail.setVisibility(View.GONE);
+        BookingActivity.tvBuisnessName.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
         }
@@ -82,9 +83,9 @@ public class BookingFragment5 extends Fragment {
 
 /*
     private void addItems(){
-        TimeSlot item;
+        BookingTimeSlot item;
         for(int i=0;i<6;i++) {
-            item = new TimeSlot();
+            item = new BookingTimeSlot();
             switch (i) {
                 case 0:
                     item.time = "10:00";
@@ -126,6 +127,7 @@ public class BookingFragment5 extends Fragment {
         super.onDestroyView();
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
+        BookingActivity.tvBuisnessName.setVisibility(View.GONE);
     }
 
     @Override
@@ -133,5 +135,6 @@ public class BookingFragment5 extends Fragment {
         super.onDestroy();
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
+        BookingActivity.tvBuisnessName.setVisibility(View.GONE);
     }
 }

@@ -66,7 +66,7 @@ public class BookingFragment1 extends Fragment {
 
     private void initView(){
         staffList = new ArrayList<>();
-        staffAdapter = new BookingSelectStaffAdapter(mContext,staffList);
+        staffAdapter = new BookingSelectStaffAdapter(mContext,staffList,mParam1);
         staffList.clear();
         addStaff();
     }
@@ -77,6 +77,18 @@ public class BookingFragment1 extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvBookingSelectStaff.setLayoutManager(layoutManager);
         rvBookingSelectStaff.setAdapter(staffAdapter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BookingActivity.title_booking.setText(mParam1);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BookingActivity.title_booking.setText(mParam1);
     }
 
     private void addStaff(){

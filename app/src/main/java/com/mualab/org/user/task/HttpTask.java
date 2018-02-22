@@ -54,6 +54,7 @@ public class HttpTask {
         public static final String FORM_DATA = "multipart/form-data; charset=UTF-8";
         public static final String APPLICATION_JSON = "application/json; charset=UTF-8";
         public static final String APPLICATION_TEXT = "application/text; charset=UTF-8";
+        public static final String APPLICATION_TEXT_2 = "application/x-www-form-urlencoded";
         public static final String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded; charset=UTF-8";
     }
 

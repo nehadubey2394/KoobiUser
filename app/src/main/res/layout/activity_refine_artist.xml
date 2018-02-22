@@ -39,7 +39,7 @@
                     android:id="@+id/chbOutcall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_selector"
+                    android:button="@drawable/circuler_checkbox_selector"
                     android:textSize="12sp"
                     android:fontFamily="@font/roboto_regular"
                     android:layout_centerVertical="true"

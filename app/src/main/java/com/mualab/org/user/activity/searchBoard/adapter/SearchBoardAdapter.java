@@ -45,7 +45,6 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         showLoader = status;
     }
 
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         /*View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.searchboard_item_layout, parent, false);
@@ -145,18 +144,19 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 public void onClick(View view) {
                     ArtistsSearchBoard item = artistsList.get(getAdapterPosition());
                     Intent intent = new Intent(context, BookingActivity.class);
-                    if (item.businessType.equals("independent")){
+                    intent.putExtra("item",item);
+                    intent.putExtra("mParam","1");
+                    context.startActivity(intent);
+
+                  /*  if (item.businessType.equals("independent")){
                         intent.putExtra("item",item);
                         intent.putExtra("mParam","1");
                         context.startActivity(intent);
-
-                        //    ((MainActivity)context).addFragment(BookingFragmentMain.newInstance("1",item), true, R.id.fragment_place);
                     }else {
                         intent.putExtra("item",item);
                         intent.putExtra("mParam","");
                         context.startActivity(intent);
-                        //    ((MainActivity)context).addFragment(BookingFragmentMain.newInstance("",item), true, R.id.fragment_place);
-                    }
+                    }*/
 
                 }
             });
