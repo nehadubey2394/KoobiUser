@@ -21,29 +21,42 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.booking.BookingActivity;
+import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.listner.DatePickerListener;
+import com.mualab.org.user.model.booking.Services;
+import com.mualab.org.user.model.booking.SubServices;
 import com.mualab.org.user.util.DatePickerFragment;
+
+import java.util.ArrayList;
 
 import static com.mualab.org.user.constants.Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE;
 
 public class RefineArtistActivity extends AppCompatActivity implements View.OnClickListener,DatePickerListener {
-    private ExpandableListView lvService;
+    private ExpandableListView lvExpandable;
     private boolean isServiceOpen = false;
     private ImageView ivPrice,ivDistance;
     private TextView tv_refine_dob,tv_refine_loc;
+    private ServiceExpandListAdapter expandableListAdapter;
+    private ArrayList<Services>services;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refine_artist);
+        initView();
         setViewId();
     }
 
-    private void init(){
-
+    private void initView(){
+        services = new ArrayList<>();
+        expandableListAdapter = new ServiceExpandListAdapter(RefineArtistActivity.this, services);
+        services.clear();
+        addServices();
     }
+
 
     private void setViewId(){
         ImageView ivBack = findViewById(R.id.ivHeaderBack);
@@ -60,7 +73,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         AppCompatButton btnApply = findViewById(R.id.btnApply);
         AppCompatButton btnClear = findViewById(R.id.btnClear);
 
-        lvService = findViewById(R.id.lvService);
+        lvExpandable = findViewById(R.id.lvService);
         RelativeLayout rlService = findViewById(R.id.rlService);
         RelativeLayout rlPrice = findViewById(R.id.rlPrice);
         RelativeLayout rlDistance = findViewById(R.id.rlDistance);
@@ -89,6 +102,51 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         });
         MyToast.getInstance(RefineArtistActivity.this).showSmallCustomToast("Under developement");
 
+        lvExpandable.setAdapter(expandableListAdapter);
+
+        lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int i) {
+
+            }
+        });
+
+        lvExpandable.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                Services item = services.get(groupPosition);
+                item.isExpand = true;
+            }
+        });
+
+        // Listview Group collasped listener
+        lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                Services item = services.get(groupPosition);
+                item.isExpand = false;
+
+            }
+        });
+
+
+        lvExpandable.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+                return false;
+            }
+        });
+
+        lvExpandable.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
+                Services servicesItem = services.get(groupPosition);
+                return false;
+            }
+        });
+
         ivBack.setOnClickListener(this);
         rlService.setOnClickListener(this);
         rlPrice.setOnClickListener(this);
@@ -99,7 +157,24 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         btnApply.setOnClickListener(this);
     }
 
+    private void addServices(){
+        Services item;
+        for (int i = 0; i<5;i++){
+            item = new Services();
+            item.sName = "Hair";
 
+            ArrayList<SubServices> arrayList = new ArrayList<>();
+
+            for (int j = 0;  j<3; j++) {
+                SubServices subItem = new SubServices();
+                subItem.name = "Trim";
+                arrayList.add(subItem);
+            }
+            item.setArrayList(arrayList);
+            services.add(item);
+        }
+        expandableListAdapter.notifyDataSetChanged();
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -120,10 +195,10 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             case R.id.rlService:
                 if (!isServiceOpen){
                     isServiceOpen = true;
-                    lvService.setVisibility(View.VISIBLE);
+                    lvExpandable.setVisibility(View.VISIBLE);
                 } else {
                     isServiceOpen = false;
-                    lvService.setVisibility(View.GONE);
+                    lvExpandable.setVisibility(View.GONE);
                 }
                 break;
             case R.id.rlPrice:

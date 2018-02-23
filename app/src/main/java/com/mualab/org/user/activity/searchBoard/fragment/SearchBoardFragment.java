@@ -40,6 +40,7 @@ import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.util.Helper;
 import com.mualab.org.user.util.LocationDetector;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -102,13 +103,13 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
 
         if(scrollListener==null)
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                listAdapter.showLoading(true);
-                apiForGetArtist(page, true);
-                //apiForLoadMoreArtist(page);
-            }
-        };
+                @Override
+                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                    listAdapter.showLoading(true);
+                    apiForGetArtist(page, true);
+                    //apiForLoadMoreArtist(page);
+                }
+            };
 
         // Adds the scroll listener to RecyclerView
         rvSearchBoard.addOnScrollListener(scrollListener);
@@ -150,7 +151,8 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             } else {
                 LocationDetector locationDetector = new LocationDetector();
                 FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
-                if (locationDetector.isLocationEnabled(mContext) && locationDetector.checkLocationPermission(mContext)) {
+                if (locationDetector.isLocationEnabled(getActivity()) &&
+                        locationDetector.checkLocationPermission(getActivity())) {
 
                     mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                         @Override
@@ -171,7 +173,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                 }
             }
         }else {
-            apiForGetArtist(0, false);
+            apiForGetArtist(0,false);
         }
 
     }
@@ -184,14 +186,15 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                          getDeviceLocation();
+                        getDeviceLocation();
                     }
 
                 } else {
-                     //Toast.makeText(mContext, "Permission Denied", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(mContext, "Permission Denied", Toast.LENGTH_LONG).show();
                     apiForGetArtist(0,false);
                 }
             }
+
         }
     }
 
@@ -245,6 +248,8 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
 
                             }
                             listAdapter.notifyDataSetChanged();
+                        }else {
+                            MyToast.getInstance(mContext).showSmallCustomToast("No Artist available!");
                         }
                     }
                     //  showToast(message);
@@ -256,6 +261,16 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session"))
+                        Mualab.getInstance().getSessionManager().logout();
+                    MyToast.getInstance(mContext).showSmallCustomToast(helper.error_Messages(error));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
             }})
                 .setAuthToken(user.authToken)
                 .setProgress(!isLoadMore)

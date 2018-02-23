@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.model.booking.TimeSlot;
+import com.mualab.org.user.model.booking.BookingTimeSlot;
 
 import java.util.ArrayList;
 
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHolder> {
     private Context context;
     private String s = "";
-    private ArrayList<TimeSlot> itemList;
+    private ArrayList<BookingTimeSlot> itemList;
     // private CustomAdapterButtonListener customButtonListener = null;
 
     // Constructor of the class
-    public TimeSlotAdapter(Context context, ArrayList<TimeSlot> itemList) {
+    public TimeSlotAdapter(Context context, ArrayList<BookingTimeSlot> itemList) {
         this.context = context;
         this.itemList = itemList;
     }
@@ -46,11 +46,11 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHo
     // load data in each row element
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
-        TimeSlot timeSlot = itemList.get(listPosition);
+        BookingTimeSlot bookingTimeSlot = itemList.get(listPosition);
 
-        holder.tvTime.setText(timeSlot.time);
+        holder.tvTime.setText(bookingTimeSlot.time);
 
-        if (timeSlot.isSelected.equals("1")){
+        if (bookingTimeSlot.isSelected.equals("1")){
             holder.rlTimeSlot.setBackground(context.getResources().getDrawable(R.drawable.bg_green_background));
 
         } else {

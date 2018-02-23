@@ -109,4 +109,14 @@
         <item name="colorControlActivated">@color/dark_yellow</item>
     </style>
 
+    <style name="InOutAnimation">
+        <item name="android:windowEnterAnimation">@anim/anim_out</item>
+        <item name="android:windowExitAnimation">@anim/anim_in</item>
+    </style>
+
+    <style name="TopBottomAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_bottom</item>
+    </style>
+
 </resources>

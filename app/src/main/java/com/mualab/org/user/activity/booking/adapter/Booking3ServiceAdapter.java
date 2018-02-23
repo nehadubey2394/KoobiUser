@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.model.booking.BookinServices3;
@@ -105,8 +106,15 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             lyServiceDetail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((BookingActivity)context).addFragment(
-                            BookingFragment4.newInstance(serviceTitle,""), true, R.id.flBookingContainer);
+                    if (((BookingActivity)context).item.businessType.equals("independent")){
+                        ((BookingActivity)context).addFragment(
+                                BookingFragment4.newInstance(serviceTitle,""), true, R.id.flBookingContainer);
+
+                    }else {
+                        ((BookingActivity)context).addFragment(
+                                 BookingFragment1.newInstance(serviceTitle,""), true, R.id.flBookingContainer);
+
+                    }
                 }
             });
         }

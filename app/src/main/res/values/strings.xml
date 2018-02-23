@@ -200,6 +200,13 @@
     <string name="saturday">Sat</string>
     <string name="sunday">Sun</string>
 
+    <string name="mon">Monday</string>
+    <string name="tues">Tuesday</string>
+    <string name="wednes">Wednesday</string>
+    <string name="thurs">Thursday</string>
+    <string name="fri">Friday</string>
+    <string name="satur">Saturday</string>
+    <string name="sun">Sunday</string>
 
     <!--Dialog server maintenence-->
     <string name="txt_under_maintenance">The web server koobi.com is currently undergoing some maintenance</string>
@@ -209,6 +216,7 @@
     <string name="text_services">Services</string>
     <string name="text_total">Total</string>
     <string name="text_voucher_code">Voucher Code</string>
+    <string name="not_working">not working</string>
 
 
 </resources>

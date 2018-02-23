@@ -13,6 +13,18 @@ import java.util.ArrayList;
 public class ArtistsSearchBoard implements Parcelable {
 
     public ArtistsSearchBoard(){}
+
+    /*"_id":1,
+"userName":"pankaj",
+"firstName":"Pankaj",
+"lastName":"Patidar",
+"profileImage":"http://koobi.co.uk:3000/uploads/profile/1517822717364.jpg",
+"ratingCount":"0",
+"reviewCount":"0",
+"postCount":"0",
+"businessName":"Test",*/
+
+
     /*
  "_id":12,
 "reviewCount":"0",
@@ -29,7 +41,8 @@ public class ArtistsSearchBoard implements Parcelable {
 "title":"Hardware"
 }
 ]*/
-    public  String id,reviewCount,profileImage,userName,firstName,distance,rating,businessType;
+    public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,
+            lastName,distance,ratingCount,businessType;
 
     public  ArrayList<ArtistServices>service;
 
@@ -40,24 +53,30 @@ public class ArtistsSearchBoard implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(id);
+        parcel.writeString(_id);
         parcel.writeString(reviewCount);
         parcel.writeString(profileImage);
         parcel.writeString(userName);
         parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(businessName);
+        parcel.writeString(postCount);
         parcel.writeString(distance);
-        parcel.writeString(rating);
+        parcel.writeString(ratingCount);
         parcel.writeString(businessType);
     }
 
     private ArtistsSearchBoard(Parcel in) {
-        id = in.readString();
+        _id = in.readString();
         reviewCount = in.readString();
         profileImage = in.readString();
         userName = in.readString();
         firstName = in.readString();
+        postCount = in.readString();
+        businessName = in.readString();
+        lastName = in.readString();
         distance = in.readString();
-        rating = in.readString();
+        ratingCount = in.readString();
         businessType = in.readString();
     }
 
