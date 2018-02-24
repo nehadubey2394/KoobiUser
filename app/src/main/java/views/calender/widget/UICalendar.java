@@ -267,6 +267,10 @@ public abstract class UICalendar extends LinearLayout {
         return mTextColor;
     }
 
+    public int getTextPrimaryColor() {
+        return getResources().getColor(R.color.colorPrimary);
+    }
+
     public void setTextColor(int textColor) {
         this.mTextColor = textColor;
         redraw();

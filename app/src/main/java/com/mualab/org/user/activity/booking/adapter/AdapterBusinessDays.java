@@ -44,6 +44,7 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
         holder.ll_addTimeSlot.setVisibility(day.isOpen?View.VISIBLE:View.INVISIBLE);
         holder.listView.setVisibility(day.isOpen?View.VISIBLE:View.GONE);
         holder.checkbox.setChecked(day.isOpen);
+        holder.checkbox.setEnabled(false);
 
         if(day.isOpen){
             AdapterTimeSlot adapterTimeSlot = new AdapterTimeSlot(mContext, day.slots);

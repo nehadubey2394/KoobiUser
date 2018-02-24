@@ -167,6 +167,7 @@
 
         <android.support.v7.widget.AppCompatButton
             style="@style/My_Button_Small.Invert"
+            android:id="@+id/btnEditDate"
             android:layout_width="75dp"
             android:layout_height="30dp"
             android:text="@string/text_edit"
@@ -216,7 +217,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:layout_gravity="center"
-                android:background="@drawable/booking_services_ico"
+                android:background="@drawable/booking_location_ico"
                 />
 
         </LinearLayout>
@@ -265,6 +266,7 @@
             style="@style/My_Button_Small.Invert"
             android:layout_width="75dp"
             android:layout_height="30dp"
+            android:id="@+id/btnEditLocation"
             android:text="@string/text_edit"
             android:layout_marginRight="5dp"
             android:layout_alignParentRight="true"
@@ -312,7 +314,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:layout_gravity="center"
-                android:background="@drawable/booking_location_ico"
+                android:background="@drawable/booking_services_ico"
                 />
 
         </LinearLayout>
@@ -357,6 +359,7 @@
             style="@style/My_Button_Small.Invert"
             android:layout_width="75dp"
             android:layout_height="30dp"
+            android:id="@+id/btnEditService"
             android:text="@string/text_edit"
             android:layout_marginRight="5dp"
             android:layout_alignParentRight="true"

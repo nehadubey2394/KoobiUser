@@ -59,7 +59,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private TextView tvOpeningTime;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
-
+    private List<BusinessDay> businessDayOld;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     private void initView(){
         businessDays = new ArrayList<>();
-        adapter = new AdapterBusinessDays(BookingActivity.this, businessDays);
+        businessDayOld  =  getBusinessdays();
+        adapter = new AdapterBusinessDays(BookingActivity.this, businessDayOld);
         title_booking = findViewById(R.id.tvHeaderTitle2);
         tvBuisnessName = findViewById(R.id.tvBuisnessName);
         lyReviewPost = findViewById(R.id.lyReviewPost);
@@ -174,6 +175,68 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         alertDailog.show();
     }
 
+    private List<BusinessDay> getBusinessdays(){
+        /*BusinessProfile businessProfile =  preSession.getBusinessProfile();
+        if(businessProfile!=null && businessProfile.businessDays!=null)
+            return businessProfile.businessDays;
+        else*/ return  createDefaultBusinessHours();
+    }
+
+    private  List<BusinessDay> createDefaultBusinessHours(){
+        List<BusinessDay>businessDays = new ArrayList<>();
+        BusinessDay day1 = new BusinessDay();
+        day1.dayName = getString(R.string.mon);
+        day1.isOpen = false;
+        day1.dayId = 0;
+        day1.addTimeSlot(new TimeSlot(0));
+
+        BusinessDay day2 = new BusinessDay();
+        day2.dayName = getString(R.string.tues);
+        day2.isOpen = false;
+        day2.dayId = 1;
+        day2.addTimeSlot(new TimeSlot(1));
+
+        BusinessDay day3 = new BusinessDay();
+        day3.dayName = getString(R.string.wednes);
+        day3.isOpen = false;
+        day3.dayId = 2;
+        day3.addTimeSlot(new TimeSlot(2));
+
+        BusinessDay day4 = new BusinessDay();
+        day4.dayName = getString(R.string.thurs);
+        day4.isOpen = false;
+        day4.dayId = 3;
+        day4.addTimeSlot(new TimeSlot(3));
+
+        BusinessDay day5 = new BusinessDay();
+        day5.dayName = getString(R.string.fri);
+        day5.isOpen = false;
+        day5.dayId = 4;
+        day5.addTimeSlot(new TimeSlot(4));
+
+        BusinessDay day6 = new BusinessDay();
+        day6.dayName = getString(R.string.satur);
+        day6.isOpen = false;
+        day6.dayId = 5;
+        day6.addTimeSlot(new TimeSlot(5));
+
+        BusinessDay day7 = new BusinessDay();
+        day7.dayName = getString(R.string.sun );
+        day7.isOpen = false;
+        day7.dayId = 6;
+        day7.addTimeSlot(new TimeSlot(6));
+
+        businessDays.add(day1);
+        businessDays.add(day2);
+        businessDays.add(day3);
+        businessDays.add(day4);
+        businessDays.add(day5);
+        businessDays.add(day6);
+        businessDays.add(day7 );
+        return businessDays;
+    }
+
+
     private void apiForGetBusinessTime(){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
@@ -210,7 +273,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (status.equalsIgnoreCase("success")) {
                         JSONObject jsonObject = js.getJSONObject("artistDetail");
-                    //    item = new ArtistsSearchBoard();
+                        //    item = new ArtistsSearchBoard();
                         item._id = jsonObject.getString("_id");
                         item.userName = jsonObject.getString("userName");
                         item.firstName = jsonObject.getString("firstName");
@@ -223,46 +286,68 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
                         if (artistArray!=null) {
-                            businessDays.clear();
+                            //businessNew.clear();
 
                             for (int i=0; i<artistArray.length(); i++){
                                 JSONObject object = artistArray.getJSONObject(i);
                                 BusinessDay day = new BusinessDay();
 
-                                day.isOpen = true;
                                 day.dayId = Integer.parseInt(object.getString("day"));
 
                                 switch (day.dayId){
                                     case 0:
+                                        day.isOpen = true;
                                         day.dayName = getString(R.string.mon);
                                         break;
                                     case 1:
+                                        day.isOpen = true;
                                         day.dayName = getString(R.string.tues);
                                         break;
                                     case 2:
+                                        day.isOpen = true;
                                         day.dayName = getString(R.string.wednes);
                                         break;
                                     case 3:
+                                        day.isOpen = true;
                                         day.dayName = getString(R.string.thurs);
                                         break;
                                     case 4:
+                                        day.isOpen = true;
                                         day.dayName = getString(R.string.fri);
                                         break;
                                     case 5:
+                                        day.isOpen = true;
                                         day.dayName = getString(R.string.satur);
                                         break;
                                     case 6:
+                                        day.isOpen = true;
                                         day.dayName = getString(R.string.sun);
                                         break;
                                 }
+
                                 TimeSlot timeSlot = new TimeSlot(day.dayId);
                                 timeSlot.startTime = object.getString("startTime");
                                 timeSlot.endTime = object.getString("endTime");
                                 day.addTimeSlot(timeSlot);
-                                //   ArtistsSearchBoard item = gson.fromJson(String.valueOf(jsonObject), ArtistsSearchBoard.class);
+
                                 businessDays.add(day);
 
                             }
+
+                            for(int i=0; i<businessDayOld.size(); i++)
+                            {
+                                BusinessDay item1 = businessDayOld.get(i);
+                                {
+                                    for(int j=0; j<businessDays.size(); j++){
+                                        BusinessDay item2  = businessDays.get(j);
+                                        if (item2.dayId==item1.dayId){
+                                            businessDayOld.set(i,item2);
+                                        }
+
+                                    }
+                                }
+                            }
+
                             adapter.notifyDataSetChanged();
                             updateView();
                         }
@@ -294,6 +379,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         task.execute(this.getClass().getName());
     }
+
 
 
     public void addFragment(Fragment fragment, boolean addToBackStack, int containerId) {

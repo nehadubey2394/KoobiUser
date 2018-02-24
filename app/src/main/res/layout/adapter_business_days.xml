@@ -20,7 +20,7 @@
             android:clickable="false"
             android:button="@drawable/checkbox_selector" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:orientation="horizontal"
@@ -31,20 +31,23 @@
 
             <TextView
                 android:id="@+id/tv_dayName"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 style="@style/TextView"
                 android:textColor="@color/black"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
                 android:text="@string/monday"/>
 
             <TextView
                 android:id="@+id/tv_workingStatus"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 style="@style/TextView"
                 android:textColor="@color/gray"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
                 android:text="@string/not_working"/>
 
             <View
@@ -69,7 +72,7 @@
 
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

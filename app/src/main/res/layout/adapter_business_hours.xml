@@ -14,7 +14,7 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="32dp"
             android:src="@drawable/dot_lines"
             android:tint="@color/black"/>
 

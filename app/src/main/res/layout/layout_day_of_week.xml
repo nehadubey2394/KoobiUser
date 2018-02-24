@@ -7,5 +7,5 @@
     android:gravity="center"
     android:textSize="14sp"
     android:fontFamily="@font/roboto_regular"
-    android:textColor="@color/black"
+    android:textColor="@color/colorPrimary"
     android:paddingBottom="4dp" />

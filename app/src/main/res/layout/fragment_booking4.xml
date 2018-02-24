@@ -45,8 +45,7 @@
                         android:layout_height="wrap_content"
                         custom:showWeek="true"
                         custom:textColor="@color/black"
-                        custom:firstDayOfWeek="sunday"
-                        android:background="@drawable/bg_rounded_rectangle"
+                        custom:firstDayOfWeek="sunday"  android:background="@drawable/bg_rounded_rectangle"
                         android:overScrollMode="never"
                         custom:state="collapsed" />
 
@@ -141,7 +140,7 @@
                     </LinearLayout>
 
                     <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btnAddMoreSer"
+                        android:id="@+id/btnAddMoreService"
                         style="@style/My_Button_Small.Invert"
                         android:layout_width="100dp"
                         android:layout_height="35dp"

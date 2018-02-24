@@ -140,7 +140,7 @@ public class FlexibleCalendar extends UICalendar {
         TableRow rowWeek = (TableRow) mTableHead.getChildAt(0);
         if (rowWeek != null) {
             for (int i = 0; i < rowWeek.getChildCount(); i++) {
-                ((TextView) rowWeek.getChildAt(i)).setTextColor(getTextColor());
+                ((TextView) rowWeek.getChildAt(i)).setTextColor(getTextPrimaryColor());
             }
         }
         // redraw all views of day
@@ -207,6 +207,8 @@ public class FlexibleCalendar extends UICalendar {
                 TextView txtDayOfWeek = view.findViewById(R.id.txt_day_of_week);
                 txtDayOfWeek.setText(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 sCurrentDay = txtDayOfWeek.getText().toString();
+                txtDayOfWeek.setTextColor(getResources().getColor(R.color.colorPrimary));
+
                 view.setLayoutParams(new TableRow.LayoutParams(
                         0,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
