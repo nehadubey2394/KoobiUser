@@ -45,6 +45,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,10 +57,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public static LinearLayout lyArtistDetail;
     private List<BusinessDay> businessDays;
     private AdapterBusinessDays adapter;
-    private TextView tvOpeningTime;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
     private List<BusinessDay> businessDayOld;
+    private  HashMap<Integer,BusinessDay> hashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView(){
+        hashMap = new HashMap<>();
         businessDays = new ArrayList<>();
         businessDayOld  =  getBusinessdays();
         adapter = new AdapterBusinessDays(BookingActivity.this, businessDayOld);
@@ -84,7 +86,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         lyArtistDetail = findViewById(R.id.lyArtistDetail);
         lyArtistDetail.setVisibility(View.VISIBLE);
         tvBuisnessName.setVisibility(View.GONE);
-        tvOpeningTime = findViewById(R.id.tvOpeningTime);
+        TextView tvOpeningTime = findViewById(R.id.tvOpeningTime);
         rating = findViewById(R.id.rating);
         ImageButton ibtnChat2 = findViewById(R.id.ibtnChat2);
         ImageView ivHeaderUser2 = findViewById(R.id.ivHeaderUser2);
@@ -126,9 +128,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         TextView tvArtistName = findViewById(R.id.tvArtistName);
         tvArtistName.setText(item.userName);
 
-        if (!item.profileImage.equals(""))
-            Picasso.with(BookingActivity.this).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
-                    fit().into(ivHeaderProfile);
+        if (!item.profileImage.equals("")){
+            Picasso.with(BookingActivity.this).load(item.profileImage).placeholder(R.drawable.defoult_user_img).fit().into(ivHeaderProfile);
+        }
+
         addFragment(new BookingFragment2(), false, R.id.flBookingContainer);
 
     }
@@ -285,13 +288,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.businessName = jsonObject.getString("businessName");
 
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
+
                         if (artistArray!=null) {
                             //businessNew.clear();
 
                             for (int i=0; i<artistArray.length(); i++){
                                 JSONObject object = artistArray.getJSONObject(i);
                                 BusinessDay day = new BusinessDay();
-
                                 day.dayId = Integer.parseInt(object.getString("day"));
 
                                 switch (day.dayId){
@@ -325,14 +328,44 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                         break;
                                 }
 
-                                TimeSlot timeSlot = new TimeSlot(day.dayId);
-                                timeSlot.startTime = object.getString("startTime");
-                                timeSlot.endTime = object.getString("endTime");
-                                day.addTimeSlot(timeSlot);
-
+                                TimeSlot timeSlotNew = new TimeSlot(day.dayId);
+                                timeSlotNew.startTime = object.getString("startTime");
+                                timeSlotNew.endTime = object.getString("endTime");
+                                day.addTimeSlot(timeSlotNew);
                                 businessDays.add(day);
 
+                             /*   for(int k=0; k<businessDays.size(); k++){
+                                    BusinessDay businessDay = businessDays.get(k);
+                                    if (businessDay.dayId == day.dayId){
+                                        businessDay.addTimeSlot(timeSlotNew);
+                                        day = businessDay;
+                                    }else {
+                                        day.addTimeSlot(timeSlotNew);
+                                    }
+                                }
+*/
                             }
+
+                            //   for(int k=0; k<businessDays.size(); k++){
+
+                            //      hashMap.put(businessDay.dayId,businessDay);
+
+       /*                             Iterator it = hashMap.entrySet().iterator();
+                                    List<Map<String,Integer>> list = new ArrayList<Map<String, Integer>>();
+
+                                    while (it.hasNext()) {
+                                        Map.Entry pair = (Map.Entry)it.next();
+                                        pair.getKey();
+
+                                        if(foodTypeId.equals("")){
+                                            foodTypeId =  String.valueOf(pair.getKey());
+                                        } else {
+                                            foodTypeId = foodTypeId + "," + String.valueOf(pair.getKey());
+                                        }
+                                        it.remove();
+                                    }
+*/
+                            //     }
 
                             for(int i=0; i<businessDayOld.size(); i++)
                             {
@@ -379,7 +412,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         task.execute(this.getClass().getName());
     }
-
 
 
     public void addFragment(Fragment fragment, boolean addToBackStack, int containerId) {

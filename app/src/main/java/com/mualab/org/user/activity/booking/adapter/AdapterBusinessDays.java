@@ -45,11 +45,18 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
         holder.listView.setVisibility(day.isOpen?View.VISIBLE:View.GONE);
         holder.checkbox.setChecked(day.isOpen);
         holder.checkbox.setEnabled(false);
-
+    /*    holder.lyDotsLine.setVisibility(position == businessDaysList.size()-1?View.GONE:View.VISIBLE);
+*/
         if(day.isOpen){
+            holder.lyDotsLine.setVisibility(View.GONE);
             AdapterTimeSlot adapterTimeSlot = new AdapterTimeSlot(mContext, day.slots);
             holder.listView.setAdapter(adapterTimeSlot);
             setListViewHeightBasedOnChildren(holder.listView);
+        }else {
+            if (day.dayId==6 )
+                holder.lyDotsLine.setVisibility(View.GONE);
+            else
+                holder.lyDotsLine.setVisibility(View.VISIBLE);
         }
     }
 
@@ -61,8 +68,8 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         CheckBox checkbox;
-       // ImageView ivAddTimeSlot;
-        LinearLayout ll_addTimeSlot;
+        // ImageView ivAddTimeSlot;
+        LinearLayout ll_addTimeSlot,lyDotsLine;
         ListView listView;
         TextView tv_dayName, tv_workingStatus;
 
@@ -73,6 +80,7 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
             tv_workingStatus = itemView.findViewById(R.id.tv_workingStatus);
             //ivAddTimeSlot =  itemView.findViewById(R.id.ivAddTimeSlot);
             ll_addTimeSlot =  itemView.findViewById(R.id.ll_addTimeSlot);
+            lyDotsLine =  itemView.findViewById(R.id.lyDotsLine);
             listView = itemView.findViewById(R.id.listView);
             checkbox.setOnClickListener(this);
             ll_addTimeSlot.setOnClickListener(this);
@@ -112,47 +120,16 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
             TextView tv_from =  v.findViewById(R.id.tv_from);
             TextView tv_to =  v.findViewById(R.id.tv_to);
             View viewDivider = v.findViewById(R.id.viewDivider);
+            LinearLayout lyDotsLineHours = v.findViewById(R.id.lyDotsLineHours);
             //ImageView iv_delete = v.findViewById(R.id.iv_delete);
-          //  LinearLayout ll_delete = v.findViewById(R.id.ll_delete);
+            //  LinearLayout ll_delete = v.findViewById(R.id.ll_delete);
 
             // Populate the data into the template view using the data object
             tv_from.setText(String.format("From: %s", timeSlot.startTime));
             tv_to.setText(String.format("To: %s", timeSlot.endTime));
             viewDivider.setVisibility(timeSlots.size()==1?View.GONE:View.VISIBLE);
-          /*  ll_delete.setVisibility(timeSlots.size()==1?View.GONE:View.VISIBLE);
-            ll_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(timeSlots.size()>position){
-                        timeSlots.remove(position);
-                        AdapterTimeSlot.this.notifyDataSetChanged();
-                        AdapterBusinessDays.this.notifyItemChanged(timeSlot.dayId-1);
-                    }
-                }
-            });*/
+            // lyDotsLineHours.setVisibility(position == timeSlots.size()-1?View.GONE:View.VISIBLE);
 
-         /*   tv_from.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    picTimeSlot(AdapterTimeSlot.this,timeSlots,position);
-                }
-            });*/
-
-    /*        tv_to.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    picTimeSlot(AdapterTimeSlot.this,timeSlots,position);
-                }
-            });
-
-            v.findViewById(R.id.ll_timeslotView).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    picTimeSlot(AdapterTimeSlot.this,timeSlots,position);
-                }
-            });*/
-
-            // Return the completed view to render on screen
             return v;
         }
 

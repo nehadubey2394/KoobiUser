@@ -1,5 +1,6 @@
 package com.mualab.org.user.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,12 +24,14 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
 import com.mualab.org.user.util.LocationDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public TextView tvHeaderTitle;
     private String lat,lng;
     public RelativeLayout rlHeader1;
+    public RefineSearchBoard item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +68,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null){
+            item = (RefineSearchBoard) bundle.getSerializable("refineSearchBoard");
+        }
+
         initView();
-        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
+
+        addFragment(SearchBoardFragment.newInstance(item,""), false, R.id.fragment_place);
 
     }
 
@@ -133,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(SearchBoardFragment.newInstance(), false, R.id.fragment_place);
+                    replaceFragment(SearchBoardFragment.newInstance(item,""), false, R.id.fragment_place);
                 }
                 break;
 
@@ -239,6 +249,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
             transaction.commit();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK){
+
         }
     }
 

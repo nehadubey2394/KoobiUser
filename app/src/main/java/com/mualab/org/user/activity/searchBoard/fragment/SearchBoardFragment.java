@@ -35,6 +35,7 @@ import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
@@ -58,13 +59,19 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     private SearchBoardAdapter listAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private ArrayList<ArtistsSearchBoard>artistsList;
-
+    private String mParam1;
     private boolean isFavClick = false;
-    private String lat = "22.757062", lng = "75.882186";
+    private RefineSearchBoard item;
+    private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="";
 
 
-    public static SearchBoardFragment newInstance() {
-        return new SearchBoardFragment();
+
+    public static SearchBoardFragment newInstance(RefineSearchBoard item, String param2) {
+        SearchBoardFragment fragment = new SearchBoardFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("param1", item);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -76,6 +83,10 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            item = (RefineSearchBoard) getArguments().getSerializable("param1");
+            initView();
+        }
         if(artistsList==null)
             artistsList = new ArrayList<>();
     }
@@ -91,6 +102,18 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         cvFilter.setOnClickListener(this);
         cvFavourite.setOnClickListener(this);
         return view;
+    }
+
+    private void initView(){
+        if (item!=null){
+            lat = item.latitude;
+            lng = item.longitude;
+            subServiceId = item.subservice;
+            mainServId = item.service;
+            serviceType = item.serviceType;
+            sortSearch = item.sortSearch;
+            sortType = item.sortType;
+        }
     }
 
     @Override
@@ -125,6 +148,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             case R.id.cvFilter:
                 startActivity(new Intent(mContext,  RefineArtistActivity.class));
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                getActivity().finish();
                 break;
 
             case R.id.cvFavourite:
@@ -161,8 +185,10 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                             if (location != null) {
                                 double latitude = location.getLatitude();
                                 double longitude = location.getLongitude();
-                                lat = String.valueOf(latitude);
-                                lng = String.valueOf(longitude);
+                                if (lng.equals("") && lat.equals("")){
+                                    lat = String.valueOf(latitude);
+                                    lng = String.valueOf(longitude);
+                                }
                                 apiForGetArtist(0, false);
                             }
                         }
@@ -217,13 +243,16 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         Map<String, String> params = new HashMap<>();
         params.put("latitude", lat);
         params.put("longitude", lng);
-        params.put("distance", "10");
+        // params.put("distance", "10");
         params.put("page", ""+page);
         params.put("limit", "10");
-        params.put("service", "");
-        params.put("serviceType", "");
+        params.put("service", mainServId);
+        params.put("serviceType", serviceType);
         params.put("day", "");
         params.put("time", "");
+        params.put("subservice", subServiceId);
+        params.put("sortSearch", sortSearch);
+        params.put("sortType", sortType);
         // params.put("appType", "user");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistSearch", new HttpResponceListner.Listener() {
@@ -239,7 +268,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                         listAdapter.showLoading(false);
                         JSONArray artistArray = js.getJSONArray("artistList");
 
-                        if (artistArray!=null) {
+                        if (artistArray!=null && artistArray.length()>0) {
                             for (int i=0; i<artistArray.length(); i++){
                                 Gson gson = new Gson();
                                 JSONObject jsonObject = artistArray.getJSONObject(i);
@@ -249,7 +278,8 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                             }
                             listAdapter.notifyDataSetChanged();
                         }else {
-                            MyToast.getInstance(mContext).showSmallCustomToast("No Artist available!");
+                            if (page==0)
+                                MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
                         }
                     }
                     //  showToast(message);
