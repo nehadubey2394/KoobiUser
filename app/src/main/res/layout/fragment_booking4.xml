@@ -45,8 +45,7 @@
                         android:layout_height="wrap_content"
                         custom:showWeek="true"
                         custom:textColor="@color/black"
-                        custom:firstDayOfWeek="sunday"
-                        android:background="@drawable/bg_rounded_rectangle"
+                        custom:firstDayOfWeek="sunday"  android:background="@drawable/bg_rounded_rectangle"
                         android:overScrollMode="never"
                         custom:state="collapsed" />
 
@@ -108,8 +107,7 @@
 
                     <LinearLayout
                         android:layout_width="100dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="center_vertical"
+                        android:layout_height="32dp"       android:layout_gravity="center_vertical"
                         android:layout_marginRight="6dp"
                         android:layout_alignParentLeft="false"
                         android:layout_centerVertical="true"
@@ -122,7 +120,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/text_re_book"
-                            android:textSize="12sp"
+                            android:textSize="10sp"
                             android:textColor="@color/white"
                             android:textAllCaps="false"
                             android:gravity="center"
@@ -130,8 +128,8 @@
                             android:fontFamily="@font/roboto_medium"
                             />
                         <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
                             android:layout_marginLeft="5dp"
                             android:gravity="center"
                             android:layout_gravity="center_vertical"
@@ -141,24 +139,25 @@
                     </LinearLayout>
 
                     <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btnAddMoreSer"
+                        android:id="@+id/btnAddMoreService"
                         style="@style/My_Button_Small.Invert"
                         android:layout_width="100dp"
-                        android:layout_height="35dp"
+                        android:layout_height="32dp"
                         android:layout_centerInParent="true"
-                        android:text="@string/text_add_more_services"
-                        android:layout_gravity="center_vertical"
+                        android:text="@string/text_add_more_services" android:layout_gravity="center_vertical"
                         android:padding="2dp"
+                        android:textSize="10sp"
                         />
 
                     <android.support.v7.widget.AppCompatButton
                         android:id="@+id/btnCOnfirmBooking"
                         style="@style/My_Button_Small.Invert"
                         android:layout_width="100dp"
-                        android:layout_height="35dp"
+                        android:layout_height="32dp"
                         android:text="@string/text_confirm_booking"
                         android:layout_marginLeft="6dp"
-                        android:padding="3dp"
+                        android:padding="2dp"
+                        android:textSize="10sp"
                         android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
                         android:layout_gravity="center_vertical"

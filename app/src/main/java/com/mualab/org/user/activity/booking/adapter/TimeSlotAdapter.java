@@ -9,7 +9,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.model.booking.TimeSlot;
+import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
+import com.mualab.org.user.model.booking.BookingTimeSlot;
 
 import java.util.ArrayList;
 
@@ -17,11 +18,16 @@ import java.util.ArrayList;
 public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHolder> {
     private Context context;
     private String s = "";
-    private ArrayList<TimeSlot> itemList;
+    private ArrayList<BookingTimeSlot> itemList;
+    private CustomAdapterButtonListener customButtonListener = null;
     // private CustomAdapterButtonListener customButtonListener = null;
 
+    public void setCustomListener(CustomAdapterButtonListener customButtonListener){
+        this.customButtonListener = customButtonListener;
+    }
+
     // Constructor of the class
-    public TimeSlotAdapter(Context context, ArrayList<TimeSlot> itemList) {
+    public TimeSlotAdapter(Context context, ArrayList<BookingTimeSlot> itemList) {
         this.context = context;
         this.itemList = itemList;
     }
@@ -46,11 +52,11 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHo
     // load data in each row element
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
-        TimeSlot timeSlot = itemList.get(listPosition);
+        BookingTimeSlot bookingTimeSlot = itemList.get(listPosition);
 
-        holder.tvTime.setText(timeSlot.time);
+        holder.tvTime.setText(bookingTimeSlot.time);
 
-        if (timeSlot.isSelected.equals("1")){
+        if (bookingTimeSlot.isSelected.equals("1")){
             holder.rlTimeSlot.setBackground(context.getResources().getDrawable(R.drawable.bg_green_background));
 
         } else {
@@ -76,30 +82,9 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
-      /*      Category category = itemList.get(getAdapterPosition());
-
             if (customButtonListener != null) {
-                if (category.isSelected.equals("0")){
-
-                    // if(CategoryID.equals("")){
-                    category.isSelected = "1";
-                    CategoryID = category.id;
-                    customButtonListener.onButtonClick(getAdapterPosition(), CategoryID,0);
-
-                }
-                else {
-                    category.isSelected = "0";
-                    String  catId = category.id;
-
-                    CategoryID =  CategoryID.replace(catId , "");
-                    customButtonListener.onButtonClick(getAdapterPosition(), CategoryID,0);
-                    // selectedView.setVisibility(View.GONE);
-
-                }
-                notifyItemChanged(getAdapterPosition());
-
-
-            }*/
+                customButtonListener.onButtonClick(getAdapterPosition(),"",0);
+            }
         }
     }
 

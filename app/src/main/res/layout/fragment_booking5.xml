@@ -99,8 +99,12 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_gravity="center_vertical"
-        android:padding="4dp"
-        android:layout_margin="2dp"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
         >
 
         <LinearLayout
@@ -120,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:layout_gravity="center"
-                android:src="@drawable/booking_calender_ico"
+                android:background="@drawable/booking_calender_ico"
                 />
 
         </LinearLayout>
@@ -163,10 +167,12 @@
 
         <android.support.v7.widget.AppCompatButton
             style="@style/My_Button_Small.Invert"
-            android:layout_width="wrap_content"
+            android:id="@+id/btnEditDate"
+            android:layout_width="75dp"
             android:layout_height="30dp"
             android:text="@string/text_edit"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
             android:layout_centerVertical="true"
             android:padding="2dp"
             />
@@ -174,9 +180,10 @@
         <View
             android:layout_width="wrap_content"
             android:layout_height="0.5dp"
-            android:background="@color/grey"
+            android:background="@color/gray2"
             android:layout_toRightOf="@+id/lyCalender"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_below="@+id/lyLinear"/>
 
     </RelativeLayout>
@@ -186,8 +193,12 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_gravity="center_vertical"
-        android:padding="4dp"
-        android:layout_margin="2dp"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
         >
         <LinearLayout
             android:id="@+id/lyLoc"
@@ -206,7 +217,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:layout_gravity="center"
-                android:src="@drawable/booking_services_ico"
+                android:background="@drawable/booking_location_ico"
                 />
 
         </LinearLayout>
@@ -235,7 +246,7 @@
                 android:textColor="@color/text_color"
                 android:textSize="12sp"
                 android:fontFamily="@font/roboto_regular"
-                android:ems="15"
+                android:ems="13"
                 android:maxLines="2"
                 android:text="The Shed Chester Street Manchester"
                 />
@@ -244,6 +255,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_color"
                 android:textSize="12sp"
+                android:ems="12"
+                android:maxLines="2"
                 android:fontFamily="@font/roboto_regular"
                 android:text="M1 5GD"
                 />
@@ -251,9 +264,11 @@
 
         <android.support.v7.widget.AppCompatButton
             style="@style/My_Button_Small.Invert"
-            android:layout_width="wrap_content"
+            android:layout_width="75dp"
             android:layout_height="30dp"
+            android:id="@+id/btnEditLocation"
             android:text="@string/text_edit"
+            android:layout_marginRight="5dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:padding="2dp"
@@ -262,9 +277,10 @@
         <View
             android:layout_width="wrap_content"
             android:layout_height="0.5dp"
-            android:background="@color/grey"
+            android:background="@color/gray2"
             android:layout_toRightOf="@+id/lyLoc"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_below="@+id/lyLinear2"/>
 
     </RelativeLayout>
@@ -274,8 +290,12 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_gravity="center_vertical"
-        android:padding="4dp"
-        android:layout_margin="2dp"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
         >
         <LinearLayout
             android:id="@+id/lyServices"
@@ -294,7 +314,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:layout_gravity="center"
-                android:src="@drawable/booking_location_ico"
+                android:background="@drawable/booking_services_ico"
                 />
 
         </LinearLayout>
@@ -322,6 +342,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_color"
                 android:textSize="12sp"
+                android:ems="12"
                 android:fontFamily="@font/roboto_regular"
                 android:text="Evening Make up"
                 />
@@ -337,9 +358,11 @@
 
         <android.support.v7.widget.AppCompatButton
             style="@style/My_Button_Small.Invert"
-            android:layout_width="wrap_content"
+            android:layout_width="75dp"
             android:layout_height="30dp"
+            android:id="@+id/btnEditService"
             android:text="@string/text_edit"
+            android:layout_marginRight="5dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:padding="2dp"
@@ -349,12 +372,11 @@
             android:id="@+id/vLine"
             android:layout_width="wrap_content"
             android:layout_height="0.5dp"
-            android:background="@color/grey"
+            android:background="@color/gray2"
             android:layout_toRightOf="@+id/lyServices"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_below="@+id/lyLinear3"/>
-
-
 
 
     </RelativeLayout>
@@ -378,6 +400,7 @@
             android:textSize="16sp"
             style="@style/TextView.Bold"
             android:padding="4dp"
+            android:layout_marginLeft="10dp"
             android:text="@string/text_total"
             />
 
@@ -387,6 +410,7 @@
             android:textColor="@color/primary_blue"
             android:textSize="16sp"
             style="@style/TextView.Bold"
+            android:layout_marginLeft="5dp"
             android:padding="4dp"
             android:text="£130"
             />
@@ -398,7 +422,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="10dp"
         >
 
@@ -433,15 +457,15 @@
     </RelativeLayout>
 
 
-   <!-- <android.support.v7.widget.RecyclerView
-        android:id="@+id/rycSelectedServ"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:overScrollMode="never"
-        android:scrollbars="none" />
--->
+    <!-- <android.support.v7.widget.RecyclerView
+         android:id="@+id/rycSelectedServ"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginLeft="6dp"
+         android:layout_marginRight="6dp"
+         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+         android:overScrollMode="never"
+         android:scrollbars="none" />
+ -->
 
 </LinearLayout>

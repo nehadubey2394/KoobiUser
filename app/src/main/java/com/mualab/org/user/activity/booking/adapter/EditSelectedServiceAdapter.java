@@ -13,20 +13,20 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
-import com.mualab.org.user.model.booking.BookinServices3;
+import com.mualab.org.user.model.booking.BookingServices3;
 
 import java.util.ArrayList;
 
 
 public class EditSelectedServiceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private ArrayList<BookinServices3> artistsList;
+    private ArrayList<BookingServices3> artistsList;
     private boolean showLoader;
     String serviceTitle;
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
     // Constructor of the class
-    public EditSelectedServiceAdapter(Context context, ArrayList<BookinServices3> artistsList, String serviceTitle) {
+    public EditSelectedServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle) {
         this.context = context;
         this.artistsList = artistsList;
         this.serviceTitle = serviceTitle;
@@ -84,7 +84,7 @@ public class EditSelectedServiceAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         final ViewHolder holder = ((ViewHolder) viewHolder);
-        final BookinServices3 item = artistsList.get(position);
+        final BookingServices3 item = artistsList.get(position);
 
         holder.tvTime.setText(item.time);
         holder.tvLastService.setText(item.sName);

@@ -13,14 +13,14 @@ import android.view.ViewGroup;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.Booking3ServiceAdapter;
-import com.mualab.org.user.model.booking.BookinServices3;
+import com.mualab.org.user.model.booking.BookingServices3;
 
 import java.util.ArrayList;
 
 
 public class BookingFragment3 extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private ArrayList<BookinServices3>arrayList;
+    private ArrayList<BookingServices3>arrayList;
     private Booking3ServiceAdapter adapter;
     private Context mContext;
     // TODO: Rename and change types of parameters
@@ -43,6 +43,7 @@ public class BookingFragment3 extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BookingActivity.lyReviewPost.setVisibility(View.GONE);
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
         }
@@ -80,9 +81,9 @@ public class BookingFragment3 extends Fragment {
     }
 
     private void addService(){
-        BookinServices3 services3;
+        BookingServices3 services3;
         for (int i = 0; i<10;i++){
-            services3 = new BookinServices3();
+            services3 = new BookingServices3();
             services3.sName = "Zero Trim";
             services3.time = "10 min";
             services3.price = "250";
@@ -96,6 +97,7 @@ public class BookingFragment3 extends Fragment {
         super.onDestroyView();
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -103,5 +105,6 @@ public class BookingFragment3 extends Fragment {
         super.onDestroy();
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
     }
 }

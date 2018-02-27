@@ -15,7 +15,7 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/screen_bg_color"
         android:layout_below="@+id/topLayout"
         android:layout_above="@+id/lyBottom"
@@ -27,6 +27,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
+
             >
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -38,7 +39,7 @@
                     android:id="@+id/chbOutcall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:button="@drawable/checkbox_selector"
+                    android:button="@drawable/circuler_checkbox_selector"
                     android:textSize="12sp"
                     android:fontFamily="@font/roboto_regular"
                     android:layout_centerVertical="true"
@@ -106,7 +107,7 @@
                 />
 
             <RelativeLayout
-                android:id="@+id/rlDob"
+                android:id="@+id/rlDnT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -123,7 +124,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/tv_refine_dob"
+                    android:id="@+id/tv_refine_dnt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="@string/text_date_and_time"
@@ -185,14 +186,16 @@
 
             </RelativeLayout>
 
-            <ExpandableListView
+            <views.ExpandableList.NonScrollExpandableListView
                 android:id="@+id/lvService"
-                android:layout_height="match_parent"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
                 android:childDivider="@color/white"
                 android:dividerHeight="1dp"
                 android:divider="@null"
                 android:visibility="gone"
+                android:layout_marginLeft="2dp"
                 android:groupIndicator="@null" />
 
             <View

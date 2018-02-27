@@ -4,6 +4,7 @@ package com.mualab.org.user.activity.booking.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,19 +20,20 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
 import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
+import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
 import com.mualab.org.user.model.booking.BookingInfo;
-import com.mualab.org.user.model.booking.TimeSlot;
+import com.mualab.org.user.model.booking.BookingTimeSlot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class BookingFragment4 extends Fragment implements View.OnClickListener{
+public class BookingFragment4 extends Fragment implements View.OnClickListener,CustomAdapterButtonListener{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private ArrayList<TimeSlot>timeSlots;
+    private ArrayList<BookingTimeSlot> bookingTimeSlots;
     private ArrayList<BookingInfo>bookingInfos;
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
@@ -52,6 +54,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
         }
@@ -74,9 +77,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
     }
 
     private void initView(){
-        timeSlots = new ArrayList<>();
+        bookingTimeSlots = new ArrayList<>();
         bookingInfos = new ArrayList<>();
-        listAdapter = new TimeSlotAdapter(mContext, timeSlots);
+        listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
+        listAdapter.setCustomListener(BookingFragment4.this);
         bookingInfoAdapter = new BookingInfoAdapter(mContext, bookingInfos);
         addItems();
         addServices();
@@ -86,6 +90,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
 
         AppCompatButton btnCOnfirmBooking = rootView.findViewById(R.id.btnCOnfirmBooking);
+        AppCompatButton btnAddMoreService = rootView.findViewById(R.id.btnAddMoreService);
 
         RecyclerView rycTimeSlot = rootView.findViewById(R.id.rycTimeSlot);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL, false);
@@ -150,12 +155,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
         // viewCalendar.select(new Day(2018, 4, 22));
 
         btnCOnfirmBooking.setOnClickListener(this);
+        btnAddMoreService.setOnClickListener(this);
     }
 
     private void addItems(){
-        TimeSlot item;
-        for(int i=0;i<6;i++) {
-            item = new TimeSlot();
+        BookingTimeSlot item;
+        for(int i=0;i<7;i++) {
+            item = new BookingTimeSlot();
             switch (i) {
               /*  case 0:
                     item.itemName = "Subscription";
@@ -191,8 +197,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
                     item.isSelected = "0";
                     break;
 
+                case 6:
+                    item.time = "3:00";
+                    item.isSelected = "0";
+                    break;
+
             }
-            timeSlots.add(item);
+            bookingTimeSlots.add(item);
         }
     }
 
@@ -242,6 +253,35 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener{
                         BookingFragment5.newInstance(""), true, R.id.flBookingContainer);
 
                 break;
+
+            case R.id.btnAddMoreService:
+
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                int count = fm.getBackStackEntryCount();
+                for(int i = 0; i < count; ++i) {
+                    if (i>0)
+                        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+              /*  ((BookingActivity)mContext).addFragment(
+                        BookingFragment5.newInstance(""), true, R.id.flBookingContainer);*/
+
+                break;
         }
+    }
+
+    @Override
+    public void onButtonClick(int position, String buttonText, int selectedCount) {
+        BookingTimeSlot item =  bookingTimeSlots.get(position);
+
+        for (int i = 0;i<bookingTimeSlots.size();i++){
+            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
+            timeSlot.isSelected = "0";
+        }
+        listAdapter.notifyDataSetChanged();
+        // if (item.isSelected.equals("0"))
+        item.isSelected = "1";
+        //  else
+        //     item.isSelected = "0";
+        listAdapter.notifyItemChanged(position);
     }
 }

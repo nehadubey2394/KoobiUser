@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:clickable="false"
+            android:button="@drawable/checkbox_selector" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:layout_marginLeft="5dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/gray_boder_white_bg">
+
+            <TextView
+                android:id="@+id/tv_dayName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView"
+                android:textColor="@color/black"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:text="@string/monday"/>
+
+            <TextView
+                android:id="@+id/tv_workingStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView"
+                android:textColor="@color/gray"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:text="@string/not_working"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:id="@+id/ll_addTimeSlot"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/ivAddTimeSlot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:src="@drawable/add_ico"/>
+
+            </LinearLayout>
+
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyDotsLine"
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:background="@drawable/dot_lines"
+            android:tint="@color/black"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@null"
+        android:dividerHeight="2dp"
+        android:listSelector="@android:color/transparent"
+        android:visibility="gone"/>
+
+</LinearLayout>

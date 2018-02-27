@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
+import com.mualab.org.user.activity.searchBoard.adapter.RefineServiceExpandListAdapter;
+import com.mualab.org.user.model.SearchBoard.RefineServices;
+import com.mualab.org.user.model.SearchBoard.RefineSubServices;
 import com.mualab.org.user.model.booking.Services;
 import com.mualab.org.user.model.booking.SubServices;
 
@@ -25,7 +28,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private ExpandableListView lvExpandable;
-    private  ServiceExpandListAdapter expandableListAdapter;
+    private ServiceExpandListAdapter expandableListAdapter;
     private ArrayList<Services>services;
     private ImageView ivOutcall;
     boolean isOutCallSelect = false;
@@ -48,6 +51,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
         }

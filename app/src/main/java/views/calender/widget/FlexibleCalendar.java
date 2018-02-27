@@ -13,12 +13,15 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.dialogs.MyToast;
+
 import views.calender.data.CalendarAdapter;
 import views.calender.data.Day;
 import views.calender.data.Event;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by neha on 15/2/18.
@@ -140,7 +143,7 @@ public class FlexibleCalendar extends UICalendar {
         TableRow rowWeek = (TableRow) mTableHead.getChildAt(0);
         if (rowWeek != null) {
             for (int i = 0; i < rowWeek.getChildCount(); i++) {
-                ((TextView) rowWeek.getChildAt(i)).setTextColor(getTextColor());
+                ((TextView) rowWeek.getChildAt(i)).setTextColor(getTextPrimaryColor());
             }
         }
         // redraw all views of day
@@ -165,9 +168,46 @@ public class FlexibleCalendar extends UICalendar {
 
                 // set the selected item
                 if (isSelectedDay(day)) {
-                    mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+                    Date currentDay = mAdapter.getCalendar().getTime();
+                    Calendar todayCal = Calendar.getInstance();
+                    int cYear  = todayCal.get(Calendar.YEAR);
+                    int cMonth  = todayCal.get(Calendar.MONTH)+1;
+                    int cDay  = todayCal.get(Calendar.DAY_OF_MONTH);
+
+                    int year = day.getYear();
+                    int month =  day.getMonth()+1;
+                    int dayOfMonth =  day.getDay();
+
+                    if (year>=cYear && month>=cMonth){
+                        if (year==cYear && month==cMonth && dayOfMonth<=cDay){
+                            MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
+                        }else {
+                            mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+                            txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
+                            txtDay.setTextColor(getSelectedItemTextColor());
+                        }
+                    }else {
+                        MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
+                    }
+/*
+                    if (dayOfMonth > cDay && cMonth==(month) && cYear== year){
+                        //    txtDay.setAlpha(1f);
+                        mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+                        txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
+                        txtDay.setTextColor(getSelectedItemTextColor());
+                    }else if (dayOfMonth <= cDay && month >(cMonth) && year>=cYear){
+                        txtDay.setAlpha(1f);
+                        mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+                        txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
+                        txtDay.setTextColor(getSelectedItemTextColor());
+                    }else {
+                        // txtDay.setAlpha(0.5f);
+                        MyToast.getInstance(mContext).showSmallCustomToast("YOu can't select previous date for booking.");
+                    }*/
+
+                   /* mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
                     txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
-                    txtDay.setTextColor(getSelectedItemTextColor());
+                    txtDay.setTextColor(getSelectedItemTextColor());*/
                 }
             }
         }
@@ -207,6 +247,8 @@ public class FlexibleCalendar extends UICalendar {
                 TextView txtDayOfWeek = view.findViewById(R.id.txt_day_of_week);
                 txtDayOfWeek.setText(dayOfWeekIds[(i + getFirstDayOfWeek()) % 7]);
                 sCurrentDay = txtDayOfWeek.getText().toString();
+                txtDayOfWeek.setTextColor(getResources().getColor(R.color.colorPrimary));
+
                 view.setLayoutParams(new TableRow.LayoutParams(
                         0,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -264,12 +306,15 @@ public class FlexibleCalendar extends UICalendar {
     private void onItemClicked(View view, Day day) {
         select(day);
 
+        //  Day day1 = getSelectedDay();
+
         Calendar cal = mAdapter.getCalendar();
 
         int newYear = day.getYear();
         int newMonth = day.getMonth();
         int oldYear = cal.get(Calendar.YEAR);
         int oldMonth = cal.get(Calendar.MONTH);
+
         if (newMonth != oldMonth) {
             cal.set(day.getYear(), day.getMonth(), 1);
 
