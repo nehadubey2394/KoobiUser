@@ -62,7 +62,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     private String mParam1;
     private boolean isFavClick = false;
     private RefineSearchBoard item;
-    private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="";
+    private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="";
 
 
 
@@ -113,6 +113,8 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             serviceType = item.serviceType;
             sortSearch = item.sortSearch;
             sortType = item.sortType;
+            time = item.time;
+            day = item.day;
         }
     }
 
@@ -248,8 +250,8 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         params.put("limit", "10");
         params.put("service", mainServId);
         params.put("serviceType", serviceType);
-        params.put("day", "");
-        params.put("time", "");
+        params.put("day", day);
+        params.put("time", time);
         params.put("subservice", subServiceId);
         params.put("sortSearch", sortSearch);
         params.put("sortType", sortType);

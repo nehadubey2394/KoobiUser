@@ -179,6 +179,7 @@
     <string name="alert_something_wenjt_wrong">Something went wrong!</string>
     <string name="text_no_data_found">No user found</string>
     <string name="text_opening_time">&#160;&#160;Opening Time</string>
+    <string name="text_working_hours">Working hours</string>
     <string name="title_booking">Booking</string>
     <string name="text_posts">Posts</string>
     <string name="text_reviews">Reviews</string>

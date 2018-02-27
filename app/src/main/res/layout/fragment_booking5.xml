@@ -246,7 +246,7 @@
                 android:textColor="@color/text_color"
                 android:textSize="12sp"
                 android:fontFamily="@font/roboto_regular"
-                android:ems="15"
+                android:ems="13"
                 android:maxLines="2"
                 android:text="The Shed Chester Street Manchester"
                 />
@@ -255,7 +255,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_color"
                 android:textSize="12sp"
-                android:ems="14"
+                android:ems="12"
                 android:maxLines="2"
                 android:fontFamily="@font/roboto_regular"
                 android:text="M1 5GD"
@@ -342,6 +342,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_color"
                 android:textSize="12sp"
+                android:ems="12"
                 android:fontFamily="@font/roboto_regular"
                 android:text="Evening Make up"
                 />

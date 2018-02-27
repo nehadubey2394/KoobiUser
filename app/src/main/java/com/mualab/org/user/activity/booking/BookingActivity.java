@@ -55,11 +55,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public static TextView title_booking,tvBuisnessName;
     public static LinearLayout lyReviewPost;
     public static LinearLayout lyArtistDetail;
-    private List<BusinessDay> businessDays;
+    private List<BusinessDay> businessDays,businessDayOld;
     private AdapterBusinessDays adapter;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
-    private List<BusinessDay> businessDayOld;
     private  HashMap<Integer,BusinessDay> hashMap;
 
     @Override
@@ -286,13 +285,12 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.reviewCount = jsonObject.getString("reviewCount");
                         item.postCount = jsonObject.getString("postCount");
                         item.businessName = jsonObject.getString("businessName");
-
+                        ArrayList<TimeSlot> timeSlots = new ArrayList<>();
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
-
                         if (artistArray!=null) {
                             //businessNew.clear();
-
                             for (int i=0; i<artistArray.length(); i++){
+
                                 JSONObject object = artistArray.getJSONObject(i);
                                 BusinessDay day = new BusinessDay();
                                 day.dayId = Integer.parseInt(object.getString("day"));
@@ -331,41 +329,48 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                 TimeSlot timeSlotNew = new TimeSlot(day.dayId);
                                 timeSlotNew.startTime = object.getString("startTime");
                                 timeSlotNew.endTime = object.getString("endTime");
-                                day.addTimeSlot(timeSlotNew);
+                                timeSlotNew.dayId = day.dayId;
+
+                                if (timeSlots.size()!=0){
+                                    if (timeSlots.get(0).dayId == day.dayId){
+                                        timeSlots.add(1,timeSlotNew);
+                                    }else {
+                                        timeSlots.clear();
+                                        timeSlots.add(timeSlotNew);
+                                    }
+                                }else {
+                                    timeSlots.add(timeSlotNew);
+                                }
+
+                                day.slots.addAll(timeSlots);
                                 businessDays.add(day);
 
-                             /*   for(int k=0; k<businessDays.size(); k++){
-                                    BusinessDay businessDay = businessDays.get(k);
-                                    if (businessDay.dayId == day.dayId){
-                                        businessDay.addTimeSlot(timeSlotNew);
-                                        day = businessDay;
-                                    }else {
-                                        day.addTimeSlot(timeSlotNew);
-                                    }
-                                }
-*/
+
                             }
 
-                            //   for(int k=0; k<businessDays.size(); k++){
 
-                            //      hashMap.put(businessDay.dayId,businessDay);
+                  /*          ArrayList<BusinessDay>arrayList = new ArrayList<>();
+                            arrayList.clear();
 
-       /*                             Iterator it = hashMap.entrySet().iterator();
-                                    List<Map<String,Integer>> list = new ArrayList<Map<String, Integer>>();
+                            for(BusinessDay day : businessDays)
+                            {
+                                if (arrayList.size()!=0){
+                                    {
+                                        for (int n=0; n<2; n++){
 
-                                    while (it.hasNext()) {
-                                        Map.Entry pair = (Map.Entry)it.next();
-                                        pair.getKey();
-
-                                        if(foodTypeId.equals("")){
-                                            foodTypeId =  String.valueOf(pair.getKey());
-                                        } else {
-                                            foodTypeId = foodTypeId + "," + String.valueOf(pair.getKey());
+                                            if (day.dayId == day.slots.get(n).dayId)
+                                            {
+                                                arrayList.add(day);
+                                            }
                                         }
-                                        it.remove();
                                     }
+                                }else {
+                                    arrayList.add(day);
+                                }
+                            }
 */
-                            //     }
+
+
 
                             for(int i=0; i<businessDayOld.size(); i++)
                             {

@@ -45,6 +45,7 @@ public class ArtistsSearchBoard implements Parcelable {
             lastName,distance,ratingCount,businessType;
 
     public  ArrayList<ArtistServices>service;
+    public  ArrayList<ArtistServices>allService;
 
     @Override
     public int describeContents() {

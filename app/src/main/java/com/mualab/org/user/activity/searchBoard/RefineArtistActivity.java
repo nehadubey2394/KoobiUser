@@ -1,8 +1,12 @@
 package com.mualab.org.user.activity.searchBoard;
 
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
@@ -11,12 +15,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -48,7 +54,12 @@ import com.mualab.org.user.util.Helper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,11 +69,12 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     private ExpandableListView lvExpandable;
     private boolean isServiceOpen = false;
     private ImageView ivPrice,ivDistance;
-    private TextView tv_refine_dob,tv_refine_loc;
+    private TextView tv_refine_dnt,tv_refine_loc;
     private RefineServiceExpandListAdapter expandableListAdapter;
     private ArrayList<RefineServices>services;
-    private String subServiceId = "",mainServId = "",sortType ="",sortSearch ="distance",serviceType="",lat="",lng="";
-    private CheckBox chbOutcall;
+    private String subServiceId = "",mainServId = "",sortType ="",sortSearch ="distance",serviceType="",lat="",lng="",date_time,format,time;
+    private int mHour,mMinute,dayId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +99,9 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         ivPrice = findViewById(R.id.ivPrice);
         ivDistance = findViewById(R.id.ivDistance);
 
-        tv_refine_dob = findViewById(R.id.tv_refine_dob);
+        tv_refine_dnt = findViewById(R.id.tv_refine_dnt);
         tv_refine_loc = findViewById(R.id.tv_refine_loc);
-        chbOutcall = findViewById(R.id.chbOutcall);
+        CheckBox chbOutcall = findViewById(R.id.chbOutcall);
 
         AppCompatButton btnApply = findViewById(R.id.btnApply);
         AppCompatButton btnClear = findViewById(R.id.btnClear);
@@ -110,7 +122,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         RelativeLayout rlPrice = findViewById(R.id.rlPrice);
         RelativeLayout rlDistance = findViewById(R.id.rlDistance);
         RelativeLayout rlRefineLocation = findViewById(R.id.rlRefineLocation);
-        RelativeLayout rlDob = findViewById(R.id.rlDob);
+        RelativeLayout rlDnT = findViewById(R.id.rlDnT);
 
         RadioGroup rdgOrder =  findViewById(R.id.rdgOrder);
         final AppCompatRadioButton rbAscending =  findViewById(R.id.rbAscending);
@@ -194,22 +206,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         lvExpandable.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
-             /*   RefineServices servicesItem = services.get(groupPosition);
-                ArrayList<RefineSubServices> arrayList = servicesItem.getArrayList();
 
-                RefineSubServices subModel = arrayList.get(childPosition);
-                if (subModel.isChecked.equals("0")){
-                    subModel.isChecked = "1";
-                   // servicesItem.isSubItemChecked = true;
-                   // servicesItem.isChecked = "1";
-                    expandableListAdapter.notifyDataSetChanged();
-
-                }else {
-                    subModel.isChecked = "0";
-                 //   servicesItem.isSubItemChecked = false;
-                  //  servicesItem.isChecked = "0";
-                    expandableListAdapter.notifyDataSetChanged();
-                }*/
                 return false;
             }
         });
@@ -218,7 +215,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         rlService.setOnClickListener(this);
         rlPrice.setOnClickListener(this);
         rlDistance.setOnClickListener(this);
-        rlDob.setOnClickListener(this);
+        rlDnT.setOnClickListener(this);
         rlRefineLocation.setOnClickListener(this);
         btnClear.setOnClickListener(this);
         btnApply.setOnClickListener(this);
@@ -235,10 +232,8 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 getAddress();
                 break;
 
-            case R.id.rlDob:
-                DatePickerFragment datePickerFragment = new DatePickerFragment(Constant.CALENDAR_DAY_PAST, true,false);
-                datePickerFragment.setDateListener(this);
-                datePickerFragment.show(getSupportFragmentManager(), "");
+            case R.id.rlDnT:
+                datePicker();
                 break;
 
             case R.id.rlService:
@@ -262,7 +257,13 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 break;
             case R.id.btnClear :
                 tv_refine_loc.setText("");
-                tv_refine_dob.setText("");
+                tv_refine_dnt.setText("");
+
+                Intent intent2 = new Intent(RefineArtistActivity.this, MainActivity.class);
+                //intent.putExtra("refineSearchBoard",refineSearchBoard);
+                startActivity(intent2);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
                 break;
 
             case R.id.btnApply :
@@ -270,12 +271,6 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 // List<Map<String,String>> list = new ArrayList<Map<String, String>>();
                 // list.clear();
                 for (RefineServices services :services ){
-                    //HashMap<String,String> hashMap = new HashMap<>();
-                 /*   if (mainServId.equals(""))
-                        mainServId =  services.id;
-                    else
-                        mainServId = mainServId + "," + services.id;*/
-
 
                     if (services.isChecked.equals("1")){
 
@@ -292,22 +287,15 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                                         if (!mainServId.contains(subItem.serviceId))
                                             mainServId = mainServId + "," + subItem.serviceId;
                                     }
-                                    //     hashMap.put("mainServId",mainServId);
-                                    //     hashMap.put("SubId", subServiceId);
                                 }
 
                             }
-                        }/*else {
-                            hashMap.put("mainServId",mainServId);
-                            hashMap.put("SubId", subServiceId);
                         }
-                        if (hashMap.size()!=0)
-                            list.add(hashMap);*/
                     }
                 }
 
                 RefineSearchBoard refineSearchBoard = new RefineSearchBoard();
-                refineSearchBoard.day = "";
+                refineSearchBoard.day = ""+dayId;
                 refineSearchBoard.latitude = lat;
                 refineSearchBoard.longitude = lng;
                 refineSearchBoard.service = mainServId;
@@ -315,7 +303,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 refineSearchBoard.serviceType = serviceType;
                 refineSearchBoard.sortSearch = sortSearch;
                 refineSearchBoard.sortType = sortType;
-
+                refineSearchBoard.time = time;
 
                 Intent intent = new Intent(RefineArtistActivity.this, MainActivity.class);
                 intent.putExtra("refineSearchBoard",refineSearchBoard);
@@ -444,9 +432,77 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             }
         }
     }
+
+    private void datePicker(){
+        // Get Current Date
+        final Calendar c = GregorianCalendar.getInstance();
+        int mYear = c.get(GregorianCalendar.YEAR);
+        int mMonth = c.get(GregorianCalendar.MONTH);
+        int mDay = c.get(GregorianCalendar.DAY_OF_MONTH);
+        dayId = c.get(GregorianCalendar.DAY_OF_WEEK)-1;
+        String weekday = new DateFormatSymbols().getShortWeekdays()[dayId];
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,AlertDialog.THEME_HOLO_LIGHT,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year,int monthOfYear, int dayOfMonth) {
+                        Date date = new Date(year, monthOfYear, dayOfMonth-1);
+                        dayId = date.getDay()-1;
+                        date_time = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                        //*************Call Time Picker Here ********************
+                        tiemPicker();
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
+    }
+
+    private void tiemPicker(){
+        // Get Current Time
+        final Calendar c = Calendar.getInstance();
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        mMinute = c.get(Calendar.MINUTE);
+        // Launch Time Picker Dialog
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this,AlertDialog.THEME_HOLO_LIGHT,
+                new TimePickerDialog.OnTimeSetListener() {
+
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        if (hourOfDay == 0) {
+
+                            hourOfDay += 12;
+
+                            format = "AM";
+                        }
+                        else if (hourOfDay == 12) {
+
+                            format = "PM";
+
+                        }
+                        else if (hourOfDay > 12) {
+
+                            hourOfDay -= 12;
+
+                            format = "PM";
+
+                        }
+                        else {
+
+                            format = "AM";
+                        }
+
+                        mHour = hourOfDay;
+                        mMinute = minute;
+                        time = hourOfDay + ":" + minute+" "+format;
+
+                        tv_refine_dnt.setText(date_time+" "+hourOfDay + ":" + minute+" "+format);
+                    }
+                }, mHour, mMinute, false);
+        timePickerDialog.show();
+    }
+
     @Override
     public void onDateSet(int year, int month, int day, int cal_type) {
-        tv_refine_dob.setText(day + "/" + (month + 1) + "/" + year);
+        tv_refine_dnt.setText(day + "/" + (month + 1) + "/" + year);
     }
 
     @Override
