@@ -35,7 +35,7 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
     public int getChildrenCount(int groupPosition) {
         if (parentArrayList.size()!=0){
             try {
-                childtems = parentArrayList.get(groupPosition).getArrayList();
+                childtems = parentArrayList.get(groupPosition).arrayList;
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -53,7 +53,7 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
     public Object getChild(int groupPosition, int childPosition) {
         if (parentArrayList.size()!=0){
             try {
-                childtems = parentArrayList.get(groupPosition).getArrayList();
+                childtems = parentArrayList.get(groupPosition).arrayList;
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -100,7 +100,7 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
         if (parentArrayList.size()!=0){
             try {
                 Services services = parentArrayList.get(groupPosition);
-                ArrayList<SubServices> arrayList = services.getArrayList();
+                ArrayList<SubServices> arrayList = services.arrayList;
                 if (arrayList.size()==0){
                     holder.ivDropDown.setVisibility(View.GONE);
 
@@ -124,7 +124,7 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
                     holder.tvMainSerName.setTextColor(activity.getResources().getColor(R.color.text_color));
                 }
 
-                holder.tvMainSerName.setText(services.sName);
+                holder.tvMainSerName.setText(services.serviceName);
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -167,7 +167,7 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
 
         holder.tvSubSerName = convertView.findViewById(R.id.tvSubSerName);
         holder.ivDropDown2 =  convertView.findViewById(R.id.ivDropDown2);
-        holder.tvSubSerName.setText(subServices.name);
+        holder.tvSubSerName.setText(subServices.subServiceName);
 
 
         return convertView;

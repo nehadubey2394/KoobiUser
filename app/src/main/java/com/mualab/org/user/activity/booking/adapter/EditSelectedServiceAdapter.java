@@ -86,9 +86,9 @@ public class EditSelectedServiceAdapter extends RecyclerView.Adapter<RecyclerVie
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final BookingServices3 item = artistsList.get(position);
 
-        holder.tvTime.setText(item.time);
-        holder.tvLastService.setText(item.sName);
-        holder.tvAmount.setText(item.price);
+        holder.tvTime.setText(item.completionTime);
+        holder.tvLastService.setText(item.title);
+        holder.tvAmount.setText(item.inCallPrice);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

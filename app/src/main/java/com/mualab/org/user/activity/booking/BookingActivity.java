@@ -31,7 +31,11 @@ import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
+import com.mualab.org.user.model.booking.BookingServices3;
+import com.mualab.org.user.model.booking.BookingStaff;
 import com.mualab.org.user.model.booking.BusinessDay;
+import com.mualab.org.user.model.booking.Services;
+import com.mualab.org.user.model.booking.SubServices;
 import com.mualab.org.user.model.booking.TimeSlot;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
@@ -59,7 +63,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private AdapterBusinessDays adapter;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
-    private  HashMap<Integer,BusinessDay> hashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +77,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView(){
-        hashMap = new HashMap<>();
+
         businessDays = new ArrayList<>();
         businessDayOld  =  getBusinessdays();
         adapter = new AdapterBusinessDays(BookingActivity.this, businessDayOld);
@@ -131,7 +134,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             Picasso.with(BookingActivity.this).load(item.profileImage).placeholder(R.drawable.defoult_user_img).fit().into(ivHeaderProfile);
         }
 
-        addFragment(new BookingFragment2(), false, R.id.flBookingContainer);
+        addFragment(BookingFragment2.newInstance(item,""), false, R.id.flBookingContainer);
 
     }
 
@@ -285,6 +288,53 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.reviewCount = jsonObject.getString("reviewCount");
                         item.postCount = jsonObject.getString("postCount");
                         item.businessName = jsonObject.getString("businessName");
+
+                        JSONArray allServiceArray = jsonObject.getJSONArray("allService");
+                        if (allServiceArray!=null) {
+                            for (int j=0; j<allServiceArray.length(); j++){
+                                JSONObject object = allServiceArray.getJSONObject(j);
+                                Services services = new Services();
+                                services.serviceId = object.getString("serviceId");
+                                services.serviceName = object.getString("serviceName");
+
+                                JSONArray subServiesArray = object.getJSONArray("subServies");
+                                if (subServiesArray!=null) {
+                                    for (int k=0; k<subServiesArray.length(); k++){
+                                        JSONObject jObj = subServiesArray.getJSONObject(k);
+                                        //          SubServices subServices = gson.fromJson(String.valueOf(jObj), SubServices.class);
+                                        SubServices subServices = new SubServices();
+                                        subServices._id = jObj.getString("_id");
+                                        subServices.serviceId = jObj.getString("serviceId");
+                                        subServices.subServiceId = jObj.getString("subServiceId");
+                                        subServices.subServiceName = jObj.getString("subServiceName");
+
+                                        JSONArray artistservices = jObj.getJSONArray
+                                                ("artistservices");
+                                        for (int m=0; m<artistservices.length(); m++){
+                                            Gson gson = new Gson();
+                                            JSONObject jsonObject3 = artistservices.getJSONObject(m);
+                                            BookingServices3 services3 = gson.fromJson(String.valueOf(jsonObject3), BookingServices3.class);
+                                            subServices.artistservices.add(services3);
+                                        }
+
+                                        services.arrayList.add(subServices);
+                                    }
+                                    item.allService.add(services);
+                                }
+                            }
+                        }
+
+                        JSONArray staffInfo = jsonObject.getJSONArray("staffInfo");
+                        if (staffInfo!=null) {
+                            for (int a=0; a<staffInfo.length(); a++){
+                                JSONObject staffInfoJSONObject = staffInfo.getJSONObject(a);
+                                Gson gson = new Gson();
+                                BookingStaff bookingStaff = gson.fromJson(String.valueOf(staffInfoJSONObject), BookingStaff.class);
+                                item.staffList.add(bookingStaff);
+
+                            }
+                        }
+
                         ArrayList<TimeSlot> timeSlots = new ArrayList<>();
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
                         if (artistArray!=null) {

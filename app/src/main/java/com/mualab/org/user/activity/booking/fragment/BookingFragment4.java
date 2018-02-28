@@ -21,6 +21,7 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
 import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
 import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingTimeSlot;
 
@@ -37,15 +38,16 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private ArrayList<BookingInfo>bookingInfos;
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
-
+    private ArtistsSearchBoard item;
     public BookingFragment4() {
         // Required empty public constructor
     }
 
-    public static BookingFragment4 newInstance(String param1, String param2) {
+    public static BookingFragment4 newInstance(String param1, String mParam2) {
         BookingFragment4 fragment = new BookingFragment4();
         Bundle args = new Bundle();
         args.putString("param1", param1);
+      //  args.putParcelable("param2", item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,6 +59,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
+          //  item = getArguments().getParcelable("param1")  ;
         }
     }
 

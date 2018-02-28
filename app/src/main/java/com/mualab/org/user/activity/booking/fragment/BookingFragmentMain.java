@@ -86,13 +86,13 @@ public class BookingFragmentMain extends Fragment implements View.OnClickListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mParam1.equals("1")){
+      /*  if (mParam1.equals("1")){
             getChildFragmentManager().beginTransaction().replace(R.id.flBookingContainer,
                     BookingFragment1.newInstance("","")).commit();
         }else {
             getChildFragmentManager().beginTransaction().replace(R.id.flBookingContainer,
                     BookingFragment2.newInstance("","")).commit();
-        }
+        }*/
     }
 
     @Override

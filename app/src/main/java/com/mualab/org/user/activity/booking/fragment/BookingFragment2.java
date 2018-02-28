@@ -13,6 +13,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
 import com.mualab.org.user.activity.searchBoard.adapter.RefineServiceExpandListAdapter;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.SearchBoard.RefineServices;
 import com.mualab.org.user.model.SearchBoard.RefineSubServices;
 import com.mualab.org.user.model.booking.Services;
@@ -32,17 +33,17 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     private ArrayList<Services>services;
     private ImageView ivOutcall;
     boolean isOutCallSelect = false;
-
+    private ArtistsSearchBoard item;
 
     public BookingFragment2() {
         // Required empty public constructor
     }
 
 
-    public static BookingFragment2 newInstance(String param1, String param2) {
+    public static BookingFragment2 newInstance(ArtistsSearchBoard item, String param2) {
         BookingFragment2 fragment = new BookingFragment2();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putParcelable(ARG_PARAM1, item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,7 +54,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            item =  getArguments().getParcelable("param1");
         }
     }
 
@@ -74,10 +75,9 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     }
 
     private void initView(){
-        services = new ArrayList<>();
+        services =  item.allService;
         expandableListAdapter = new ServiceExpandListAdapter(mContext, services);
-        services.clear();
-        addStaff();
+       // services.clear();
     }
 
     private void setViewId(View rootView){
@@ -87,7 +87,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
         ExpandableListView lvExpandable = rootView.findViewById(R.id.lvExpandable);
         lvExpandable.setAdapter(expandableListAdapter);
-
+       // expandableListAdapter.notifyDataSetChanged();
         lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int i) {
@@ -127,30 +127,12 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
                 Services servicesItem = services.get(groupPosition);
+                SubServices subServices = servicesItem.arrayList.get(childPosition);
                 ((BookingActivity)mContext).addFragment(
-                        BookingFragment3.newInstance(servicesItem.getArrayList().get(childPosition).name,""), true, R.id.flBookingContainer);
+                        BookingFragment3.newInstance(subServices.subServiceName,subServices,item), true, R.id.flBookingContainer);
                 return false;
             }
         });
-    }
-
-    private void addStaff(){
-        Services item;
-        for (int i = 0; i<5;i++){
-            item = new Services();
-            item.sName = "Make Up";
-
-            ArrayList<SubServices> arrayList = new ArrayList<>();
-
-            for (int j = 0;  j<3; j++) {
-                SubServices subItem = new SubServices();
-                subItem.name = "Trim";
-                arrayList.add(subItem);
-            }
-            item.setArrayList(arrayList);
-            services.add(item);
-        }
-        expandableListAdapter.notifyDataSetChanged();
     }
 
     @Override

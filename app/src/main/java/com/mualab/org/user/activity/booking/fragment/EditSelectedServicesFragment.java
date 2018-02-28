@@ -83,9 +83,9 @@ public class EditSelectedServicesFragment extends Fragment {
         BookingServices3 services3;
         for (int i = 0; i<10;i++){
             services3 = new BookingServices3();
-            services3.sName = "Zero Trim";
-            services3.time = "10 min";
-            services3.price = "250";
+            services3.title = "Zero Trim";
+            services3.completionTime = "10 min";
+            services3.inCallPrice = "250";
             arrayList.add(services3);
         }
         adapter.notifyDataSetChanged();
