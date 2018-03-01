@@ -13,6 +13,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.Services;
 import com.mualab.org.user.model.booking.SubServices;
 
@@ -141,7 +142,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                     isOutCallSelect = false;
                     ivOutcall.setImageResource(R.drawable.inactive_checkbox);
                 }
-                //   OutCallFilter();
+                OutCallFilter();
                 break;
         }
     }
@@ -163,7 +164,8 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                /* for (Services mService : tempArrayList2){
                     for (SubServices subServices : mService.arrayList){
                         for (BookingServices3 services3 : subServices.artistservices) {
-                            if (!services3.outCallPrice.equals("0")){
+                            if (services3.outCallPrice.equals("0")){
+                                tempArrayList2.remove(mService);
                                 services.add(mService);
                             }else {
                                 tempArrayList2.remove(mService);
@@ -172,19 +174,25 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                     }
 
                 }*/
-         /*       for (int i=0; i<tempArrayList2.size(); i++){
+                for (int i=0; i<tempArrayList2.size(); i++){
                     Services mServices = tempArrayList2.get(i);
-                    for (int j=0; j<mServices.arrayList.size(); j++){
-                        SubServices subServices = mServices.arrayList.get(j);
-                        for (int k=0; k<subServices.artistservices.size(); k++){
-                            BookingServices3 services3 = subServices.artistservices.get(k);
-                            if (services3.outCallPrice.equals("0")){
-                                subServices.artistservices.remove(k);
+                    if (mServices.isOutCall){
+                        for (int j=0; j<mServices.arrayList.size(); j++) {
+                            SubServices subServices = mServices.arrayList.get(j);
+                            if (subServices.isOutCall){
+                                for (int k=0; k<subServices.artistservices.size(); k++) {
+                                    BookingServices3 services3 = subServices.artistservices.get(k);
+                                    if (services3.isOutCall){
+                                        if (!services3.outCallPrice.equals("0") || !services3.outCallPrice.equals("null") ){
+                                            services.add(mServices);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+
                 }
-            }*/
             }
         }else {
             services.addAll(tempArrayList);

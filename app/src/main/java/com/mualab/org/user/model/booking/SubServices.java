@@ -11,7 +11,8 @@ import java.util.ArrayList;
 
 public class SubServices implements Serializable{
     public  String _id,subServiceName,serviceId,subServiceId;
-
+    @SerializedName("isOutCall")
+    public boolean isOutCall;
     @SerializedName("artistservices")
     public   ArrayList<BookingServices3>artistservices = new ArrayList<>();
 }

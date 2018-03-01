@@ -90,7 +90,14 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final BookingServices3 item = artistsList.get(position);
 
-        holder.tvTime.setText(item.completionTime+ " Min");
+        String CurrentString = item.completionTime;
+        if (CurrentString.contains(":")){
+            String[] separated = CurrentString.split(":");
+            String hours = separated[0]+"hrs ";
+            String min = separated[1]+" min";
+            holder.tvTime.setText(hours+min);
+        }
+
         holder.tvLastService.setText(item.title);
         holder.tvAmount.setText(item.inCallPrice);
     }
@@ -115,7 +122,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     }else {
                         ((BookingActivity)context).addFragment(
-                                 BookingFragment1.newInstance(serviceTitle,item), true, R.id.flBookingContainer);
+                                BookingFragment1.newInstance(serviceTitle,item), true, R.id.flBookingContainer);
 
                     }
                 }

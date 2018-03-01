@@ -315,8 +315,21 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                         for (int m=0; m<artistservices.length(); m++){
                                             Gson gson = new Gson();
                                             JSONObject jsonObject3 = artistservices.getJSONObject(m);
-                                            BookingServices3 services3 = gson.fromJson(String.valueOf(jsonObject3), BookingServices3.class);
+                                            BookingServices3 services3 = new BookingServices3();
+
+                                            services3._id = jsonObject3.getString("_id");
+                                            services3.title = jsonObject3.getString("title");
+                                            services3.completionTime = jsonObject3.getString("completionTime");
+                                            services3.outCallPrice = jsonObject3.getString("outCallPrice");
+                                            services3.inCallPrice = jsonObject3.getString("inCallPrice");
+
+                                            if (!services3.outCallPrice.equals("0") || !services3.outCallPrice.equals("null")){
+                                                services3.isOutCall = true;
+                                                subServices.isOutCall = true;
+                                                services.isOutCall = true;
+                                            }
                                             subServices.artistservices.add(services3);
+
                                         }
 
                                         services.arrayList.add(subServices);
