@@ -1,44 +1,46 @@
 package com.mualab.org.user.activity;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
+import android.graphics.Bitmap;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.NewStoryActivity;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
-import com.mualab.org.user.util.LocationDetector;
+import com.mualab.org.user.task.HttpResponceListner;
+import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
+
+import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
     private int clickedId = 0;
     public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon;
     public TextView tvHeaderTitle;
-    private String lat,lng;
     public RelativeLayout rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
 
@@ -111,8 +113,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void openNewStoryActivity(){
-        Intent intent = new Intent(this, NewStoryActivity.class);
-        startActivityForResult(intent, REQUEST_ADD_NEW_STORY);
+        /*Intent intent = new Intent(this, NewStoryActivity.class);
+        startActivityForResult(intent, REQUEST_ADD_NEW_STORY);*/
+        startActivityForResult(new Intent(MainActivity.this, CameraActivity.class),
+                REQUEST_ADD_NEW_STORY);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK && requestCode==REQUEST_ADD_NEW_STORY){
+
+            /*if(resultCode == 7891){
+
+                Uri uri = data.getData();
+                String dataType  = data.getType();
+                if(dataType.equals("image/jpeg")){
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(MainActivity.this.getContentResolver(),uri);
+                        addMyStory(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }*/
+        }
     }
 
     @Override
@@ -278,5 +305,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             handler.removeCallbacks(runnable);
             super.onBackPressed();
         }
+    }
+
+
+
+    private void addMyStory( Bitmap bitmap){
+
+        if(ConnectionDetector.isConnected()){
+            Map<String,String> map = new HashMap<>();
+            map.put("type", "image");
+
+            HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
+                @Override
+                public void onResponse(String response, String apiName) {
+                    try {
+                        JSONObject js = new JSONObject(response);
+                        String status = js.getString("status");
+                        String message = js.getString("message");
+                        if (status.equalsIgnoreCase("success")) {
+                            showToast(message);
+                            finish();
+                        }
+                        else showToast(message);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void ErrorListener(VolleyError error) {
+                    Log.d("res:", ""+error.getLocalizedMessage());
+                }})
+                    .setParam(map)
+                    .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
+                    .setProgress(true));
+            task.postImage("myStory", bitmap);
+        }else showToast(getString(R.string.error_msg_network));
+    }
+
+    private void showToast(String str){
+        if(!TextUtils.isEmpty(str))
+            MyToast.getInstance(this).showSmallCustomToast(str);
     }
 }

@@ -149,7 +149,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 textHolder.tvUserName.setText(fullName);
                 textHolder.tvPostTime.setText(feeds.crd);
-                textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
+                textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 textHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 textHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 textHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
@@ -169,7 +169,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 imageHolder.tvUserName.setText(fullName);
                 imageHolder.tvPostTime.setText(feeds.crd);
-                imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
+                imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
 
 
                 imageHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
@@ -283,7 +283,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 vedioHolder.tvUserName.setText(fullName);
                 vedioHolder.tvPostTime.setText(feeds.crd);
-                vedioHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
+                vedioHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 vedioHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 vedioHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 vedioHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);

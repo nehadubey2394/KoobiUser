@@ -176,7 +176,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         endlesScrollListener = new EndlessRecyclerViewScrollListener(lm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                apiForGetAllFeeds(page, 100);
+                //apiForGetAllFeeds(page, 100, false);
             }
         };
 
@@ -185,7 +185,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
         getStoryList();
 
-        Progress.show(mContext);
+       // Progress.show(mContext);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -292,7 +292,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     feeds.clear();
                     feedType = "";
                     CURRENT_FEED_STATE = Constant.FEED_STATE;
-                    apiForGetAllFeeds(0, 100);
+                    apiForGetAllFeeds(0, 100, true);
                     //ParseAndUpdateUI(loadAllFeedJSONFromAsset());
                 }
                 break;
@@ -304,7 +304,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     feeds.clear();
                     feedType = "image";
                     CURRENT_FEED_STATE = Constant.IMAGE_STATE;
-                    apiForGetAllFeeds( 0, 100);
+                    apiForGetAllFeeds( 0, 100, true);
                     //ParseAndUpdateUI(loadImageJSONFromAsset());
                 }
 
@@ -317,7 +317,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     feeds.clear();
                     feedType = "video";
                     CURRENT_FEED_STATE = Constant.VIDEO_STATE;
-                    apiForGetAllFeeds( 0, 100);
+                    apiForGetAllFeeds( 0, 100, true);
                     //ParseAndUpdateUI(loadVideoJSONFromAsset());
                 }
                 break;
@@ -373,7 +373,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
     }*/
 
 
-    private void apiForGetAllFeeds(final int page, final int feedLimit){
+    private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -383,7 +383,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
                         dialog.dismiss();
-                        apiForGetAllFeeds(page, feedLimit);
+                        apiForGetAllFeeds(page, feedLimit, isEnableProgress);
                     }
 
                 }
@@ -424,8 +424,8 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                 .setAuthToken(user.authToken)
                 .setParam(params)
                 .setMethod(Request.Method.POST)
-                .setProgress(true)
-                .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
+                .setProgress(isEnableProgress)
+                .setBodyContentType(HttpTask.ContentType.X_WWW_FORM_URLENCODED))
                 .execute(this.getClass().getName());
     }
 
@@ -439,11 +439,37 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
                 tvNoData.setVisibility(View.GONE);
-                JSONArray array = js.getJSONArray("Feeds");
+                JSONArray array = js.getJSONArray("AllFeeds");
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
                     JSONObject jsonObject = array.getJSONObject(i);
                     Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
+
+                    /*tmp get data and set into actual json format*/
+                    Feeds.User user = feed.userInfo.get(0);
+                    feed.userName = user.userName;
+                    feed.fullName = user.firstName+" "+user.lastName;
+                    feed.profileImage = user.profileImage;
+                    feed.userId = user._id;
+                    feed.crd =feed.timeElapsed;
+
+
+                    if(feed.feedData!=null){
+
+                        feed.feed = new ArrayList<>();
+                        feed.feedThumb = new ArrayList<>();
+                        for(Feeds.Feed tmp :feed.feedData){
+                            feed.feed.add(tmp.feedPost);
+
+                            if(!TextUtils.isEmpty(feed.feedData.get(0).videoThumb))
+                                feed.feedThumb.add(tmp.feedPost);
+                        }
+
+                    }
+                        feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+
+
+
                     feeds.add(feed);
                 }
 
@@ -648,10 +674,11 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     }
                     break;
 
+
                 case Constant.POST_FEED_DATA:
                     resetView();
-                   // setPagination(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-                    //callAPI("", 0, "10", Constant.FEED_STATE);
+                    endlesScrollListener.resetState();
+                    apiForGetAllFeeds(0, 100, true);
                     break;
 
                 case Constant.REQUEST_VIDEO_CAPTURE:

@@ -47,6 +47,7 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.model.MediaUri;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
@@ -361,7 +362,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     }else {
                         apiCallForUploadVideo(file);
                     }*/
-                        sendToBackGroundService();
+                        MyToast.getInstance(FeedPostActivity.this)
+                                .showSmallMessage(getString(R.string.under_development));
+                        //sendToBackGroundService();
                     } else if (feedType == Constant.IMAGE_STATE)
                         apiCallForUploadData();
                 }else {
@@ -391,16 +394,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void sendToBackGroundService() {
-        isShare = "";
-
-        if (isFbShared && isTwitteron) {
-            isShare = "facebook,twitter";
-        } else if (isFbShared) {
-            isShare = "facebook";
-        } else if (isTwitteron) {
-            isShare = "twitter";
-        }
-
         address = TextUtils.isEmpty(address) ? "" : address;
         Map<String, String> map = new HashMap<>();
         map.put("feedType", "video");
@@ -417,7 +410,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             map.put("longitude", "");
         }
 
-        /*if (Constant.isVideoUploading) {
+      /*  if (Constant.isVideoUploading) {
             Toast.makeText(this, "Please wait until your upload is complete", Toast.LENGTH_SHORT).show();
         } else {
             Constant.isVideoUploading = true;
@@ -590,16 +583,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     // uploadimage call
     private void apiCallForUploadData() {
-        isShare = "";
-
-        if (isFbShared && isTwitteron) {
-            isShare = "facebook,twitter";
-        } else if (isFbShared) {
-            isShare = "facebook";
-        } else if (isTwitteron) {
-            isShare = "twitter";
-        }
-
 
         address = TextUtils.isEmpty(address) ? "" : address;
         String feedTypetxt = "";
@@ -613,9 +596,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         Map<String, String> map = new HashMap<>();
         map.put("feedType", feedTypetxt);
         map.put("caption", caption);
-        map.put("isShare", isShare);
         map.put("location", address);
         map.put("tags", tages);
+        map.put("serviceTagId", tages);
 
         if (lat != null && lng != null) {
             map.put("latitude", "" + lat);
@@ -629,7 +612,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         List<Uri>uris = new ArrayList<>();
         for(String uri: mediaUri.uriList)
             uris.add(Uri.parse(uri));
-
+        Progress.show(this);
         new UploadImage(FeedPostActivity.this,
                 session.getAuthToken(),
                 map,
@@ -637,6 +620,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 new UploadImage.Listner() {
             @Override
             public void onResponce(String responce) {
+                Progress.hide(FeedPostActivity.this);
                 if (!TextUtils.isEmpty(responce)){
                     Log.d("Responce", responce);
                     resetView();
@@ -648,6 +632,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onError(String error) {
                 Log.d("Responce", error);
+                Progress.hide(FeedPostActivity.this);
                 MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
             }
         }).execute();

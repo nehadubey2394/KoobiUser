@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
@@ -36,6 +37,19 @@ public class Progress {
 
     public static void show(Context context) {
         //if(progress==null)
+        if(progress!=null){
+            try{
+                View removeView = ((Activity) context).findViewById(R.id.progressRootView);
+                removeView.setVisibility(View.GONE);
+               /* ViewGroup rootView = (ViewGroup) ((Activity) context).findViewById(android.R.id.content);
+                rootView.removeView(removeView);*/
+            }catch (Exception e){
+                e.printStackTrace();
+                progress = new Progress((Activity) context);
+                progress.progressBarView.setVisibility(View.VISIBLE);
+                progress.progressBarView.findViewById(R.id.view).setVisibility(View.VISIBLE);
+            }
+        }
         progress = new Progress((Activity) context);
         progress.progressBarView.setVisibility(View.VISIBLE);
         progress.progressBarView.findViewById(R.id.view).setVisibility(View.VISIBLE);

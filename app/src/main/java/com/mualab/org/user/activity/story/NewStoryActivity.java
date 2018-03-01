@@ -39,7 +39,6 @@ public class NewStoryActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_story);
-
         init();
     }
 
@@ -78,8 +77,8 @@ public class NewStoryActivity extends Activity {
                     //Play with the encoding bitrate to change quality and size.
                     .videoEncodingBitRate(DEFAULT_BITRATE * 5)                     // Sets a custom bit rate for video recording.
                     .audioEncodingBitRate(50000)                       // Sets a custom bit rate for audio recording.
-                    .videoFrameRate(60)                                // Sets a custom frame rate (FPS) for video recording.
-//                    .qualityProfile(MaterialCamera.QUALITY_1080P)       // Sets a quality profile, manually setting bit rates or frame rates with other settings will overwrite individual quality profile settings
+                    .videoFrameRate(30)                                // Sets a custom frame rate (FPS) for video recording.
+                    .qualityProfile(MaterialCamera.QUALITY_720P)       // Sets a quality profile, manually setting bit rates or frame rates with other settings will overwrite individual quality profile settings
                     .videoPreferredHeight(720)                         // Sets a preferred height for the recorded video output.
                     .videoPreferredAspect(16f / 9f)                     // Sets a preferred aspect ratio for the recorded video output.
                     .maxAllowedFileSize(1024 * 1024 * 40)               // Sets a max file size of 4MB, recording will stop if file reaches this limit. Keep in mind, the FAT file system has a file size limit of 4GB.
@@ -95,7 +94,7 @@ public class NewStoryActivity extends Activity {
 //                .autoRecordWithDelaySec(5)                         // The video camera will start recording automatically after a 5 second countdown. This disables switching between the front and back camera initially.
 //                .autoRecordWithDelayMs(5000)                       // Same as the above, expressed with milliseconds instead of seconds.
                     .audioDisabled(false)                              // Set to true to record video without any audio.
-                    .countdownSeconds(30f)
+                    .countdownSeconds(60f)
                     .start(CAMERA_RQ);
         }
         else{
@@ -113,8 +112,8 @@ public class NewStoryActivity extends Activity {
                     .continueTimerInPlayback(false)                    // If true, the countdown timer will continue to go down during playback, rather than pausing.
                     .videoEncodingBitRate(DEFAULT_BITRATE * 5)                     // Sets a custom bit rate for video recording.
                     .audioEncodingBitRate(50000)                       // Sets a custom bit rate for audio recording.
-                    .videoFrameRate(60)                                // Sets a custom frame rate (FPS) for video recording.
-//                    .qualityProfile(MaterialCamera.QUALITY_1080P)       // Sets a quality profile, manually setting bit rates or frame rates with other settings will overwrite individual quality profile settings
+                    .videoFrameRate(30)                                // Sets a custom frame rate (FPS) for video recording.
+                    //.qualityProfile(MaterialCamera.QUALITY_720P)       // Sets a quality profile, manually setting bit rates or frame rates with other settings will overwrite individual quality profile settings
                     .videoPreferredHeight(720)                         // Sets a preferred height for the recorded video output.
                     .videoPreferredAspect(16f / 9f)                     // Sets a preferred aspect ratio for the recorded video output.
                     .maxAllowedFileSize(1024 * 1024 * 10)               // Sets a max file size of 4MB, recording will stop if file reaches this limit. Keep in mind, the FAT file system has a file size limit of 4GB.
@@ -189,13 +188,11 @@ public class NewStoryActivity extends Activity {
                 Exception e = (Exception) data.getSerializableExtra(MaterialCamera.ERROR_EXTRA);
                 e.printStackTrace();
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }else {
+                finish();
             }
         }
     }
-
-
-
-
 }
 
 
