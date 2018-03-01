@@ -13,7 +13,6 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
-import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.Services;
 import com.mualab.org.user.model.booking.SubServices;
 
@@ -26,7 +25,6 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private ExpandableListView lvExpandable;
     private ServiceExpandListAdapter expandableListAdapter;
     private ArrayList<Services>services,tempArrayList;
     private ImageView ivOutcall;
@@ -126,10 +124,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         lvExpandable.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
-                Services servicesItem = services.get(groupPosition);
-                SubServices subServices = servicesItem.arrayList.get(childPosition);
-                ((BookingActivity)mContext).addFragment(
-                        BookingFragment3.newInstance(subServices.subServiceName,subServices,item), true, R.id.flBookingContainer);
+                onChildClickListener(expandableListView,view,groupPosition,childPosition,l);
                 return false;
             }
         });
@@ -146,9 +141,16 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                     isOutCallSelect = false;
                     ivOutcall.setImageResource(R.drawable.inactive_checkbox);
                 }
-             //   OutCallFilter();
+                //   OutCallFilter();
                 break;
         }
+    }
+
+    private void onChildClickListener(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l){
+        Services servicesItem = services.get(groupPosition);
+        SubServices subServices = servicesItem.arrayList.get(childPosition);
+        ((BookingActivity)mContext).addFragment(
+                BookingFragment3.newInstance(subServices.subServiceName,subServices,item), true, R.id.flBookingContainer);
     }
 
     public void OutCallFilter() {
@@ -182,19 +184,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                         }
                     }
                 }
-
-                for (int i=0; i<tempArrayList2.size(); i++){
-                    Services mServices = tempArrayList2.get(i);
-                    for (int j=0; j<mServices.arrayList.size(); j++){
-                        SubServices subServices = mServices.arrayList.get(j);
-                        for (int k=0; k<subServices.artistservices.size(); k++){
-                            BookingServices3 services3 = subServices.artistservices.get(k);
-                            if (!services3.outCallPrice.equals("0")){
-                                services.add(mServices);
-                            }
-                        }
-                    }
-                }*/
+            }*/
             }
         }else {
             services.addAll(tempArrayList);
