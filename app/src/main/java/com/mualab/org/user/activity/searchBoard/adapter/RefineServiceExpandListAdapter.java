@@ -27,6 +27,11 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
         this.activity = activity;
     }
 
+    public void setNewItems(Context activity, ArrayList<RefineServices> parents) {
+        this.parentArrayList = parents;
+        this.activity = activity;
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getGroupCount() {
@@ -179,9 +184,11 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
                 if (b){
                     holder.checkbox2.setChecked(true);
                     subServices.isChecked = "1";
+                    subServices.isSubItemChecked = true;
                 }else {
                     holder.checkbox2.setChecked(false);
                     subServices.isChecked = "0";
+                    subServices.isSubItemChecked = false;
                 }
             }
         });
