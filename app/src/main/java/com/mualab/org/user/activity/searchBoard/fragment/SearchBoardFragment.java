@@ -286,6 +286,9 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                             if (page==0)
                                 MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
                         }
+                    }else {
+                        MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
+
                     }
                     //  showToast(message);
                 } catch (Exception e) {
