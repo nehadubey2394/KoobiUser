@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="2dp"
+    android:layout_marginTop="4dp"
+
+    >
+
+    <LinearLayout
+        android:id="@+id/lyDotsLineHours"
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@drawable/dot_lines"
+            android:tint="@color/black"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/ll_timeslotView"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="5dp"
+        android:paddingLeft="5dp"
+        android:background="@drawable/gray_boder_white_bg">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/calender_clock"
+            android:tint="@color/black"/>
+
+        <TextView
+            android:id="@+id/tv_from"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/TextView"
+            android:textColor="@color/black"
+            android:layout_marginLeft="5dp"
+            android:text="From 10:00 AM"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="@color/gray2"
+            />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/calender_clock"
+            android:tint="@color/black"/>
+
+        <TextView
+            android:id="@+id/tv_to"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/TextView"
+            android:textColor="@color/black"
+            android:layout_marginLeft="5dp"
+            android:text="From 7:00 PM"/>
+
+        <View
+            android:id="@+id/viewDivider"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="@color/gray2"
+            />
+
+        <!--     <LinearLayout
+                 android:id="@+id/ll_delete"
+                 android:layout_width="40dp"
+                 android:layout_height="match_parent"
+                 android:gravity="center">
+
+                 <ImageView
+                     android:id="@+id/iv_delete"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginLeft="5dp"
+                     android:layout_marginRight="5dp"
+                     android:src="@drawable/ic_close_black"/>
+
+
+             </LinearLayout>-->
+
+
+    </LinearLayout>
+
+</LinearLayout>

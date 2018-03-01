@@ -4,6 +4,8 @@ package com.mualab.org.user.activity.booking.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,31 +20,35 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
 import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
+import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
-import com.mualab.org.user.model.booking.TimeSlot;
+import com.mualab.org.user.model.booking.BookingTimeSlot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class BookingFragment4 extends Fragment {
+public class BookingFragment4 extends Fragment implements View.OnClickListener,CustomAdapterButtonListener{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private ArrayList<TimeSlot>timeSlots;
+    private ArrayList<BookingTimeSlot> bookingTimeSlots;
     private ArrayList<BookingInfo>bookingInfos;
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
+    private ArtistsSearchBoard item;
 
     public BookingFragment4() {
         // Required empty public constructor
     }
 
-    public static BookingFragment4 newInstance(String param1, String param2) {
+    public static BookingFragment4 newInstance(String param1, String mParam2) {
         BookingFragment4 fragment = new BookingFragment4();
         Bundle args = new Bundle();
         args.putString("param1", param1);
+      //  args.putParcelable("param2", item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,8 +57,10 @@ public class BookingFragment4 extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
+          //  item = getArguments().getParcelable("param1")  ;
         }
     }
 
@@ -73,9 +81,10 @@ public class BookingFragment4 extends Fragment {
     }
 
     private void initView(){
-        timeSlots = new ArrayList<>();
+        bookingTimeSlots = new ArrayList<>();
         bookingInfos = new ArrayList<>();
-        listAdapter = new TimeSlotAdapter(mContext, timeSlots);
+        listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
+        listAdapter.setCustomListener(BookingFragment4.this);
         bookingInfoAdapter = new BookingInfoAdapter(mContext, bookingInfos);
         addItems();
         addServices();
@@ -83,6 +92,10 @@ public class BookingFragment4 extends Fragment {
 
     private void setViewId(View rootView){
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
+
+        AppCompatButton btnCOnfirmBooking = rootView.findViewById(R.id.btnCOnfirmBooking);
+        AppCompatButton btnAddMoreService = rootView.findViewById(R.id.btnAddMoreService);
+
         RecyclerView rycTimeSlot = rootView.findViewById(R.id.rycTimeSlot);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL, false);
         rycTimeSlot.setLayoutManager(layoutManager);
@@ -91,7 +104,6 @@ public class BookingFragment4 extends Fragment {
         RecyclerView rycBookingInfo = rootView.findViewById(R.id.rycBookingInfo);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(mContext);
         rycBookingInfo.setLayoutManager(layoutManager2);
-        rycBookingInfo.setHasFixedSize(true);
         rycBookingInfo.setNestedScrollingEnabled(false);
         rycBookingInfo.setAdapter(bookingInfoAdapter);
 
@@ -144,13 +156,16 @@ public class BookingFragment4 extends Fragment {
         viewCalendar.addEventTag(2018, 8, 14);
         viewCalendar.addEventTag(2018, 8, 23);
 */
-        viewCalendar.select(new Day(2018, 4, 22));
+        // viewCalendar.select(new Day(2018, 4, 22));
+
+        btnCOnfirmBooking.setOnClickListener(this);
+        btnAddMoreService.setOnClickListener(this);
     }
 
     private void addItems(){
-        TimeSlot item;
-        for(int i=0;i<6;i++) {
-            item = new TimeSlot();
+        BookingTimeSlot item;
+        for(int i=0;i<7;i++) {
+            item = new BookingTimeSlot();
             switch (i) {
               /*  case 0:
                     item.itemName = "Subscription";
@@ -186,12 +201,18 @@ public class BookingFragment4 extends Fragment {
                     item.isSelected = "0";
                     break;
 
+                case 6:
+                    item.time = "3:00";
+                    item.isSelected = "0";
+                    break;
+
             }
-            timeSlots.add(item);
+            bookingTimeSlots.add(item);
         }
     }
 
     private void addServices(){
+        bookingInfos.clear();
         BookingInfo item;
         for(int i=0;i<2;i++) {
             item = new BookingInfo();
@@ -214,9 +235,6 @@ public class BookingFragment4 extends Fragment {
         }
     }
 
-
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -229,5 +247,45 @@ public class BookingFragment4 extends Fragment {
         super.onDestroy();
         BookingActivity.lyReviewPost.setVisibility(View.GONE);
         BookingActivity.title_booking.setText(mParam1);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btnCOnfirmBooking:
+                ((BookingActivity)mContext).addFragment(
+                        BookingFragment5.newInstance(""), true, R.id.flBookingContainer);
+
+                break;
+
+            case R.id.btnAddMoreService:
+
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                int count = fm.getBackStackEntryCount();
+                for(int i = 0; i < count; ++i) {
+                    if (i>0)
+                        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+              /*  ((BookingActivity)mContext).addFragment(
+                        BookingFragment5.newInstance(""), true, R.id.flBookingContainer);*/
+
+                break;
+        }
+    }
+
+    @Override
+    public void onButtonClick(int position, String buttonText, int selectedCount) {
+        BookingTimeSlot item =  bookingTimeSlots.get(position);
+
+        for (int i = 0;i<bookingTimeSlots.size();i++){
+            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
+            timeSlot.isSelected = "0";
+        }
+        listAdapter.notifyDataSetChanged();
+        // if (item.isSelected.equals("0"))
+        item.isSelected = "1";
+        //  else
+        //     item.isSelected = "0";
+        listAdapter.notifyItemChanged(position);
     }
 }

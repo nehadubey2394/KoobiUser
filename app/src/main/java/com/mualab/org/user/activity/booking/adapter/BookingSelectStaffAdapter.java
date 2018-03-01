@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.booking.BookingActivity;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.model.booking.BookingStaff;
 import com.squareup.picasso.Picasso;
@@ -21,13 +23,14 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     private Context context;
     private ArrayList<BookingStaff> artistsList;
     private boolean showLoader;
-
+    private String serviceTitle;
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
     // Constructor of the class
-    public BookingSelectStaffAdapter(Context context, ArrayList<BookingStaff> artistsList) {
+    public BookingSelectStaffAdapter(Context context, ArrayList<BookingStaff> artistsList,String serviceTitle) {
         this.context = context;
         this.artistsList = artistsList;
+        this.serviceTitle = serviceTitle;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
 
-        if (position != 0 && position == getItemCount() - 1) {
+        if (position != 0 && position == getItemCount() ) {
             return VIEWTYPE_LOADER;
         }
         return VIEWTYPE_ITEM;
@@ -85,14 +88,15 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         final BookingStaff item = artistsList.get(position);
 
         holder.tvStaffArtistName.setText(item.userName);
-        holder.tvSpaciality.setText(item.spaciality);
+        holder.tvSpaciality.setText(item.serviceName);
         if (!item.profileImage.equals("")){
             Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(holder.ivSelectStaffProfile);
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    {
         TextView tvStaffArtistName,tvSpaciality;
         ImageView ivSelectStaffProfile;
         private ViewHolder(View itemView)
@@ -102,6 +106,15 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
             ivSelectStaffProfile = itemView.findViewById(R.id.ivSelectStaffProfile);
             tvStaffArtistName = itemView.findViewById(R.id.tvStaffArtistName);
             tvSpaciality = itemView.findViewById(R.id.tvSpaciality);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            ((BookingActivity)context).addFragment(
+                    BookingFragment4.newInstance(serviceTitle,""), true, R.id.flBookingContainer);
+
         }
     }
 

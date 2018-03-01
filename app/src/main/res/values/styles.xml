@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -18,8 +18,8 @@
     <style name="AppTheme.FullScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
-        <item name="android:windowTranslucentNavigation" tools:ignore="NewApi">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <!--<item name="android:windowBackground">@drawable/gradent_splash_bg</item>-->
     </style>
 
@@ -38,7 +38,6 @@
 
     <style name="AppTheme.Camera" parent="AppTheme.FullScreen">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme.DarkActionBar" parent="AppTheme">
@@ -110,9 +109,4 @@
         <item name="colorControlActivated">@color/dark_yellow</item>
     </style>
 
-
-    <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/fade_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_out</item>
-    </style>
 </resources>

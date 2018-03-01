@@ -179,6 +179,7 @@
     <string name="alert_something_wenjt_wrong">Something went wrong!</string>
     <string name="text_no_data_found">No user found</string>
     <string name="text_opening_time">&#160;&#160;Opening Time</string>
+    <string name="text_working_hours">Working hours</string>
     <string name="title_booking">Booking</string>
     <string name="text_posts">Posts</string>
     <string name="text_reviews">Reviews</string>
@@ -200,12 +201,23 @@
     <string name="saturday">Sat</string>
     <string name="sunday">Sun</string>
 
+    <string name="mon">Monday</string>
+    <string name="tues">Tuesday</string>
+    <string name="wednes">Wednesday</string>
+    <string name="thurs">Thursday</string>
+    <string name="fri">Friday</string>
+    <string name="satur">Saturday</string>
+    <string name="sun">Sunday</string>
 
     <!--Dialog server maintenence-->
     <string name="txt_under_maintenance">The web server koobi.com is currently undergoing some maintenance</string>
     <string name="temporary_maintenance">Temporary Maintenance</string>
     <string name="what_happened">What happened?</string>
     <string name="txt_description_maintenance">Server and website need regular maintenance just like a car to keep them up and running smoothly.</string>
+    <string name="text_services">Services</string>
+    <string name="text_total">Total</string>
+    <string name="text_voucher_code">Voucher Code</string>
+    <string name="not_working">not working</string>
 
     <string name="once_upon_a_time">Once upon a time…</string>
     <string name="story_duration">Story duration</string>

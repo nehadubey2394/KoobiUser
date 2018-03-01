@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.Services;
 import com.mualab.org.user.model.booking.SubServices;
 
@@ -25,21 +27,21 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private ExpandableListView lvExpandable;
-    private  ServiceExpandListAdapter expandableListAdapter;
-    private ArrayList<Services>services;
+    private ServiceExpandListAdapter expandableListAdapter;
+    private ArrayList<Services>services,tempArrayList;
     private ImageView ivOutcall;
     boolean isOutCallSelect = false;
-
+    private ArtistsSearchBoard item;
 
     public BookingFragment2() {
         // Required empty public constructor
     }
 
 
-    public static BookingFragment2 newInstance(String param1, String param2) {
+    public static BookingFragment2 newInstance(ArtistsSearchBoard item, String param2) {
         BookingFragment2 fragment = new BookingFragment2();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putParcelable(ARG_PARAM1, item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,8 +50,9 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
+        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            item =  getArguments().getParcelable("param1");
         }
     }
 
@@ -70,10 +73,11 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     }
 
     private void initView(){
-        services = new ArrayList<>();
+        tempArrayList = new ArrayList<>();
+        services =  item.allService;
+        tempArrayList.addAll(services);
         expandableListAdapter = new ServiceExpandListAdapter(mContext, services);
-        services.clear();
-        addStaff();
+        // services.clear();
     }
 
     private void setViewId(View rootView){
@@ -83,7 +87,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
         ExpandableListView lvExpandable = rootView.findViewById(R.id.lvExpandable);
         lvExpandable.setAdapter(expandableListAdapter);
-
+        // expandableListAdapter.notifyDataSetChanged();
         lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int i) {
@@ -123,30 +127,12 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
                 Services servicesItem = services.get(groupPosition);
+                SubServices subServices = servicesItem.arrayList.get(childPosition);
                 ((BookingActivity)mContext).addFragment(
-                        BookingFragment3.newInstance(servicesItem.getArrayList().get(childPosition).name,""), true, R.id.flBookingContainer);
+                        BookingFragment3.newInstance(subServices.subServiceName,subServices,item), true, R.id.flBookingContainer);
                 return false;
             }
         });
-    }
-
-    private void addStaff(){
-        Services item;
-        for (int i = 0; i<5;i++){
-            item = new Services();
-            item.sName = "Make Up";
-
-            ArrayList<SubServices> arrayList = new ArrayList<>();
-
-            for (int j = 0;  j<3; j++) {
-                SubServices subItem = new SubServices();
-                subItem.name = "Trim";
-                arrayList.add(subItem);
-            }
-            item.setArrayList(arrayList);
-            services.add(item);
-        }
-        expandableListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -160,7 +146,60 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                     isOutCallSelect = false;
                     ivOutcall.setImageResource(R.drawable.inactive_checkbox);
                 }
+             //   OutCallFilter();
                 break;
         }
     }
+
+    public void OutCallFilter() {
+        services.clear();
+        ArrayList<Services>tempArrayList2 = new ArrayList<>();
+        tempArrayList2.addAll(tempArrayList);
+        // tempArrayList.clear();
+        if (isOutCallSelect){
+            if (tempArrayList2.size()!=0){
+               /* for (Services mService : tempArrayList2){
+                    for (SubServices subServices : mService.arrayList){
+                        for (BookingServices3 services3 : subServices.artistservices) {
+                            if (!services3.outCallPrice.equals("0")){
+                                services.add(mService);
+                            }else {
+                                tempArrayList2.remove(mService);
+                            }
+                        }
+                    }
+
+                }*/
+         /*       for (int i=0; i<tempArrayList2.size(); i++){
+                    Services mServices = tempArrayList2.get(i);
+                    for (int j=0; j<mServices.arrayList.size(); j++){
+                        SubServices subServices = mServices.arrayList.get(j);
+                        for (int k=0; k<subServices.artistservices.size(); k++){
+                            BookingServices3 services3 = subServices.artistservices.get(k);
+                            if (services3.outCallPrice.equals("0")){
+                                subServices.artistservices.remove(k);
+                            }
+                        }
+                    }
+                }
+
+                for (int i=0; i<tempArrayList2.size(); i++){
+                    Services mServices = tempArrayList2.get(i);
+                    for (int j=0; j<mServices.arrayList.size(); j++){
+                        SubServices subServices = mServices.arrayList.get(j);
+                        for (int k=0; k<subServices.artistservices.size(); k++){
+                            BookingServices3 services3 = subServices.artistservices.get(k);
+                            if (!services3.outCallPrice.equals("0")){
+                                services.add(mServices);
+                            }
+                        }
+                    }
+                }*/
+            }
+        }else {
+            services.addAll(tempArrayList);
+        }
+        expandableListAdapter.notifyDataSetChanged();
+    }
+
 }

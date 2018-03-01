@@ -34,6 +34,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
+                android:padding="2dp"
                 android:layout_alignParentLeft="true" />
 
             <ImageButton
@@ -72,7 +73,21 @@
 
         </RelativeLayout>
 
+        <TextView
+            style="@style/TextView.Bold"
+            android:id="@+id/tvBuisnessName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beauty Zone"
+            android:textSize="18sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            />
+
+
         <LinearLayout
+            android:id="@+id/lyArtistDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
