@@ -1,14 +1,18 @@
 package com.mualab.org.user.activity.feeds;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -29,9 +33,12 @@ import com.android.volley.VolleyError;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.FilteredAdapter;
 import com.hendraanggrian.widget.SocialAutoCompleteTextView;
@@ -46,6 +53,7 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.task.UploadImage;
 import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.util.LocationDetector;
 import com.mualab.org.user.util.media.ImageVideoUtil;
 
 import org.json.JSONArray;
@@ -122,7 +130,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
 
         viewDidLoad();
-
         updateUi();
 
         ivShareFbOn.setOnClickListener(new View.OnClickListener() {
@@ -185,6 +192,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
+
+        checkLocationPermisssion();
+
     }
 
     private void getDropDown(String tag) {
@@ -604,13 +614,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         map.put("feedType", feedTypetxt);
         map.put("caption", caption);
         map.put("isShare", isShare);
-        map.put("city", address);
+        map.put("location", address);
         map.put("tags", tages);
 
         if (lat != null && lng != null) {
             map.put("latitude", "" + lat);
             map.put("longitude", "" + lng);
         } else {
+            checkLocationPermisssion();
             map.put("latitude", "");
             map.put("longitude", "");
         }
@@ -745,6 +756,41 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         MyToast.getInstance(this).showSmallMessage(string);
         //MySnackBar.showSnackbarSort(this, findViewById(R.id.myCoordinatorLayout), string);
     }*/
+
+    private void checkLocationPermisssion() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        Constant.MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                getLocation();
+            }
+        }else {
+            getLocation();
+        }
+    }
+
+
+    private void getLocation(){
+        LocationDetector locationDetector = new LocationDetector();
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (locationDetector.isLocationEnabled(this) && locationDetector.checkLocationPermission(this)) {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(
+                    this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                        lat = location.getLatitude();
+                        lng = location.getLongitude();
+                    }
+                }
+            });
+
+        }else {
+            locationDetector.showLocationSettingDailod(this);
+        }
+    }
 
     private class TagAdapter extends FilteredAdapter<String> {
         final Filter filter = new SocialFilter() {
