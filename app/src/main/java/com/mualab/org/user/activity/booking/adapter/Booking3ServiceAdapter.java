@@ -14,6 +14,7 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingServices3;
 
 import java.util.ArrayList;
@@ -23,14 +24,16 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Context context;
     private ArrayList<BookingServices3> artistsList;
     private boolean showLoader;
-    String serviceTitle;
+    private String serviceTitle;
+    private ArtistsSearchBoard item;
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
     // Constructor of the class
-    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle) {
+    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item) {
         this.context = context;
         this.artistsList = artistsList;
         this.serviceTitle = serviceTitle;
+        this.item = item;
     }
 
     @Override
@@ -87,9 +90,9 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final BookingServices3 item = artistsList.get(position);
 
-        holder.tvTime.setText(item.time);
-        holder.tvLastService.setText(item.sName);
-        holder.tvAmount.setText(item.price);
+        holder.tvTime.setText(item.completionTime+ " Min");
+        holder.tvLastService.setText(item.title);
+        holder.tvAmount.setText(item.inCallPrice);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -112,7 +115,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     }else {
                         ((BookingActivity)context).addFragment(
-                                 BookingFragment1.newInstance(serviceTitle,""), true, R.id.flBookingContainer);
+                                 BookingFragment1.newInstance(serviceTitle,item), true, R.id.flBookingContainer);
 
                     }
                 }

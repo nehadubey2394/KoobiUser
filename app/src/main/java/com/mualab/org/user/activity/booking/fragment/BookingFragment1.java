@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingSelectStaffAdapter;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingStaff;
 
 import java.util.ArrayList;
@@ -20,22 +21,23 @@ import java.util.ArrayList;
 
 public class BookingFragment1 extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
     private ArrayList<BookingStaff>staffList;
     private BookingSelectStaffAdapter staffAdapter;
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
+    private ArtistsSearchBoard item;
 
 
     public BookingFragment1() {
         // Required empty public constructor
     }
 
-    public static BookingFragment1 newInstance(String param1, String param2) {
+    public static BookingFragment1 newInstance(String param1, ArtistsSearchBoard  item) {
         BookingFragment1 fragment = new BookingFragment1();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString("param1", param1);
+        args.putParcelable("param2", item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,7 +46,8 @@ public class BookingFragment1 extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam1 = getArguments().getString("param1");
+            item = getArguments().getParcelable("param2")  ;
         }
     }
 
@@ -65,10 +68,9 @@ public class BookingFragment1 extends Fragment {
     }
 
     private void initView(){
-        staffList = new ArrayList<>();
+        // staffList = new ArrayList<>();
+        staffList = item.staffList;
         staffAdapter = new BookingSelectStaffAdapter(mContext,staffList,mParam1);
-        staffList.clear();
-        addStaff();
     }
 
     private void setViewId(View rootView){
@@ -89,17 +91,5 @@ public class BookingFragment1 extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         BookingActivity.title_booking.setText(mParam1);
-    }
-
-    private void addStaff(){
-        BookingStaff staff;
-        for (int i = 0; i<10;i++){
-            staff = new BookingStaff();
-            staff.userName = "Jamie Bloggs";
-            staff.spaciality = "Hair Expert";
-            staff.profileImage = "http://koobi.co.uk/uploads/profile/1517824082281.jpg";
-            staffList.add(staff);
-        }
-        staffAdapter.notifyDataSetChanged();
     }
 }

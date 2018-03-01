@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.mualab.org.user.model.ArtistServices;
+import com.mualab.org.user.model.booking.BookingStaff;
+import com.mualab.org.user.model.booking.Services;
 
 import java.util.ArrayList;
 
@@ -45,7 +47,8 @@ public class ArtistsSearchBoard implements Parcelable {
             lastName,distance,ratingCount,businessType;
 
     public  ArrayList<ArtistServices>service;
-    public  ArrayList<ArtistServices>allService;
+    public  ArrayList<Services>allService = new ArrayList<>();
+    public ArrayList<BookingStaff>staffList = new ArrayList<>();
 
     @Override
     public int describeContents() {
