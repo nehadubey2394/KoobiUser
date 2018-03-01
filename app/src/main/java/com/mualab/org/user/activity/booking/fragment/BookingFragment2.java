@@ -183,7 +183,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                                 for (int k=0; k<subServices.artistservices.size(); k++) {
                                     BookingServices3 services3 = subServices.artistservices.get(k);
                                     if (services3.isOutCall){
-                                        if (!services3.outCallPrice.equals("0") || !services3.outCallPrice.equals("null") ){
+                                        if (!services3.outCallPrice.equals("0") && !services3.outCallPrice.equals("null") ){
                                             services.add(mServices);
                                         }
                                     }

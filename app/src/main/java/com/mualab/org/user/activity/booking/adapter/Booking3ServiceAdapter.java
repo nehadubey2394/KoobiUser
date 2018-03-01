@@ -93,7 +93,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String CurrentString = item.completionTime;
         if (CurrentString.contains(":")){
             String[] separated = CurrentString.split(":");
-            String hours = separated[0]+"hrs ";
+            String hours = separated[0]+" hrs ";
             String min = separated[1]+" min";
             holder.tvTime.setText(hours+min);
         }
