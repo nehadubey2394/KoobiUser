@@ -677,6 +677,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
                 case Constant.POST_FEED_DATA:
                     resetView();
+                    feeds.clear();
                     endlesScrollListener.resetState();
                     apiForGetAllFeeds(0, 100, true);
                     break;

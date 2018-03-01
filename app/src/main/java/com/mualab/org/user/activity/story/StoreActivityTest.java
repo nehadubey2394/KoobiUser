@@ -228,7 +228,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
         storyStatusView.setStoryDuration(statusDuration);
         // or
         // statusView.setStoriesCountWithDurations(statusResourcesDuration);
-        //storyStatusView.setUserInteractionListener(this);
+        storyStatusView.setStoriesListener(this);
         // storyStatusView.playStories();
         //target = new ImageViewTarget(ivPhoto, progress_bar);
 

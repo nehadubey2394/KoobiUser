@@ -288,9 +288,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 vedioHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 vedioHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
-                if(feeds.feedThumb!=null && feeds.feedThumb.size()>0){
+                if(TextUtils.isEmpty(feeds.videoThumbnail)){
                     Picasso.with(vedioHolder.ivFeedCenter.getContext())
-                            .load(feeds.feedThumb.get(0))
+                            .load(feeds.videoThumbnail)
                             .fit()
                             .placeholder(R.drawable.gallery_placeholder)
                             .into(vedioHolder.ivFeedCenter);
@@ -786,17 +786,17 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public void onClickEvent(MotionEvent e) {
             int adapterPosition = getPosition();
             Feeds feed = feedItems.get(adapterPosition);
-         /*   if (feed.feedType.equalsIgnoreCase("image")) {
-                mContext.startActivity(new Intent(mContext, ImageViewActivity.class)
+            if (feed.feedType.equalsIgnoreCase("image")) {
+               /* mContext.startActivity(new Intent(mContext, ImageViewActivity.class)
                         .setData(Uri.parse(feed.feed.get(0)))
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));*/
             } else if (feed.feedType.equalsIgnoreCase("video")) {
                 if(feed.feedThumb!=null && feed.feedThumb.size()>0){
                     mContext.startActivity(new Intent(Intent.ACTION_VIEW)
                             .setDataAndType(Uri.parse(feed.feed.get(0)), "video/mp4")
                             .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
                 }
-            }*/
+            }
         }
 
         @Override
