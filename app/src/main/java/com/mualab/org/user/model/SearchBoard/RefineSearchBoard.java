@@ -1,6 +1,7 @@
 package com.mualab.org.user.model.SearchBoard;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Mindiii on 2/24/2018.
@@ -8,5 +9,6 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class RefineSearchBoard implements Serializable{
-    public String latitude, longitude,page,limit,service,serviceType,day,time,subservice,sortSearch,sortType;
+    public String latitude, longitude,page,limit,service,serviceType,day,time,subservice,date,location,sortSearch,sortType;
+    public ArrayList<RefineServices> refineServices = new ArrayList<>();
 }

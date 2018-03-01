@@ -63,6 +63,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private AdapterBusinessDays adapter;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
+    private String businessType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         Intent i = getIntent();
         item =  i.getParcelableExtra("item");
         mParam1 = i.getStringExtra("mParam");
-
+        businessType = item.businessType;
         initView();
     }
 
@@ -288,6 +289,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.reviewCount = jsonObject.getString("reviewCount");
                         item.postCount = jsonObject.getString("postCount");
                         item.businessName = jsonObject.getString("businessName");
+                        item.businessType = businessType;
 
                         JSONArray allServiceArray = jsonObject.getJSONArray("allService");
                         if (allServiceArray!=null) {
@@ -324,15 +326,18 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             }
                         }
 
-                        JSONArray staffInfo = jsonObject.getJSONArray("staffInfo");
-                        if (staffInfo!=null) {
-                            for (int a=0; a<staffInfo.length(); a++){
-                                JSONObject staffInfoJSONObject = staffInfo.getJSONObject(a);
-                                Gson gson = new Gson();
-                                BookingStaff bookingStaff = gson.fromJson(String.valueOf(staffInfoJSONObject), BookingStaff.class);
-                                item.staffList.add(bookingStaff);
+                        if (businessType.equals("business")){
+                            JSONArray staffInfo = jsonObject.getJSONArray("staffInfo");
+                            if (staffInfo!=null) {
+                                for (int a=0; a<staffInfo.length(); a++){
+                                    JSONObject staffInfoJSONObject = staffInfo.getJSONObject(a);
+                                    Gson gson = new Gson();
+                                    BookingStaff bookingStaff = gson.fromJson(String.valueOf(staffInfoJSONObject), BookingStaff.class);
+                                    item.staffList.add(bookingStaff);
 
+                                }
                             }
+
                         }
 
                         ArrayList<TimeSlot> timeSlots = new ArrayList<>();

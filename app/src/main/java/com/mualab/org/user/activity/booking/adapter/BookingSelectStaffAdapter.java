@@ -65,7 +65,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
 
-        if (position != 0 && position == getItemCount() - 1) {
+        if (position != 0 && position == getItemCount() ) {
             return VIEWTYPE_LOADER;
         }
         return VIEWTYPE_ITEM;
@@ -88,7 +88,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         final BookingStaff item = artistsList.get(position);
 
         holder.tvStaffArtistName.setText(item.userName);
-        holder.tvSpaciality.setText(item.spaciality);
+        holder.tvSpaciality.setText(item.serviceName);
         if (!item.profileImage.equals("")){
             Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(holder.ivSelectStaffProfile);
