@@ -783,6 +783,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     if (location != null) {
                         lat = location.getLatitude();
                         lng = location.getLongitude();
+                        address = "Indore";
                     }
                 }
             });
