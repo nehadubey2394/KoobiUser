@@ -65,7 +65,6 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="",date;
 
 
-
     public static SearchBoardFragment newInstance(RefineSearchBoard item, String param2) {
         SearchBoardFragment fragment = new SearchBoardFragment();
         Bundle args = new Bundle();
@@ -114,7 +113,10 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             sortSearch = item.sortSearch;
             sortType = item.sortType;
             time = item.time;
-            day = item.day;
+            if (item.day.equals("100")){
+                day = "";
+            }else
+                day = item.day;
             date = item.date;
         }
     }
