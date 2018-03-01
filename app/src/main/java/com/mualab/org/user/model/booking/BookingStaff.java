@@ -5,5 +5,5 @@ package com.mualab.org.user.model.booking;
  */
 
 public class BookingStaff {
-   public String _id,userName,profileImage,spaciality;
+   public String _id,userName,profileImage,spaciality,serviceName;
 }

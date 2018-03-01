@@ -72,22 +72,30 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     private TextView tv_refine_dnt,tv_refine_loc;
     private RefineServiceExpandListAdapter expandableListAdapter;
     private ArrayList<RefineServices>services;
-    private String subServiceId = "",mainServId = "",sortType ="",sortSearch ="distance",serviceType="",lat="",lng="",date_time,format,time;
+    private String mainServId = "",sortType ="",sortSearch ="",serviceType="",lat="",lng="",date_time="",format,time="",subServiceId = "",location="";
     private int mHour,mMinute,dayId;
-
+    private RefineSearchBoard refineSearchBoard ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refine_artist);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            refineSearchBoard = (RefineSearchBoard) bundle.getSerializable("params");
+        }
         initView();
         setViewId();
     }
 
     private void initView(){
-        services = new ArrayList<>();
-        expandableListAdapter = new RefineServiceExpandListAdapter(RefineArtistActivity.this, services);
-        apiForGetAllServices();
+        if (refineSearchBoard!=null){
+            services = refineSearchBoard.refineServices;
+            expandableListAdapter = new RefineServiceExpandListAdapter(RefineArtistActivity.this, services);
+        }else {
+            services = new ArrayList<>();
+            expandableListAdapter = new RefineServiceExpandListAdapter(RefineArtistActivity.this, services);
+        }
     }
 
     private void setViewId(){
@@ -144,7 +152,39 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 }
             }
         });
-        //  MyToast.getInstance(RefineArtistActivity.this).showSmallCustomToast("Under developement");
+
+        if (refineSearchBoard!=null){
+            lat = refineSearchBoard.latitude;
+            lng = refineSearchBoard.longitude;
+            subServiceId = refineSearchBoard.subservice;
+            mainServId = refineSearchBoard.service;
+            serviceType = refineSearchBoard.serviceType;
+            sortSearch = refineSearchBoard.sortSearch;
+            sortType = refineSearchBoard.sortType;
+            time = refineSearchBoard.time;
+            date_time = refineSearchBoard.date;
+            location = refineSearchBoard.location;
+            dayId = Integer.parseInt(refineSearchBoard.day);
+
+            if (!date_time.equals(""))
+                tv_refine_dnt.setText(date_time+" " + ":" + time);
+            tv_refine_loc.setText(location);
+
+            if (serviceType.equals("price")) {
+                ivPrice.setImageResource(R.drawable.active_price_ico);
+                ivDistance.setImageResource(R.drawable.route_ico);
+            }
+            if (serviceType.equals("1")){
+                chbOutcall.setChecked(true);
+            }
+            if (sortType.equals("1")){
+                rbDescending.setChecked(true);
+            }
+        }else {
+            apiForGetAllServices();
+        }
+
+
 
         lvExpandable.setAdapter(expandableListAdapter);
 
@@ -267,13 +307,13 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case R.id.btnApply :
-                subServiceId = "";
                 // List<Map<String,String>> list = new ArrayList<Map<String, String>>();
                 // list.clear();
+                RefineSearchBoard refineSearchBoard = new RefineSearchBoard();
+
                 for (RefineServices services :services ){
 
                     if (services.isChecked.equals("1")){
-
                         if (services.getArrayList().size()!=0){
                             for (int j = 0; j < services.getArrayList().size(); j++) {
                                 RefineSubServices subItem = services.getArrayList().get(j);
@@ -292,9 +332,24 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                             }
                         }
                     }
-                }
 
-                RefineSearchBoard refineSearchBoard = new RefineSearchBoard();
+                }
+               /* for (RefineServices services :services ){
+                    if (services.isChecked.equals("1")){
+                        if (services.getArrayList().size()!=0){
+                            for (int j = 0; j < services.getArrayList().size(); j++) {
+                                RefineSubServices subItem = services.getArrayList().get(j);
+                                ArrayList<RefineSubServices> arrayList = new ArrayList<>();
+                                if (subItem.isChecked.equals("1")){
+                                    services.setArrayList(arrayList);
+                                }
+                            }
+                        }
+                        refineSearchBoard.refineServices.add(services);
+                    }
+                }
+*/
+                refineSearchBoard.refineServices.addAll(services);
                 refineSearchBoard.day = ""+dayId;
                 refineSearchBoard.latitude = lat;
                 refineSearchBoard.longitude = lng;
@@ -304,6 +359,8 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 refineSearchBoard.sortSearch = sortSearch;
                 refineSearchBoard.sortType = sortType;
                 refineSearchBoard.time = time;
+                refineSearchBoard.date = date_time;
+                refineSearchBoard.location = location;
 
                 Intent intent = new Intent(RefineArtistActivity.this, MainActivity.class);
                 intent.putExtra("refineSearchBoard",refineSearchBoard);
@@ -419,6 +476,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 tv_refine_loc.setText(place.getName());
+                location = ""+place.getName();
                 LatLng latLng = place.getLatLng();
                 lat = String.valueOf(latLng.latitude);
                 lng = String.valueOf(latLng.longitude);
@@ -451,6 +509,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                         date_time = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
                         //*************Call Time Picker Here ********************
                         tiemPicker();
+
                     }
                 }, mYear, mMonth, mDay);
         datePickerDialog.show();
@@ -509,6 +568,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(RefineArtistActivity.this, MainActivity.class);
+        intent.putExtra("refineSearchBoard",refineSearchBoard);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();

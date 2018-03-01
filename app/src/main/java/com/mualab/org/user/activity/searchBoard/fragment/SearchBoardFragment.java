@@ -62,7 +62,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     private String mParam1;
     private boolean isFavClick = false;
     private RefineSearchBoard item;
-    private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="";
+    private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="",date;
 
 
 
@@ -115,6 +115,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             sortType = item.sortType;
             time = item.time;
             day = item.day;
+            date = item.date;
         }
     }
 
@@ -148,7 +149,9 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.cvFilter:
-                startActivity(new Intent(mContext,  RefineArtistActivity.class));
+                Intent intent = new Intent(mContext,  RefineArtistActivity.class);
+                intent.putExtra("params",item);
+                startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 getActivity().finish();
                 break;

@@ -2,13 +2,14 @@ package com.mualab.org.user.model.SearchBoard;
 
 import com.mualab.org.user.model.SearchBoard.RefineSubServices;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Mindiii on 2/6/2018.
  */
 
-public class RefineServices {
+public class RefineServices implements Serializable{
     /*"serviceList":[
 {
 "_id":1,

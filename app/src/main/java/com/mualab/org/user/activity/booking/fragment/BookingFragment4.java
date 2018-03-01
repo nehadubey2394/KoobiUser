@@ -39,6 +39,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
     private ArtistsSearchBoard item;
+
     public BookingFragment4() {
         // Required empty public constructor
     }

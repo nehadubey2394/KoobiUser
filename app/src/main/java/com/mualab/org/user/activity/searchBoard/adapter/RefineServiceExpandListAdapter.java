@@ -169,7 +169,7 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
         }
 
         holder.tvSubSerName = convertView.findViewById(R.id.tvSubSerName);
-   //     holder.ivDropDown2 =  convertView.findViewById(R.id.ivDropDown2);
+        //     holder.ivDropDown2 =  convertView.findViewById(R.id.ivDropDown2);
         holder.checkbox2 =  convertView.findViewById(R.id.checkbox2);
         holder.tvSubSerName.setText(subServices.title);
 
@@ -186,19 +186,17 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-
-/*
-        if (subServices.isChecked.equals("0")){
-            holder.ivChecbox.setImageResource(R.drawable.unchecked_icon);
+        if (subServices.isChecked.equals("1")){
+            holder.checkbox2.setChecked(true);
 
         }else {
-            holder.ivChecbox.setImageResource(R.drawable.checked_icon);
-        }*/
+            holder.checkbox2.setChecked(false);
+        }
         return convertView;
     }
 
     private class ViewHolder2 {
-      //  ImageView checkbox2;
+        //  ImageView checkbox2;
         TextView tvSubSerName;
         CheckBox checkbox2;
     }
