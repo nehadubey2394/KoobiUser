@@ -12,6 +12,8 @@ import java.util.ArrayList;
 public class Services implements Serializable{
     @SerializedName("serviceId")
     public String serviceId;
+    @SerializedName("isOutCall")
+    public boolean isOutCall;
     @SerializedName("serviceName")
     public String serviceName;
     @SerializedName("subServies")

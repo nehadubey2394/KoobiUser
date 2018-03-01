@@ -67,13 +67,13 @@ import static com.mualab.org.user.constants.Constant.PLACE_AUTOCOMPLETE_REQUEST_
 
 public class RefineArtistActivity extends AppCompatActivity implements View.OnClickListener,DatePickerListener {
     private ExpandableListView lvExpandable;
-    private boolean isServiceOpen = false;
+    private boolean isServiceOpen = false,isClear = false;
     private ImageView ivPrice,ivDistance;
     private TextView tv_refine_dnt,tv_refine_loc;
     private RefineServiceExpandListAdapter expandableListAdapter;
     private ArrayList<RefineServices>services,tempSerevice;
     private String mainServId = "",sortType ="",sortSearch ="",serviceType="",lat="",lng="",date_time="",format,time="",subServiceId = "",location="";
-    private int mHour,mMinute,dayId;
+    private int mHour,mMinute,dayId = 100;
     private RefineSearchBoard refineSearchBoard ;
     private CheckBox chbOutcall;
     private  AppCompatRadioButton rbAscending,rbDescending;
@@ -91,13 +91,13 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initView(){
+        tempSerevice = new ArrayList<>();
         if (refineSearchBoard!=null){
             services = refineSearchBoard.refineServices;
-            tempSerevice = refineSearchBoard.tempSerevice;
+            tempSerevice.addAll(refineSearchBoard.tempSerevice);
             expandableListAdapter = new RefineServiceExpandListAdapter(RefineArtistActivity.this, services);
         }else {
             services = new ArrayList<>();
-            tempSerevice = new ArrayList<>();
             expandableListAdapter = new RefineServiceExpandListAdapter(RefineArtistActivity.this, services);
         }
     }
@@ -174,7 +174,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 tv_refine_dnt.setText(date_time+" " + ":" + time);
             tv_refine_loc.setText(location);
 
-            if (sortType.equals("price")) {
+            if (sortSearch.equals("price")) {
                 ivPrice.setImageResource(R.drawable.active_price_ico);
                 ivDistance.setImageResource(R.drawable.route_ico);
             }
@@ -279,7 +279,12 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 sortSearch ="distance";
                 break;
             case R.id.btnClear :
-                clearFilter();
+                //clearFilter();
+                refineSearchBoard = null;
+                Intent intent = new Intent(RefineArtistActivity.this,RefineArtistActivity.class);
+                finish();
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 break;
 
             case R.id.btnApply :
@@ -294,7 +299,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
 
         if (servicesItem.isChecked.equals("0")){
             servicesItem.isChecked = "1";
-            servicesItem.isSubItemChecked = false;
+            servicesItem.isSubItemChecked = true;
             expandableListAdapter.notifyDataSetChanged();
 
         }else {
@@ -306,43 +311,48 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void filterApply(){
-        RefineSearchBoard refineSearchBoard = new RefineSearchBoard();
+        RefineSearchBoard refineSearchBoard ;
+        if (isClear){
+            refineSearchBoard = null;
+        }else {
+            refineSearchBoard = new RefineSearchBoard();
 
-        for (RefineServices services :services ){
-            if (services.isChecked.equals("1")){
-                if (services.getArrayList().size()!=0){
-                    for (int j = 0; j < services.getArrayList().size(); j++) {
-                        RefineSubServices subItem = services.getArrayList().get(j);
-                        if (subItem.isChecked.equals("1")){
-                            if(subServiceId.equals("") && mainServId.equals("")){
-                                subServiceId =  subItem.id;
-                                mainServId =  subItem.serviceId;
+            for (RefineServices services :services ){
+                if (services.isChecked.equals("1")){
+                    if (services.getArrayList().size()!=0){
+                        for (int j = 0; j < services.getArrayList().size(); j++) {
+                            RefineSubServices subItem = services.getArrayList().get(j);
+                            if (subItem.isChecked.equals("1")){
+                                if(subServiceId.equals("") && mainServId.equals("")){
+                                    subServiceId =  subItem.id;
+                                    mainServId =  subItem.serviceId;
+                                }
+                                else {
+                                    subServiceId = subServiceId + "," + subItem.id;
+                                    if (!mainServId.contains(subItem.serviceId))
+                                        mainServId = mainServId + "," + subItem.serviceId;
+                                }
                             }
-                            else {
-                                subServiceId = subServiceId + "," + subItem.id;
-                                if (!mainServId.contains(subItem.serviceId))
-                                    mainServId = mainServId + "," + subItem.serviceId;
-                            }
+
                         }
-
                     }
                 }
             }
-        }
 
-        refineSearchBoard.refineServices.addAll(services);
-        refineSearchBoard.tempSerevice.addAll(tempSerevice);
-        refineSearchBoard.day = ""+dayId;
-        refineSearchBoard.latitude = lat;
-        refineSearchBoard.longitude = lng;
-        refineSearchBoard.service = mainServId;
-        refineSearchBoard.subservice = subServiceId;
-        refineSearchBoard.serviceType = serviceType;
-        refineSearchBoard.sortSearch = sortSearch;
-        refineSearchBoard.sortType = sortType;
-        refineSearchBoard.time = time;
-        refineSearchBoard.date = date_time;
-        refineSearchBoard.location = location;
+            refineSearchBoard.refineServices.addAll(services);
+            refineSearchBoard.day = ""+dayId;
+            refineSearchBoard.latitude = lat;
+            refineSearchBoard.longitude = lng;
+            refineSearchBoard.service = mainServId;
+            refineSearchBoard.subservice = subServiceId;
+            refineSearchBoard.serviceType = serviceType;
+            refineSearchBoard.sortSearch = sortSearch;
+            refineSearchBoard.sortType = sortType;
+            refineSearchBoard.time = time;
+            refineSearchBoard.date = date_time;
+            refineSearchBoard.location = location;
+            refineSearchBoard.tempSerevice.addAll(tempSerevice);
+        }
 
         Intent intent = new Intent(RefineArtistActivity.this, MainActivity.class);
         intent.putExtra("refineSearchBoard",refineSearchBoard);
@@ -352,6 +362,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void clearFilter(){
+        isClear = true;
         services.clear();
         sortSearch = "";
         serviceType = "";
@@ -363,15 +374,33 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         location = "";
         lat = "";
         lng = "";
+        dayId = 100;
         tv_refine_loc.setText("");
         tv_refine_dnt.setText("");
-        services.addAll(tempSerevice);
-        expandableListAdapter.notifyDataSetChanged();
         chbOutcall.setChecked(false);
         ivDistance.setImageResource(R.drawable.active_route_ico);
         rbDescending.setTextColor(getResources().getColor(R.color.text_color));
         rbAscending.setTextColor(getResources().getColor(R.color.colorPrimary));
-        refineSearchBoard = new RefineSearchBoard();
+        lvExpandable.setVisibility(View.GONE);
+        isServiceOpen = false;
+
+        for (RefineServices services :tempSerevice ){
+            if (services.isChecked.equals("1")){
+                services.isChecked = "0";
+                if (services.getArrayList().size()!=0){
+                    for (int j = 0; j < services.getArrayList().size(); j++) {
+                        RefineSubServices subItem = services.getArrayList().get(j);
+                        subItem.isChecked = "0";
+                        subItem.isSubItemChecked = false;
+                    }
+                }
+            }
+        }
+        services.addAll(tempSerevice);
+        expandableListAdapter.notifyDataSetChanged();
+
+        refineSearchBoard = null;
+
     }
 
     private void getAddress() {
@@ -437,6 +466,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                                     subItem.title = jsonObject2.getString("title").trim();
                                     subItem.serviceId = jsonObject2.getString("serviceId").trim();
                                     subItem.isChecked = "0";
+                                    subItem.isSubItemChecked = false;
                                     arrayList.add(subItem);
                                 }
                                 service.setArrayList(arrayList);
