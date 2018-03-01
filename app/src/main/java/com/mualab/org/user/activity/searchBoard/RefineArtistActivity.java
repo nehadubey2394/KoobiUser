@@ -174,7 +174,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 tv_refine_dnt.setText(date_time+" " + ":" + time);
             tv_refine_loc.setText(location);
 
-            if (sortType.equals("price")) {
+            if (sortSearch.equals("price")) {
                 ivPrice.setImageResource(R.drawable.active_price_ico);
                 ivDistance.setImageResource(R.drawable.route_ico);
             }
