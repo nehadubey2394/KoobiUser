@@ -230,7 +230,6 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
-
                     if (status.equalsIgnoreCase("success")) {
 
                         listAdapter.showLoading(false);
@@ -249,13 +248,13 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                     }
                     //  showToast(message);
                 } catch (Exception e) {
-                    Progress.hide(mContext);
                     e.printStackTrace();
                 }
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
+                Progress.hide(mContext);
             }})
                 .setAuthToken(user.authToken)
                 .setProgress(!isLoadMore)

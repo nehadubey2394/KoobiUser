@@ -47,6 +47,11 @@ public class Progress {
             progress.progressBarView.setVisibility(View.GONE);
         }
 
+        try{
+            ((Activity) context).findViewById(R.id.progressRootView).setVisibility(View.GONE);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         //progressBarView.setVisibility(View.GONE);
     }
 

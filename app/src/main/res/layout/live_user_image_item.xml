@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="70dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center_horizontal">
 
     <RelativeLayout
         android:layout_width="60dp"
@@ -16,39 +18,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_centerVertical="true"
-            app:civ_border_width="1dp"
-            android:padding="1dp"
             android:src="@drawable/defoult_user_img"
             android:background="@drawable/gradient_circle_img"
-            app:civ_border_color="@color/transparent" />
-
-        <!-- <com.mualab.org.user.views.InsLoadingView
-             android:layout_centerInParent="true"
-             android:id="@+id/iv_user_image"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:layout_margin="2dp"
-             android:background="?attr/selectableItemBackgroundBorderless"
-             android:src="@drawable/user_ico"
-             app:start_color="@color/colorPrimaryDark"
-             app:end_color="#3f8efc" />-->
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/transparent"/>
 
         <TextView
             android:id="@+id/tv_live"
             android:layout_width="20dp"
             android:layout_height="10dp"
+            style="@style/TextView"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="14dp"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="1dp"
             android:layout_marginRight="1dp"
             android:background="@drawable/bg_selected"
-            android:fontFamily="@font/roboto_regular"
             android:gravity="center"
             android:text="@string/text_live"
-            android:textColor="@color/white"
-            android:textSize="8sp" />
+            android:textSize="8sp"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/iv_add_icon"
@@ -60,21 +49,18 @@
             android:src="@drawable/add_ico"
             android:visibility="gone" />
 
-
     </RelativeLayout>
 
 
     <TextView
         android:id="@+id/tv_user_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        style="@style/TextView"
         android:gravity="center"
         android:maxLines="1"
-        android:fontFamily="@font/roboto_regular"
-        android:text="Neha"
         android:textAllCaps="false"
-        android:maxWidth="70dp"
+        android:maxWidth="65dp"
         android:textColor="@color/text_color"
         android:textSize="10sp" />
 

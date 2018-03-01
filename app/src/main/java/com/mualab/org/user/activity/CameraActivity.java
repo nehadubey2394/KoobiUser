@@ -127,10 +127,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         cameraView.setPictureSize(result);
 
 
+
         touchListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
 
                 if(!isCameraSession){
 
@@ -143,10 +143,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         showToast("ACTION_UP");
                     }
                 }
-
                 return false;
             }
-
         };
 
 
@@ -703,6 +701,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 public void ErrorListener(VolleyError error) {
                      Log.d("res:", ""+error.getLocalizedMessage());
                 }})
+                    .setParam(map)
                     .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
                     .setProgress(true));
             task.postImage("myStory", bitmap);

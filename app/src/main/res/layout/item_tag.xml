@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textViewName"
+    style="?android:attr/dropDownItemStyle"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:ellipsize="marquee"
+    android:textSize="14sp"
+    android:fontFamily="@font/roboto_regular"
+    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+    android:singleLine="true" />

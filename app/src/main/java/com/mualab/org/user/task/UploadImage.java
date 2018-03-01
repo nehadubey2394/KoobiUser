@@ -11,7 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.util.FileUtils;
+import com.mualab.org.user.util.media.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

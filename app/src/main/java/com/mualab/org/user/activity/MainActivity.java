@@ -23,6 +23,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.story.NewStoryActivity;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public TextView tvHeaderTitle;
     private String lat,lng;
     public RelativeLayout rlHeader1;
+    private static final int REQUEST_ADD_NEW_STORY = 8719;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }*/
     }
 
+
+    public void openNewStoryActivity(){
+        Intent intent = new Intent(this, NewStoryActivity.class);
+        startActivityForResult(intent, REQUEST_ADD_NEW_STORY);
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -116,7 +124,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.ibtnChat :
-                MyToast.getInstance(MainActivity.this).showSmallCustomToast("Under developement");
+                openNewStoryActivity();
+                //MyToast.getInstance(MainActivity.this).showSmallCustomToast("Under developement");
                 break;
 
             case R.id.ivAppIcon :
