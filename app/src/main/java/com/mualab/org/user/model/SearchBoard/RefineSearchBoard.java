@@ -11,4 +11,5 @@ import java.util.ArrayList;
 public class RefineSearchBoard implements Serializable{
     public String latitude, longitude,page,limit,service,serviceType,day,time,subservice,date,location,sortSearch,sortType;
     public ArrayList<RefineServices> refineServices = new ArrayList<>();
+    public ArrayList<RefineServices> tempSerevice = new ArrayList<>();
 }

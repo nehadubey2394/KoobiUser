@@ -245,6 +245,9 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                             }
                             listAdapter.notifyDataSetChanged();
                         }
+                    }else {
+                        MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
+
                     }
                     //  showToast(message);
                 } catch (Exception e) {
