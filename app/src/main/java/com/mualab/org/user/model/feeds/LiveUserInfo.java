@@ -1,5 +1,7 @@
 package com.mualab.org.user.model.feeds;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -8,49 +10,22 @@ import java.io.Serializable;
 
 public class LiveUserInfo implements Serializable {
 
+    @SerializedName("_id")
+    public int id;
+
+    @SerializedName("count")
+    public int storyCount = 1;
+
     public String isLive;
+
+    public String userName;
+
+    public String firstName;
+
+    public String lastName;
 
     public String profileImage;
 
-    public String mailVerified;
-
-    public String authToken;
-
-    public String countryCode;
-
-    public String liveDate;
-
-    public String otpVerified;
-
-    public String OTP;
-
-    public String userType;
-
-    public String id;
-
-    public String firebaseToken;
-
-    public String email;
-
-    public String address;
-
-    public String deviceToken;
-
-    public String deviceType;
-
-    public String gender;
-
-    public String longitude;
-
-    public String contactNo;
-
-    public String latitude;
-
     public String fullName;
 
-    public String socialId;
-
-    public String chatId;
-
-    public String coverImage;
 }

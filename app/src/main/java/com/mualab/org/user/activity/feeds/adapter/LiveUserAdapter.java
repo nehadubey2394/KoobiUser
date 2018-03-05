@@ -4,22 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.AddStoryActivity;
 import com.mualab.org.user.activity.CameraActivity;
+import com.mualab.org.user.activity.story.StoreActivityTest;
+import com.mualab.org.user.activity.story.StoreViewActivity;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.List;
-
-import static com.mualab.org.user.activity.feeds.fragment.FeedsFragment.FEED_TAB;
-import static com.mualab.org.user.activity.feeds.fragment.FeedsFragment.SEARCH_TAB;
 
 /**
  * Created by mindiii on 9/8/17.
@@ -29,12 +28,11 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
 
     private Context mContext;
     private List<LiveUserInfo> liveUserList;
-    private int feedState;
 
-    public LiveUserAdapter(Context mContext, List<LiveUserInfo> liveUserList, int feedState) {
+
+    public LiveUserAdapter(Context mContext, List<LiveUserInfo> liveUserList) {
         this.mContext = mContext;
         this.liveUserList = liveUserList;
-        this.feedState = feedState;
     }
 
     @Override
@@ -46,8 +44,16 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.tvUserName.setText(liveUserList.get(position).fullName);
-        if (feedState == FEED_TAB) {
+        LiveUserInfo userInfo = liveUserList.get(position);
+        holder.tvUserName.setText(String.format("%s %s", userInfo.firstName, userInfo.lastName));
+        holder.ivAddLive.setVisibility(position==0?View.VISIBLE:View.GONE);
+        if (!TextUtils.isEmpty(userInfo.profileImage))
+            Picasso.with(mContext)
+                    .load(userInfo.profileImage).placeholder(R.drawable.defoult_user_img)
+                    .fit()
+                    .into(holder.ivUserImg);
+
+        /*if (feedState == FEED_TAB) {
             if (position == 0) {
                 holder.ivAddLive.setVisibility(View.VISIBLE);
                 holder.tv_live.setVisibility(View.GONE);
@@ -64,14 +70,7 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
                 holder.ivAddLive.setVisibility(View.GONE);
                 holder.tv_live.setVisibility(View.GONE);
             }
-        }
-
-
-        if (!liveUserList.get(position).profileImage.equals(""))
-            Picasso.with(mContext)
-                    .load(liveUserList.get(position).profileImage).placeholder(R.drawable.defoult_user_img)
-                    .fit()
-                    .into(holder.ivUserImg);
+        }*/
     }
 
     @Override
@@ -96,16 +95,18 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
         public void onClick(View v) {
 
              int pos = getAdapterPosition();
+             LiveUserInfo userInfo = liveUserList.get(pos);
 
-             if(pos==0){
-                 Intent intent = new Intent(mContext, CameraActivity.class);
+             if(pos==0 && userInfo.storyCount==0){
+                 mContext.startActivity(new Intent(mContext, CameraActivity.class));
+             }else {
+                 Intent intent = new Intent(mContext, StoreActivityTest.class);
                  Bundle args = new Bundle();
                  args.putSerializable("ARRAYLIST", (Serializable) liveUserList);
                  args.putInt("position", getAdapterPosition());
                  intent.putExtra("BUNDLE", args);
                  mContext.startActivity(intent);
              }
-
         }
     }
 }

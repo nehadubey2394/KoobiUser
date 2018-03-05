@@ -127,10 +127,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         cameraView.setPictureSize(result);
 
 
+
         touchListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
 
                 if(!isCameraSession){
 
@@ -143,10 +143,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         showToast("ACTION_UP");
                     }
                 }
-
                 return false;
             }
-
         };
 
 
@@ -284,12 +282,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         btnTakePhoto.setOnClickListener(this);
         btnFlashLight.setOnClickListener(this);
-        findViewById(R.id.btnAccept).setOnClickListener(this);
-        findViewById(R.id.ivBack).setOnClickListener(this);
+       // findViewById(R.id.btnAccept).setOnClickListener(this);
+        findViewById(R.id.retry).setOnClickListener(this);
         findViewById(R.id.btnBack).setOnClickListener(this);
         findViewById(R.id.switchCamera).setOnClickListener(this);
         findViewById(R.id.btnCameraMode).setOnClickListener(this);
-        findViewById(R.id.addStory).setOnClickListener(this);
+        findViewById(R.id.add_to_story).setOnClickListener(this);
         isCameraSession = true;
     }
 
@@ -363,12 +361,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
 
-            case R.id.addStory:
+            case R.id.add_to_story:
                 addMyStory();
                 break;
 
 
-            case R.id.ivBack:
+            case R.id.retry:
             case R.id.btnBack:
                 onBackPressed();
                 break;
@@ -703,6 +701,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 public void ErrorListener(VolleyError error) {
                      Log.d("res:", ""+error.getLocalizedMessage());
                 }})
+                    .setParam(map)
                     .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
                     .setProgress(true));
             task.postImage("myStory", bitmap);
