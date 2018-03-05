@@ -10,7 +10,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -281,9 +283,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
                 try {
                     feedType = Constant.IMAGE_STATE;
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
-                            Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));
-                    iv_postimage.setImageBitmap(bitmap);
+                   /* Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                            Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));*/
+
+                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
+                            BitmapFactory.decodeFile(
+                                    ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)),
+                                            this)), 200, 200);
+                    iv_postimage.setImageBitmap(ThumbImage);
 
                     if(mediaUri.uriList.size()>1){
                         tvMediaSize.setVisibility(View.VISIBLE);
@@ -298,7 +305,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     iv_postimage.setImageBitmap(bitmap);
                     //mSelectedImages.get(0) = Uri.parse(f.getPath());
                 }*/
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }else if(mediaUri.mediaType == Constant.VIDEO_STATE){

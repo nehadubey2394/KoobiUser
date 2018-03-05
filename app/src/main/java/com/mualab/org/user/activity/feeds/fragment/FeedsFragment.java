@@ -1,6 +1,5 @@
 package com.mualab.org.user.activity.feeds.fragment;
 
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -9,10 +8,10 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,11 +63,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,8 +71,9 @@ import java.util.List;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
-
-
+/*
+ * Dharmraj acharya
+ * */
 public class FeedsFragment extends Fragment implements View.OnClickListener,FeedAdapter.Listener {
 
     private int CURRENT_FEED_STATE = 0;
@@ -100,13 +96,13 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
     private String caption;
     private String feedType = "feeds";
-    private boolean inProgressAPI;
+  //  private boolean inProgressAPI;
     private int lastFeedTypeId;
     private PermissionType permissionType;
     private User user;
 
     private MediaUri mediaUri;
-    private Handler handler;
+
 
     public FeedsFragment() {
         // Required empty public constructor
@@ -134,15 +130,14 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         feeds = new ArrayList<>();
         liveUserList = new ArrayList<>();
         liveUserList.clear();
-        User user = Mualab.getInstance().getSessionManager().getUser();
+
         LiveUserInfo me = new LiveUserInfo();
         me.id = user.id;
-        me.fullName = "My Story";
+        me.userName = "My Story";
         me.profileImage = user.profileImage;
         me.storyCount = 0;
         liveUserList.add(me);
         Progress.hide(mContext);
-        //loadLiveUserJSONFromAsset();
     }
 
     @Override
@@ -190,18 +185,8 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
         rvFeed.setAdapter(feedAdapter);
         rvFeed.addOnScrollListener(endlesScrollListener);
-
         getStoryList();
-
-       // Progress.show(mContext);
         updateViewType(R.id.ly_feeds);
-     /*   Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 1000);*/
     }
 
     @Override
@@ -212,27 +197,8 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
             case R.id.ly_videos:
                 updateViewType(view.getId());
                 break;
-            /*case R.id.ly_images:
-                tvImages.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvVideos.setTextColor(getResources().getColor(R.color.text_color));
-                tvFeeds.setTextColor(getResources().getColor(R.color.text_color));
-                updateViewType(view.getId());
-                break;
-            case R.id.ly_videos:
-                tvImages.setTextColor(getResources().getColor(R.color.text_color));
-                tvVideos.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvFeeds.setTextColor(getResources().getColor(R.color.text_color));
-                updateViewType(view.getId());
-                break;
-            case R.id.ly_feeds:
-                tvImages.setTextColor(getResources().getColor(R.color.text_color));
-                tvVideos.setTextColor(getResources().getColor(R.color.text_color));
-                tvFeeds.setTextColor(getResources().getColor(R.color.colorPrimary));
-                updateViewType(view.getId());
-                break;*/
 
             case R.id.tv_post:
-
                 caption = edCaption.getText().toString().trim();
                 Intent intent = null;
                 ActivityOptionsCompat options = null;
@@ -242,7 +208,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     intent.putExtra("mediaUri", mediaUri);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation(getActivity(), iv_selectedImage, "profile");
+                            makeSceneTransitionAnimation(getActivity(), (View)iv_selectedImage, "profile");
                 }else if (!TextUtils.isEmpty(caption)) {
                     /*intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", caption);
@@ -252,7 +218,6 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                 }
 
                 if (intent != null) {
-
                     if(options!=null)
                     startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
                     else startActivityForResult(intent, Constant.POST_FEED_DATA);
@@ -263,7 +228,6 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                 permissionType = PermissionType.VIDEO;
                 checkPermissionAndPicImageOrVideo("Select Video");
                 break;
-
 
             case R.id.iv_get_img:
                 permissionType = PermissionType.IMAGE;
@@ -342,51 +306,6 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         lastFeedTypeId = id;
     }
 
-    /*public String loadAllFeedJSONFromAsset() {
-        String json = null;
-        try {
-            InputStream is = mContext.getAssets().open("all_feeds_data.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-    public String loadImageJSONFromAsset() {
-        String json = null;
-        try {
-            InputStream is = mContext.getAssets().open("feeds_image_data.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-    public String loadVideoJSONFromAsset() {
-        String json = null;
-        try {
-            InputStream is = mContext.getAssets().open("feeds_video_data.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }*/
 
     @Override
     public void onDestroy() {
@@ -460,7 +379,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
             JSONObject js = new JSONObject(response);
             String status = js.getString("status");
             // String message = js.getString("message");
-            inProgressAPI = false;
+           // inProgressAPI = false;
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
                 JSONArray array = js.getJSONArray("AllFeeds");
@@ -514,7 +433,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
         } catch (JSONException e) {
             e.printStackTrace();
-            inProgressAPI = false;
+            //inProgressAPI = false;
             feedAdapter.notifyDataSetChanged();
             //MyToast.getInstance(mContext).showSmallCustomToast(getString(R.string.alert_something_wenjt_wrong));
         }finally {
@@ -571,9 +490,11 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                                 me.lastName = live.firstName;
                                 me.fullName = live.firstName+" "+live.lastName;
                                 me.storyCount = live.storyCount;
+                                me.userName = "You";
 
                             }else liveUserList.add(live);
                         }
+
                         liveUserAdapter.notifyDataSetChanged();
                     }
                     //  showToast(message);
@@ -655,8 +576,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Bitmap thumbBitmap;
-        String filePath;
+       // String filePath;
 
         if (resultCode == RESULT_OK) {
 
@@ -671,8 +591,10 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                             mediaUri.isFromGallery = false;
                             mediaUri.mediaType = Constant.IMAGE_STATE;
                             mediaUri.addUri(String.valueOf(picUri));
-
-                            updatePostImageUI(bitmap);
+                            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
+                                    BitmapFactory.decodeFile(
+                                            ImageVideoUtil.generatePath(picUri, mContext)), 150, 150);
+                            updatePostImageUI(ThumbImage);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -692,9 +614,12 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                         }
                         mediaUri.addUri(uriList);
                         try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), Uri.parse(mediaUri.uri));
-                            updatePostImageUI(bitmap);
-                        } catch (IOException e) {
+                            Bitmap ThumbImage = ThumbnailUtils
+                                    .extractThumbnail(BitmapFactory.decodeFile(
+                                            ImageVideoUtil.generatePath(tmpUri.get(0), mContext)), 100, 100);
+                           // Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), Uri.parse(mediaUri.uri));
+                            updatePostImageUI(ThumbImage);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -714,8 +639,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                         mediaUri.isFromGallery = false;
                         mediaUri.mediaType = Constant.VIDEO_STATE;
                         mediaUri.addUri(String.valueOf(data.getData()));
-                        thumbBitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mediaUri.uri), mContext); //ImageVideoUtil.getCompressBitmap();
-                        updatePostImageUI(thumbBitmap);
+                        updatePostImageUI(ImageVideoUtil.getVideoToThumbnil(data.getData(), mContext));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -725,11 +649,10 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     mediaUri = new MediaUri();
                     mediaUri.isFromGallery = true;
                     mediaUri.mediaType = Constant.VIDEO_STATE;
-                    mediaUri.uri = String.valueOf(data.getData());
                     mediaUri.addUri(String.valueOf(data.getData()));
 
                     try {
-                        filePath = PathUtil.getPath(mContext, Uri.parse(mediaUri.uri));
+                        String filePath = PathUtil.getPath(mContext, Uri.parse(mediaUri.uri));
                         assert filePath != null;
                         File file = new File(filePath);
                         // Get length of file in bytes
@@ -744,9 +667,9 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                             updatePostImageUI(null);
                             MyToast.getInstance(mContext).showSmallMessage("You can't upload more then 50mb.");
                         }else {
-                            filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), mContext);
-                            thumbBitmap = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
-                            updatePostImageUI(thumbBitmap);
+                            //filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), mContext);
+                            //thumbBitmap = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
+                            updatePostImageUI(ImageVideoUtil.getVideoToThumbnil(data.getData(), mContext));
                         }
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
@@ -793,19 +716,14 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
     private void updatePostImageUI(Bitmap bitmap) {
         if (bitmap != null) {
-            //Bitmap original = BitmapFactory.decodeStream(getAssets().open("1024x768.jpg"));
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
             iv_selectedImage.setVisibility(View.VISIBLE);
-            iv_selectedImage.setImageBitmap(decoded);
+            iv_selectedImage.setImageBitmap(bitmap);
         } else {
             iv_selectedImage.setImageBitmap(null);
             iv_selectedImage.setVisibility(View.GONE);
             edCaption.setText("");
         }
     }
-
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {

@@ -45,7 +45,7 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         LiveUserInfo userInfo = liveUserList.get(position);
-        holder.tvUserName.setText(String.format("%s %s", userInfo.firstName, userInfo.lastName));
+        holder.tvUserName.setText(String.format("%s", userInfo.userName));
         holder.ivAddLive.setVisibility(position==0?View.VISIBLE:View.GONE);
         if (!TextUtils.isEmpty(userInfo.profileImage))
             Picasso.with(mContext)
