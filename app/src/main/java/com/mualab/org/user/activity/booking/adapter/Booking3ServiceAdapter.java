@@ -14,8 +14,10 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingServices3;
+import com.mualab.org.user.session.Session;
 
 import java.util.ArrayList;
 
@@ -28,6 +30,8 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private ArtistsSearchBoard item;
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
+    private Session session = Mualab.getInstance().getSessionManager();
+
     // Constructor of the class
     public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item) {
         this.context = context;
@@ -89,6 +93,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final BookingServices3 item = artistsList.get(position);
+        holder.tvLastService.setText(item.title);
 
         String CurrentString = item.completionTime;
         if (CurrentString.contains(":")){
@@ -98,8 +103,11 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             holder.tvTime.setText(hours+min);
         }
 
-        holder.tvLastService.setText(item.title);
-        holder.tvAmount.setText(item.inCallPrice);
+        if (session.getIsOutCallFilter()){
+            holder.tvAmount.setText(item.outCallPrice);
+        }else {
+            holder.tvAmount.setText(item.inCallPrice);
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

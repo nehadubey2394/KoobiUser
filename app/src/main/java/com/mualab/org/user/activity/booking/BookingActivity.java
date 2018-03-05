@@ -4,11 +4,11 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -23,7 +23,6 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.adapter.AdapterBusinessDays;
-import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
@@ -49,7 +48,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +62,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private RatingBar rating;
     private ImageView ivHeaderProfile;
     private String businessType;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -418,29 +417,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             }
 
 
-                  /*          ArrayList<BusinessDay>arrayList = new ArrayList<>();
-                            arrayList.clear();
-
-                            for(BusinessDay day : businessDays)
-                            {
-                                if (arrayList.size()!=0){
-                                    {
-                                        for (int n=0; n<2; n++){
-
-                                            if (day.dayId == day.slots.get(n).dayId)
-                                            {
-                                                arrayList.add(day);
-                                            }
-                                        }
-                                    }
-                                }else {
-                                    arrayList.add(day);
-                                }
-                            }
-*/
-
-
-
                             for(int i=0; i<businessDayOld.size(); i++)
                             {
                                 BusinessDay item1 = businessDayOld.get(i);
@@ -470,9 +446,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             public void ErrorListener(VolleyError error) {
                 try{
                     Helper helper = new Helper();
-                    if (helper.error_Messages(error).contains("Session"))
+                    if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
-                    MyToast.getInstance(BookingActivity.this).showSmallCustomToast(helper.error_Messages(error));
+                        //      MyToast.getInstance(BookingActivity.this).showSmallCustomToast(helper.error_Messages(error));
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -494,7 +471,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
         if (!fragmentPopped) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_in,0,0);
+            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_in,0,0);
             transaction.add(containerId, fragment, backStackName);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);

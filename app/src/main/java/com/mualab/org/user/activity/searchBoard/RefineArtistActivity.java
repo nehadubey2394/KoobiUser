@@ -77,6 +77,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     private RefineSearchBoard refineSearchBoard ;
     private CheckBox chbOutcall;
     private  AppCompatRadioButton rbAscending,rbDescending;
+    private Session session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
 
     private void initView(){
         tempSerevice = new ArrayList<>();
+        session = Mualab.getInstance().getSessionManager();
         if (refineSearchBoard!=null){
             services = refineSearchBoard.refineServices;
             tempSerevice.addAll(refineSearchBoard.tempSerevice);
@@ -281,6 +283,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             case R.id.btnClear :
                 //clearFilter();
                 refineSearchBoard = null;
+                session.setIsOutCallFilter(false);
                 Intent intent = new Intent(RefineArtistActivity.this,RefineArtistActivity.class);
                 finish();
                 startActivity(intent);
@@ -352,6 +355,12 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             refineSearchBoard.date = date_time;
             refineSearchBoard.location = location;
             refineSearchBoard.tempSerevice.addAll(tempSerevice);
+        }
+
+        if (serviceType.equals("1")){
+            session.setIsOutCallFilter(true);
+        }else {
+            session.setIsOutCallFilter(false);
         }
 
         Intent intent = new Intent(RefineArtistActivity.this, MainActivity.class);
@@ -489,9 +498,10 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             public void ErrorListener(VolleyError error) {
                 try{
                     Helper helper = new Helper();
-                    if (helper.error_Messages(error).contains("Session"))
+                    if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
-                    MyToast.getInstance(RefineArtistActivity.this).showSmallCustomToast(helper.error_Messages(error));
+                        //  MyToast.getInstance(RefineArtistActivity.this).showSmallCustomToast(helper.error_Messages(error));
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -586,9 +596,17 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
 
                         mHour = hourOfDay;
                         mMinute = minute;
-                        time = hourOfDay + ":" + minute+" "+format;
 
-                        tv_refine_dnt.setText(date_time+" "+hourOfDay + ":" + minute+" "+format);
+                        String sMin = "";
+
+                        if (minute < 10)
+                            sMin = "0" + minute;
+                        else
+                            sMin = "" + minute;
+
+                        time = hourOfDay + ":" + sMin+" "+format;
+
+                        tv_refine_dnt.setText(date_time+" "+hourOfDay + ":" + sMin+" "+format);
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();

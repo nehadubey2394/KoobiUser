@@ -2,13 +2,14 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_centerHorizontal="true"
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
     android:clickable="true"
     android:focusable="true">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,5 +50,17 @@
         android:layout_marginLeft="8dp"
         android:overScrollMode="never"
          />
+
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/no_data_available"
+        android:textColor="@color/text_color"
+        android:textSize="14sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone"
+        android:fontFamily="@font/roboto_regular"/>
 
 </LinearLayout>
