@@ -27,6 +27,7 @@ import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public TextView tvHeaderTitle;
     public RelativeLayout rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
+
+    private String lat,lng;
+    public RefineSearchBoard item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +72,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null){
+            item = (RefineSearchBoard) bundle.getSerializable("refineSearchBoard");
+        }
+
+
         initView();
-        addFragment(new SearchBoardFragment(), false, R.id.fragment_place);
+        addFragment(SearchBoardFragment.newInstance(item,""), false, R.id.fragment_place);
+
 
     }
 
@@ -169,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(SearchBoardFragment.newInstance(), false, R.id.fragment_place);
+                    replaceFragment(SearchBoardFragment.newInstance(item, ""), false, R.id.fragment_place);
                 }
                 break;
 
