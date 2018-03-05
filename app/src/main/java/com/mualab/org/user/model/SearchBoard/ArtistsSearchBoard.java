@@ -44,7 +44,8 @@ public class ArtistsSearchBoard implements Parcelable {
 }
 ]*/
     public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,
-            lastName,distance,ratingCount,businessType;
+            lastName,distance,ratingCount,businessType,serviceType;
+    ;
 
     public  ArrayList<ArtistServices>service;
     public  ArrayList<Services>allService = new ArrayList<>();
@@ -68,6 +69,7 @@ public class ArtistsSearchBoard implements Parcelable {
         parcel.writeString(distance);
         parcel.writeString(ratingCount);
         parcel.writeString(businessType);
+        parcel.writeString(serviceType);
     }
 
     private ArtistsSearchBoard(Parcel in) {
@@ -82,6 +84,7 @@ public class ArtistsSearchBoard implements Parcelable {
         distance = in.readString();
         ratingCount = in.readString();
         businessType = in.readString();
+        serviceType = in.readString();
     }
 
     public static final Creator<ArtistsSearchBoard> CREATOR = new Creator<ArtistsSearchBoard>() {
