@@ -21,7 +21,7 @@ import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.listner.OnDoubleTapListener;
-import com.mualab.org.user.model.feeds.AllFeeds;
+import com.mualab.org.user.model.feeds.Feeds;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
@@ -49,21 +49,21 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_LOADING = 3;
 
     private Context mContext;
-    private List<AllFeeds> feedItems;
+    private List<Feeds> feedItems;
 
     private Listener listener;
 
     public interface Listener{
-        void onCommentBtnClick(AllFeeds feed, int pos);
+        void onCommentBtnClick(Feeds feed, int pos);
     }
 
 
-    public FeedAdapter(Context mContext, List<AllFeeds> feedItems) {
+    public FeedAdapter(Context mContext, List<Feeds> feedItems) {
         this.mContext = mContext;
         this.feedItems = feedItems;
     }
 
-    public FeedAdapter(Context mContext, List<AllFeeds> feedItems, Listener listener) {
+    public FeedAdapter(Context mContext, List<Feeds> feedItems, Listener listener) {
         this.mContext = mContext;
         this.feedItems = feedItems;
         this.listener = listener;
@@ -100,7 +100,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
 
-        AllFeeds feed = feedItems.get(position);
+        Feeds feed = feedItems.get(position);
         if(feed== null){
             return  VIEW_TYPE_LOADING;
         }else {
@@ -133,7 +133,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return;
         }
         //  else {
-        final AllFeeds feeds = feedItems.get(position);
+        final Feeds feeds = feedItems.get(position);
         String fullName = feeds.fullName.substring(0, 1).toUpperCase() + feeds.fullName.substring(1);
 
         switch (feeds.feedType) {
@@ -149,7 +149,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 textHolder.tvUserName.setText(fullName);
                 textHolder.tvPostTime.setText(feeds.crd);
-                textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
+                textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 textHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 textHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 textHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
@@ -169,7 +169,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 imageHolder.tvUserName.setText(fullName);
                 imageHolder.tvPostTime.setText(feeds.crd);
-                imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
+                imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
 
 
                 imageHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
@@ -255,7 +255,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                         @Override
                         public void onPageSelected(int pos) {
-                            AllFeeds feed = feedItems.get(imageHolder.getAdapterPosition());
+                            Feeds feed = feedItems.get(imageHolder.getAdapterPosition());
                             feed.viewPagerlastPos = pos;
                             addBottomDots(imageHolder.ll_Dot, feed.feed.size(), pos);
                         }
@@ -283,14 +283,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 vedioHolder.tvUserName.setText(fullName);
                 vedioHolder.tvPostTime.setText(feeds.crd);
-                vedioHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.city)?"N/A":feeds.city);
+                vedioHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 vedioHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 vedioHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 vedioHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
-                if(feeds.feedThumb!=null && feeds.feedThumb.size()>0){
+                if(TextUtils.isEmpty(feeds.videoThumbnail)){
                     Picasso.with(vedioHolder.ivFeedCenter.getContext())
-                            .load(feeds.feedThumb.get(0))
+                            .load(feeds.videoThumbnail)
                             .fit()
                             .placeholder(R.drawable.gallery_placeholder)
                             .into(vedioHolder.ivFeedCenter);
@@ -337,13 +337,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 //onFeedItemClickListener.onCommentsClick(view, cellFeedViewHolder.getAdapterPosition());
 
                 int pos = holder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(pos);
+                Feeds feed = feedItems.get(pos);
                 if(listener!=null){
                     listener.onCommentBtnClick(feed, pos);
                 }
 
                 /*int adapterPosition = holder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
                 Intent intent = new Intent(mContext, CommentsActivity.class);
                 intent.putExtra("feed_id", feed.fId);
                 intent.putExtra("feed", feed);
@@ -356,7 +356,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = holder.getAdapterPosition();
-               /* AllFeeds feed = feedItems.get(adapterPosition);
+               /* Feeds feed = feedItems.get(adapterPosition);
                 Intent intent = new Intent(mContext, LikeActivity.class);
                 intent.putExtra("FeedId", feed.fId);
                 intent.putExtra("myUserId", feed.userId);
@@ -368,7 +368,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = holder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
 
                 if (feed.likeStatus.equals("0")) {
                     feedItems.get(adapterPosition).likeCount++;
@@ -387,7 +387,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = holder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
                 // shareDialog(feed, 0);
             }
         });
@@ -419,13 +419,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 //onFeedItemClickListener.onCommentsClick(view, videoHolder.getAdapterPosition());
 
                 int pos = videoHolder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(pos);
+                Feeds feed = feedItems.get(pos);
                 if(listener!=null){
                     listener.onCommentBtnClick(feed, pos);
                 }
 
                /* int adapterPosition = videoHolder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
                 Intent intent = new Intent(mContext, CommentsActivity.class);
                 intent.putExtra("feed_id", feed.fId);
                 intent.putExtra("feed", feed);
@@ -439,7 +439,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = videoHolder.getAdapterPosition();
-               /* AllFeeds feed = feedItems.get(adapterPosition);
+               /* Feeds feed = feedItems.get(adapterPosition);
                 Intent intent = new Intent(mContext, LikeActivity.class);
                 intent.putExtra("FeedId", feed.fId);
                 intent.putExtra("myUserId", feed.userId);
@@ -451,7 +451,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = videoHolder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
 
                 if (feed.likeStatus.equals("0")) {
                     feedItems.get(adapterPosition).likeCount++;
@@ -470,7 +470,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = videoHolder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
                 int innerPosition = 0;
                 //  shareDialog(feed, innerPosition);
             }
@@ -505,7 +505,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 //onFeedItemClickListener.onCommentsClick(view, cellFeedViewHolder.getAdapterPosition());
 
                 int pos = cellFeedViewHolder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(pos);
+                Feeds feed = feedItems.get(pos);
                 if(listener!=null){
                     listener.onCommentBtnClick(feed, pos);
                 }
@@ -525,7 +525,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
-              /*  AllFeeds feed = feedItems.get(adapterPosition);
+              /*  Feeds feed = feedItems.get(adapterPosition);
                 Intent intent = new Intent(mContext, LikeActivity.class);
                 intent.putExtra("FeedId", feed.fId);
                 intent.putExtra("myUserId", feed.userId);
@@ -537,7 +537,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
 
                 if (feed.likeStatus.equals("0")) {
                     feedItems.get(adapterPosition).likeCount++;
@@ -556,7 +556,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
-                AllFeeds feed = feedItems.get(adapterPosition);
+                Feeds feed = feedItems.get(adapterPosition);
                 int innerPosition = 0;
                 if (cellFeedViewHolder.weakRefViewPager != null)
                     innerPosition = cellFeedViewHolder.weakRefViewPager.get().getCurrentItem();
@@ -580,7 +580,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 /*
-    private void shareDialog(final AllFeeds feed, final int innerPosition) {
+    private void shareDialog(final Feeds feed, final int innerPosition) {
 
         new com.app.mualab.share.ShareDialog(mContext, new com.app.mualab.share.ShareDialog.Listner() {
             @Override
@@ -624,7 +624,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 */
 
 /*
-    private void apiForLikes(final AllFeeds feed) {
+    private void apiForLikes(final Feeds feed) {
 
         Map<String, String> map = new HashMap<>();
         map.put("feedId", feed.fId);
@@ -785,24 +785,24 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @Override
         public void onClickEvent(MotionEvent e) {
             int adapterPosition = getPosition();
-            AllFeeds feed = feedItems.get(adapterPosition);
-         /*   if (feed.feedType.equalsIgnoreCase("image")) {
-                mContext.startActivity(new Intent(mContext, ImageViewActivity.class)
+            Feeds feed = feedItems.get(adapterPosition);
+            if (feed.feedType.equalsIgnoreCase("image")) {
+               /* mContext.startActivity(new Intent(mContext, ImageViewActivity.class)
                         .setData(Uri.parse(feed.feed.get(0)))
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));*/
             } else if (feed.feedType.equalsIgnoreCase("video")) {
                 if(feed.feedThumb!=null && feed.feedThumb.size()>0){
                     mContext.startActivity(new Intent(Intent.ACTION_VIEW)
                             .setDataAndType(Uri.parse(feed.feed.get(0)), "video/mp4")
                             .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
                 }
-            }*/
+            }
         }
 
         @Override
         public void onDoubleTap(MotionEvent e) {
             int adapterPosition = getPosition();
-            AllFeeds feed = feedItems.get(adapterPosition);
+            Feeds feed = feedItems.get(adapterPosition);
             if (feed.likeStatus.equals("0")) {
                 feedItems.get(adapterPosition).likeCount++;
                 feed.likeStatus = "1";

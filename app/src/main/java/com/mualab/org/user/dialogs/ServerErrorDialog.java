@@ -19,10 +19,14 @@ import com.mualab.org.user.R;
 public class ServerErrorDialog implements View.OnClickListener{
 
     private Dialog dialog;
+    private static boolean isDialogAlreadyCreate;
     //private Listner listner;
 
     public ServerErrorDialog(Context context) {
         //this.listner = listner;
+
+        if(isDialogAlreadyCreate)
+            return;
         dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -48,13 +52,17 @@ public class ServerErrorDialog implements View.OnClickListener{
 
 
     public void show() {
-        if (dialog != null)
+        if (dialog != null && !isDialogAlreadyCreate){
             dialog.show();
+            isDialogAlreadyCreate = true;
+        }
+
     }
 
     public void dismiss() {
         if (dialog != null)
             dialog.dismiss();
+        isDialogAlreadyCreate = false;
     }
 
     @Override
@@ -63,6 +71,7 @@ public class ServerErrorDialog implements View.OnClickListener{
 
             case R.id.btnRetry:
                 dialog.dismiss();
+                isDialogAlreadyCreate = false;
                // listner.onNetworkChange(dialog, ConnectionDetector.isConnected());
                 break;
         }
