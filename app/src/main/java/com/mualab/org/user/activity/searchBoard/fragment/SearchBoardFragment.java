@@ -303,9 +303,10 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             public void ErrorListener(VolleyError error) {
                 try{
                     Helper helper = new Helper();
-                    if (helper.error_Messages(error).contains("Session"))
+                    if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
-                    MyToast.getInstance(mContext).showSmallCustomToast(helper.error_Messages(error));
+                        //  MyToast.getInstance(mContext).showSmallCustomToast(helper.error_Messages(error));
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }

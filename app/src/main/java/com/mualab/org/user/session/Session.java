@@ -100,6 +100,15 @@ public class Session {
         return mypref.getString("authToken", "");
     }
 
+    public boolean getIsOutCallFilter() {
+        return mypref.getBoolean("outcall",false);
+    }
+
+    public void setIsOutCallFilter(boolean value){
+        editor.putBoolean("outcall", value);
+        this.editor.commit();
+    }
+
     public boolean getIsFirebaseLogin() {
         return mypref.getBoolean(IS_FIrebaseLogin, false);
     }

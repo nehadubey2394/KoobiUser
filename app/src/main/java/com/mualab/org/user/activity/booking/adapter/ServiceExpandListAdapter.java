@@ -9,8 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.Services;
 import com.mualab.org.user.model.booking.SubServices;
+import com.mualab.org.user.session.Session;
 
 import java.util.ArrayList;
 
@@ -19,10 +22,12 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
     private Context activity;
     private ArrayList<Services> parentArrayList;
     private ArrayList<SubServices> childtems;
+    private  ArtistsSearchBoard item;
 
-    public ServiceExpandListAdapter(Context activity, ArrayList<Services> parents) {
+    public ServiceExpandListAdapter(Context activity, ArrayList<Services> parents,ArtistsSearchBoard item) {
         this.parentArrayList = parents;
         this.activity = activity;
+        this.item = item;
     }
 
 
@@ -104,11 +109,6 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
                 if (arrayList.size()==0){
                     holder.ivDropDown.setVisibility(View.GONE);
 
-                 /*   if (ingredients.isChecked.equals("0")){
-                        holder.ivChecbox.setImageResource(R.drawable.unchecked_icon);
-                    }else {
-                        holder.ivChecbox.setImageResource(R.drawable.checked_icon);
-                    }*/
                 }else {
                     //  holder.ivChecbox.setVisibility(View.GONE);
                     holder.ivDropDown.setVisibility(View.VISIBLE);
