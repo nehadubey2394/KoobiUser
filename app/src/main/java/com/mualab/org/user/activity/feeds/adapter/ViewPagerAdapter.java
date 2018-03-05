@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.feeds.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,19 +41,21 @@ public class ViewPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View itemView = mLayoutInflater.inflate(R.layout.pager_layout, container, false);
         itemView.setOnTouchListener(tapListener);
-        ImageView postImages = (ImageView) itemView.findViewById(R.id.post_image);
+        ImageView postImages = itemView.findViewById(R.id.post_image);
 
         Picasso.with(context)
                 .load(ImagesList.get(position))
                 .fit()
+               // .resize(postImages.getMeasuredWidth(), postImages.getMeasuredHeight())
                 .placeholder(R.drawable.gallery_placeholder)
                 .into(postImages);
         container.addView(itemView);
@@ -60,7 +63,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
     }
 

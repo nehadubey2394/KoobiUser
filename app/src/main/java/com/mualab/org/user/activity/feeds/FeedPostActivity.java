@@ -247,7 +247,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         tvLoaction = findViewById(R.id.tv_loaction);
         ivShareFbOn = findViewById(R.id.iv_fb_on);
         ivShareTwitterOn = findViewById(R.id.iv_twitter_on);
-        iv_postimage = findViewById(R.id.iv_postimage);
+        iv_postimage = findViewById(R.id.iv_selectedImage);
         edCaption = findViewById(R.id.edCaption);
         tvMediaSize = findViewById(R.id.tvMediaSize);
        // progressBar = findViewById(R.id.progress_bar);
@@ -343,7 +343,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 if(ConnectionDetector.isConnected()){
 
                     if (feedType == Constant.TEXT_STATE)
-                        apiCallForUploadData();
+                        apiUploadTextFeed();
                     if (feedType == Constant.VIDEO_STATE) {
                     /*Uri videoUri = Uri.parse(mSelectdVideo);
 
@@ -581,9 +581,29 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         hideKeyboard();
     }
 
-    // uploadimage call
-    private void apiCallForUploadData() {
 
+    private void apiUploadTextFeed(){
+        Map<String, String> map = prepareCommonPostData();
+
+        new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                parseResponce(response);
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                Log.d("Responce", "error");
+            }})
+                .setAuthToken(session.getAuthToken())
+                .setProgress(true)
+                .setParam(map))
+               // .setBody(map, HttpTask.ContentType.FORM_DATA))
+                .postImage(null,null);
+    }
+
+
+    private Map<String, String> prepareCommonPostData(){
         address = TextUtils.isEmpty(address) ? "" : address;
         String feedTypetxt = "";
         if (feedType == Constant.TEXT_STATE)
@@ -609,9 +629,17 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             map.put("longitude", "");
         }
 
+        return map;
+    }
+
+    // uploadimage call
+    private void apiCallForUploadData() {
+
+        Map<String, String> map = prepareCommonPostData();
         List<Uri>uris = new ArrayList<>();
         for(String uri: mediaUri.uriList)
             uris.add(Uri.parse(uri));
+
         Progress.show(this);
         new UploadImage(FeedPostActivity.this,
                 session.getAuthToken(),
@@ -620,13 +648,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 new UploadImage.Listner() {
             @Override
             public void onResponce(String responce) {
-                Progress.hide(FeedPostActivity.this);
-                if (!TextUtils.isEmpty(responce)){
-                    Log.d("Responce", responce);
-                    resetView();
-                    setResult(Activity.RESULT_OK);
-                    finish();
-                }
+               parseResponce(responce);
             }
 
             @Override
@@ -636,6 +658,24 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
             }
         }).execute();
+    }
+
+    private void parseResponce(String responce){
+        Progress.hide(FeedPostActivity.this);
+        try {
+            JSONObject js = new JSONObject(responce);
+            String status = js.getString("status");
+             String message = js.getString("message");
+            if (status.equalsIgnoreCase("success")) {
+                resetView();
+                setResult(Activity.RESULT_OK);
+                finish();
+            }else {
+                MyToast.getInstance(this).showSmallMessage(message);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
   /*  public String getRealPathFromURI(Uri contentUri) {

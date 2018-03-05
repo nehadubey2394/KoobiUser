@@ -10,7 +10,7 @@ import com.mualab.org.user.R;
 
 /**
  * Created by dharmraj on 14/11/17.
- */
+ **/
 
 public class SelectableDialog {
 
@@ -41,9 +41,10 @@ public class SelectableDialog {
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.setContentView(R.layout.dialog_select_videos);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        TextView tvFromCamera = (TextView) dialog.findViewById(R.id.tv_video_from_camera);
-        TextView tvFromGallery = (TextView) dialog.findViewById(R.id.tv_video_from_gallery);
+        TextView tvFromCamera = dialog.findViewById(R.id.tv_video_from_camera);
+        TextView tvFromGallery = dialog.findViewById(R.id.tv_video_from_gallery);
         TextView tvTitle = dialog.findViewById(R.id.tvTitle);
+        dialog.setCancelable(false);
 
         if(!TextUtils.isEmpty(title))
             tvTitle.setText(title);

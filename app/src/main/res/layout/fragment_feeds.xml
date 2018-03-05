@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/parentView"
@@ -54,7 +55,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:layout_gravity="bottom"
-                android:padding="2dp"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
                 app:contentInsetRight="0dp"
@@ -64,7 +64,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:weightSum="3"
                     android:layout_gravity="center_vertical"
@@ -74,11 +74,10 @@
                     <LinearLayout
                         android:id="@+id/ly_feeds"
                         android:layout_width="0dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="5dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="2dp">
+                        android:gravity="center">
 
                         <TextView
                             android:id="@+id/tvFeeds"
@@ -94,11 +93,11 @@
                     <LinearLayout
                         android:id="@+id/ly_images"
                         android:layout_width="0dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="5dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="2dp">
+                        android:gravity="center">
 
                         <TextView
                             android:id="@+id/tvImages"
@@ -115,11 +114,10 @@
                     <LinearLayout
                         android:id="@+id/ly_videos"
                         android:layout_width="0dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="5dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:padding="2dp">
+                        android:gravity="center">
 
                         <TextView
                             android:id="@+id/tvVideos"
@@ -170,17 +168,32 @@
         android:layout_marginRight="5dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <TextView
-        android:id="@+id/tvNoData"
+
+    <LinearLayout
+        android:id="@+id/ll_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:visibility="gone"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="@font/roboto_medium"
-        android:layout_gravity="center"
-        android:textColor="@color/text_color"
-        android:layout_above="@+id/btnLogout"
-        android:text="@string/text_no_data_found"/>
+        android:layout_gravity="top|center"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressTintMode="multiply"
+            android:progressTint="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/tv_msg"
+            style="@style/TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/loading"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

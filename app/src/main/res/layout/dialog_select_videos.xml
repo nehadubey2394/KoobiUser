@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="3dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rectangular_darkgrey_border"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -15,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             style="@style/TextView.Dialog"
-            android:background="@drawable/bg_top_rounded_primary_color"
+
+            android:background="@color/colorPrimary"
             android:gravity="center"
             android:text="Select Video"
             android:textColor="@color/white"
@@ -54,9 +59,11 @@
             style="@style/TextView.Dialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:textColor="@color/black"
             android:text="@string/text_cancel" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ly_user_post"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -23,7 +24,24 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <de.hdodenhof.circleimageview.CircleImageView
+                <com.github.siyamed.shapeimageview.RoundedImageView
+                    android:id="@+id/iv_selectedImage"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:transitionName="profile"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/gallery_placeholder"
+                    app:siBorderColor="@color/colorPrimary"
+                    app:siBorderWidth="1dp"
+                    app:siRadius="3dp"
+                    app:siSquare="true"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginTop="2dp"
+                    android:visibility="gone"
+                    tools:ignore="UnusedAttribute" />
+
+                <!--<de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_selectedImage"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -35,7 +53,7 @@
                     android:src="@drawable/defoult_user_img"
                     android:background="@drawable/gradient_circle_img"
                     android:visibility="gone"
-                    />
+                    />-->
 
                 <EditText
                     android:id="@+id/ed_caption"
