@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,6 +64,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +83,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
     private int CURRENT_FEED_STATE = 0;
     // ui components delecration
     private Context mContext;
-    private TextView  tvImages, tvVideos, tvFeeds,tvNoData;
+    private TextView  tvImages, tvVideos, tvFeeds,tv_msg;
     private LinearLayout ll_header;
 
     private LiveUserAdapter liveUserAdapter;
@@ -87,6 +91,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
     private EditText edCaption;
     private ImageView iv_selectedImage;
+    private LinearLayout ll_progress;
     private EndlessRecyclerViewScrollListener endlesScrollListener;
     private FeedAdapter feedAdapter;
     //private ImagesAdapter imagesAdapter;
@@ -101,6 +106,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
     private User user;
 
     private MediaUri mediaUri;
+    private Handler handler;
 
     public FeedsFragment() {
         // Required empty public constructor
@@ -135,6 +141,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         me.profileImage = user.profileImage;
         me.storyCount = 0;
         liveUserList.add(me);
+        Progress.hide(mContext);
         //loadLiveUserJSONFromAsset();
     }
 
@@ -150,9 +157,10 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         tvImages = view.findViewById(R.id.tvImages);
         tvVideos =  view.findViewById(R.id.tvVideos);
         tvFeeds = view.findViewById(R.id.tvFeeds);
-        tvNoData = view.findViewById(R.id.tvNoData);
         RecyclerView rvMyStory = view.findViewById(R.id.recyclerView);
         rvFeed = view.findViewById(R.id.rvFeed);
+        tv_msg = view.findViewById(R.id.tv_msg);
+        ll_progress = view.findViewById(R.id.ll_progress);
 
         view.findViewById(R.id.ly_images).setOnClickListener(this);
         view.findViewById(R.id.ly_videos).setOnClickListener(this);
@@ -186,13 +194,14 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         getStoryList();
 
        // Progress.show(mContext);
-        Handler handler = new Handler();
+        updateViewType(R.id.ly_feeds);
+     /*   Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateViewType(R.id.ly_feeds);
+
             }
-        }, 1000);
+        }, 1000);*/
     }
 
     @Override
@@ -226,20 +235,27 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
                 caption = edCaption.getText().toString().trim();
                 Intent intent = null;
+                ActivityOptionsCompat options = null;
                 if(mediaUri!=null && mediaUri.uriList.size()>0){
                     intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", TextUtils.isEmpty(caption)?"":caption);
                     intent.putExtra("mediaUri", mediaUri);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
+                    options = ActivityOptionsCompat.
+                            makeSceneTransitionAnimation(getActivity(), iv_selectedImage, "profile");
                 }else if (!TextUtils.isEmpty(caption)) {
-                    intent = new Intent(mContext, FeedPostActivity.class);
+                    /*intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", caption);
                     intent.putExtra("feedType", Constant.TEXT_STATE);
-                    intent.putExtra("requestCode", Constant.POST_FEED_DATA);
+                    intent.putExtra("requestCode", Constant.POST_FEED_DATA);*/
+                    MyToast.getInstance(mContext).showSmallMessage(getString(R.string.under_development));
                 }
 
                 if (intent != null) {
-                    startActivityForResult(intent, Constant.POST_FEED_DATA);
+
+                    if(options!=null)
+                    startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
+                    else startActivityForResult(intent, Constant.POST_FEED_DATA);
                 }
                 break;
 
@@ -372,6 +388,12 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         return json;
     }*/
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //Progress.hide(mContext);
+        Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
+    }
 
     private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
         Session session = Mualab.getInstance().getSessionManager();
@@ -398,10 +420,11 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         params.put("limit", String.valueOf(feedLimit));
         params.put("type", "home");
         // params.put("appType", "user");
-
+        Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(mContext, "getAllFeeds", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                ll_progress.setVisibility(View.GONE);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
@@ -413,20 +436,22 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     }else MyToast.getInstance(mContext).showSmallMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
+                   // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
                 }
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_progress.setVisibility(View.GONE);
                 //MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
             }})
                 .setAuthToken(user.authToken)
                 .setParam(params)
                 .setMethod(Request.Method.POST)
-                .setProgress(isEnableProgress)
+                .setProgress(false)
                 .setBodyContentType(HttpTask.ContentType.X_WWW_FORM_URLENCODED))
                 .execute(this.getClass().getName());
+        ll_progress.setVisibility(isEnableProgress?View.VISIBLE:View.GONE);
     }
 
     private void ParseAndUpdateUI(final String response) {
@@ -438,7 +463,6 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
             inProgressAPI = false;
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
-                tvNoData.setVisibility(View.GONE);
                 JSONArray array = js.getJSONArray("AllFeeds");
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
@@ -477,7 +501,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
             } else if (status.equals("fail") && feeds.size()==0) {
                 rvFeed.setVisibility(View.GONE);
-                tvNoData.setVisibility(View.VISIBLE);
+                tv_msg.setVisibility(View.VISIBLE);
                 feedAdapter.notifyDataSetChanged();
                /* if (type == Constant.IMAGE_STATE) {
                     imagesAdapter.notifyDataSetChanged();
@@ -491,9 +515,10 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         } catch (JSONException e) {
             e.printStackTrace();
             inProgressAPI = false;
-            MyToast.getInstance(mContext).showSmallCustomToast(getString(R.string.alert_something_wenjt_wrong));
+            feedAdapter.notifyDataSetChanged();
+            //MyToast.getInstance(mContext).showSmallCustomToast(getString(R.string.alert_something_wenjt_wrong));
         }finally {
-            Progress.hide(mContext);
+            //Progress.hide(mContext);
         }
     }
 
@@ -565,7 +590,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                 .setParam(params)
                 .setProgress(false)
                 .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
-                .execute(this.getClass().getName());
+                .execute("getMyStoryUser");
     }
 
 
@@ -646,6 +671,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                             mediaUri.isFromGallery = false;
                             mediaUri.mediaType = Constant.IMAGE_STATE;
                             mediaUri.addUri(String.valueOf(picUri));
+
                             updatePostImageUI(bitmap);
                         }
                     } catch (Exception e) {
@@ -759,13 +785,20 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
     private void resetView(){
         mediaUri = null;
         caption = "";
+        tvImages.setTextColor(getResources().getColor(R.color.text_color));
+        tvFeeds.setTextColor(getResources().getColor(R.color.text_color));
+        tvFeeds.setTextColor(getResources().getColor(R.color.colorPrimary));
         updatePostImageUI(null);
     }
 
     private void updatePostImageUI(Bitmap bitmap) {
         if (bitmap != null) {
+            //Bitmap original = BitmapFactory.decodeStream(getAssets().open("1024x768.jpg"));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
             iv_selectedImage.setVisibility(View.VISIBLE);
-            iv_selectedImage.setImageBitmap(bitmap);
+            iv_selectedImage.setImageBitmap(decoded);
         } else {
             iv_selectedImage.setImageBitmap(null);
             iv_selectedImage.setVisibility(View.GONE);

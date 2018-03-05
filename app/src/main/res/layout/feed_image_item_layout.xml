@@ -64,14 +64,6 @@
 
     </RelativeLayout>
 
-    <com.hendraanggrian.widget.SocialTextView
-        android:id="@+id/tv_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoLink="web|email"
-        android:padding="10dp"
-        android:textColor="@color/text_color"
-        android:visibility="gone" />
 
     <!--<View
         android:layout_width="match_parent"
@@ -82,12 +74,24 @@
 
     <include layout="@layout/feed_item_footer"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="40dp"
         />
+
+    <com.hendraanggrian.widget.SocialTextView
+        android:id="@+id/tv_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web|email"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/text_color"
+        android:text="dasfkjhfkj .f msdafjkhasd"
+        android:visibility="visible" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/gray" />
+        android:background="@color/gray2" />
 
 </LinearLayout>

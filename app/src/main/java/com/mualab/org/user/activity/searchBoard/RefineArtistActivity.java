@@ -489,14 +489,14 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                     }
                     //  showToast(message);
                 } catch (Exception e) {
-                    Progress.hide(RefineArtistActivity.this);
+                   // Progress.hide(RefineArtistActivity.this);
                     e.printStackTrace();
                 }
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
-                try{
+               /* try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
@@ -505,7 +505,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
+*/
 
             }})
                 .setAuthToken(user.authToken)

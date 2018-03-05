@@ -41,7 +41,6 @@ import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
-import com.mualab.org.user.util.Helper;
 import com.mualab.org.user.util.LocationDetector;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -266,6 +265,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    Progress.hide(mContext);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -301,7 +301,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void ErrorListener(VolleyError error) {
-                try{
+               /* try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
@@ -310,7 +310,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
+*/
 
             }})
                 .setAuthToken(user.authToken)

@@ -134,7 +134,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         //  else {
         final Feeds feeds = feedItems.get(position);
-        String fullName = feeds.fullName.substring(0, 1).toUpperCase() + feeds.fullName.substring(1);
+        //String fullName = feeds.fullName.substring(0, 1).toUpperCase() + feeds.fullName.substring(1);
 
         switch (feeds.feedType) {
             case "text":
@@ -147,7 +147,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             .into(textHolder.ivProfile);
                 }
 
-                textHolder.tvUserName.setText(fullName);
+                textHolder.tvUserName.setText(feeds.userName);
                 textHolder.tvPostTime.setText(feeds.crd);
                 textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 textHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
@@ -167,7 +167,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             .into(imageHolder.ivProfile);
                 }
 
-                imageHolder.tvUserName.setText(fullName);
+                imageHolder.tvUserName.setText(feeds.userName);
                 imageHolder.tvPostTime.setText(feeds.crd);
                 imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
 
@@ -281,7 +281,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             .into(vedioHolder.ivProfile);
                 }
 
-                vedioHolder.tvUserName.setText(fullName);
+                vedioHolder.tvUserName.setText(feeds.userName);
                 vedioHolder.tvPostTime.setText(feeds.crd);
                 vedioHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 vedioHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));

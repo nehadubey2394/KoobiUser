@@ -66,10 +66,11 @@
             android:layout_height="wrap_content">
 
             <com.github.siyamed.shapeimageview.RoundedImageView
-                android:id="@+id/iv_postimage"
+                android:id="@+id/iv_selectedImage"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
+                android:transitionName="profile"
                 android:scaleType="centerCrop"
                 android:src="@drawable/gallery_placeholder"
                 app:siBorderColor="@color/colorPrimary"

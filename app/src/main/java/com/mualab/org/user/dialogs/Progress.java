@@ -40,7 +40,7 @@ public class Progress {
         if(progress!=null){
             try{
                 View removeView = ((Activity) context).findViewById(R.id.progressRootView);
-                removeView.setVisibility(View.GONE);
+                if(removeView!=null) removeView.setVisibility(View.GONE);
                /* ViewGroup rootView = (ViewGroup) ((Activity) context).findViewById(android.R.id.content);
                 rootView.removeView(removeView);*/
             }catch (Exception e){
@@ -62,7 +62,10 @@ public class Progress {
         }
 
         try{
-            ((Activity) context).findViewById(R.id.progressRootView).setVisibility(View.GONE);
+            View removeView = ((Activity) context).findViewById(R.id.progressRootView);
+            if(removeView!=null){
+                removeView.setVisibility(View.GONE);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
