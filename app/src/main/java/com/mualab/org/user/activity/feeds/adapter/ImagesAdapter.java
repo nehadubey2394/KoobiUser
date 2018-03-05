@@ -11,9 +11,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.constants.Constant;
-import com.mualab.org.user.model.feeds.AllFeeds;
+import com.mualab.org.user.model.feeds.Feeds;
 
 import java.util.List;
 
@@ -24,12 +23,12 @@ import java.util.List;
 public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<AllFeeds> feedsArrayList;
+    private List<Feeds> feedsArrayList;
     private int type;
     private final int VIEW_FEED_TYPE = 1;
     private final int VIEW_TYPE_LOADING = 2;
 
-    public ImagesAdapter(Context mContext, List<AllFeeds> feedsArrayList, int type) {
+    public ImagesAdapter(Context mContext, List<Feeds> feedsArrayList, int type) {
         this.mContext = mContext;
         this.feedsArrayList = feedsArrayList;
         this.type = type;
@@ -57,8 +56,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder h, final int position) {
-        //final AllFeeds feeds = feedsArrayList.get(position);
-        final AllFeeds feeds = feedsArrayList.get(position);
+        //final Feeds feeds = feedsArrayList.get(position);
+        final Feeds feeds = feedsArrayList.get(position);
         if (h instanceof LoadingViewHolder) {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) h;
             loadingViewHolder.progressBar.setIndeterminate(true);

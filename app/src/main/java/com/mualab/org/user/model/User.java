@@ -1,5 +1,7 @@
 package com.mualab.org.user.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,8 @@ import java.io.Serializable;
 
 public class User implements Serializable{
 
-    public String id;
+    @SerializedName("_id")
+    public int id;
     public String fullName;
     public String firstName;
     public String lastName;

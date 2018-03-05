@@ -24,7 +24,7 @@
                 android:orientation="horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/iv_profileImage"
+                    android:id="@+id/iv_selectedImage"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginLeft="10dp"
@@ -76,25 +76,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginRight="2dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
                     android:src="@drawable/video_ico"
                     android:tint="@color/colorPrimary" />
 
-                <ImageView
+               <!-- <ImageView
                     android:id="@+id/ivWeb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginRight="4dp"
                     android:src="@drawable/internet_ico"
-                    android:tint="@color/colorPrimary" />
+                    android:tint="@color/colorPrimary" />-->
 
                 <TextView
                     android:id="@+id/tv_post"
                     android:layout_width="80dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:background="@drawable/bg_selected"
                     android:gravity="center"
                     android:fontFamily="@font/roboto_light"

@@ -52,12 +52,21 @@
                 android:gravity="center_vertical">
 
 
-                <ImageButton
-                    android:id="@+id/ivBack"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/btn_default_light"
-                    android:src="@drawable/com_facebook_close" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:id="@+id/btnBack"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_white_x"
+                        android:layout_centerInParent="true"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -90,14 +99,21 @@
                 android:layout_height="?actionBarSize"
                 android:gravity="center_vertical">
 
-                <ImageButton
-                    android:id="@+id/btnBack"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/btn_default_light"
-                    android:src="@drawable/down_arrow_ico"
-                    android:tint="@color/white"
-                    android:rotation="90"/>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:id="@+id/retry"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_white_x"
+                        android:layout_centerInParent="true"/>
+
+                </RelativeLayout>
 
                 <View
                     android:layout_width="0dp"
@@ -105,14 +121,14 @@
                     android:layout_weight="1" />
 
 
-                <ImageButton
+                <!--<ImageButton
                     android:id="@+id/btnAccept"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/btn_default_light"
                     android:src="@drawable/down_arrow_ico"
                     android:tint="@color/white"
-                    android:rotation="275"/>
+                    android:rotation="275"/>-->
             </LinearLayout>
 
         </ViewSwitcher>
@@ -178,27 +194,33 @@
                 android:layout_height="match_parent"
                 android:gravity="center">
 
-
-                <LinearLayout
-                    android:id="@+id/addStory"
+                <RelativeLayout
+                    android:id="@+id/add_to_story"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:background="?selectableItemBackgroundBorderless">
+                    android:padding="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/save_story">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/down_arrow_ico"/>
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/ic_add_to_story"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/ic_add_to_story"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/TextView"
-                        android:text="Your Story"/>
-                </LinearLayout>
+                        android:textSize="11sp"
+                        android:text="Add To Story"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/ic_add_to_story"
+                        android:layout_marginTop="7dp"
+                        android:textColor="#fff"/>
 
+                </RelativeLayout>
 
 
                 <!-- <android.support.v7.widget.RecyclerView
