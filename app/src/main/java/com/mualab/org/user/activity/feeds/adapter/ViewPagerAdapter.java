@@ -1,8 +1,10 @@
 package com.mualab.org.user.activity.feeds.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +27,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     private List<String> ImagesList;
     private Listner listner;
     private MyOnDoubleTapListener tapListener;
+    private int px;
 
 
     public ViewPagerAdapter(Context context, List<String> imagesList, Listner listner) {
@@ -33,6 +36,9 @@ public class ViewPagerAdapter extends PagerAdapter {
         this.listner = listner;
         this.mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         tapListener = new MyOnDoubleTapListener(context);
+        Resources r = context.getResources();
+        px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, r.getDisplayMetrics());
+
     }
 
     @Override
@@ -54,8 +60,8 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         Picasso.with(context)
                 .load(ImagesList.get(position))
-                .fit()
-               // .resize(postImages.getMeasuredWidth(), postImages.getMeasuredHeight())
+               // .fit()
+                .resize(px,px)
                 .placeholder(R.drawable.gallery_placeholder)
                 .into(postImages);
         container.addView(itemView);
