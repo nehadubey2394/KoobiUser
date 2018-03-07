@@ -22,12 +22,10 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
     private Context activity;
     private ArrayList<Services> parentArrayList;
     private ArrayList<SubServices> childtems;
-    private  ArtistsSearchBoard item;
 
-    public ServiceExpandListAdapter(Context activity, ArrayList<Services> parents,ArtistsSearchBoard item) {
+    public ServiceExpandListAdapter(Context activity, ArrayList<Services> parents) {
         this.parentArrayList = parents;
         this.activity = activity;
-        this.item = item;
     }
 
 

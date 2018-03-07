@@ -31,13 +31,14 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
     private Session session = Mualab.getInstance().getSessionManager();
-
+    private  boolean isOutCallSelect;
     // Constructor of the class
-    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item) {
+    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item,boolean isOutCallSelect) {
         this.context = context;
         this.artistsList = artistsList;
         this.serviceTitle = serviceTitle;
         this.item = item;
+        this.isOutCallSelect = isOutCallSelect;
     }
 
     @Override
@@ -103,7 +104,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             holder.tvTime.setText(hours+min);
         }
 
-        if (session.getIsOutCallFilter()){
+        if (session.getIsOutCallFilter() || isOutCallSelect){
             holder.tvAmount.setText(item.outCallPrice);
         }else {
             holder.tvAmount.setText(item.inCallPrice);

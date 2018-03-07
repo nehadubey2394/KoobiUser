@@ -84,7 +84,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         tempArrayList = new ArrayList<>();
         services =  item.allService;
         tempArrayList.addAll(services);
-        expandableListAdapter = new ServiceExpandListAdapter(mContext, services,item);
+        expandableListAdapter = new ServiceExpandListAdapter(mContext, services);
         // services.clear();
     }
 
@@ -165,13 +165,9 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
             case R.id.ivOutcall :
                 if (!isOutCallSelect){
                     isOutCallSelect = true;
-                    session.setIsOutCallFilter(true);
-                    session.setIsOutCallFilter(true);
                     ivOutcall.setImageResource(R.drawable.active_check_box);
                 }else {
                     isOutCallSelect = false;
-                    session.setIsOutCallFilter(false);
-                    session.setIsOutCallFilter(false);
                     ivOutcall.setImageResource(R.drawable.inactive_checkbox);
                 }
                 OutCallFilter();
@@ -183,7 +179,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         Services servicesItem = services.get(groupPosition);
         SubServices subServices = servicesItem.arrayList.get(childPosition);
         ((BookingActivity)mContext).addFragment(
-                BookingFragment3.newInstance(subServices.subServiceName,subServices,item), true, R.id.flBookingContainer);
+                BookingFragment3.newInstance(subServices.subServiceName,subServices,item,isOutCallSelect), true, R.id.flBookingContainer);
     }
 
     public void OutCallFilter() {
@@ -197,36 +193,43 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                 for (int i=0; i<tempArrayList2.size(); i++){
                     Services mServices = tempArrayList2.get(i);
                     Services newService = new Services();
+
                     if (mServices.isOutCall){
                         for (int j=0; j<mServices.arrayList.size(); j++) {
                             SubServices subServices = mServices.arrayList.get(j);
                             SubServices newSubServise = new SubServices();
+
                             if (subServices.isOutCall){
+
                                 for (int k=0; k<subServices.artistservices.size(); k++) {
                                     BookingServices3 services3 = subServices.artistservices.get(k);
                                     BookingServices3 newServices3 = new BookingServices3();
 
                                     if (services3.isOutCall){
-                                        if (!services3.outCallPrice.equals("0") && !services3.outCallPrice.equals("null") ){
-                                            newServices3.outCallPrice = services3.outCallPrice;
-                                            newServices3._id = services3._id;
-                                            newServices3.title = services3.title;
-                                            newServices3.completionTime = services3.completionTime;
-                                            newServices3.inCallPrice = services3.inCallPrice;
-                                            newServices3.isOutCall = true;
 
-                                            newSubServise.artistservices.add(newServices3);
-                                            newSubServise._id = subServices._id;
-                                            newSubServise.isOutCall = true;
-                                            newSubServise.serviceId = subServices.serviceId;
-                                            newSubServise.subServiceId = subServices.subServiceId;
-                                            newSubServise.subServiceName = subServices.subServiceName;
+                                        if (!services3.outCallPrice.equals("null")){
+                                            double outCallPrice = Double.parseDouble(services3.outCallPrice);
+                                            if (outCallPrice > 0 ){
+                                                newServices3.outCallPrice = services3.outCallPrice;
+                                                newServices3._id = services3._id;
+                                                newServices3.title = services3.title;
+                                                newServices3.completionTime = services3.completionTime;
+                                                newServices3.inCallPrice = services3.inCallPrice;
+                                                newServices3.isOutCall = true;
 
-                                            newService.isOutCall= true;
-                                            newService.serviceName= mServices.serviceName;
-                                            newService.serviceId= mServices.serviceId;
-                                            newService.arrayList.add(newSubServise);
-                                            services.add(newService);
+                                                newSubServise.artistservices.add(newServices3);
+                                                newSubServise._id = subServices._id;
+                                                newSubServise.isOutCall = true;
+                                                newSubServise.serviceId = subServices.serviceId;
+                                                newSubServise.subServiceId = subServices.subServiceId;
+                                                newSubServise.subServiceName = subServices.subServiceName;
+
+                                                newService.isOutCall= true;
+                                                newService.serviceName= mServices.serviceName;
+                                                newService.serviceId= mServices.serviceId;
+                                                newService.arrayList.add(newSubServise);
+                                                services.add(newService);
+                                            }
                                         }
                                     }
                                 }
@@ -237,8 +240,9 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                 }
             }
         }else {
-            services.addAll(tempArrayList);
-            session.setIsOutCallFilter(false);
+            //  if (session.getIsOutCallFilter())
+            InCallFilter();
+            // services.addAll(tempArrayList);
         }
         if (services.size()==0){
             lvExpandable.setVisibility(View.GONE);
@@ -270,41 +274,43 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                             BookingServices3 services3 = subServices.artistservices.get(k);
                             BookingServices3 newServices3 = new BookingServices3();
 
-                            if (!services3.inCallPrice.equals("0") && !services3.inCallPrice.equals("null")) {
-                                newServices3.outCallPrice = services3.outCallPrice;
-                                newServices3._id = services3._id;
-                                newServices3.title = services3.title;
-                                newServices3.completionTime = services3.completionTime;
-                                newServices3.inCallPrice = services3.inCallPrice;
-                                newServices3.isOutCall = true;
-                                newSubServise.artistservices.add(newServices3);
+                            if (!services3.inCallPrice.equals("null")) {
+                                double inCallPrice = Double.parseDouble(services3.inCallPrice);
+                                if (inCallPrice > 0) {
+                                    newServices3.outCallPrice = services3.outCallPrice;
+                                    newServices3._id = services3._id;
+                                    newServices3.title = services3.title;
+                                    newServices3.completionTime = services3.completionTime;
+                                    newServices3.inCallPrice = services3.inCallPrice;
+                                    newServices3.isOutCall = true;
+                                    newSubServise.artistservices.add(newServices3);
+                                }
                             }
+
+                            newSubServise._id = subServices._id;
+                            newSubServise.isOutCall = true;
+                            newSubServise.serviceId = subServices.serviceId;
+                            newSubServise.subServiceId = subServices.subServiceId;
+                            newSubServise.subServiceName = subServices.subServiceName;
+                            newService.arrayList.add(newSubServise);
                         }
-
-                        newSubServise._id = subServices._id;
-                        newSubServise.isOutCall = true;
-                        newSubServise.serviceId = subServices.serviceId;
-                        newSubServise.subServiceId = subServices.subServiceId;
-                        newSubServise.subServiceName = subServices.subServiceName;
-                        newService.arrayList.add(newSubServise);
                     }
+                    newService.isOutCall = true;
+                    newService.serviceName = mServices.serviceName;
+                    newService.serviceId = mServices.serviceId;
+
+                    services.add(newService);
                 }
-                newService.isOutCall = true;
-                newService.serviceName = mServices.serviceName;
-                newService.serviceId = mServices.serviceId;
 
-                services.add(newService);
-            }
-
-            if (services.size() == 0) {
-                lvExpandable.setVisibility(View.GONE);
-                tvNoData.setVisibility(View.VISIBLE);
-            } else {
-                expandableListAdapter.notifyDataSetChanged();
-                lvExpandable.setVisibility(View.VISIBLE);
-                tvNoData.setVisibility(View.GONE);
+                if (services.size() == 0) {
+                    lvExpandable.setVisibility(View.GONE);
+                    tvNoData.setVisibility(View.VISIBLE);
+                } else {
+                    expandableListAdapter.notifyDataSetChanged();
+                    lvExpandable.setVisibility(View.VISIBLE);
+                    tvNoData.setVisibility(View.GONE);
+                }
             }
         }
     }
-
 }
