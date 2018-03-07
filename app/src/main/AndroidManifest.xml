@@ -120,7 +120,7 @@
         <activity android:name=".activity.story.draj_camera.CaptureActivity" />
         <activity android:name=".activity.story.draj_camera.CaptureActivity2" />
         <activity android:name=".activity.story.NewStoryActivity" />
-        <activity android:name=".activity.feeds.PreviewImageActivity"></activity>
+        <activity android:name=".activity.feeds.PreviewImageActivity"/>
     </application>
 
 </manifest>
