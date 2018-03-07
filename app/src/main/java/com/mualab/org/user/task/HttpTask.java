@@ -2,7 +2,6 @@ package com.mualab.org.user.task;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -17,9 +16,9 @@ import com.mualab.org.user.application.VolleyRequest.VolleySingleton;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.dialogs.ServerErrorDialog;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.util.media.FileUtils;
 
 import org.json.JSONObject;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -347,7 +346,8 @@ public class HttpTask {
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
                 if (key != null && file != null) {
-                   // params.put(key, new DataPart(file.getName(), AppHelper.getFileDataFromDrawable(file), "image/jpeg"));
+                    String mimeType = FileUtils.getMimeType(file);
+                    params.put(key, new DataPart(file.getName(), AppHelper.getFileDataFromFile(file), mimeType));
                 }
                 return params;
             }
@@ -358,6 +358,8 @@ public class HttpTask {
         multipartRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 0, 1f));
         VolleySingleton.getInstance(context.getApplicationContext()).addToRequestQueue(multipartRequest);
     }
+
+
 
     private void handleError(VolleyError error){
         if(progress)

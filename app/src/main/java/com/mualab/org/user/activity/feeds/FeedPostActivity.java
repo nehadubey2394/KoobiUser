@@ -3,6 +3,7 @@ package com.mualab.org.user.activity.feeds;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -27,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Filter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +48,7 @@ import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.FilteredAdapter;
 import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.story.draj_camera.internal.BaseCaptureActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
@@ -55,14 +59,19 @@ import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.task.UploadImage;
+import com.mualab.org.user.task.UploadVideoTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.LocationDetector;
+import com.mualab.org.user.util.SuziLoader;
 import com.mualab.org.user.util.media.ImageVideoUtil;
+import com.mualab.org.user.videocompressor.file.FileUtils;
+import com.mualab.org.user.videocompressor.video.MediaController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -103,6 +112,10 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private String isShare = "", tages = "", address;
 
     private MediaUri mediaUri;
+    private AlertDialog mAlertDialog;
+    private File tempFile;
+    private Boolean mDeleteCompressedMedia = false;
+    private String mUploadUri = null;
 
     private BroadcastReceiver receiverUpComplete = new BroadcastReceiver() {
 
@@ -317,6 +330,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     bitmap = ImageVideoUtil.getVidioThumbnail(filePath);
                 } else {
                     bitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mediaUri.uriList.get(0)), this); //ImageVideoUtil.getCompressBitmap();
+                   /* SuziLoader loader = new SuziLoader(); //Create it for once
+                    loader.with(this) //Context
+                            .load(mediaUri.uriList.get(0)) //Video path
+                            .into(iv_postimage) // imageview to load the thumbnail
+                            .type("mini") // mini or micro
+                            .show();*/ // to show the thumbnail
                 }
 
                 if (bitmap != null)
@@ -352,25 +371,17 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     if (feedType == Constant.TEXT_STATE)
                         apiUploadTextFeed();
                     if (feedType == Constant.VIDEO_STATE) {
-                    /*Uri videoUri = Uri.parse(mSelectdVideo);
 
-                    String path = ImageVideoUtil.generatePath(videoUri, FeedPostActivity.this);
-                    File file = new File(path);
-
-                    // Get length of file in bytes
-                    long fileSizeInBytes = file.length();
-                    // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
-                    long fileSizeInKB = fileSizeInBytes / 1024;
-                    // Convert the KB to MegaBytes (1 MB = 1024 KBytes)
-                    long fileSizeInMB = fileSizeInKB / 1024;
-
-                    if(fileSizeInMB>10){
-                        compressVideo(videoUri, file);
-                    }else {
-                        apiCallForUploadVideo(file);
-                    }*/
-                        MyToast.getInstance(FeedPostActivity.this)
-                                .showSmallMessage(getString(R.string.under_development));
+                        String uri = mediaUri.uriList.get(0);
+                        if (mUploadUri == null) {
+                            initProgressBar();
+                            mDeleteCompressedMedia = true;
+                            //saveTempAndCompress(uri);
+                            uploadVideo();
+                        }else {
+                            initProgressBar();
+                            uploadVideo();
+                        }
                         //sendToBackGroundService();
                     } else if (feedType == Constant.IMAGE_STATE)
                         apiCallForUploadData();
@@ -397,6 +408,99 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     // TODO: Handle the error.
                 }
                 break;
+        }
+    }
+
+    private boolean isMediaVideo(String uri){
+        if(uri.contains(".mp4") || uri.contains(".wmv") || uri.contains(".flv") || uri.contains(".avi")){
+            return true;
+        }
+        return false;
+    }
+
+    private void deleteOutputFile(@Nullable String uri) {
+        if (uri != null)
+            //noinspection ResultOfMethodCallIgnored
+            new File(Uri.parse(uri).getPath()).delete();
+    }
+
+
+    private void saveTempAndCompress(String uri){
+        //save temporary file for compression
+        //String fileName = uri.substring(uri.indexOf("Stories/") + 8);
+        //tempFile = FileUtils.saveTempFile(fileName, this, Uri.parse(uri));
+
+        String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
+        tempFile = new File(path); //com.mualab.org.user.util.media.FileUtils.getFile(this, Uri.parse(uri));
+
+        //delete the original
+        //deleteOutputFile(uri);
+
+        //compress temp file and save new compressed version in "/Stories/"
+        new VideoCompressor().execute();
+    }
+
+    class VideoCompressor extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressBar();
+            Log.d(TAG,"Start video compression");
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return MediaController.getInstance().convertVideo(tempFile.getPath());
+        }
+
+        @Override
+        protected void onPostExecute(String filePath) {
+            super.onPostExecute(filePath);
+            if(!filePath.equals("")){
+                mUploadUri = filePath;
+                Log.d(TAG,"Compression successfully!");
+                if(mDeleteCompressedMedia){
+                    uploadVideo();
+                }
+            }else {
+                hideProgressBar();
+            }
+        }
+    }
+
+    private void initProgressBar(){
+        LayoutInflater li = LayoutInflater.from(this);
+        View layout = li.inflate(R.layout.layout_processing_dialog, null);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                150, FrameLayout.LayoutParams.WRAP_CONTENT
+        );
+        layout.setLayoutParams(params);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(layout);
+        //mAlertDialog.setTitle("Prepare data for uploading video..");
+        mAlertDialog = alertDialogBuilder.create();
+        mAlertDialog.setCancelable(false);
+        mAlertDialog.show();
+    }
+
+
+
+    private void showProgressBar(){
+//    if(mProgressBar != null){
+//      mProgressBar.setVisibility(View.VISIBLE);
+//    }
+        if(mAlertDialog != null){
+            mAlertDialog.show();
+        }
+    }
+
+    private void hideProgressBar(){
+//    if(mProgressBar != null){
+//      mProgressBar.setVisibility(View.INVISIBLE);
+//    }
+        if(mAlertDialog != null){
+            mAlertDialog.dismiss();
         }
     }
 
@@ -455,102 +559,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-  /*  private void compressVideo(Uri uri, final File tmpFile) {
-
-        final File file;
-        try {
-            File outputDir = new File(getExternalFilesDir(null), "outputs");
-            //noinspection ResultOfMethodCallIgnored
-            outputDir.mkdir();
-            file = File.createTempFile("transcode_test", ".mp4", outputDir);
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to create temporary file.", e);
-            Toast.makeText(this, "Failed to create temporary file.", Toast.LENGTH_LONG).show();
-            return;
-        }
-        ContentResolver resolver = getContentResolver();
-        final ParcelFileDescriptor parcelFileDescriptor;
-        try {
-            parcelFileDescriptor = resolver.openFileDescriptor(uri, "r");
-        } catch (FileNotFoundException e) {
-            Log.w("Could not open '" + uri.toString() + "'", e);
-            Toast.makeText(FeedPostActivity.this, "File not found.", Toast.LENGTH_LONG).show();
-            return;
-        }
-        final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        //final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setMax(PROGRESS_BAR_MAX);
-        final long startTime = SystemClock.uptimeMillis();
-        MediaTranscoder.Listener listener = new MediaTranscoder.Listener() {
-            @Override
-            public void onTranscodeProgress(double progress) {
-               *//* if (progress < 0) {
-                    progressBar.setIndeterminate(true);
-                } else {
-                    progressBar.setIndeterminate(false);
-                    progressBar.setProgress((int) Math.round(progress * PROGRESS_BAR_MAX));
-                }
-*//*
-                progressBar.setProgress((int) Math.round(progress * PROGRESS_BAR_MAX));
-            }
-
-            @Override
-            public void onTranscodeCompleted() {
-                progressBar.setVisibility(View.GONE);
-                Log.d(TAG, "transcoding took " + (SystemClock.uptimeMillis() - startTime) + "ms");
-                onTranscodeFinished(true, "transcoded file placed on " + file, parcelFileDescriptor);
-                //  Uri uri = FileProvider.getUriForFile(FeedPostActivity.this, Constant.FILE_PROVIDER_AUTHORITY, file);
-                apiCallForUploadVideo(file);
-            }
-
-            @Override
-            public void onTranscodeCanceled() {
-                progressBar.setVisibility(View.GONE);
-                onTranscodeFinished(false, "Compress canceled.", parcelFileDescriptor);
-            }
-
-            @Override
-            public void onTranscodeFailed(Exception exception) {
-
-                // Get length of file in bytes
-                long fileSizeInBytes = tmpFile.length();
-                // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
-                long fileSizeInKB = fileSizeInBytes / 1024;
-                // Convert the KB to MegaBytes (1 MB = 1024 KBytes)
-                long fileSizeInMB = fileSizeInKB / 1024;
-
-                if (fileSizeInMB <= 30) {
-                    apiCallForUploadVideo(tmpFile);
-                }
-                // onTranscodeFinished(false, "Transcoder error occurred.", parcelFileDescriptor);
-            }
-        };
-        Log.d(TAG, "transcoding into " + file);
-        mFuture = MediaTranscoder.getInstance().transcodeVideo(fileDescriptor, file.getAbsolutePath(),
-                // MediaFormatStrategyPresets.createAndroid720pStrategy(8000 * 1000, 128 * 1000, 1), listener);
-                MediaFormatStrategyPresets.createExportPreset960x540Strategy(), listener);
-        // switchButtonEnabled(true);
-    }
-
-    private void onTranscodeFinished(boolean isSuccess, String toastMessage, ParcelFileDescriptor parcelFileDescriptor) {
-        progressBar.setProgress(0);
-        progressBar.setVisibility(View.GONE);
-        // switchButtonEnabled(false);
-        Toast.makeText(FeedPostActivity.this, toastMessage, Toast.LENGTH_LONG).show();
-        try {
-            parcelFileDescriptor.close();
-        } catch (IOException e) {
-            Log.w("Error while closing", e);
-        }
-    }*/
-
-    /*  @Override
-      public void onBackPressed() {
-          super.onBackPressed();
-          setResult(Activity.RESULT_CANCELED);
-      }
-  */
 
     @Override
     public void onBackPressed() {
@@ -685,91 +693,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-  /*  public String getRealPathFromURI(Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            cursor = FeedPostActivity.this.getContentResolver().query(contentUri,
-                    proj, null, null, null);
-            assert cursor != null;
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }*/
-
-    /*private void apiCallForUploadVideo(File file) {
-
-        isShare = "";
-
-        if (isFbShared && isTwitteron) {
-            isShare = "facebook,twitter";
-        } else if (isFbShared) {
-            isShare = "facebook";
-        } else if (isTwitteron) {
-            isShare = "twitter";
-        }
-
-        address = TextUtils.isEmpty(address) ? "" : address;
-        Map<String, String> map = new HashMap<>();
-        map.put("feedType", "video");
-        map.put("caption", caption);
-        map.put("isShare", isShare);
-        map.put("city", address);
-        map.put("tags", tages);
-
-        if (lat != null && lng != null) {
-            map.put("latitude", "" + lat);
-            map.put("longitude", "" + lng);
-        } else {
-            map.put("latitude", "");
-            map.put("longitude", "");
-        }
-        Intent serviceIntent = new Intent(FeedPostActivity.this, ServiceUploadFile.class);
-        serviceIntent.putExtra("videoUri", mSelectdVideo);
-        serviceIntent.putExtra("map", (Serializable) map);
-        startService(serviceIntent);
-        Toast.makeText(this, "Uploading start..", Toast.LENGTH_SHORT).show();
-        finish();
-        WebServiceAPI api = new WebServiceAPI(this, "fds", new ResponseApi.Listener() {
-            @Override
-            public void onResponse(String response, String apiName) {
-                try {
-                    JSONObject object = new JSONObject(response);
-                    String status = object.getString("status");
-                    if (status.equals("success")) {
-                        Toasty.success(FeedPostActivity.this,  "Post successfully upload", Toast.LENGTH_SHORT).show();
-                        resetView();
-                        setResult(Activity.RESULT_OK);
-                        finish();
-                    }
-                    // OTP =  object.getString("message");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toasty.error(
-                            FeedPostActivity.this,
-                            getString(R.string.error_while_upload_video),
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void ErrorListener(VolleyError error) {
-
-            }
-        });
-        api.callMultiPartApiVideo("user/addFeeds", map, "feed[0]", file);
-    }*/
-
-   /* @Override
-    public void onProgressChange(int current, int max) {
-        progressBar.setProgress(current);
-    }
-*/
     private void unregisterUploadReceiver() {
         if (receiverUpComplete != null) {
             FeedPostActivity.this.unregisterReceiver(receiverUpComplete);
@@ -870,4 +793,27 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             }
         }
     }
+
+    private void uploadVideo(){
+
+        Map<String, String> map = prepareCommonPostData();
+
+        new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                Log.d(apiName, response);
+                hideProgressBar();
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                Log.d("fdashgf", "dfaew");
+                hideProgressBar();
+            }})
+                .setAuthToken(session.getAuthToken())
+                .setParam(map)
+                .setProgress(true))
+                .postFile("feed", tempFile);
+    }
+
 }

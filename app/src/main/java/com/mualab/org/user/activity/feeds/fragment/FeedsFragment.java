@@ -1,5 +1,6 @@
 package com.mualab.org.user.activity.feeds.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -23,6 +24,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -221,6 +224,9 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     if(options!=null)
                     startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
                     else startActivityForResult(intent, Constant.POST_FEED_DATA);
+                }else {
+                    Animation shake = AnimationUtils.loadAnimation(mContext, R.anim.shake);
+                    edCaption.startAnimation(shake);
                 }
                 break;
 
@@ -487,7 +493,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                             if(live.id == user.id){
                                 LiveUserInfo me = liveUserList.get(0);
                                 me.firstName = live.firstName;
-                                me.lastName = live.firstName;
+                                me.lastName = live.lastName;
                                 me.fullName = live.firstName+" "+live.lastName;
                                 me.storyCount = live.storyCount;
                                 me.userName = "You";
@@ -549,8 +555,8 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     //mediaUri = null;
                     Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-                        long maxVideoSize = 10*1024*1024; // 10 MB
-                        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10000);
+                        long maxVideoSize = 30*1024*1024; // 30 MB
+                        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);
                         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
                         intent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, maxVideoSize);
                         startActivityForResult(intent, Constant.REQUEST_VIDEO_CAPTURE);
@@ -565,8 +571,11 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         });
         dialog.setTitle(title);
         if(Build.VERSION.SDK_INT>=23){
-            if (mContext.checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+            if (mContext.checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    mContext.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED  ) {
+                requestPermissions(new String[]{android.Manifest.permission.CAMERA,
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY);
             }else dialog.show();
         }
@@ -639,7 +648,9 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                         mediaUri.isFromGallery = false;
                         mediaUri.mediaType = Constant.VIDEO_STATE;
                         mediaUri.addUri(String.valueOf(data.getData()));
-                        updatePostImageUI(ImageVideoUtil.getVideoToThumbnil(data.getData(), mContext));
+                        Bitmap bitmapThumb = ImageVideoUtil.getVideoToThumbnil(data.getData(), mContext);
+                        //Bitmap bitmapThumb = ThumbnailUtils.createVideoThumbnail(String.valueOf(data.getData()), MediaStore.Images.Thumbnails.MICRO_KIND);
+                        updatePostImageUI(bitmapThumb);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -667,9 +678,9 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                             updatePostImageUI(null);
                             MyToast.getInstance(mContext).showSmallMessage("You can't upload more then 50mb.");
                         }else {
-                            //filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), mContext);
-                            //thumbBitmap = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
-                            updatePostImageUI(ImageVideoUtil.getVideoToThumbnil(data.getData(), mContext));
+                            filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), mContext);
+                            Bitmap thumbBitmap = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
+                            updatePostImageUI(thumbBitmap);
                         }
                     } catch (URISyntaxException e) {
                         e.printStackTrace();

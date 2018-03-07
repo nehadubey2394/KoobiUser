@@ -54,11 +54,6 @@ public class AppHelper {
         return bytes;
     }
 
-    public static void hideKeyboard(View view, Context context) {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
     public static byte[] read(File file) throws IOException {
 
         ByteArrayOutputStream ous = null;
