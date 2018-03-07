@@ -79,8 +79,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private void initView(){
 
         businessDays = new ArrayList<>();
-        businessDayOld  =  getBusinessdays();
-        adapter = new AdapterBusinessDays(BookingActivity.this, businessDayOld);
+     //   businessDayOld  =  getBusinessdays();
+        adapter = new AdapterBusinessDays(BookingActivity.this, businessDays);
         title_booking = findViewById(R.id.tvHeaderTitle2);
         tvBuisnessName = findViewById(R.id.tvBuisnessName);
         lyReviewPost = findViewById(R.id.lyReviewPost);
@@ -356,7 +356,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         ArrayList<TimeSlot> timeSlots = new ArrayList<>();
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
                         if (artistArray!=null) {
-                            //businessNew.clear();
+                            businessDays.clear();
                             for (int i=0; i<artistArray.length(); i++){
 
                                 JSONObject object = artistArray.getJSONObject(i);
@@ -417,7 +417,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             }
 
 
-                            for(int i=0; i<businessDayOld.size(); i++)
+                           /* for(int i=0; i<businessDayOld.size(); i++)
                             {
                                 BusinessDay item1 = businessDayOld.get(i);
                                 {
@@ -429,7 +429,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                                     }
                                 }
-                            }
+                            }*/
 
                             adapter.notifyDataSetChanged();
                             updateView();
