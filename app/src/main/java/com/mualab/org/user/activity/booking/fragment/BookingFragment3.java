@@ -29,17 +29,20 @@ public class BookingFragment3 extends Fragment {
     private String mParam1;
     private SubServices subServices;
     private ArtistsSearchBoard item;
+    private  boolean isOutCallSelect;
 
     public BookingFragment3() {
         // Required empty public constructor
     }
 
-    public static BookingFragment3 newInstance(String param1, SubServices subServices, ArtistsSearchBoard item) {
+    public static BookingFragment3 newInstance(String param1, SubServices subServices, ArtistsSearchBoard item,boolean isOutCallSelect) {
         BookingFragment3 fragment = new BookingFragment3();
         Bundle args = new Bundle();
         args.putString("param1", param1);
         args.putSerializable("param2", subServices);
         args.putParcelable("param3", item);
+        args.putBoolean("param4", isOutCallSelect);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,6 +54,7 @@ public class BookingFragment3 extends Fragment {
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
+            isOutCallSelect = getArguments().getBoolean("param4");
             subServices = (SubServices) getArguments().getSerializable("param2");
             item = getArguments().getParcelable("param3");
         }
@@ -74,8 +78,8 @@ public class BookingFragment3 extends Fragment {
 
     private void initView(){
         arrayList = subServices.artistservices;
-        adapter = new Booking3ServiceAdapter(mContext,arrayList,mParam1,item);
-       // arrayList.clear();
+        adapter = new Booking3ServiceAdapter(mContext,arrayList,mParam1,item,isOutCallSelect);
+        // arrayList.clear();
         // addService();
     }
 

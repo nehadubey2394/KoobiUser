@@ -121,7 +121,6 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         });*/
     }
 
-
     private void setDateField() {
         Calendar now = Calendar.getInstance();
         //create new DateDialogFragment
