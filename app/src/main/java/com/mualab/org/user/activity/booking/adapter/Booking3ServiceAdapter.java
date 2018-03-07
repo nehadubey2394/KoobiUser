@@ -104,7 +104,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             holder.tvTime.setText(hours+min);
         }
 
-        if (session.getIsOutCallFilter() || isOutCallSelect){
+        if (isOutCallSelect){
             holder.tvAmount.setText(item.outCallPrice);
         }else {
             holder.tvAmount.setText(item.inCallPrice);
