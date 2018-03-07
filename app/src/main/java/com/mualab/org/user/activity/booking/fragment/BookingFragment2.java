@@ -94,6 +94,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
         if (session.getIsOutCallFilter()){
             isOutCallSelect = true;
+            isOutCallSelect = true;
             ivOutcall.setImageResource(R.drawable.active_check_box);
         }else
             ivOutcall.setImageResource(R.drawable.inactive_checkbox);
@@ -191,55 +192,66 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         // tempArrayList.clear();
         if (isOutCallSelect){
             if (tempArrayList2.size()!=0){
+                double outCallPrice = 0.0;
 
-                for (int i=0; i<tempArrayList2.size(); i++){
+                for (int i = 0; i < tempArrayList2.size(); i++) {
                     Services mServices = tempArrayList2.get(i);
                     Services newService = new Services();
+                    ArrayList<BookingServices3>services3ArrayList = new ArrayList<>();
+                    ArrayList<SubServices> subServicesArrayList = new ArrayList<>();
 
-                    if (mServices.isOutCall){
-                        for (int j=0; j<mServices.arrayList.size(); j++) {
-                            SubServices subServices = mServices.arrayList.get(j);
-                            SubServices newSubServise = new SubServices();
+                    for (int j = 0; j < mServices.arrayList.size(); j++) {
+                        SubServices subServices = mServices.arrayList.get(j);
+                        SubServices newSubServise = new SubServices();
+                        subServicesArrayList.clear();
 
-                            if (subServices.isOutCall){
+                        for (int k = 0; k < subServices.artistservices.size(); k++) {
+                            BookingServices3 services3 = subServices.artistservices.get(k);
+                            BookingServices3 newServices3 = new BookingServices3();
+                            services3ArrayList.clear();
 
-                                for (int k=0; k<subServices.artistservices.size(); k++) {
-                                    BookingServices3 services3 = subServices.artistservices.get(k);
-                                    BookingServices3 newServices3 = new BookingServices3();
-
-                                    if (services3.isOutCall){
-
-                                        if (!services3.outCallPrice.equals("null")){
-                                            double outCallPrice = Double.parseDouble(services3.outCallPrice);
-                                            if (outCallPrice > 0 ){
-                                                newServices3.outCallPrice = services3.outCallPrice;
-                                                newServices3._id = services3._id;
-                                                newServices3.title = services3.title;
-                                                newServices3.completionTime = services3.completionTime;
-                                                newServices3.inCallPrice = services3.inCallPrice;
-                                                newServices3.isOutCall = true;
-
-                                                newSubServise.artistservices.add(newServices3);
-                                                newSubServise._id = subServices._id;
-                                                newSubServise.isOutCall = true;
-                                                newSubServise.serviceId = subServices.serviceId;
-                                                newSubServise.subServiceId = subServices.subServiceId;
-                                                newSubServise.subServiceName = subServices.subServiceName;
-
-                                                newService.isOutCall= true;
-                                                newService.serviceName= mServices.serviceName;
-                                                newService.serviceId= mServices.serviceId;
-                                                newService.arrayList.add(newSubServise);
-                                                services.add(newService);
-                                            }
-                                        }
-                                    }
+                            if (!services3.outCallPrice.equals("null")) {
+                                outCallPrice = Double.parseDouble(services3.outCallPrice);
+                                if (outCallPrice > 0) {
+                                    newServices3.outCallPrice = services3.outCallPrice;
+                                    newServices3._id = services3._id;
+                                    newServices3.title = services3.title;
+                                    newServices3.completionTime = services3.completionTime;
+                                    newServices3.inCallPrice = services3.inCallPrice;
+                                    newServices3.isOutCall = true;
+                                    services3ArrayList.add(newServices3);
+                                    newSubServise.artistservices.add(newServices3);
                                 }
                             }
+
+                        }
+
+                        if (outCallPrice > 0 && newSubServise.artistservices.size()!=0) {
+                            newSubServise._id = subServices._id;
+                            newSubServise.isOutCall = true;
+                            newSubServise.serviceId = subServices.serviceId;
+                            newSubServise.subServiceId = subServices.subServiceId;
+                            newSubServise.subServiceName = subServices.subServiceName;
+                            subServicesArrayList.add(newSubServise);
+                            newService.arrayList.add(newSubServise);
                         }
                     }
+                    if (outCallPrice > 0 && newService.arrayList.size()!=0) {
+                        newService.isOutCall = true;
+                        newService.serviceName = mServices.serviceName;
+                        newService.serviceId = mServices.serviceId;
 
+                        services.add(newService);
+                    }
                 }
+              /*  if (services.size() == 0) {
+                    lvExpandable.setVisibility(View.GONE);
+                    tvNoData.setVisibility(View.VISIBLE);
+                } else {
+                    expandableListAdapter.notifyDataSetChanged();
+                    lvExpandable.setVisibility(View.VISIBLE);
+                    tvNoData.setVisibility(View.GONE);
+                }*/
             }
         }
         if (services.size()==0){
@@ -309,15 +321,14 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
                     services.add(newService);
                 }
-
-                if (services.size() == 0) {
-                    lvExpandable.setVisibility(View.GONE);
-                    tvNoData.setVisibility(View.VISIBLE);
-                } else {
-                    expandableListAdapter.notifyDataSetChanged();
-                    lvExpandable.setVisibility(View.VISIBLE);
-                    tvNoData.setVisibility(View.GONE);
-                }
+            }
+            if (services.size() == 0) {
+                lvExpandable.setVisibility(View.GONE);
+                tvNoData.setVisibility(View.VISIBLE);
+            } else {
+                expandableListAdapter.notifyDataSetChanged();
+                lvExpandable.setVisibility(View.VISIBLE);
+                tvNoData.setVisibility(View.GONE);
             }
         }
     }
