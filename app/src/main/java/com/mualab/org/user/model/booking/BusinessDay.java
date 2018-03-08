@@ -1,5 +1,7 @@
 package com.mualab.org.user.model.booking;
 
+import android.support.annotation.NonNull;
+
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
@@ -52,4 +54,5 @@ public class BusinessDay implements Serializable {
         result.put("slots", slots);
         return result;
     }
+
 }

@@ -52,12 +52,12 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
             AdapterTimeSlot adapterTimeSlot = new AdapterTimeSlot(mContext, day.slots);
             holder.listView.setAdapter(adapterTimeSlot);
             setListViewHeightBasedOnChildren(holder.listView);
-        }else {
+        }/*else {
             if (day.dayId==6 )
                 holder.lyDotsLine.setVisibility(View.GONE);
             else
                 holder.lyDotsLine.setVisibility(View.VISIBLE);
-        }
+        }*/
     }
 
     @Override
