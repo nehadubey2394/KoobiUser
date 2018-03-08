@@ -56,7 +56,7 @@
                     />-->
 
                 <EditText
-                    android:id="@+id/ed_caption"
+                    android:id="@+id/edCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|top"
@@ -70,7 +70,9 @@
                     android:lines="3"
                     android:textSize="14sp"
                     android:textColor="@color/text_color"
-                    android:textColorHint="@color/text_color" />
+                    android:textColorHint="@color/text_color"
+                    android:transitionName="text"
+                    tools:ignore="UnusedAttribute"/>
             </LinearLayout>
 
 

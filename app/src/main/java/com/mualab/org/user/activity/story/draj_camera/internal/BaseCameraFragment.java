@@ -2,7 +2,6 @@ package com.mualab.org.user.activity.story.draj_camera.internal;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.content.res.AppCompatResources;
@@ -436,22 +436,6 @@ protected void setImageRes(ImageView iv, @DrawableRes int res) {
     Log.d(TAG, "startRecordingVideo: setting orientation: " + orientation);
     getActivity().setRequestedOrientation(orientation);
     mInterface.setDidRecord(true);
-
-//    if(mVideoPlayingHandler != null){
-//      mVideoPlayingHandler.removeCallbacks(mVideoPlayingRunnable);
-//    }
-//    mVideoPlayingHandler = new Handler();
-//    mVideoPlayingRunnable = new Runnable() {
-//      @Override
-//      public void run() {
-//        mVideoPlayingHandler.postDelayed(mVideoPlayingRunnable, 100);
-//        if(mIsRecording){
-//          Log.d(TAG, "recording: is recording: " + mIsRecording);
-//        }
-//      }
-//    };
-//    mVideoPlayingRunnable.run();
-
     return true;
   }
 
@@ -587,7 +571,6 @@ protected void setImageRes(ImageView iv, @DrawableRes int res) {
     }
 
     setImageRes(mButtonFlash, res);
-
   }
 
   private void setupFlashModeVideo() {
@@ -610,7 +593,8 @@ protected void setImageRes(ImageView iv, @DrawableRes int res) {
       default:
         res = mInterface.iconFlashOff();
     }
-
     setImageRes(mButtonFlashVideo, res);
   }
+
+
 }

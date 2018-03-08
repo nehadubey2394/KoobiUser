@@ -1,0 +1,155 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activity.story.core.CaptureStoryFragment">
+
+    <com.otaliastudios.cameraview.CameraView
+        android:id="@+id/camera"
+        android:keepScreenOn="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:gravity="center_vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/mButtonBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="2dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_white_x"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/mRecordDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/mcam_defaultDuration"
+            android:textColor="#fff"
+            android:textSize="@dimen/mcam_regular_content_fontsize" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/mButtonFlash"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/btn_default_light"
+            android:src="@drawable/ic_flash_off_white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="16dp">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/mButtonFacing"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_capture_options"
+                android:src="@drawable/ic_camera_rear_white" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:background="@drawable/circle_opaque"
+                android:layout_gravity="center"
+                android:id="@+id/video_button_container">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:background="@drawable/btn_capture_options">
+
+                    <ImageButton
+                        android:id="@+id/videoButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:background="@drawable/button_effect"
+                        android:padding="5dp"
+                        android:scaleType="fitXY"
+                        tools:ignore="ContentDescription"
+                        android:visibility="gone"
+                        tools:src="@drawable/mcam_action_capture" />
+
+
+                    <ImageButton
+                        android:id="@+id/mButtonStillshot"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:background="@drawable/mcam_circle_selector"
+                        android:padding="5dp"
+                        android:scaleType="fitXY"
+                        android:visibility="visible"
+                        tools:ignore="ContentDescription"
+                        tools:src="@drawable/mcam_action_stillshot" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/mButtonCameraMode"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_capture_options"
+                android:src="@drawable/ic_videocam_white"
+                />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

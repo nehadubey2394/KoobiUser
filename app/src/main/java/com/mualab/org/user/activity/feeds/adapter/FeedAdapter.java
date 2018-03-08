@@ -25,7 +25,6 @@ import com.mualab.org.user.model.feeds.Feeds;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
-
 import java.util.List;
 
 import kotlin.Unit;
@@ -50,7 +49,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<Feeds> feedItems;
-
     private Listener listener;
 
     public interface Listener{
@@ -145,7 +143,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             .load(feeds.profileImage)
                             .fit()
                             .into(textHolder.ivProfile);
-                }
+                }else  Picasso.with(mContext)
+                        .load(R.drawable.defoult_user_img)
+                        .into(textHolder.ivProfile);
 
                 textHolder.tvUserName.setText(feeds.userName);
                 textHolder.tvPostTime.setText(feeds.crd);
@@ -165,7 +165,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             .load(feeds.profileImage)
                             .fit()
                             .into(imageHolder.ivProfile);
-                }
+                }else  Picasso.with(mContext)
+                        .load(R.drawable.defoult_user_img)
+                        .into(imageHolder.ivProfile);
 
                 imageHolder.tvUserName.setText(feeds.userName);
                 imageHolder.tvPostTime.setText(feeds.crd);
@@ -273,33 +275,35 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             case "video":
 
-                final FeedVideoHolder vedioHolder = ((FeedVideoHolder) holder);
+                final FeedVideoHolder videoHolder = ((FeedVideoHolder) holder);
                 if (!TextUtils.isEmpty(feeds.profileImage)) {
-                    Picasso.with(vedioHolder.ivProfile.getContext())
+                    Picasso.with(videoHolder.ivProfile.getContext())
                             .load(feeds.profileImage)
                             .fit()
-                            .into(vedioHolder.ivProfile);
-                }
+                            .into(videoHolder.ivProfile);
+                }else  Picasso.with(mContext)
+                        .load(R.drawable.defoult_user_img)
+                        .into(videoHolder.ivProfile);
 
-                vedioHolder.tvUserName.setText(feeds.userName);
-                vedioHolder.tvPostTime.setText(feeds.crd);
-                vedioHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
-                vedioHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
-                vedioHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                vedioHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+                videoHolder.tvUserName.setText(feeds.userName);
+                videoHolder.tvPostTime.setText(feeds.crd);
+                videoHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
+                videoHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
+                videoHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
+                videoHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
                 if(TextUtils.isEmpty(feeds.videoThumbnail)){
-                    Picasso.with(vedioHolder.ivFeedCenter.getContext())
+                    Picasso.with(videoHolder.ivFeedCenter.getContext())
                             .load(feeds.videoThumbnail)
                             .fit()
                             .placeholder(R.drawable.gallery_placeholder)
-                            .into(vedioHolder.ivFeedCenter);
+                            .into(videoHolder.ivFeedCenter);
                 }
 
                 if(!TextUtils.isEmpty(feeds.caption)){
-                    vedioHolder.tv_text.setVisibility(View.VISIBLE);
-                    vedioHolder.tv_text.setText(feeds.caption);
-                }else vedioHolder.tv_text.setVisibility(View.GONE);
+                    videoHolder.tv_text.setVisibility(View.VISIBLE);
+                    videoHolder.tv_text.setText(feeds.caption);
+                }else videoHolder.tv_text.setVisibility(View.GONE);
 
                 break;
         }
