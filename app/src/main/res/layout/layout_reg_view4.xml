@@ -61,6 +61,16 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            style="@style/TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            android:layout_marginTop="5dp"
+            android:padding="2dp"
+            android:text="@string/error_password_vailidation"/>
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_cnfPwd"
             android:layout_width="match_parent"
