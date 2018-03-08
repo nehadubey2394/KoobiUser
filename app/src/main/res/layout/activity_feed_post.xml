@@ -122,7 +122,10 @@
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:background="@null"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            android:transitionName="text"
+            tools:ignore="UnusedAttribute"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+             />
 
     </LinearLayout>
 

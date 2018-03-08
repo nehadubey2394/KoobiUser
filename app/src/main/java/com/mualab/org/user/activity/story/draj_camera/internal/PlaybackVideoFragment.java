@@ -1,12 +1,12 @@
 package com.mualab.org.user.activity.story.draj_camera.internal;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,8 +54,7 @@ public class PlaybackVideoFragment extends Fragment
     mInterface = (BaseCaptureInterface) activity;
   }
 
-  public static PlaybackVideoFragment newInstance(
-          String outputUri, boolean allowRetry, int primaryColor) {
+  public static PlaybackVideoFragment newInstance(String outputUri, boolean allowRetry, int primaryColor) {
     PlaybackVideoFragment fragment = new PlaybackVideoFragment();
     fragment.setRetainInstance(true);
     Bundle args = new Bundle();

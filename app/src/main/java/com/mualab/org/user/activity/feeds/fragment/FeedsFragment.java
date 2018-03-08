@@ -213,11 +213,13 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     options = ActivityOptionsCompat.
                             makeSceneTransitionAnimation(getActivity(), (View)iv_selectedImage, "profile");
                 }else if (!TextUtils.isEmpty(caption)) {
-                    /*intent = new Intent(mContext, FeedPostActivity.class);
+                    intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", caption);
                     intent.putExtra("feedType", Constant.TEXT_STATE);
-                    intent.putExtra("requestCode", Constant.POST_FEED_DATA);*/
-                    MyToast.getInstance(mContext).showSmallMessage(getString(R.string.under_development));
+                    intent.putExtra("requestCode", Constant.POST_FEED_DATA);
+                    options = ActivityOptionsCompat.
+                            makeSceneTransitionAnimation(getActivity(), (View)edCaption, "text");
+                   // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.under_development));
                 }
 
                 if (intent != null) {
@@ -255,7 +257,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
             ll_header.findViewById(R.id.iv_get_img).setOnClickListener(this);
             ll_header.findViewById(R.id.iv_video_popup).setOnClickListener(this);
             ll_header.findViewById(R.id.tv_post).setOnClickListener(this);
-            edCaption = ll_header.findViewById(R.id.ed_caption);
+            edCaption = ll_header.findViewById(R.id.edCaption);
             edCaption.setText("");
 
         }else if(ll_header!=null && ll_header.getChildCount()>0){
@@ -403,21 +405,19 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     feed.crd =feed.timeElapsed;
 
 
-                    if(feed.feedData!=null){
+                    if(feed.feedData!=null && feed.feedData.size()>0){
 
                         feed.feed = new ArrayList<>();
                         feed.feedThumb = new ArrayList<>();
+
                         for(Feeds.Feed tmp :feed.feedData){
                             feed.feed.add(tmp.feedPost);
-
                             if(!TextUtils.isEmpty(feed.feedData.get(0).videoThumb))
                                 feed.feedThumb.add(tmp.feedPost);
                         }
 
-                    }
                         feed.videoThumbnail = feed.feedData.get(0).videoThumb;
-
-
+                    }
 
                     feeds.add(feed);
                 }

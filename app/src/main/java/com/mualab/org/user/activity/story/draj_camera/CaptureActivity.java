@@ -1,7 +1,7 @@
 package com.mualab.org.user.activity.story.draj_camera;
 
-import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 import com.mualab.org.user.activity.story.draj_camera.internal.BaseCaptureActivity;
 import com.mualab.org.user.activity.story.draj_camera.internal.CameraFragment;

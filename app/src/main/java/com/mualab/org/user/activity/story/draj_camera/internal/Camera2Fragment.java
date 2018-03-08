@@ -693,7 +693,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     } catch (NullPointerException e) {
       // Currently an NPE is thrown when the Camera2API is used but not supported on the
       // device this code runs.
-      new ErrorDialog().show(getFragmentManager(), "dialog");
+      new ErrorDialog().show(getActivity().getFragmentManager(), "dialog");
     } catch (InterruptedException e) {
       throwError(new Exception("Interrupted while trying to lock camera opening.", e));
     }
