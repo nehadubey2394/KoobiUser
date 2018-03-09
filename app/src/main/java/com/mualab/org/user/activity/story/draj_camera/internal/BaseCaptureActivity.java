@@ -2,7 +2,6 @@ package com.mualab.org.user.activity.story.draj_camera.internal;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -173,10 +173,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
       mFlashMode = savedInstanceState.getInt("flash_mode");
     }
 
-    getWindow()
-        .addFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
   }
 
   private void checkPermissions() {
@@ -223,7 +220,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
 
   @Override
   public final void onBackPressed() {
-    Fragment frag = getFragmentManager().findFragmentById(R.id.container);
+    Fragment frag = getSupportFragmentManager().findFragmentById(R.id.container);
     if (frag != null) {
       if (frag instanceof PlaybackVideoFragment && allowRetry()) {
         onRetry(((CameraUriInterface) frag).getOutputUri());
@@ -333,7 +330,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
   }
 
   private void showInitialRecorder() {
-    getFragmentManager().beginTransaction().replace(R.id.container, createFragment()).commit();
+    getSupportFragmentManager().beginTransaction().replace(R.id.container, createFragment()).commit();
   }
 
   @Override
@@ -347,7 +344,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
       finish();
       return;
     }
-    getFragmentManager().beginTransaction().replace(R.id.container, createFragment()).commit();
+    getSupportFragmentManager().beginTransaction().replace(R.id.container, createFragment()).commit();
   }
 
   @Override
@@ -370,7 +367,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
       Fragment frag =
           PlaybackVideoFragment.newInstance(
               outputUri, allowRetry(), getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
-      getFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
+      getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
     }
   }
 
@@ -380,7 +377,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
       useMedia(outputUri);
     } else {
       Fragment frag = StillshotPreviewFragment.newInstance(outputUri, allowRetry(), getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
-      getFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
+      getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
     }
   }
 

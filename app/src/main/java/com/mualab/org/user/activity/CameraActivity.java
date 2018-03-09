@@ -100,7 +100,32 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     //private List<Uri> mSelected;
 
     // video record support variables.
-    private View.OnTouchListener touchListener;
+   // private View.OnTouchListener touchListener;
+
+
+    long pressTime = 0L;
+    long limit = 500L;
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            if(!isCameraSession){
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        pressTime = System.currentTimeMillis();
+                        startRecording();
+                        return false;
+                    case MotionEvent.ACTION_UP:
+                        long now = System.currentTimeMillis();
+                        stopRecording();
+                        return limit < now - pressTime;
+                }
+            }
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +153,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-        touchListener = new View.OnTouchListener() {
+       /* touchListener = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -145,7 +170,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 return false;
             }
-        };
+        };*/
 
 
         cameraView.addCameraListener(new CameraListener() {
@@ -251,6 +276,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         super.onPause();
         cameraView.stop();
     }
+
+
 
     @Override
     public void onDestroy() {
@@ -452,7 +479,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             btnTakePhoto.setText("REC");
             btnCameraMode.setImageResource(R.drawable.ic_photo_camera_white);
             updateState(STATE_TAKE_VIDEO);
-            btnTakePhoto.setOnTouchListener(touchListener);
+            //btnTakePhoto.setOnTouchListener(touchListener);
+            btnTakePhoto.setOnTouchListener(onTouchListener);
         }else {
             isCameraSession = true;
             btnCameraMode.setImageResource(R.drawable.ic_videocam_white);

@@ -64,6 +64,25 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
     private int counter = 0;
     private boolean isRunningStory;
 
+    long pressTime = 0L;
+    long limit = 500L;
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    pressTime = System.currentTimeMillis();
+                    storyStatusView.pause();
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    long now = System.currentTimeMillis();
+                    storyStatusView.resume();
+                    return limit < now - pressTime;
+            }
+            return false;
+        }
+    };
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -100,22 +119,25 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
             }
         });
 
-
         // bind reverse view
-        findViewById(R.id.reverse).setOnClickListener(new View.OnClickListener() {
+        View reverse = findViewById(R.id.reverse);
+        reverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 storyStatusView.reverse();
             }
         });
+        reverse.setOnTouchListener(onTouchListener);
 
         // bind skip view
-        findViewById(R.id.skip).setOnClickListener(new View.OnClickListener() {
+        View skip = findViewById(R.id.skip);
+        skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 storyStatusView.skip();
             }
         });
+        skip.setOnTouchListener(onTouchListener);
 
         findViewById(R.id.actions).setOnTouchListener(new View.OnTouchListener() {
             @Override

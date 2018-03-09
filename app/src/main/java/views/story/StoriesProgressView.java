@@ -180,9 +180,8 @@ public class StoriesProgressView extends LinearLayout {
                 int next = current + 1;
                 if (next <= (progressBars.size() - 1)) {
                     progressBars.get(next).startProgress();
-                    progressBars.get(next).pauseProgress();
                     if (storiesListener != null) storiesListener.onNext();
-                   // progressBars.get(next).startProgress();
+                    progressBars.get(next).startProgress();
                 } else {
                    // isComplete = true;
                     if (storiesListener != null) storiesListener.onComplete();
@@ -191,16 +190,6 @@ public class StoriesProgressView extends LinearLayout {
         };
     }
 
-
-    public void playNextStory(){
-        int next = current + 1;
-        if (next <= (progressBars.size() - 1)) {
-            progressBars.get(next).startProgress();
-        } else {
-            // isComplete = true;
-            if (storiesListener != null) storiesListener.onComplete();
-        }
-    }
 
     /**
      * Start progress animation

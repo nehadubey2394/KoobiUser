@@ -13,6 +13,7 @@
         android:id="@+id/lyDotsLineHours"
         android:layout_width="25dp"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:gravity="center_horizontal">
 
         <ImageView
@@ -31,7 +32,7 @@
         android:layout_height="32dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="2dp"
         android:paddingLeft="5dp"
         android:background="@drawable/gray_boder_white_bg">
 

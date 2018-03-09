@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:clickable="false"
+            android:visibility="gone"
             android:button="@drawable/checkbox_selector" />
 
         <RelativeLayout
@@ -29,7 +30,7 @@
             android:layout_height="36dp"
             android:orientation="horizontal"
             android:paddingLeft="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="2dp"
             android:gravity="center_vertical"
             android:background="@drawable/gray_boder_white_bg">
 
@@ -83,6 +84,7 @@
     <LinearLayout
         android:id="@+id/lyDotsLine"
         android:layout_width="25dp"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal">
 

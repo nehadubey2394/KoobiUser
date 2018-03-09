@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
 
 public class ImageVideoUtil {
 
-    private static LruCache<String, Bitmap> mMemoryCache;
+    private LruCache<String, Bitmap> mMemoryCache;
 
     public static byte[] compressBitmap(Bitmap bmp) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

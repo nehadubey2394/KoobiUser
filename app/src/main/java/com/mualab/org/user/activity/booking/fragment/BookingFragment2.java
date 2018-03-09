@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
@@ -91,6 +92,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     private void setViewId(View rootView){
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
         ivOutcall = rootView.findViewById(R.id.ivOutcall);
+        RelativeLayout lyOutcall = rootView.findViewById(R.id.lyOutcall);
 
         if (session.getIsOutCallFilter()){
             isOutCallSelect = true;
@@ -99,7 +101,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         }else
             ivOutcall.setImageResource(R.drawable.inactive_checkbox);
 
-        ivOutcall.setOnClickListener(this);
+        lyOutcall.setOnClickListener(this);
 
         tvNoData = rootView.findViewById(R.id.tvNoData);
         lvExpandable = rootView.findViewById(R.id.lvExpandable);
@@ -163,7 +165,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.ivOutcall :
+            case R.id.lyOutcall :
                 if (!isOutCallSelect){
                     isOutCallSelect = true;
                     OutCallFilter();

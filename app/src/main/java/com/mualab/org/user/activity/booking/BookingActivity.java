@@ -47,7 +47,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +60,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public static TextView title_booking,tvBuisnessName;
     public static LinearLayout lyReviewPost;
     public static LinearLayout lyArtistDetail;
-    private List<BusinessDay> businessDays,businessDayOld;
+    private ArrayList<BusinessDay> businessDays,businessDayOld;
     private AdapterBusinessDays adapter;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
@@ -79,7 +82,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private void initView(){
 
         businessDays = new ArrayList<>();
-     //   businessDayOld  =  getBusinessdays();
+        businessDayOld = new ArrayList<>();
+        //   businessDayOld  =  getBusinessdays();
         adapter = new AdapterBusinessDays(BookingActivity.this, businessDays);
         title_booking = findViewById(R.id.tvHeaderTitle2);
         tvBuisnessName = findViewById(R.id.tvBuisnessName);
@@ -357,6 +361,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
                         if (artistArray!=null) {
                             businessDays.clear();
+                            HashMap<Integer,BusinessDay> hashMap = new HashMap<>();
+
                             for (int i=0; i<artistArray.length(); i++){
 
                                 JSONObject object = artistArray.getJSONObject(i);
@@ -411,25 +417,28 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                 }
 
                                 day.slots.addAll(timeSlots);
-                                businessDays.add(day);
 
+                                hashMap.put(day.dayId,day);
+                                //        businessDayOld.add(day);
 
                             }
 
+                            if (hashMap.size()!=0){
 
-                           /* for(int i=0; i<businessDayOld.size(); i++)
-                            {
-                                BusinessDay item1 = businessDayOld.get(i);
-                                {
-                                    for(int j=0; j<businessDays.size(); j++){
-                                        BusinessDay item2  = businessDays.get(j);
-                                        if (item2.dayId==item1.dayId){
-                                            businessDayOld.set(i,item2);
-                                        }
-
-                                    }
+                                for (Object o : hashMap.entrySet()) {
+                                    Map.Entry pair = (Map.Entry) o;
+                                    BusinessDay businessDay = hashMap.get(pair.getKey());
+                                    businessDays.add(businessDay);
+                                    //    it.remove();
                                 }
-                            }*/
+                                Collections.sort(businessDays, new Comparator<BusinessDay>() {
+                                    @Override
+                                    public int compare(BusinessDay a, BusinessDay b)
+                                    {
+                                        return a.dayId > b.dayId ? +1 : a.dayId < b.dayId ? -1 : 0;
+                                    }
+                                });
+                            }
 
                             adapter.notifyDataSetChanged();
                             updateView();
