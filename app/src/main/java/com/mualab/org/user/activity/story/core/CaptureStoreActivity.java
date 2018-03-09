@@ -1,18 +1,17 @@
 package com.mualab.org.user.activity.story.core;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by dharmraj on 8/3/18.
- */
+ **/
 
-public class CaptureStoreActivity extends Activity{
+public class CaptureStoreActivity extends BaseStoryActivity{
 
-    /*@Override
+    @Override
     @NonNull
     public Fragment getFragment() {
         return CaptureStoryFragment.newInstance();
-    }*/
+    }
 }

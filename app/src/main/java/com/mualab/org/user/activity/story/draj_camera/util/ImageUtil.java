@@ -32,8 +32,7 @@ public class ImageUtil {
    * @param output path to output file
    * @param callback will always return in originating thread
    */
-  public static void saveToDiskAsync(
-          final byte[] input, final File output, final ICallback callback) {
+  public static void saveToDiskAsync(final byte[] input, final File output, final ICallback callback) {
     final Handler handler = new Handler();
     new Thread() {
       @Override
@@ -45,21 +44,17 @@ public class ImageUtil {
           outputStream.flush();
           outputStream.close();
 
-          handler.post(
-                  new Runnable() {
+          handler.post(new Runnable() {
                     @Override
                     public void run() {
                       callback.done(null);
-                    }
-                  });
+                    }});
         } catch (final Exception e) {
-          handler.post(
-                  new Runnable() {
+          handler.post(new Runnable() {
                     @Override
                     public void run() {
                       callback.done(e);
-                    }
-                  });
+                    }});
         }
       }
     }.start();
@@ -80,6 +75,39 @@ public class ImageUtil {
     Log.d(TAG, "Original: " + data.length / 1024 + " Kb");
     Log.d(TAG, "Compressed: " + output.length / 1024 + " Kb");
     return output;
+  }
+
+
+
+  public static void saveToDiskAsync(final Bitmap bitmap, final File output, final ICallback callback){
+    final Handler handler = new Handler();
+    new Thread() {
+      @Override
+      public void run() {
+        try {
+          //Convert bitmap to byte array
+          ByteArrayOutputStream bos = new ByteArrayOutputStream();
+          bitmap.compress(Bitmap.CompressFormat.PNG, 80 /*ignored for PNG*/, bos);
+          byte[] bitmapdata = bos.toByteArray();
+          //write the bytes in file
+          FileOutputStream fos = new FileOutputStream(output);
+          fos.write(bitmapdata);
+          fos.flush();
+          fos.close();
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              callback.done(null);
+            }});
+        } catch (final Exception e) {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              callback.done(e);
+            }});
+        }
+      }
+    }.start();
   }
 
   /**
