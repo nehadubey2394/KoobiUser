@@ -127,7 +127,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 public void onClick(View view) {
                     if (((BookingActivity)context).item.businessType.equals("independent")){
                         ((BookingActivity)context).addFragment(
-                                BookingFragment4.newInstance(serviceTitle,""), true, R.id.flBookingContainer);
+                                BookingFragment4.newInstance(serviceTitle,item._id), true, R.id.flBookingContainer);
 
                     }else {
                         ((BookingActivity)context).addFragment(

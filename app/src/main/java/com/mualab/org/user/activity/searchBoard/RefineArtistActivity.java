@@ -489,7 +489,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                     }
                     //  showToast(message);
                 } catch (Exception e) {
-                   // Progress.hide(RefineArtistActivity.this);
+                    // Progress.hide(RefineArtistActivity.this);
                     e.printStackTrace();
                 }
             }
