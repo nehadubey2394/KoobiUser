@@ -78,7 +78,7 @@ public class BookingFragment3 extends Fragment {
 
     private void initView(){
         arrayList = subServices.artistservices;
-        adapter = new Booking3ServiceAdapter(mContext,arrayList,mParam1,item,isOutCallSelect);
+        adapter = new Booking3ServiceAdapter(mContext,arrayList,mParam1,item,isOutCallSelect, subServices);
         // arrayList.clear();
         // addService();
     }

@@ -14,30 +14,33 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingSelectStaffAdapter;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.model.booking.BookingInfo;
+import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.BookingStaff;
+import com.mualab.org.user.model.booking.SubServices;
 
 import java.util.ArrayList;
 
 
 public class BookingFragment1 extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private ArrayList<BookingStaff>staffList;
     private BookingSelectStaffAdapter staffAdapter;
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private ArtistsSearchBoard item;
+    private BookingInfo bookingInfo;
 
 
     public BookingFragment1() {
         // Required empty public constructor
     }
 
-    public static BookingFragment1 newInstance(String param1, ArtistsSearchBoard  item) {
+    public static BookingFragment1 newInstance(String param1, ArtistsSearchBoard  item,BookingInfo bookingInfo) {
         BookingFragment1 fragment = new BookingFragment1();
         Bundle args = new Bundle();
         args.putString("param1", param1);
         args.putParcelable("param2", item);
+        args.putSerializable("param3", bookingInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,6 +51,7 @@ public class BookingFragment1 extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
             item = getArguments().getParcelable("param2")  ;
+            bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
         }
     }
 
@@ -69,8 +73,11 @@ public class BookingFragment1 extends Fragment {
 
     private void initView(){
         // staffList = new ArrayList<>();
-        staffList = item.staffList;
-        staffAdapter = new BookingSelectStaffAdapter(mContext,staffList,mParam1);
+        ArrayList<BookingStaff> staffList = item.staffList;
+        bookingInfo.artistId = item._id;
+        bookingInfo.artistName = item.businessName;
+        bookingInfo.profilePic = item.profileImage;
+        staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,mParam1,bookingInfo);
     }
 
     private void setViewId(View rootView){

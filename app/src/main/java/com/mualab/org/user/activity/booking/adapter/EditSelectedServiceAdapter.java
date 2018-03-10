@@ -105,8 +105,8 @@ public class EditSelectedServiceAdapter extends RecyclerView.Adapter<RecyclerVie
             lyServiceDetail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((BookingActivity)context).addFragment(
-                            BookingFragment4.newInstance(serviceTitle,""), true, R.id.flBookingContainer);
+                   /* ((BookingActivity)context).addFragment(
+                            BookingFragment4.newInstance(serviceTitle,""), true, R.id.flBookingContainer);*/
                 }
             });
         }

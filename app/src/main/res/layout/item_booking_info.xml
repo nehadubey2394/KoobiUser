@@ -38,7 +38,6 @@
             android:maxLines="1"
             android:maxWidth="180dp"
             android:padding="2dp"
-            android:visibility="gone"
             android:text="Evening Makeup"
             android:textColor="@color/text_color"
             android:textSize="12sp" />
@@ -53,7 +52,6 @@
         android:gravity="right|center_vertical"
         android:maxLines="2"
         android:padding="2dp"
-        android:visibility="gone"
         android:text="£170"
         android:layout_marginRight="6dp"
         android:layout_centerVertical="true"

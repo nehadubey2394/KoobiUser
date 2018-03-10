@@ -334,4 +334,11 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
             }
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (BookingFragment4.bookingInfos!=null)
+            BookingFragment4.bookingInfos.clear();
+    }
 }

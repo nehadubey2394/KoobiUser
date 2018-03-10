@@ -13,7 +13,10 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
+import com.mualab.org.user.model.booking.BookingInfo;
+import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.BookingStaff;
+import com.mualab.org.user.model.booking.SubServices;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,15 +25,15 @@ import java.util.ArrayList;
 public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ArrayList<BookingStaff> artistsList;
-    private boolean showLoader;
     private String serviceTitle;
-    private  final int VIEWTYPE_ITEM = 1;
-    private  final int VIEWTYPE_LOADER = 2;
+    private BookingInfo bookingInfo;
+
     // Constructor of the class
-    public BookingSelectStaffAdapter(Context context, ArrayList<BookingStaff> artistsList,String serviceTitle) {
+    public BookingSelectStaffAdapter(Context context, ArrayList<BookingStaff> artistsList, String serviceTitle, BookingInfo bookingInfo) {
         this.context = context;
         this.artistsList = artistsList;
         this.serviceTitle = serviceTitle;
+        this.bookingInfo = bookingInfo;
     }
 
     @Override
@@ -38,51 +41,17 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         return artistsList.size();
     }
 
-    public void showLoading(boolean status) {
-        showLoader = status;
-    }
-
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        /*View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.searchboard_item_layout, parent, false);
-        return new ViewHolder(view);*/
-        View view;
-        switch (viewType) {
-            case VIEWTYPE_ITEM:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_booking_select_staff_item_layout, parent, false);
-                ViewHolder viewHolder = new ViewHolder(view);
-                return viewHolder;
-
-            case VIEWTYPE_LOADER:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more_view, parent, false);
-                return new LoadingViewHolder(view);
-        }
-        return null;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_booking_select_staff_item_layout, parent, false);
+        return new ViewHolder(view);
 
     }
 
-    @Override
-    public int getItemViewType(int position) {
-
-        if (position != 0 && position == getItemCount() ) {
-            return VIEWTYPE_LOADER;
-        }
-        return VIEWTYPE_ITEM;
-    }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
-
-        if (viewHolder instanceof LoadingViewHolder) {
-            LoadingViewHolder loaderViewHolder = (LoadingViewHolder) viewHolder;
-            if (showLoader) {
-                loaderViewHolder.progressBar.setVisibility(View.VISIBLE);
-            } else {
-                loaderViewHolder.progressBar.setVisibility(View.GONE);
-            }
-            return;
-        }
 
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final BookingStaff item = artistsList.get(position);
@@ -113,8 +82,9 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         public void onClick(View view) {
             BookingStaff bookingStaff = artistsList.get(getAdapterPosition());
+
             ((BookingActivity)context).addFragment(
-                    BookingFragment4.newInstance("Booking",bookingStaff._id), true, R.id.flBookingContainer);
+                    BookingFragment4.newInstance("Booking",bookingStaff._id,bookingInfo), true, R.id.flBookingContainer);
 
         }
     }

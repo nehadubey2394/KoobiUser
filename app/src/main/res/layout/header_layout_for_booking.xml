@@ -81,6 +81,7 @@
             android:text="Beauty Zone"
             android:textSize="18sp"
             android:layout_marginLeft="10dp"
+            android:paddingLeft="2dp"
             android:layout_marginTop="10dp"
             android:visibility="gone"
             />
