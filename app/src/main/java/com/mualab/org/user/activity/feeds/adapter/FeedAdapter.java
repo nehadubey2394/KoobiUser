@@ -55,6 +55,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onCommentBtnClick(Feeds feed, int pos);
     }
 
+    public void clear(){
+        final int size = feedItems.size();
+        feedItems.clear();
+        notifyItemRangeRemoved(0, size);
+    }
 
     public FeedAdapter(Context mContext, List<Feeds> feedItems) {
         this.mContext = mContext;
@@ -297,7 +302,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             .load(feeds.videoThumbnail)
                             .placeholder(R.drawable.gallery_placeholder)
                             .into(videoHolder.ivFeedCenter);
-                }
+                }else  Picasso.with(videoHolder.ivFeedCenter.getContext())
+                        .load(R.drawable.gallery_placeholder)
+                        .into(videoHolder.ivFeedCenter);
 
                 if(!TextUtils.isEmpty(feeds.caption)){
                     videoHolder.tv_text.setVisibility(View.VISIBLE);

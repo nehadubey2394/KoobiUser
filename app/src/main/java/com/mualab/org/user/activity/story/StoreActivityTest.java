@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.story;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -8,12 +9,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
@@ -52,6 +55,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
 
     private ImageView ivPhoto, ivUserImg;
     private ProgressBar progress_bar;
+    private RelativeLayout addMoreStory;
 
 
     private TextView tvUserName;
@@ -106,11 +110,20 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
         videoView = findViewById(R.id.videoView);
         ivUserImg = findViewById(R.id.iv_user_image);
         tvUserName =  findViewById(R.id.tv_user_name);
+        addMoreStory =  findViewById(R.id.addMoreStory);
 
         vidControl = new MediaController(this);
         vidControl.setAnchorView(videoView);
         videoView.setMediaController(vidControl);
         storyStatusView = findViewById(R.id.storiesStatus);
+
+        addMoreStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(StoreActivityTest.this, CameraActivity.class));
+                finish();
+            }
+        });
 
         ivPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,6 +296,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
     private void updateView(){
         counter = 0;
         userInfo = liveUserList.get(currentIndex);
+        addMoreStory.setVisibility(userInfo.id == Mualab.getInstance().getSessionManager().getUser().id?View.VISIBLE:View.GONE);
         tvUserName.setText(String.format("%s %s", userInfo.firstName, userInfo.lastName));
         if(TextUtils.isEmpty(userInfo.profileImage)){
             Picasso.with(this).load(R.drawable.defoult_user_img).fit().into(ivUserImg);

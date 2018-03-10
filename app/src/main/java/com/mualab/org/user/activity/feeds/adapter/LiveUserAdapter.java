@@ -1,8 +1,6 @@
 package com.mualab.org.user.activity.feeds.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,13 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.CameraActivity;
-import com.mualab.org.user.activity.story.StoreActivityTest;
-import com.mualab.org.user.activity.story.StoreViewActivity;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.squareup.picasso.Picasso;
-
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -28,11 +21,17 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
 
     private Context mContext;
     private List<LiveUserInfo> liveUserList;
+    private Listner listner;
+
+    public interface Listner{
+        void onClickedUserStory(LiveUserInfo storyUser, int position);
+    }
 
 
-    public LiveUserAdapter(Context mContext, List<LiveUserInfo> liveUserList) {
+    public LiveUserAdapter(Context mContext, List<LiveUserInfo> liveUserList, Listner listner) {
         this.mContext = mContext;
         this.liveUserList = liveUserList;
+        this.listner = listner;
     }
 
     @Override
@@ -96,7 +95,8 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
 
              int pos = getAdapterPosition();
              LiveUserInfo userInfo = liveUserList.get(pos);
-
+             listner.onClickedUserStory(userInfo, pos);
+/*
              if(pos==0 && userInfo.storyCount==0){
                  mContext.startActivity(new Intent(mContext, CameraActivity.class));
              }else {
@@ -106,7 +106,7 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
                  args.putInt("position", getAdapterPosition());
                  intent.putExtra("BUNDLE", args);
                  mContext.startActivity(intent);
-             }
+             }*/
         }
     }
 }

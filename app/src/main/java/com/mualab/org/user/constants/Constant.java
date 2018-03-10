@@ -21,6 +21,7 @@ public class Constant {
     public static final int GALLERY_INTENT_CALLED = 90;
     public static final int ACTIVITY_COMMENT = 107;
     public static final int OTP_VERIFICATION = 108;
+    public static final int ADD_STORY = 465;
 
     public static final int POST_FEED_DATA = 1039;
     public static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1001;

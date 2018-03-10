@@ -36,10 +36,12 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
 import com.mualab.org.user.activity.feeds.adapter.FeedItemAnimator;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
+import com.mualab.org.user.activity.story.StoreActivityTest;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
@@ -67,6 +69,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +80,8 @@ import static android.app.Activity.RESULT_OK;
 /*
  * Dharmraj acharya
  * */
-public class FeedsFragment extends Fragment implements View.OnClickListener,FeedAdapter.Listener {
+public class FeedsFragment extends Fragment implements View.OnClickListener,
+        FeedAdapter.Listener, LiveUserAdapter.Listner {
 
     private int CURRENT_FEED_STATE = 0;
     // ui components delecration
@@ -164,8 +168,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
         view.findViewById(R.id.ly_videos).setOnClickListener(this);
         view.findViewById(R.id.ly_feeds).setOnClickListener(this);
         addRemoveHeader(true);
-
-        liveUserAdapter = new LiveUserAdapter(mContext, liveUserList);
+        liveUserAdapter = new LiveUserAdapter(mContext, liveUserList, this);
         rvMyStory.setAdapter(liveUserAdapter);
     }
 
@@ -416,7 +419,8 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                                 feed.feedThumb.add(tmp.feedPost);
                         }
 
-                        feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+                        if(feed.feedType.equals("video"))
+                            feed.videoThumbnail = feed.feedData.get(0).videoThumb;
                     }
 
                     feeds.add(feed);
@@ -555,9 +559,9 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                     //mediaUri = null;
                     Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-                        long maxVideoSize = 30*1024*1024; // 30 MB
+                        long maxVideoSize = 20*1024*1024; // 30 MB
                         intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);
-                        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+                        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
                         intent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, maxVideoSize);
                         startActivityForResult(intent, Constant.REQUEST_VIDEO_CAPTURE);
                     }
@@ -637,8 +641,10 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
 
                 case Constant.POST_FEED_DATA:
                     resetView();
-                    feeds.clear();
                     endlesScrollListener.resetState();
+                    feeds.clear();
+                    //first clear the recycler view so items are not populated twice
+                    feedAdapter.clear();
                     apiForGetAllFeeds(0, 100, true);
                     break;
 
@@ -696,6 +702,17 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                         feedAdapter.notifyItemChanged(pos);
                     }
                     break;
+
+                case Constant.ADD_STORY:
+                    liveUserList.clear();
+                    LiveUserInfo me = new LiveUserInfo();
+                    me.id = user.id;
+                    me.userName = "My Story";
+                    me.profileImage = user.profileImage;
+                    me.storyCount = 0;
+                    liveUserList.add(me);
+                    getStoryList();
+                    break;
             }
 
         } else {
@@ -747,6 +764,20 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,Feed
                 }
             }
             break;
+        }
+    }
+
+    @Override
+    public void onClickedUserStory(LiveUserInfo storyUser, int position) {
+        if(storyUser.id==user.id && storyUser.storyCount==0){
+            startActivityForResult(new Intent(mContext, CameraActivity.class), Constant.ADD_STORY);
+        }else {
+            Intent intent = new Intent(mContext, StoreActivityTest.class);
+            Bundle args = new Bundle();
+            args.putSerializable("ARRAYLIST", (Serializable) liveUserList);
+            args.putInt("position", position);
+            intent.putExtra("BUNDLE", args);
+            startActivity(intent);
         }
     }
 }

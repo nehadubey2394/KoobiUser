@@ -707,6 +707,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             Bitmap bitmap = ivTakenPhoto.getBitmap();
             Map<String,String> map = new HashMap<>();
             map.put("type", "image");
+            map.put("userId", ""+Mualab.getInstance().getSessionManager().getUser().id);
 
             HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
                 @Override
@@ -716,7 +717,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                         String status = js.getString("status");
                         String message = js.getString("message");
                         if (status.equalsIgnoreCase("success")) {
-                            showToast(message);
                             finish();
                         }
                         else showToast(message);

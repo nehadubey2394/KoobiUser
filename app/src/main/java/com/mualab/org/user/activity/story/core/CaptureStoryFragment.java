@@ -197,7 +197,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
             public void onPictureTaken(byte[] jpeg) {
                 super.onPictureTaken(jpeg);
                 cameraView.stop();
-                Progress.showProgressOnly(getContext());
+                Progress.show(getContext());
                 CameraUtils.decodeBitmap(jpeg, 3000, 3000, new CameraUtils.BitmapCallback() {
                     @Override
                     public void onBitmapReady(Bitmap bitmap) {
