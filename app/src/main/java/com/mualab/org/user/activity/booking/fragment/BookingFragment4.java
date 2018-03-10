@@ -155,6 +155,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
         bookingInfos.add(bookingInfo);
         Collections.reverse(bookingInfos);
+
+
         bookingInfoAdapter.notifyDataSetChanged();
 
         // bind events of calendar
