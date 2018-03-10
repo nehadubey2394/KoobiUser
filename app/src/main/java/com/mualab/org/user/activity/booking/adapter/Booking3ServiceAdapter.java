@@ -143,6 +143,9 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     bookingInfo.ssId = subServices.subServiceId;
                     bookingInfo.sId = subServices.serviceId;
                     bookingInfo.time = services3.completionTime;
+                    bookingInfo.artistName = item.businessName;
+                    bookingInfo.profilePic = item.profileImage;
+                    bookingInfo.artistId = item._id;
 
                     if (isOutCallSelect) {
                         bookingInfo.price = Double.parseDouble(services3.outCallPrice);

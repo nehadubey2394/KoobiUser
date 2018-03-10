@@ -82,6 +82,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         public void onClick(View view) {
             BookingStaff bookingStaff = artistsList.get(getAdapterPosition());
+
             ((BookingActivity)context).addFragment(
                     BookingFragment4.newInstance("Booking",bookingStaff._id,bookingInfo), true, R.id.flBookingContainer);
 

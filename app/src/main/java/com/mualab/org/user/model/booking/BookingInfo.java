@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 public class BookingInfo implements Serializable {
-    public String sServiceName,date,time,sId,ssId,msId;
+    public String sServiceName,date,time,sId,ssId,msId,artistName,profilePic,artistId;
     public double price;
 
 }

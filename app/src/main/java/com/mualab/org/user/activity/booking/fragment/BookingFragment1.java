@@ -74,6 +74,9 @@ public class BookingFragment1 extends Fragment {
     private void initView(){
         // staffList = new ArrayList<>();
         ArrayList<BookingStaff> staffList = item.staffList;
+        bookingInfo.artistId = item._id;
+        bookingInfo.artistName = item.businessName;
+        bookingInfo.profilePic = item.profileImage;
         staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,mParam1,bookingInfo);
     }
 

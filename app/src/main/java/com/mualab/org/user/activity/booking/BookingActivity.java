@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.booking;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.adapter.AdapterBusinessDays;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
@@ -507,14 +510,43 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void showAlertDailog(final FragmentManager fm){
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(BookingActivity.this);
+        alertDialog.setTitle("Alert!");
+        alertDialog.setMessage("Are you sure you want to permanently remove all selected services?");
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int which) {
+                dialog.cancel();
+                BookingFragment4.bookingInfos.clear();
+                fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
+            }
+        });
+
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
 
     @Override
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
-        if (i > 0) {
+
+        if (i==3 && BookingFragment4.bookingInfos.size()>0){
+            showAlertDailog(fm);
+        }else  if (i==2 && BookingFragment4.bookingInfos.size()>0){
+            showAlertDailog(fm);
+        }else if (i==0 && BookingFragment4.bookingInfos.size()>0){
+            showAlertDailog(fm);
+        }
+        else if (i > 0) {
             fm.popBackStack();
-        } else {
+        }else  {
             super.onBackPressed();
         }
     }

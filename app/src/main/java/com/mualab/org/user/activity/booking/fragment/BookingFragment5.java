@@ -8,13 +8,18 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SelectedServices;
+import com.mualab.org.user.model.booking.BookingInfo;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class BookingFragment5 extends Fragment implements View.OnClickListener{
@@ -23,15 +28,16 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private ArrayList<SelectedServices>selectedServices;
+    private BookingInfo bookingInfo;
 
     public BookingFragment5() {
         // Required empty public constructor
     }
 
-    public static BookingFragment5 newInstance(String param1) {
+    public static BookingFragment5 newInstance(BookingInfo bookingInfo) {
         BookingFragment5 fragment = new BookingFragment5();
         Bundle args = new Bundle();
-        args.putString("param1", param1);
+        args.putSerializable("bookingInfo", bookingInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,7 +49,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         BookingActivity.lyArtistDetail.setVisibility(View.GONE);
         BookingActivity.tvBuisnessName.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString("param1");
+            bookingInfo = (BookingInfo) getArguments().getSerializable("bookingInfo");
         }
     }
 
@@ -77,6 +83,14 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         AppCompatButton btnEditDate = rootView.findViewById(R.id.btnEditDate);
         AppCompatButton btnEditLocation = rootView.findViewById(R.id.btnEditLocation);
         AppCompatButton btnEditService = rootView.findViewById(R.id.btnEditService);
+        CircleImageView ivSelectStaffProfile = rootView.findViewById(R.id.ivSelectStaffProfile);
+        TextView tvStaffArtistName = rootView.findViewById(R.id.tvStaffArtistName);
+
+        tvStaffArtistName.setText(bookingInfo.artistName);
+        if (!bookingInfo.profilePic.equals("")){
+            Picasso.with(mContext).load(bookingInfo.profilePic).placeholder(R.drawable.defoult_user_img).
+                    fit().into(ivSelectStaffProfile);
+        }
 /*
         RecyclerView rycBookingInfo = rootView.findViewById(R.id.rycBookingInfo);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(mContext);
