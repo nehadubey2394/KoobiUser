@@ -308,5 +308,6 @@
     <string name="mcam_image_preview_error_title">Image preview error</string>
     <string name="mcam_image_preview_error_message">Could not decode bitmap</string>
     <string name="no_data_available">No data available!</string>
+    <string name="there_are_no_available_slots_please_select_another_day">There are no available slots. Please select another day.</string>
 
 </resources>

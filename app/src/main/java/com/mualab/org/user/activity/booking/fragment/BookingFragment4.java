@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import views.calender.data.CalendarAdapter;
 import views.calender.data.Day;
@@ -65,6 +66,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
     private int dayId;
+    private RecyclerView rycTimeSlot;
+    private TextView tvNoSlot;
 
     public BookingFragment4() {
         // Required empty public constructor
@@ -122,7 +125,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         AppCompatButton btnCOnfirmBooking = rootView.findViewById(R.id.btnCOnfirmBooking);
         AppCompatButton btnAddMoreService = rootView.findViewById(R.id.btnAddMoreService);
 
-        RecyclerView rycTimeSlot = rootView.findViewById(R.id.rycTimeSlot);
+        rycTimeSlot = rootView.findViewById(R.id.rycTimeSlot);
+        tvNoSlot = rootView.findViewById(R.id.tvNoSlot);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext,LinearLayoutManager.HORIZONTAL, false);
         rycTimeSlot.setLayoutManager(layoutManager);
         rycTimeSlot.setAdapter(listAdapter);
@@ -167,9 +171,25 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 }else {
                     sDay = String.valueOf(day.getDay());
                 }
-
                 selectedDate = day.getYear()+"-"+sMonth+"-"+sDay;
-                apiForGetSlots();
+
+                if (viewCalendar.isSelectedDay(day)) {
+                    Calendar todayCal = Calendar.getInstance();
+                    int cYear  = todayCal.get(Calendar.YEAR);
+                    int cMonth  = todayCal.get(Calendar.MONTH)+1;
+                    int cDay  = todayCal.get(Calendar.DAY_OF_MONTH);
+
+                    int year = day.getYear();
+                    int dayOfMonth =  day.getDay();
+
+                    if (year>=cYear && month>=cMonth){
+                        if (year==cYear && month==cMonth && dayOfMonth<cDay){
+                            Log.i("","can't select previous date");
+                        }else {
+                            apiForGetSlots();
+                        }
+                    }
+                }
             }
 
             @Override
@@ -269,10 +289,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        rycTimeSlot.setVisibility(View.VISIBLE);
+                        tvNoSlot.setVisibility(View.GONE);
                         bookingTimeSlots.clear();
 
                         JSONArray jsonArray = js.getJSONArray("timeSlots");
-                        if (jsonArray!=null) {
+                        if (jsonArray!=null && jsonArray.length()!=0) {
                             for (int j=0; j<jsonArray.length(); j++){
                                 BookingTimeSlot item = new BookingTimeSlot();
                                 item.time = jsonArray.getString(j);
@@ -280,12 +302,15 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 bookingTimeSlots.add(item);
                             }
                         }else {
-                            MyToast.getInstance(mContext).showSmallCustomToast(message);
+                            rycTimeSlot.setVisibility(View.GONE);
+                            tvNoSlot.setVisibility(View.VISIBLE);
+                          //  MyToast.getInstance(mContext).showSmallCustomToast(message);
                         }
 
                         listAdapter.notifyDataSetChanged();
                     }else {
-                        MyToast.getInstance(mContext).showSmallCustomToast(message);
+                        rycTimeSlot.setVisibility(View.GONE);
+                        tvNoSlot.setVisibility(View.VISIBLE);
                     }
                     //  showToast(message);
                 } catch (Exception e) {
