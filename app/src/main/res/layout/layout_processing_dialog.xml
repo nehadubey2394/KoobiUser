@@ -6,7 +6,6 @@
     android:background="@color/transparent"
     android:orientation="vertical"
     android:gravity="center"
-    android:layout_centerInParent="true"
     android:layout_gravity="center"
     android:padding="20dp">
 
@@ -15,7 +14,6 @@
         android:layout_height="30dp"
         android:id="@+id/dialog_progress_bar"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
         android:indeterminate="true"
         android:background="@android:color/transparent"
         android:indeterminateDrawable="@drawable/loader_img_animation"
@@ -31,7 +29,7 @@
         android:textSize="14sp"
         android:textColor="@color/white"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"/>
+       />
 
 
 </LinearLayout>

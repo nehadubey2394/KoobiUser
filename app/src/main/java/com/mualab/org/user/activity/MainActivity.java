@@ -132,10 +132,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private static final int RESULT_START_VIDEO = 4589;
     private static final int RESULT_ADD_NEW_STORY = 7891;
     public void openNewStoryActivity(){
+        showToast(getString(R.string.under_development));
         /*Intent intent = new Intent(this, NewStoryActivity.class);
         startActivityForResult(intent, REQUEST_ADD_NEW_STORY);*/
 
-        FilePaths filePaths = new FilePaths();
+       /* FilePaths filePaths = new FilePaths();
         File saveFolder = new File(filePaths.STORIES);
         try{
             if (!saveFolder.mkdirs());
@@ -169,7 +170,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 .audioDisabled(false)                              // Set to true to record video without any audio.
                 .countdownSeconds(60f)
                 .stillShot()
-                .start(REQUEST_ADD_NEW_STORY);
+                .start(REQUEST_ADD_NEW_STORY);*/
 
        /* startActivityForResult(new Intent(MainActivity.this, CameraActivity.class),
                 REQUEST_ADD_NEW_STORY);*/

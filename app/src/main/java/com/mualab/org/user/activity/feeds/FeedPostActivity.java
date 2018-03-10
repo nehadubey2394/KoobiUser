@@ -369,6 +369,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
         switch (v.getId()) {
             case R.id.iv_feedPost:
+                findViewById(R.id.iv_feedPost).setEnabled(false);
                 KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
                 if(ConnectionDetector.isConnected()){
 
@@ -387,11 +388,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                         }
                         //sendToBackGroundService();
                     } else if (feedType == Constant.IMAGE_STATE)
-                        apiCallForUploadData();
+                        apiCallForUploadImages();
                 }
                 else {
+                    findViewById(R.id.iv_feedPost).setEnabled(true);
                     MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
-                            getString(R.string.error_msg_network));
+                             getString(R.string.error_msg_network));
                 }
                 break;
 
@@ -535,12 +537,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
                 parseResponce(response);
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
+                findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
             }})
                 .setAuthToken(session.getAuthToken())
@@ -567,6 +571,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         map.put("location", address);
         map.put("tags", tages);
         map.put("serviceTagId", tages);
+        map.put("userId", ""+session.getUser().id);
 
         if (lat != null && lng != null) {
             map.put("latitude", "" + lat);
@@ -581,7 +586,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
     // uploadimage call
-    private void apiCallForUploadData() {
+    private void apiCallForUploadImages() {
         initProgressBar();
         Map<String, String> map = prepareCommonPostData();
         List<Uri>uris = new ArrayList<>();
@@ -594,12 +599,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 new UploadImage.Listner() {
             @Override
             public void onResponce(String responce) {
+                findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
                 parseResponce(responce);
             }
 
             @Override
             public void onError(String error) {
+                findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
                 MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
             }
@@ -728,6 +735,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(String response, String apiName) {
                 Log.d(apiName, response);
+                findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
                 try {
                     JSONObject js = new JSONObject(response);
@@ -748,6 +756,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void ErrorListener(VolleyError error) {
                 Log.d("fdashgf", "dfaew");
+                findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
             }})
                 .setAuthToken(session.getAuthToken())
