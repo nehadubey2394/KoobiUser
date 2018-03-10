@@ -22,6 +22,8 @@ public interface BaseStoryInterface {
 
     void onShowStillshot(String outputUri);
 
+    boolean shouldAutoSubmit();
+
     void setRecordingStart(long start);
 
     void setRecordingEnd(long end);
@@ -36,10 +38,41 @@ public interface BaseStoryInterface {
 
     long getLengthLimit();
 
+    /*Camera methods*/
+
     @BaseStoryActivity.CameraPosition
     int getCurrentCameraPosition();
 
-    Facing getCameraFacing();
+    void toggleCameraPosition();
+
+    void setCameraPosition(int cameraPosition);
+
+    void setDidRecord(boolean didRecord);
+
+    boolean didRecord();
+
+    long maxAllowedFileSize();
+
+
+    /** @return true if we only want to take photographs instead of video capture */
+    boolean useStillshot();
+
+    void setCameraMode(int cameraMode);
+
+    @BaseStoryActivity.FlashMode
+    int getFlashMode();
+
+    @BaseStoryActivity.FlashMode
+    int getFlashModeVideo();
+
+    void setFlashModes(boolean flashModes);
+
+    void toggleFlashMode();
+
+    boolean shouldHideFlash();
+
+    boolean shouldHideCameraFacing();
+
 
     void useMedia(String uri);
 
@@ -47,15 +80,15 @@ public interface BaseStoryInterface {
 
     boolean allowRetry();
 
-    void setDidRecord(boolean didRecord);
 
-    boolean didRecord();
+
+
 
     boolean restartTimerOnRetry();
 
     boolean continueTimerInPlayback();
 
-    long maxAllowedFileSize();
+    /*icons methods*/
 
     @DrawableRes
     int iconRecord();
@@ -85,26 +118,8 @@ public interface BaseStoryInterface {
     @StringRes
     int labelUseVideo();
 
-    @StringRes
-    int labelConfirm();
-
     @DrawableRes
     int iconStillshot();
-
-    /** @return true if we only want to take photographs instead of video capture */
-    boolean useStillshot();
-
-    @BaseStoryActivity.FlashMode
-    int getFlashMode();
-
-    @BaseStoryActivity.FlashMode
-    int getFlashModeVideo();
-
-    void setFlashModes(int modes);
-
-    void setFlashModeVideo(int modes);
-
-    boolean shouldHideCameraFacing();
 
     @DrawableRes
     int iconFlashAuto();
@@ -114,7 +129,4 @@ public interface BaseStoryInterface {
 
     @DrawableRes
     int iconFlashOff();
-
-
-
 }

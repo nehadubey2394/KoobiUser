@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.story.draj_camera.internal;
+package com.mualab.org.user.activity.story.core;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.story.draj_camera.internal.BaseCaptureInterface;
+import com.mualab.org.user.activity.story.draj_camera.internal.CameraIntentKey;
+import com.mualab.org.user.activity.story.draj_camera.internal.CameraUriInterface;
 import com.mualab.org.user.activity.story.draj_camera.util.CameraUtil;
 
 import views.easyvideoplayer.EasyVideoCallback;
@@ -21,14 +24,14 @@ import views.easyvideoplayer.EasyVideoPlayer;
 
 
 /** @author Aidan Follestad (afollestad) */
-public class PlaybackVideoFragment extends Fragment
+public class VideoPreviewFragment extends Fragment
     implements CameraUriInterface, EasyVideoCallback {
 
   private static final String TAG = "PlaybackVideoFragment";
 
   private EasyVideoPlayer mPlayer;
   private String mOutputUri;
-  private BaseCaptureInterface mInterface;
+  private BaseStoryInterface mInterface;
 
   private Handler mCountdownHandler;
   private final Runnable mCountdownRunnable =
@@ -51,11 +54,11 @@ public class PlaybackVideoFragment extends Fragment
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
-    mInterface = (BaseCaptureInterface) activity;
+    mInterface = (BaseStoryInterface) activity;
   }
 
-  public static PlaybackVideoFragment newInstance(String outputUri, boolean allowRetry, int primaryColor) {
-    PlaybackVideoFragment fragment = new PlaybackVideoFragment();
+  public static VideoPreviewFragment newInstance(String outputUri, boolean allowRetry, int primaryColor) {
+    VideoPreviewFragment fragment = new VideoPreviewFragment();
     fragment.setRetainInstance(true);
     Bundle args = new Bundle();
     args.putString("output_uri", outputUri);
@@ -97,7 +100,7 @@ public class PlaybackVideoFragment extends Fragment
     mPlayer =  view.findViewById(R.id.playbackView);
     mPlayer.setCallback(this);
 
-    mPlayer.setSubmitTextRes(mInterface.labelConfirm());
+    //mPlayer.setSubmitTextRes(mInterface.labelConfirm());
     mPlayer.setRetryTextRes(mInterface.labelRetry());
     mPlayer.setPlayDrawableRes(mInterface.iconPlay());
     mPlayer.setPauseDrawableRes(mInterface.iconPause());

@@ -6,7 +6,7 @@
     tools:context=".activity.story.core.CaptureStoryFragment">
 
     <com.otaliastudios.cameraview.CameraView
-        android:id="@+id/camera"
+        android:id="@+id/cameraView"
         android:keepScreenOn="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -47,7 +47,8 @@
             android:fontFamily="sans-serif-medium"
             android:text="@string/mcam_defaultDuration"
             android:textColor="#fff"
-            android:textSize="@dimen/mcam_regular_content_fontsize" />
+            android:textSize="@dimen/mcam_regular_content_fontsize"
+            android:visibility="gone"/>
 
         <View
             android:layout_width="0dp"
@@ -59,6 +60,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@drawable/btn_default_light"
+            android:padding="12dp"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_flash_off_white" />
     </LinearLayout>
 
@@ -112,7 +115,7 @@
                         android:scaleType="fitXY"
                         tools:ignore="ContentDescription"
                         android:visibility="gone"
-                        tools:src="@drawable/mcam_action_capture" />
+                        android:src="@drawable/mcam_action_capture" />
 
 
                     <ImageButton
@@ -124,9 +127,8 @@
                         android:background="@drawable/mcam_circle_selector"
                         android:padding="5dp"
                         android:scaleType="fitXY"
-                        android:visibility="visible"
                         tools:ignore="ContentDescription"
-                        tools:src="@drawable/mcam_action_stillshot" />
+                        android:src="@drawable/mcam_action_stillshot" />
 
                 </RelativeLayout>
 
