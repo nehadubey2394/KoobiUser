@@ -15,22 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import views.calender.data.CalendarAdapter;
-import views.calender.data.Day;
-import views.calender.widget.FlexibleCalendar;
-
 import com.android.volley.VolleyError;
-import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
 import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
 import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingTimeSlot;
@@ -47,13 +40,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
+
+import views.calender.data.CalendarAdapter;
+import views.calender.data.Day;
+import views.calender.widget.FlexibleCalendar;
 
 
 public class BookingFragment4 extends Fragment implements View.OnClickListener,CustomAdapterButtonListener{
@@ -62,22 +56,24 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     // TODO: Rename and change types of parameters
     private String mParam1,artistId,selectedDate,sMonth= "",sDay;
     private ArrayList<BookingTimeSlot> bookingTimeSlots;
-    private ArrayList<BookingInfo>bookingInfos;
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
     private int dayId;
     private RecyclerView rycTimeSlot;
     private TextView tvNoSlot;
+    private BookingInfo bookingInfo;
+    public static ArrayList<BookingInfo> bookingInfos = new ArrayList<>();
 
     public BookingFragment4() {
         // Required empty public constructor
     }
 
-    public static BookingFragment4 newInstance(String param1, String mParam2) {
+    public static BookingFragment4 newInstance(String param1, String mParam2,BookingInfo bookingInfo) {
         BookingFragment4 fragment = new BookingFragment4();
         Bundle args = new Bundle();
         args.putString("param1", param1);
         args.putString("param2", mParam2);
+        args.putSerializable("param3", bookingInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,6 +86,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
             artistId = getArguments().getString("param2")  ;
+            bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
         }
     }
 
@@ -98,7 +95,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_booking4, container, false);
         initView();
-        setViewId(rootView);
+        setView(rootView);
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -111,15 +108,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
     private void initView(){
         bookingTimeSlots = new ArrayList<>();
-        bookingInfos = new ArrayList<>();
+
         listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
         listAdapter.setCustomListener(BookingFragment4.this);
         bookingInfoAdapter = new BookingInfoAdapter(mContext, bookingInfos);
-
-        addServices();
     }
 
-    private void setViewId(View rootView){
+    private void setView(View rootView){
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
 
         AppCompatButton btnCOnfirmBooking = rootView.findViewById(R.id.btnCOnfirmBooking);
@@ -144,8 +139,16 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
         viewCalendar.setAdapter(adapter);
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy");
+        dateFormat.setTimeZone(cal.getTimeZone());
+
         selectedDate = getCurrentDate();
         dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-2;
+        bookingInfo.date = dateFormat.format(cal.getTime());
+        //  bookingInfo.time = getCurrentTime();
+
+        bookingInfos.add(bookingInfo);
+        bookingInfoAdapter.notifyDataSetChanged();
 
         // bind events of calendar
         viewCalendar.setCalendarListener(new FlexibleCalendar.CalendarListener() {
@@ -233,30 +236,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         btnAddMoreService.setOnClickListener(this);
     }
 
-    private void addServices(){
-        bookingInfos.clear();
-        BookingInfo item;
-        for(int i=0;i<2;i++) {
-            item = new BookingInfo();
-            switch (i) {
-                case 0:
-                    item.time = "10:00";
-                    item.date = "Sun 10th November 2018";
-                    item.sServiceName = "Evening Make Up";
-                    item.price = "£70";
-                    break;
-                case 1:
-                    item.time = "11:00";
-                    item.date = "Mon 12th November 2018";
-                    item.sServiceName = "Hair Cut";
-                    item.price = "£60";
-                    break;
-
-            }
-            bookingInfos.add(item);
-        }
-    }
-
     private void apiForGetSlots(){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
@@ -299,12 +278,16 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 BookingTimeSlot item = new BookingTimeSlot();
                                 item.time = jsonArray.getString(j);
                                 item.isSelected = "0";
+                                if (j==0){
+                                    bookingInfo.time = item.time;
+                                    bookingInfoAdapter.notifyDataSetChanged();
+                                }
                                 bookingTimeSlots.add(item);
                             }
                         }else {
                             rycTimeSlot.setVisibility(View.GONE);
                             tvNoSlot.setVisibility(View.VISIBLE);
-                          //  MyToast.getInstance(mContext).showSmallCustomToast(message);
+                            //  MyToast.getInstance(mContext).showSmallCustomToast(message);
                         }
 
                         listAdapter.notifyDataSetChanged();
@@ -418,8 +401,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         listAdapter.notifyDataSetChanged();
         // if (item.isSelected.equals("0"))
         item.isSelected = "1";
+        bookingInfo.time = item.time;
         //  else
         //     item.isSelected = "0";
         listAdapter.notifyItemChanged(position);
+        bookingInfoAdapter.notifyDataSetChanged();
     }
 }

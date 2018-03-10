@@ -16,7 +16,9 @@ import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingServices3;
+import com.mualab.org.user.model.booking.SubServices;
 import com.mualab.org.user.session.Session;
 
 import java.util.ArrayList;
@@ -32,13 +34,15 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private  final int VIEWTYPE_LOADER = 2;
     private Session session = Mualab.getInstance().getSessionManager();
     private  boolean isOutCallSelect;
+    private SubServices subServices;
     // Constructor of the class
-    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item,boolean isOutCallSelect) {
+    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices) {
         this.context = context;
         this.artistsList = artistsList;
         this.serviceTitle = serviceTitle;
         this.item = item;
         this.isOutCallSelect = isOutCallSelect;
+        this.subServices = subServices;
     }
 
     @Override
@@ -103,15 +107,16 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             String min = separated[1]+" min";
             holder.tvTime.setText(hours+min);
         }
-
+        double prise = 0.0;
         if (isOutCallSelect){
-            holder.tvAmount.setText(item.outCallPrice);
+            prise = Double.parseDouble(item.outCallPrice);
         }else {
-            holder.tvAmount.setText(item.inCallPrice);
+            prise = Double.parseDouble(item.inCallPrice);
         }
+        holder.tvAmount.setText(""+prise);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tvAmount,tvLastService,tvTime;
         LinearLayout lyServiceDetail;
         private ViewHolder(View itemView)
@@ -122,20 +127,42 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             tvLastService = itemView.findViewById(R.id.tvLastService);
             tvTime = itemView.findViewById(R.id.tvTime);
 
-            lyServiceDetail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            lyServiceDetail.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.lyServiceDetail:
+                    BookingServices3 services3 = artistsList.get(getAdapterPosition());
+
+                    BookingInfo bookingInfo = new BookingInfo();
+                    bookingInfo.sServiceName = services3.title;
+                    bookingInfo.msId = services3._id;
+                    bookingInfo.ssId = subServices.subServiceId;
+                    bookingInfo.sId = subServices.serviceId;
+                    bookingInfo.time = services3.completionTime;
+
+                    if (isOutCallSelect) {
+                        bookingInfo.price = Double.parseDouble(services3.outCallPrice);
+                    }else {
+                        bookingInfo.price = Double.parseDouble(services3.inCallPrice);
+                    }
+
+
                     if (((BookingActivity)context).item.businessType.equals("independent")){
                         ((BookingActivity)context).addFragment(
-                                BookingFragment4.newInstance(serviceTitle,item._id), true, R.id.flBookingContainer);
+                                BookingFragment4.newInstance(serviceTitle,item._id,bookingInfo), true, R.id.flBookingContainer);
 
                     }else {
                         ((BookingActivity)context).addFragment(
-                                BookingFragment1.newInstance(serviceTitle,item), true, R.id.flBookingContainer);
+                                BookingFragment1.newInstance(serviceTitle,item, bookingInfo), true, R.id.flBookingContainer);
 
                     }
-                }
-            });
+                    break;
+
+            }
         }
     }
 
