@@ -16,14 +16,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.draj_camera.internal.BaseGalleryFragment;
+import com.mualab.org.user.activity.story.draj_camera.TimeLimitReachedException;
 import com.mualab.org.user.activity.story.draj_camera.internal.CameraIntentKey;
 import com.mualab.org.user.activity.story.draj_camera.internal.CameraUriInterface;
-import com.mualab.org.user.activity.story.draj_camera.internal.PlaybackVideoFragment;
 import com.mualab.org.user.activity.story.draj_camera.util.CameraUtil;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -35,11 +35,11 @@ import java.lang.annotation.RetentionPolicy;
 public abstract class BaseStoryActivity extends AppCompatActivity implements BaseStoryInterface{
 
     public static final int PERMISSION_RC = 69;
+    private static final String TAG = BaseStoryActivity.class.getName();
 
     @IntDef({CAMERA_POSITION_UNKNOWN, CAMERA_POSITION_BACK, CAMERA_POSITION_FRONT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface CameraPosition {}
-
     public static final int CAMERA_POSITION_UNKNOWN = 0;
     public static final int CAMERA_POSITION_FRONT = 1;
     public static final int CAMERA_POSITION_BACK = 2;
@@ -47,20 +47,32 @@ public abstract class BaseStoryActivity extends AppCompatActivity implements Bas
     @IntDef({FLASH_MODE_OFF, FLASH_MODE_ON, FLASH_MODE_AUTO, FLASH_MODE_TOURCH, })
     @Retention(RetentionPolicy.SOURCE)
     public @interface FlashMode {}
-
     public static final int FLASH_MODE_OFF = 0;
     public static final int FLASH_MODE_ON = 1;
     public static final int FLASH_MODE_AUTO = 2;
     public static final int FLASH_MODE_TOURCH = 3;
 
+    @IntDef({CAMERA_MODE_PICTURE, CAMERA_MODE_VIDEO})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface CameraMode {}
+    public static final int CAMERA_MODE_PICTURE = 0;
+    public static final int CAMERA_MODE_VIDEO = 1;
 
-    private int mCameraPosition = CAMERA_POSITION_FRONT;
     private int mFlashMode = FLASH_MODE_OFF;
+    private int mCameraMode = CAMERA_MODE_PICTURE;
+    private int mCameraPosition = CAMERA_POSITION_FRONT;
+
     private boolean mRequestingPermission;
     private long mRecordingStart = -1;
     private long mRecordingEnd = -1;
     private long mLengthLimit = -1;
+    private boolean mDidRecord = false;
+    private boolean isFlashModesVideo = false;
+    //private List<Integer> mFlashModes;
 
+
+    private String mUri = null;
+    private String mUploadUri = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -162,7 +174,20 @@ public abstract class BaseStoryActivity extends AppCompatActivity implements Bas
     }
 
 
-
+    @Override
+    public final void useMedia(String uri) {
+        if (uri != null) {
+            Log.d(TAG, "useMedia: upload uri: " + uri);
+            mUri = uri;
+//      setResult(
+//          Activity.RESULT_OK,
+//          getIntent()
+//              .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RECORDED)
+//              .setDataAndType(Uri.parse(uri), useStillshot() ? "image/jpeg" : "video/mp4"));
+            //saveMediaToMemory(uri);
+        }
+//    finish();
+    }
 
 
     @Override
@@ -176,18 +201,226 @@ public abstract class BaseStoryActivity extends AppCompatActivity implements Bas
     public void onBackPressed() {
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.container);
         if (frag != null) {
-            if (frag instanceof PlaybackVideoFragment && allowRetry()) {
+            if (frag instanceof VideoPreviewFragment && allowRetry()) {
                 onRetry(((CameraUriInterface) frag).getOutputUri());
                 return;
             } else if (frag instanceof CaptureStoryFragment) {
                 ((CaptureStoryFragment) frag).cleanup();
-            } else if (frag instanceof BaseGalleryFragment && allowRetry()) {
+            } else if (frag instanceof PhotoPreviewFragment && allowRetry()) {
                 onRetry(((CameraUriInterface) frag).getOutputUri());
                 return;
             }
         }
-        else super.onBackPressed();
+        super.onBackPressed();
     }
+
+
+    @Override
+    public final boolean shouldAutoSubmit() {
+        return getIntent().getBooleanExtra(CameraIntentKey.AUTO_SUBMIT, false);
+    }
+
+    @Override
+    public void onShowStillshot(String outputUri) {
+        if (shouldAutoSubmit()) {
+            useMedia(outputUri);
+        } else {
+            Fragment frag = PhotoPreviewFragment.newInstance(outputUri, allowRetry(), getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
+        }
+    }
+
+
+    @Override
+    public final void onShowPreview(@Nullable final String outputUri, boolean countdownIsAtZero) {
+        if ((shouldAutoSubmit() && (countdownIsAtZero || !allowRetry() || !hasLengthLimit())) || outputUri == null) {
+            if (outputUri == null) {
+                setResult(
+                        RESULT_CANCELED,
+                        new Intent().putExtra(RjCamera.ERROR_EXTRA, new TimeLimitReachedException()));
+                finish();
+                return;
+            }
+            useMedia(outputUri);
+        } else {
+            if (!hasLengthLimit() || !continueTimerInPlayback()) {
+                // No countdown or countdown should not continue through playback, reset timer to 0
+                setRecordingStart(-1);
+            }
+            Fragment frag = VideoPreviewFragment.newInstance(outputUri, allowRetry(), getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, frag).commit();
+        }
+    }
+
+    @Override
+    public void addToStory(String uri) {
+        Log.d(TAG, "addToStory: adding file to story.");
+       /* initProgressBar();
+        if(isMediaVideo(uri)){
+            if(mUploadUri == null){
+                Log.d(TAG, "addToStory: Video was not saved. Beginning compression.");
+                mDeleteCompressedMedia = true;
+                saveTempAndCompress(uri);
+            }
+            else{
+                Log.d(TAG, "addToStory: video has been saved. Now uploading.");
+                Log.d(TAG, "addToStory: upload uri: " + mUploadUri);
+                finishActivityAndUpload();
+            }
+        }
+        else{
+            if(mUploadUri == null){
+                Log.d(TAG, "addToStory: Image was not saved. Now uploading");
+                mDeleteCompressedMedia = true;
+                mUploadUri = uri;
+                finishActivityAndUpload();
+            }
+            else{
+                Log.d(TAG, "addToStory: Image has been saved. Now uploading.");
+                Log.d(TAG, "addToStory: upload uri: " + mUploadUri);
+                finishActivityAndUpload();
+            }
+        }*/
+
+    }
+
+
+
+    /*Video Camera methods*/
+
+    @Override
+    public void setRecordingStart(long start) {
+        mRecordingStart = start;
+        if (start > -1 && hasLengthLimit()) setRecordingEnd(mRecordingStart + getLengthLimit());
+        else setRecordingEnd(-1);
+    }
+
+    @Override
+    public long getRecordingStart() {
+        return mRecordingStart;
+    }
+
+    @Override
+    public void setRecordingEnd(long end) {
+        mRecordingEnd = end;
+    }
+
+    @Override
+    public long getRecordingEnd() {
+        return mRecordingEnd;
+    }
+
+    @Override
+    public long getLengthLimit() {
+        return mLengthLimit;
+    }
+
+    @Override
+    public boolean hasLengthLimit() {
+        return getLengthLimit() > -1;
+    }
+
+    @Override
+    public boolean countdownImmediately() {
+        return getIntent().getBooleanExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, false);
+    }
+
+    @Override
+    public void setCameraPosition(int position) {
+        mCameraPosition = position;
+    }
+
+    @Override
+    public void toggleCameraPosition() {
+        if (getCurrentCameraPosition() == CAMERA_POSITION_FRONT) {
+            // Front, go to back if possible
+           setCameraPosition(CAMERA_POSITION_BACK);
+        } else {
+            // Back, go to front if possible
+            setCameraPosition(CAMERA_POSITION_FRONT);
+        }
+    }
+
+
+
+
+    @Override
+    public boolean restartTimerOnRetry() {
+        return getIntent().getBooleanExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, false);
+    }
+
+    @Override
+    public boolean continueTimerInPlayback() {
+        return getIntent().getBooleanExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, false);
+    }
+
+    @Override
+    public int getCurrentCameraPosition() {
+        return mCameraPosition;
+    }
+
+    @Override
+    public final boolean allowRetry() {
+        return getIntent().getBooleanExtra(CameraIntentKey.ALLOW_RETRY, true);
+    }
+
+
+    @Override
+    public void setDidRecord(boolean didRecord) {
+        mDidRecord = didRecord;
+    }
+
+    @Override
+    public boolean didRecord() {
+        return mDidRecord;
+    }
+
+    @Override
+    public int getFlashMode() {
+        return mFlashMode;
+    }
+
+    @Override
+    public int getFlashModeVideo() {
+        return mFlashMode;
+    }
+
+
+    @Override
+    public void toggleFlashMode() {
+        if (isFlashModesVideo) {
+            if(mFlashMode == FLASH_MODE_TOURCH){
+                mFlashMode = FLASH_MODE_OFF;
+            } else{
+                mFlashMode = FLASH_MODE_TOURCH;
+            }
+        }
+        else {
+            if(mFlashMode == FLASH_MODE_OFF){
+                mFlashMode = FLASH_MODE_ON;
+            } else if(mFlashMode == FLASH_MODE_ON){
+                mFlashMode = FLASH_MODE_AUTO;
+            }else if(mFlashMode == FLASH_MODE_AUTO){
+                mFlashMode = FLASH_MODE_OFF;
+            }
+        }
+    }
+
+    @Override
+    public void setCameraMode(int cameraMode) {
+        mCameraMode = cameraMode;
+    }
+
+    @Override
+    public void setFlashModes(boolean flashModes) {
+        this.isFlashModesVideo = flashModes;
+    }
+
+    @Override
+    public boolean shouldHideFlash() {
+        return !useStillshot();
+    }
+
 
     @DrawableRes
     @Override
@@ -244,14 +477,6 @@ public abstract class BaseStoryActivity extends AppCompatActivity implements Bas
         return getIntent().getIntExtra(CameraIntentKey.LABEL_CONFIRM, R.string.mcam_use_video);
     }
 
-    @StringRes
-    @Override
-    public int labelConfirm() {
-        return getIntent()
-                .getIntExtra(
-                        CameraIntentKey.LABEL_CONFIRM,
-                        useStillshot() ? R.string.mcam_use_stillshot : R.string.mcam_use_video);
-    }
 
     @DrawableRes
     @Override
@@ -267,7 +492,7 @@ public abstract class BaseStoryActivity extends AppCompatActivity implements Bas
 
     @Override
     public boolean useStillshot() {
-        return getIntent().getBooleanExtra(CameraIntentKey.STILL_SHOT, false);
+        return mCameraMode == CAMERA_MODE_PICTURE;
     }
 
     @DrawableRes
@@ -290,18 +515,14 @@ public abstract class BaseStoryActivity extends AppCompatActivity implements Bas
                 .getIntExtra(CameraIntentKey.ICON_FLASH_OFF, R.drawable.mcam_action_flash_off);
     }
 
-    @Override
-    public void setFlashModes(int modes) {
-        mFlashMode = modes;
-    }
-
-    @Override
-    public void setFlashModeVideo(int mFlashMode) {
-        this.mFlashMode = mFlashMode;
-    }
 
     @Override
     public boolean shouldHideCameraFacing() {
         return !getIntent().getBooleanExtra(CameraIntentKey.ALLOW_CHANGE_CAMERA, false);
+    }
+
+    @Override
+    public long maxAllowedFileSize() {
+        return getIntent().getLongExtra(CameraIntentKey.MAX_ALLOWED_FILE_SIZE, -1);
     }
 }
