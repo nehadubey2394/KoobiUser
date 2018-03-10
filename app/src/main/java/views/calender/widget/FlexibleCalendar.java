@@ -168,7 +168,6 @@ public class FlexibleCalendar extends UICalendar {
 
                 // set the selected item
                 if (isSelectedDay(day)) {
-                    Date currentDay = mAdapter.getCalendar().getTime();
                     Calendar todayCal = Calendar.getInstance();
                     int cYear  = todayCal.get(Calendar.YEAR);
                     int cMonth  = todayCal.get(Calendar.MONTH)+1;
@@ -179,7 +178,7 @@ public class FlexibleCalendar extends UICalendar {
                     int dayOfMonth =  day.getDay();
 
                     if (year>=cYear && month>=cMonth){
-                        if (year==cYear && month==cMonth && dayOfMonth<=cDay){
+                        if (year==cYear && month==cMonth && dayOfMonth<cDay){
                             MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
                         }else {
                             mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
@@ -189,25 +188,6 @@ public class FlexibleCalendar extends UICalendar {
                     }else {
                         MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
                     }
-/*
-                    if (dayOfMonth > cDay && cMonth==(month) && cYear== year){
-                        //    txtDay.setAlpha(1f);
-                        mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
-                        txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
-                        txtDay.setTextColor(getSelectedItemTextColor());
-                    }else if (dayOfMonth <= cDay && month >(cMonth) && year>=cYear){
-                        txtDay.setAlpha(1f);
-                        mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
-                        txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
-                        txtDay.setTextColor(getSelectedItemTextColor());
-                    }else {
-                        // txtDay.setAlpha(0.5f);
-                        MyToast.getInstance(mContext).showSmallCustomToast("YOu can't select previous date for booking.");
-                    }*/
-
-                   /* mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
-                    txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
-                    txtDay.setTextColor(getSelectedItemTextColor());*/
                 }
             }
         }

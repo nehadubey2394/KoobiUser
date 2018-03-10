@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         initView();
+
         addFragment(SearchBoardFragment.newInstance(item,""), false, R.id.fragment_place);
 
 
@@ -361,7 +362,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onBackPressed();
         }
     }
-
 
 
     private void addMyStory( Bitmap bitmap){
