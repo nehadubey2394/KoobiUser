@@ -7,11 +7,10 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -27,12 +26,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -48,7 +45,6 @@ import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.FilteredAdapter;
 import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.draj_camera.internal.BaseCaptureActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
@@ -59,12 +55,10 @@ import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.task.UploadImage;
-import com.mualab.org.user.task.UploadVideoTask;
 import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.util.KeyboardUtil;
 import com.mualab.org.user.util.LocationDetector;
-import com.mualab.org.user.util.SuziLoader;
 import com.mualab.org.user.util.media.ImageVideoUtil;
-import com.mualab.org.user.videocompressor.file.FileUtils;
 import com.mualab.org.user.videocompressor.video.MediaController;
 
 import org.json.JSONArray;
@@ -72,13 +66,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,13 +79,9 @@ import kotlin.jvm.functions.Function2;
 
 public class FeedPostActivity extends AppCompatActivity implements View.OnClickListener {
 
-   // private static final int REQUEST_CODE_PICK = 1;
-   //private static final int PROGRESS_BAR_MAX = 1000;
     public static String TAG = FeedPostActivity.class.getName();
 
-    // private EditText edCaption;
-    // private AutoCompleteTextView edCaption;
-    ArrayList<String> tagList = new ArrayList<>();
+    private ArrayList<String> tagList = new ArrayList<>();
     private TextView tvLoaction;
     private ImageView ivShareFbOn, ivShareTwitterOn, iv_postimage;
     private Session session;
@@ -104,7 +92,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private SocialAutoCompleteTextView edCaption;
     private TextView tvMediaSize;
     private List<String> hashTags = new ArrayList<>();
-   // private Future<Void> mFuture;
 
     private int feedType;
     private String caption;
@@ -113,11 +100,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     private MediaUri mediaUri;
     private AlertDialog mAlertDialog;
-    private File tempFile;
+
     private Boolean mDeleteCompressedMedia = false;
     private String mUploadUri = null;
 
-    private BroadcastReceiver receiverUpComplete = new BroadcastReceiver() {
+    private File tempFile;
+    private Bitmap videoThumb;
+
+    /*private BroadcastReceiver receiverUpComplete = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -125,11 +115,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             //showLikedSnackbar("Video Has been Uploaded");
         }
     };
-
+*/
     @Override
     protected void onResume() {
         super.onResume();
-        FeedPostActivity.this.registerReceiver(receiverUpComplete, new IntentFilter("FILTER"));
+       // FeedPostActivity.this.registerReceiver(receiverUpComplete, new IntentFilter("FILTER"));
     }
 
     @Override
@@ -210,7 +200,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         });
 
         checkLocationPermisssion();
-
     }
 
     private void getDropDown(String tag) {
@@ -257,7 +246,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         lastTxt = tag;
     }
 
-
     private void viewDidLoad() {
         tvLoaction = findViewById(R.id.tv_loaction);
         ivShareFbOn = findViewById(R.id.iv_fb_on);
@@ -279,7 +267,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         tagAdapter = new TagAdapter(this);
         edCaption.setHashtagAdapter(tagAdapter);
     }
-
 
     @SuppressLint("DefaultLocale")
     private void updateUi() {
@@ -323,13 +310,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 }
             }else if(mediaUri.mediaType == Constant.VIDEO_STATE){
 
-                Bitmap bitmap;
                 feedType = Constant.VIDEO_STATE;
                 if (mediaUri.isFromGallery) {
                     String filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(0)), this);
-                    bitmap = ImageVideoUtil.getVidioThumbnail(filePath);
+                    videoThumb = ImageVideoUtil.getVidioThumbnail(filePath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
                 } else {
-                    bitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mediaUri.uriList.get(0)), this); //ImageVideoUtil.getCompressBitmap();
+                    videoThumb = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mediaUri.uriList.get(0)),
+                            this,
+                            MediaStore.Video.Thumbnails.FULL_SCREEN_KIND); //ImageVideoUtil.getCompressBitmap();
                    /* SuziLoader loader = new SuziLoader(); //Create it for once
                     loader.with(this) //Context
                             .load(mediaUri.uriList.get(0)) //Video path
@@ -338,8 +326,8 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                             .show();*/ // to show the thumbnail
                 }
 
-                if (bitmap != null)
-                    iv_postimage.setImageBitmap(bitmap);
+                if (videoThumb != null)
+                    iv_postimage.setImageBitmap(videoThumb);
                 // Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mSelectdVideo), this);
             }
         }else {
@@ -351,46 +339,60 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        tagList = null;
+        tvLoaction = null;
+        ivShareFbOn = null;
+        ivShareTwitterOn= null;
+        iv_postimage = null;
+        session = null;
+        lat = lng = null;
+        tagAdapter = null;
+        edCaption = null;
+        tvMediaSize = null;
+        hashTags = null;
+        caption = null;
+        lastTxt = isShare = tages = address = null;
+        mediaUri = null;
+        mAlertDialog = null;
+        mDeleteCompressedMedia = false;
+        mUploadUri = null;
+        tempFile = null;
+        videoThumb = null;
     }
 
     @Override
     public void onClick(View v) {
-
         caption = edCaption.getText().toString().trim();
         if (TextUtils.isEmpty(caption))
             caption = "";
         else getAllTags();
 
-
         switch (v.getId()) {
-
             case R.id.iv_feedPost:
-                hideKeyboard();
+                KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
                 if(ConnectionDetector.isConnected()){
 
                     if (feedType == Constant.TEXT_STATE)
                         apiUploadTextFeed();
                     if (feedType == Constant.VIDEO_STATE) {
-
-                        String uri = mediaUri.uriList.get(0);
+                        //String uri = mediaUri.uriList.get(0);
                         if (mUploadUri == null) {
                             initProgressBar();
                             mDeleteCompressedMedia = true;
                             //saveTempAndCompress(uri);
-                            uploadVideo();
+                            uploadVideo(videoThumb);
                         }else {
                             initProgressBar();
-                            uploadVideo();
+                            uploadVideo(videoThumb);
                         }
                         //sendToBackGroundService();
                     } else if (feedType == Constant.IMAGE_STATE)
                         apiCallForUploadData();
-                }else {
-                    MySnackBar.showSnackbar(FeedPostActivity.this,
-                            findViewById(R.id.activity_add_post),
+                }
+                else {
+                    MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
                             getString(R.string.error_msg_network));
                 }
-
                 break;
 
             case R.id.iv_back:
@@ -406,99 +408,34 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     // TODO: Handle the error.
                 } catch (GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
-                }
-                break;
+                }break;
         }
     }
 
-    private boolean isMediaVideo(String uri){
-        if(uri.contains(".mp4") || uri.contains(".wmv") || uri.contains(".flv") || uri.contains(".avi")){
-            return true;
-        }
-        return false;
-    }
-
-    private void deleteOutputFile(@Nullable String uri) {
-        if (uri != null)
-            //noinspection ResultOfMethodCallIgnored
-            new File(Uri.parse(uri).getPath()).delete();
-    }
-
-
-    private void saveTempAndCompress(String uri){
-        //save temporary file for compression
-        //String fileName = uri.substring(uri.indexOf("Stories/") + 8);
-        //tempFile = FileUtils.saveTempFile(fileName, this, Uri.parse(uri));
-
-        String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
-        tempFile = new File(path); //com.mualab.org.user.util.media.FileUtils.getFile(this, Uri.parse(uri));
-
-        //delete the original
-        //deleteOutputFile(uri);
-
-        //compress temp file and save new compressed version in "/Stories/"
-        new VideoCompressor().execute();
-    }
-
-    class VideoCompressor extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showProgressBar();
-            Log.d(TAG,"Start video compression");
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            return MediaController.getInstance().convertVideo(tempFile.getPath());
-        }
-
-        @Override
-        protected void onPostExecute(String filePath) {
-            super.onPostExecute(filePath);
-            if(!filePath.equals("")){
-                mUploadUri = filePath;
-                Log.d(TAG,"Compression successfully!");
-                if(mDeleteCompressedMedia){
-                    uploadVideo();
-                }
-            }else {
-                hideProgressBar();
-            }
-        }
-    }
 
     private void initProgressBar(){
         LayoutInflater li = LayoutInflater.from(this);
         View layout = li.inflate(R.layout.layout_processing_dialog, null);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                150, FrameLayout.LayoutParams.WRAP_CONTENT
-        );
+                150, FrameLayout.LayoutParams.WRAP_CONTENT);
         layout.setLayoutParams(params);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(layout);
+
         //mAlertDialog.setTitle("Prepare data for uploading video..");
         mAlertDialog = alertDialogBuilder.create();
         mAlertDialog.setCancelable(false);
+        mAlertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         mAlertDialog.show();
     }
 
-
-
     private void showProgressBar(){
-//    if(mProgressBar != null){
-//      mProgressBar.setVisibility(View.VISIBLE);
-//    }
         if(mAlertDialog != null){
             mAlertDialog.show();
         }
     }
 
     private void hideProgressBar(){
-//    if(mProgressBar != null){
-//      mProgressBar.setVisibility(View.INVISIBLE);
-//    }
         if(mAlertDialog != null){
             mAlertDialog.dismiss();
         }
@@ -558,21 +495,10 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-
-
     @Override
     public void onBackPressed() {
-        hideKeyboard();
+        KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
         super.onBackPressed();
-    }
-
-    private void hideKeyboard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            assert imm != null;
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
     }
 
     private void getAllTags() {
@@ -590,28 +516,35 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void resetView() {
+        if(tempFile!=null){
+            try{
+                tempFile.delete();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
         edCaption.setText("");
         iv_postimage.setImageBitmap(null);
         iv_postimage.setVisibility(View.GONE);
-        hideKeyboard();
     }
 
 
     private void apiUploadTextFeed(){
+        initProgressBar();
         Map<String, String> map = prepareCommonPostData();
-
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                hideProgressBar();
                 parseResponce(response);
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
-                Log.d("Responce", "error");
+                hideProgressBar();
             }})
                 .setAuthToken(session.getAuthToken())
-                .setProgress(true)
+                .setProgress(false)
                 .setParam(map))
                // .setBody(map, HttpTask.ContentType.FORM_DATA))
                 .postImage(null,null);
@@ -649,13 +582,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     // uploadimage call
     private void apiCallForUploadData() {
-
+        initProgressBar();
         Map<String, String> map = prepareCommonPostData();
         List<Uri>uris = new ArrayList<>();
         for(String uri: mediaUri.uriList)
             uris.add(Uri.parse(uri));
-
-        Progress.show(this);
         new UploadImage(FeedPostActivity.this,
                 session.getAuthToken(),
                 map,
@@ -663,20 +594,19 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 new UploadImage.Listner() {
             @Override
             public void onResponce(String responce) {
-               parseResponce(responce);
+                hideProgressBar();
+                parseResponce(responce);
             }
 
             @Override
             public void onError(String error) {
-                Log.d("Responce", error);
-                Progress.hide(FeedPostActivity.this);
+                hideProgressBar();
                 MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
             }
         }).execute();
     }
 
     private void parseResponce(String responce){
-        Progress.hide(FeedPostActivity.this);
         try {
             JSONObject js = new JSONObject(responce);
             String status = js.getString("status");
@@ -693,23 +623,16 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void unregisterUploadReceiver() {
+   /* private void unregisterUploadReceiver() {
         if (receiverUpComplete != null) {
             FeedPostActivity.this.unregisterReceiver(receiverUpComplete);
         }
-    }
+    }*/
 
-    @Override
+  /*  @Override
     public void onPause() {
         super.onPause();
         unregisterUploadReceiver();
-    }
-
-    /*public void showLikedSnackbar(String string) {
-        if (TextUtils.isEmpty(string))
-            string = "Liked!";
-        MyToast.getInstance(this).showSmallMessage(string);
-        //MySnackBar.showSnackbarSort(this, findViewById(R.id.myCoordinatorLayout), string);
     }*/
 
     private void checkLocationPermisssion() {
@@ -794,15 +717,32 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void uploadVideo(){
+    private void uploadVideo(Bitmap videoThumb){
 
         Map<String, String> map = prepareCommonPostData();
+        String uri = mediaUri.uriList.get(0);
+        String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
+        tempFile = new File(path);
 
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 Log.d(apiName, response);
                 hideProgressBar();
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+                    if (status.equalsIgnoreCase("success")) {
+                        resetView();
+                        setResult(Activity.RESULT_OK);
+                        finish();
+                    }else {
+                        MyToast.getInstance(FeedPostActivity.this).showSmallMessage(message);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -812,8 +752,47 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             }})
                 .setAuthToken(session.getAuthToken())
                 .setParam(map)
-                .setProgress(true))
-                .postFile("feed", tempFile);
+                .setProgress(false))
+                .postFile("feed", tempFile, videoThumb);
     }
 
+    private void deleteOutputFile(@Nullable String uri) {
+        if (uri != null)
+            new File(Uri.parse(uri).getPath()).delete();
+    }
+
+    private void saveTempAndCompress(String uri){
+        String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
+        tempFile = new File(path); //com.mualab.org.user.util.media.FileUtils.getFile(this, Uri.parse(uri));
+        new VideoCompressor().execute();
+    }
+
+    class VideoCompressor extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressBar();
+            Log.d(TAG,"Start video compression");
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return MediaController.getInstance().convertVideo(tempFile.getPath());
+        }
+
+        @Override
+        protected void onPostExecute(String filePath) {
+            super.onPostExecute(filePath);
+            if(!filePath.equals("")){
+                mUploadUri = filePath;
+                Log.d(TAG,"Compression successfully!");
+                if(mDeleteCompressedMedia){
+                    uploadVideo(videoThumb);
+                }
+            }else {
+                hideProgressBar();
+            }
+        }
+    }
 }
