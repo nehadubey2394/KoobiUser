@@ -60,19 +60,27 @@ public class ImageVideoUtil {
     }
 
     public static Bitmap getVideoToThumbnil(Uri uri, Context mContext) {
+        return getVideoToThumbnil(uri,mContext, MediaStore.Video.Thumbnails.MICRO_KIND);
+    }
+
+    public static Bitmap getVideoToThumbnil(Uri uri, Context mContext, int thumbType) {
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = mContext.getContentResolver().query(uri, filePathColumn, null, null, null);
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String picturePath = cursor.getString(columnIndex);
         cursor.close();
-        return ThumbnailUtils.createVideoThumbnail(picturePath, MediaStore.Video.Thumbnails.MICRO_KIND);
+        return ThumbnailUtils.createVideoThumbnail(picturePath, thumbType);
     }
 
     public static Bitmap getVidioThumbnail(String path) {
+        return getVidioThumbnail(path, MediaStore.Images.Thumbnails.MICRO_KIND);
+    }
+
+    public static Bitmap getVidioThumbnail(String path, int thumbType) {
         Bitmap bitmap = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            bitmap = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.MICRO_KIND);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            bitmap = ThumbnailUtils.createVideoThumbnail(path, thumbType);
             if (bitmap != null) {
                 return bitmap;
             }

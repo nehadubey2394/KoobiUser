@@ -305,7 +305,7 @@ public class HttpTask {
 
 
     /*post file from multipart data form*/
-    public void postFile(final String key, final File file){
+    public void postFile(final String key, final File file, final Bitmap videoThumb){
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, api, new Response.Listener<NetworkResponse>() {
             @Override
             public void onResponse(NetworkResponse response) {
@@ -348,6 +348,10 @@ public class HttpTask {
                 if (key != null && file != null) {
                     String mimeType = FileUtils.getMimeType(file);
                     params.put(key, new DataPart(file.getName(), AppHelper.getFileDataFromFile(file), mimeType));
+                }
+
+                if(videoThumb!=null){
+                    params.put("videoThumb", new DataPart("videoThumb", AppHelper.getFileDataFromDrawable(videoThumb), "image/jpeg"));
                 }
                 return params;
             }

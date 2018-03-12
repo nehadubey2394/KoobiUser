@@ -110,7 +110,7 @@
                         android:layout_height="40dp"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
-                        android:background="@drawable/button_effect"
+                        android:background="@drawable/circle_white_bg_camera_rc"
                         android:padding="5dp"
                         android:scaleType="fitXY"
                         tools:ignore="ContentDescription"

@@ -67,9 +67,9 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
 
     private boolean mIsRecording;
 
-    private int mIconTextColor;
+   /* private int mIconTextColor;
     private int mRecordButtonColor;
-    private int mIconTextColorDark;
+    private int mIconTextColorDark;*/
 
     private Context mContext;
 
@@ -115,7 +115,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_capture_story, container, false);
     }
@@ -143,7 +143,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
         mButtonCameraMode.setOnClickListener(this);
 
         if (savedInstanceState != null) mOutputUri = savedInstanceState.getString("output_uri");
-        mRecordButtonColor = ContextCompat.getColor(mContext, R.color.colordarkRed);
+       /* mRecordButtonColor = ContextCompat.getColor(mContext, R.color.colordarkRed);
         int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
         if (CameraUtil.isColorDark(primaryColor)) {
             mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_light);
@@ -156,7 +156,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
         mRecordButtonColor = ContextCompat.getColor(getActivity(), R.color.colordarkRed);
         view.findViewById(R.id.controlsFrame);
 //    .setBackgroundColor(primaryColor);
-        mRecordDuration.setTextColor(mIconTextColor);
+        mRecordDuration.setTextColor(mIconTextColor);*/
 
 
 
@@ -197,7 +197,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
             public void onPictureTaken(byte[] jpeg) {
                 super.onPictureTaken(jpeg);
                 cameraView.stop();
-                Progress.showProgressOnly(getContext());
+                Progress.show(getContext());
                 CameraUtils.decodeBitmap(jpeg, 3000, 3000, new CameraUtils.BitmapCallback() {
                     @Override
                     public void onBitmapReady(Bitmap bitmap) {
@@ -206,7 +206,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
                         Progress.hide(getContext());
                         mInterface.onShowStillshot(mOutputUri);*/
 
-                        final File outputPic = CameraUtil.makeTempFile(getActivity(),
+                        final File outputPic = CameraUtil.makeTempFile(mContext,
                                 getArguments().getString(CameraIntentKey.SAVE_DIR), "IMG_", ".jpg");
                         // lets save the image to disk
                         ImageUtil.saveToDiskAsync(bitmap, outputPic, new ICallback() {
@@ -310,9 +310,10 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
 
         }
 
-        final int orientation = Degrees.getActivityOrientation(getActivity());
+        /*final int orientation = Degrees.getActivityOrientation(getActivity());
         Log.d(TAG, "startRecordingVideo: setting orientation: " + orientation);
-        getActivity().setRequestedOrientation(orientation);
+        getActivity().setRequestedOrientation(orientation);*/
+        assert mInterface != null;
         mInterface.setDidRecord(true);
 
         try {
@@ -330,7 +331,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
             }
 
             // Start recording
-            File file = CameraUtil.makeTempFile(getActivity(),
+            File file = CameraUtil.makeTempFile(mContext,
                     getArguments().getString(CameraIntentKey.SAVE_DIR), "VID_", ".mp4");
             cameraView.startCapturingVideo(file);
             mButtonVideo.setEnabled(false);
@@ -385,7 +386,7 @@ public class CaptureStoryFragment extends Fragment implements View.OnClickListen
 
 
     @Override
-    public final void onSaveInstanceState(Bundle outState) {
+    public final void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("output_uri", mOutputUri);
     }

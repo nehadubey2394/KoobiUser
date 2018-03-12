@@ -13,6 +13,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.application.multipleFileUpload.MultiPartRequest;
 import com.mualab.org.user.application.multipleFileUpload.StringParser;
 import com.mualab.org.user.application.multipleFileUpload.Template;
@@ -51,8 +52,9 @@ public class UploadImage {
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void execute() {
         VolleyMySingleton volleySingleton = new VolleyMySingleton(mContext);
-        mRequest = volleySingleton.getInstance().getRequestQueue();
+        mRequest = Mualab.getInstance().getRequestQueue();
         mRequest.start();
+
         List<File> images = new ArrayList<>();
         for (int index = 0, size = mSelectedImages.size(); index < size; index++) {
             Uri uri = mSelectedImages.get(index);

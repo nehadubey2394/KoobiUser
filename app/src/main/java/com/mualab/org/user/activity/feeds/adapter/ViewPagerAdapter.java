@@ -2,9 +2,14 @@ package com.mualab.org.user.activity.feeds.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
+import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,10 +21,8 @@ import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
 /**
  */
-
 public class ViewPagerAdapter extends PagerAdapter {
 
     private LayoutInflater mLayoutInflater;
@@ -36,8 +39,10 @@ public class ViewPagerAdapter extends PagerAdapter {
         this.listner = listner;
         this.mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         tapListener = new MyOnDoubleTapListener(context);
-        Resources r = context.getResources();
-        px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, r.getDisplayMetrics());
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        int width = dm.widthPixels;
+        //int height = dm.heightPixels;
+        px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, dm);
 
     }
 
@@ -62,6 +67,7 @@ public class ViewPagerAdapter extends PagerAdapter {
                 .load(ImagesList.get(position))
                // .fit()
                 .resize(px,px)
+                .centerCrop()
                 .placeholder(R.drawable.gallery_placeholder)
                 .into(postImages);
         container.addView(itemView);
@@ -77,6 +83,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     public CharSequence getPageTitle(int position) {
         return super.getPageTitle(position);
     }
+
 
     public interface Listner {
         void onSingleTap();
@@ -101,4 +108,11 @@ public class ViewPagerAdapter extends PagerAdapter {
         }
     }
 
+
+
+   public Point getDisplaySize(DisplayMetrics displayMetrics) {
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+        return new Point(width, height);
+    }
 }

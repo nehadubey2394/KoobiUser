@@ -55,6 +55,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onCommentBtnClick(Feeds feed, int pos);
     }
 
+    public void clear(){
+        final int size = feedItems.size();
+        feedItems.clear();
+        notifyItemRangeRemoved(0, size);
+    }
 
     public FeedAdapter(Context mContext, List<Feeds> feedItems) {
         this.mContext = mContext;
@@ -292,13 +297,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 videoHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 videoHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
-                if(TextUtils.isEmpty(feeds.videoThumbnail)){
+                if(!TextUtils.isEmpty(feeds.videoThumbnail)){
                     Picasso.with(videoHolder.ivFeedCenter.getContext())
                             .load(feeds.videoThumbnail)
-                            .fit()
                             .placeholder(R.drawable.gallery_placeholder)
                             .into(videoHolder.ivFeedCenter);
-                }
+                }else  Picasso.with(videoHolder.ivFeedCenter.getContext())
+                        .load(R.drawable.gallery_placeholder)
+                        .into(videoHolder.ivFeedCenter);
 
                 if(!TextUtils.isEmpty(feeds.caption)){
                     videoHolder.tv_text.setVisibility(View.VISIBLE);
