@@ -47,7 +47,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import views.calender.data.CalendarAdapter;
 import views.calender.data.Day;
@@ -153,8 +158,27 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         bookingInfo.date = "Select date";
         bookingInfo.time = "time";
 
-        bookingInfos.add(bookingInfo);
+        if (bookingInfos.size()!=0){
+            for (BookingInfo info : bookingInfos) {
+                if (info != bookingInfo)
+                    bookingInfos.add(bookingInfo);
+            }
+        }else
+            bookingInfos.add(bookingInfo);
+
+
         Collections.reverse(bookingInfos);
+
+        ArrayList<BookingInfo> arrayList = new ArrayList<>();
+        arrayList.clear();
+
+
+      /*  Set<BookingInfo> hs = new LinkedHashSet<>();
+        hs.addAll(bookingInfos);
+        bookingInfos.clear();
+        bookingInfos.addAll(hs);*/
+
+
         bookingInfoAdapter.notifyDataSetChanged();
 
         // bind events of calendar
@@ -204,6 +228,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 e.printStackTrace();
                             }
                             currentTime = "0:00 AM";
+                            bookingInfo.time = "time";
+                            bookingInfoAdapter.notifyDataSetChanged();
                             apiForGetSlots();
                         }
                     }

@@ -12,6 +12,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.model.booking.BookingInfo;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
