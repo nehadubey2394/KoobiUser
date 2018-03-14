@@ -10,7 +10,7 @@
     >
 
     <LinearLayout
-        android:layout_width="80dp"
+        android:layout_width="82dp"
         android:layout_height="35dp"
         android:layout_centerInParent="true"
         android:orientation="horizontal"
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:text="11:00"
             android:gravity="center"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:layout_marginLeft="4dp"
             android:fontFamily="@font/roboto_regular"
             android:layout_gravity="center_vertical"

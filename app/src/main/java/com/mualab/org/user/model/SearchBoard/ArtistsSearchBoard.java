@@ -44,7 +44,7 @@ public class ArtistsSearchBoard implements Parcelable {
 }
 ]*/
     public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,
-            lastName,distance,ratingCount,businessType,serviceType;
+            lastName,distance,ratingCount,businessType,serviceType,inCallpreprationTime,outCallpreprationTime;
     public  boolean isOutCallSelected = false;
 
     public  ArrayList<ArtistServices>service;

@@ -15,6 +15,7 @@ import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingServices3;
@@ -22,6 +23,9 @@ import com.mualab.org.user.model.booking.SubServices;
 import com.mualab.org.user.session.Session;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -148,11 +152,48 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     bookingInfo.artistId = item._id;
 
                     if (isOutCallSelect) {
+                        bookingInfo.preperationTime = item.outCallpreprationTime;
                         bookingInfo.price = Double.parseDouble(services3.outCallPrice);
                     }else {
                         bookingInfo.price = Double.parseDouble(services3.inCallPrice);
+                        bookingInfo.preperationTime = item.inCallpreprationTime;
                     }
 
+                    int ctMinuts = 0,ptMinuts;
+
+                    if (services3.completionTime.contains(":")){
+                        String hours,min;
+                        String[] separated = services3.completionTime.split(":");
+                        hours = separated[0];
+                        min = separated[1];
+                        ctMinuts = getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
+                    }
+
+                    if (bookingInfo.preperationTime.contains(":")){
+                        String hours,min;
+                        String[] separated = bookingInfo.preperationTime.split(":");
+                        hours = separated[0];
+                        min = separated[1];
+                        ptMinuts = getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
+
+                        bookingInfo.serviceTime = "00:"+(ptMinuts+ctMinuts);
+
+                    }
+
+                 /*   LinkedHashMap<Integer,BookingInfo> tempArrayList = new LinkedHashMap<>();
+
+                    if (BookingFragment4.bookingInfos.size()!=0){
+                        for (int i=0; i<BookingFragment4.bookingInfos.size();i++){
+                            BookingInfo info = BookingFragment4.bookingInfos.get(i);
+                            if (info.msId.equals(bookingInfo.msId)){
+                                BookingFragment4.bookingInfos.add(0,info);
+                            }else {
+                                BookingFragment4.bookingInfos.add(info);
+                            }
+                        }
+                    }else {
+                        BookingFragment4.bookingInfos.add(bookingInfo);
+                    }*/
 
                     if (((BookingActivity)context).item.businessType.equals("independent")){
                         ((BookingActivity)context).addFragment(
@@ -163,10 +204,15 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                                 BookingFragment1.newInstance(serviceTitle,item, bookingInfo), true, R.id.flBookingContainer);
 
                     }
+
                     break;
 
             }
         }
+    }
+
+    private int getTimeInMin(int hours,int min){
+        return hours*60 + min;
     }
 
 }

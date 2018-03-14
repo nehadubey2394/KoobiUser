@@ -295,6 +295,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.reviewCount = jsonObject.getString("reviewCount");
                         item.postCount = jsonObject.getString("postCount");
                         item.businessName = jsonObject.getString("businessName");
+                        item.inCallpreprationTime = jsonObject.getString("inCallpreprationTime");
+                        item.outCallpreprationTime = jsonObject.getString("outCallpreprationTime");
                         item.businessType = businessType;
                         item.serviceType = jsonObject.getString("serviceType");
 
