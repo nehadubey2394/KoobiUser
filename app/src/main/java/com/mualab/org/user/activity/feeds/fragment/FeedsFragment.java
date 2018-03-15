@@ -36,7 +36,10 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.CameraActivity;
+import com.mualab.org.user.activity.MainActivity;
+import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
 import com.mualab.org.user.activity.feeds.adapter.FeedItemAnimator;
@@ -110,6 +113,8 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
 
     private MediaUri mediaUri;
 
+    private BaseListner baseListner;
+
 
     public FeedsFragment() {
         // Required empty public constructor
@@ -120,6 +125,9 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if(context instanceof BaseListner){
+            baseListner = (BaseListner) mContext;
+        }
     }
 
 
@@ -185,7 +193,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
         endlesScrollListener = new EndlessRecyclerViewScrollListener(lm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                //apiForGetAllFeeds(page, 100, false);
+                apiForGetAllFeeds(page, 10, false);
             }
         };
 
@@ -283,7 +291,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     feeds.clear();
                     feedType = "";
                     CURRENT_FEED_STATE = Constant.FEED_STATE;
-                    apiForGetAllFeeds(0, 100, true);
+                    apiForGetAllFeeds(0, 10, true);
                     //ParseAndUpdateUI(loadAllFeedJSONFromAsset());
                 }
                 break;
@@ -295,7 +303,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     feeds.clear();
                     feedType = "image";
                     CURRENT_FEED_STATE = Constant.IMAGE_STATE;
-                    apiForGetAllFeeds( 0, 100, true);
+                    apiForGetAllFeeds( 0, 10, true);
                     //ParseAndUpdateUI(loadImageJSONFromAsset());
                 }
 
@@ -308,7 +316,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     feeds.clear();
                     feedType = "video";
                     CURRENT_FEED_STATE = Constant.VIDEO_STATE;
-                    apiForGetAllFeeds( 0, 100, true);
+                    apiForGetAllFeeds( 0, 10, true);
                     //ParseAndUpdateUI(loadVideoJSONFromAsset());
                 }
                 break;
@@ -349,6 +357,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
         params.put("page", String.valueOf(page));
         params.put("limit", String.valueOf(feedLimit));
         params.put("type", "home");
+        params.put("userId", ""+user.id);
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(mContext, "getAllFeeds", new HttpResponceListner.Listener() {
@@ -470,7 +479,18 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onCommentBtnClick(Feeds feed, int pos) {
+        Intent intent = new Intent(mContext, CommentsActivity.class);
+        intent.putExtra("feed_id", feed._id);
+        intent.putExtra("feedPosition", pos);
+        intent.putExtra("feed", feed);
+        startActivity(intent);
+    }
 
+    @Override
+    public void onLikeListClick(Feeds feed) {
+        if(baseListner!=null){
+            baseListner.addFragment(LikeFragment.newInstance(feed._id, user.id), true);
+        }
     }
 
 

@@ -2,6 +2,8 @@ package com.mualab.org.user.task;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -171,6 +173,9 @@ public class HttpTask {
         this.body = builder.body;
         this.jsonObjectString = builder.jsonObjectString;
         this.authToken = builder.authToken;
+
+        if(TextUtils.isEmpty(this.authToken))
+            this.authToken = Mualab.getInstance().getSessionManager().getAuthToken();
         this.progress = builder.progress;
     }
 

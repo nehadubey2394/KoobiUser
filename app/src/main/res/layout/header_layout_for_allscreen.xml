@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/rlHeader1"
-    android:background="@color/screen_bg_color"
-    >
+    android:background="@color/screen_bg_color">
 
     <ImageView
         android:id="@+id/ivHeader"
