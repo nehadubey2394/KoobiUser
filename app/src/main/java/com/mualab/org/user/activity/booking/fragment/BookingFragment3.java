@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
@@ -30,19 +31,19 @@ public class BookingFragment3 extends Fragment {
     private SubServices subServices;
     private ArtistsSearchBoard item;
     private  boolean isOutCallSelect;
+    private RelativeLayout lyOutcall;
 
     public BookingFragment3() {
         // Required empty public constructor
     }
 
-    public static BookingFragment3 newInstance(String param1, SubServices subServices, ArtistsSearchBoard item,boolean isOutCallSelect) {
+    public static BookingFragment3 newInstance(String param1, SubServices subServices, ArtistsSearchBoard item, boolean isOutCallSelect) {
         BookingFragment3 fragment = new BookingFragment3();
         Bundle args = new Bundle();
         args.putString("param1", param1);
         args.putSerializable("param2", subServices);
         args.putParcelable("param3", item);
         args.putBoolean("param4", isOutCallSelect);
-
         fragment.setArguments(args);
         return fragment;
     }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.application.Mualab;
@@ -180,20 +181,6 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     }
 
-                 /*   LinkedHashMap<Integer,BookingInfo> tempArrayList = new LinkedHashMap<>();
-
-                    if (BookingFragment4.bookingInfos.size()!=0){
-                        for (int i=0; i<BookingFragment4.bookingInfos.size();i++){
-                            BookingInfo info = BookingFragment4.bookingInfos.get(i);
-                            if (info.msId.equals(bookingInfo.msId)){
-                                BookingFragment4.bookingInfos.add(0,info);
-                            }else {
-                                BookingFragment4.bookingInfos.add(info);
-                            }
-                        }
-                    }else {
-                        BookingFragment4.bookingInfos.add(bookingInfo);
-                    }*/
 
                     if (((BookingActivity)context).item.businessType.equals("independent")){
                         ((BookingActivity)context).addFragment(

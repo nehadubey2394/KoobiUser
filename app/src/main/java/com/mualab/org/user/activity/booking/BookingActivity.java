@@ -27,6 +27,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.adapter.AdapterBusinessDays;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
+import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
@@ -57,7 +58,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class BookingActivity extends AppCompatActivity implements View.OnClickListener{
+public class BookingActivity extends AppCompatActivity implements View.OnClickListener,
+        HideFilterListener {
     public ArtistsSearchBoard item;
     private String mParam1;
     public static TextView title_booking,tvBuisnessName;
@@ -68,6 +70,12 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private RatingBar rating;
     private ImageView ivHeaderProfile;
     private String businessType;
+
+    @Override
+    public void onServiceAdded(boolean isShow) {
+        BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
+        frag.hideFilter(true);
+    }
 
 
     @Override
@@ -112,7 +120,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }else {
             addFragment(new BookingFragment1(), false, R.id.flBookingContainer);
         }*/
-
         ivHeaderBack2.setOnClickListener(this);
     }
 
@@ -520,6 +527,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             public void onClick(DialogInterface dialog,int which) {
                 dialog.cancel();
                 BookingFragment4.bookingInfos.clear();
+                BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
+                frag.hideFilter(false);
                 fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
             }
         });
