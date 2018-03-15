@@ -12,21 +12,18 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
-import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
-import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
+import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.SubServices;
 import com.mualab.org.user.session.Session;
+import com.mualab.org.user.util.Utility;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 
 public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -37,9 +34,9 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private ArtistsSearchBoard item;
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
-    private Session session = Mualab.getInstance().getSessionManager();
     private  boolean isOutCallSelect;
     private SubServices subServices;
+    private Utility utility;
     // Constructor of the class
     public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices) {
         this.context = context;
@@ -48,6 +45,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.item = item;
         this.isOutCallSelect = isOutCallSelect;
         this.subServices = subServices;
+        utility = new Utility(context);
     }
 
     @Override
@@ -140,24 +138,31 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public void onClick(View view) {
             switch (view.getId()){
                 case R.id.lyServiceDetail:
+                    Session session = Mualab.getInstance().getSessionManager();
+                    User user = session.getUser();
                     BookingServices3 services3 = artistsList.get(getAdapterPosition());
 
                     BookingInfo bookingInfo = new BookingInfo();
-                    bookingInfo.sServiceName = services3.title;
+                    bookingInfo.artistService = services3.title;
                     bookingInfo.msId = services3._id;
+                    bookingInfo.time = services3.completionTime;
+                    bookingInfo.sServiceName = subServices.subServiceName;
                     bookingInfo.ssId = subServices.subServiceId;
                     bookingInfo.sId = subServices.serviceId;
-                    bookingInfo.time = services3.completionTime;
-                    bookingInfo.artistName = item.businessName;
+                    bookingInfo.artistName = item.userName;
                     bookingInfo.profilePic = item.profileImage;
                     bookingInfo.artistId = item._id;
+                    bookingInfo.artistAddress = item.address;
+                    bookingInfo.userId = String.valueOf(user.id);
 
                     if (isOutCallSelect) {
                         bookingInfo.preperationTime = item.outCallpreprationTime;
+                        bookingInfo.serviceType = "2";
                         bookingInfo.price = Double.parseDouble(services3.outCallPrice);
                     }else {
                         bookingInfo.price = Double.parseDouble(services3.inCallPrice);
                         bookingInfo.preperationTime = item.inCallpreprationTime;
+                        bookingInfo.serviceType = "1";
                     }
 
                     int ctMinuts = 0,ptMinuts;
@@ -167,7 +172,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         String[] separated = services3.completionTime.split(":");
                         hours = separated[0];
                         min = separated[1];
-                        ctMinuts = getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
+                        ctMinuts = utility.getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
                     }
 
                     if (bookingInfo.preperationTime.contains(":")){
@@ -175,7 +180,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         String[] separated = bookingInfo.preperationTime.split(":");
                         hours = separated[0];
                         min = separated[1];
-                        ptMinuts = getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
+                        ptMinuts = utility.getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
 
                         bookingInfo.serviceTime = "00:"+(ptMinuts+ctMinuts);
 
@@ -196,10 +201,6 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             }
         }
-    }
-
-    private int getTimeInMin(int hours,int min){
-        return hours*60 + min;
     }
 
 }

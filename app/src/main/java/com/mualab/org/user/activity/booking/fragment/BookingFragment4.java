@@ -34,6 +34,7 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
+import com.mualab.org.user.util.Utility;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -66,7 +67,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private RecyclerView rycTimeSlot;
     private TextView tvNoSlot;
     private BookingInfo bookingInfo;
-    public static ArrayList<BookingInfo> bookingInfos = new ArrayList<>();
+    public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
     private SimpleDateFormat dateFormat,input;
     private FlexibleCalendar viewCalendar;
 
@@ -124,7 +125,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         artistId = bookingInfo.artistId;
         listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
         listAdapter.setCustomListener(BookingFragment4.this);
-        bookingInfoAdapter = new BookingInfoAdapter(mContext, bookingInfos);
+        bookingInfoAdapter = new BookingInfoAdapter(mContext, arrayListbookingInfo);
     }
 
     private void setView(View rootView){
@@ -164,9 +165,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         bookingInfo.date = "Select date";
         bookingInfo.time = "and time";
 
-        if (bookingInfos.size()!=0){
+        if (arrayListbookingInfo.size()!=0){
             boolean isMatch=false;
-            for (BookingInfo info : bookingInfos) {
+            for (BookingInfo info : arrayListbookingInfo) {
                 if (info.msId.equals(bookingInfo.msId)) {
                     isMatch=true;
                     bookingInfo = info;
@@ -176,12 +177,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     break;
                 }
             }
-            if (!isMatch)bookingInfos.add(bookingInfo);
+            if (!isMatch)arrayListbookingInfo.add(bookingInfo);
         }else{
-            bookingInfos.add(bookingInfo);
+            arrayListbookingInfo.add(bookingInfo);
         }
 
-        Collections.reverse(bookingInfos);
+        Collections.reverse(arrayListbookingInfo);
 
         bookingInfoAdapter.notifyDataSetChanged();
 
@@ -207,15 +208,17 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnCOnfirmBooking:
-                ((BookingActivity) mContext).addFragment(
-                        BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
-
+                apiForContinueBooking(false);
                 break;
 
             case R.id.btnToday:
+                viewCalendar.isFirstimeLoad = true;
                 Calendar cal = Calendar.getInstance();
+                selectedDate = getCurrentDate();
                 CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
                 viewCalendar.setAdapter(adapter);
+                viewCalendar.expand(500);
+                apiForGetSlots();
                 setCalenderClickListner();
                 break;
 
@@ -223,20 +226,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
                 if (bookingTimeSlots.size() != 0){
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("0:00 AM")) {
-                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                        int count = fm.getBackStackEntryCount();
-                        for (int i = 0; i < count; ++i) {
-                            if (i > 0)
-                                fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        }
+                        apiForContinueBooking(true);
                     } else {
                         MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
                     }
                 } else
                     MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
-
-              /*  ((BookingActivity)mContext).addFragment(
-                        BookingFragment5.newInstance(""), true, R.id.flBookingContainer);*/
 
                 break;
         }
@@ -268,6 +263,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     sDay = String.valueOf(day.getDay());
                 }
                 selectedDate = day.getYear()+"-"+sMonth+"-"+sDay;
+                bookingInfo.selectedDate = selectedDate;
 
                 if (viewCalendar.isSelectedDay(day)) {
                     Calendar todayCal = Calendar.getInstance();
@@ -291,14 +287,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 currentTime = getCurrentTime();
                             }else
                                 currentTime = "0:00 AM";
-
-                          /*  try {
-                                Date  formatedDate = input.parse(selectedDate);  // parse input
-                                bookingInfo.date =  dateFormat.format(formatedDate);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }*/
-
 
                             apiForGetSlots();
                         }
@@ -334,6 +322,34 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                         + ", Current Week position of Month: " + position);
             }
         });
+    }
+
+    private String getCurrentTime(){
+        Calendar cal = Calendar.getInstance();
+        Date currentLocalTime = cal.getTime();
+        DateFormat date = new SimpleDateFormat("hh:mm a");
+        System.out.println("currentTime"+date.format(currentLocalTime));
+        return date.format(currentLocalTime);
+    }
+
+    private String getCurrentDate(){
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH)+1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        if (month < 10){
+            sMonth = "0"+month;
+        }else {
+            sMonth = String.valueOf(month);
+        }
+
+        if (day<10){
+            sDay = "0"+day;
+        }else {
+            sDay = String.valueOf(day);
+        }
+        return year+"-"+sMonth+"-"+sDay;
     }
 
     private void apiForGetSlots(){
@@ -424,32 +440,132 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         task.execute(this.getClass().getName());
     }
 
-    private String getCurrentTime(){
-        Calendar cal = Calendar.getInstance();
-        Date currentLocalTime = cal.getTime();
-        DateFormat date = new SimpleDateFormat("hh:mm a");
-        System.out.println("currentTime"+date.format(currentLocalTime));
-        return date.format(currentLocalTime);
+    private void apiForContinueBooking(final boolean isAddMore){
+        Session session = Mualab.getInstance().getSessionManager();
+        User user = session.getUser();
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForContinueBooking(isAddMore);
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("artistId", artistId);
+        params.put("staff", artistId);
+        params.put("serviceId", bookingInfo.sId);
+        params.put("subServiceId", bookingInfo.ssId);
+        params.put("artistServiceId", bookingInfo.msId);
+        params.put("serviceType", bookingInfo.serviceType);
+        params.put("bookingDate", bookingInfo.date);
+        params.put("startTime", bookingInfo.time);
+        params.put("endTime", bookingInfo.endTime);
+        params.put("userId", String.valueOf(user.id));
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "bookArtist", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+                        if (isAddMore) {
+                            FragmentManager fm = getActivity().getSupportFragmentManager();
+                            int count = fm.getBackStackEntryCount();
+                            for (int i = 0; i < count; ++i) {
+                                if (i > 0)
+                                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            }
+                        }
+                        else {
+                            ((BookingActivity) mContext).addFragment(
+                                    BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
+                        }
+                    }else {
+                        if (message.equals("Service already added") && isAddMore){
+                            FragmentManager fm = getActivity().getSupportFragmentManager();
+                            int count = fm.getBackStackEntryCount();
+                            for (int i = 0; i < count; ++i) {
+                                if (i > 0)
+                                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            }
+                        }
+
+                        MyToast.getInstance(mContext).showDasuAlert(message);
+                    }
+                } catch (Exception e) {
+                    Progress.hide(mContext);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                        //      MyToast.getInstance(BookingActivity.this).showSmallCustomToast(helper.error_Messages(error));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(true)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
     }
 
-    private String getCurrentDate(){
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH)+1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
+    @Override
+    public void onButtonClick(int position, String buttonText, int selectedCount) {
+        BookingTimeSlot item =  bookingTimeSlots.get(position);
 
-        if (month < 10){
-            sMonth = "0"+month;
-        }else {
-            sMonth = String.valueOf(month);
+        Utility utility = new Utility(mContext);
+
+        for (int i = 0;i<bookingTimeSlots.size();i++){
+            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
+            timeSlot.isSelected = "0";
+        }
+        listAdapter.notifyDataSetChanged();
+        // if (item.isSelected.equals("0"))
+        item.isSelected = "1";
+        bookingInfo.time = item.time;
+
+        String[] separated = bookingInfo.preperationTime.split(":");
+        int minuts = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
+
+        SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+        Date d;
+        try {
+            d = df.parse(item.time);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(d);
+            cal.add(Calendar.MINUTE, minuts);
+            bookingInfo.endTime = df.format(cal.getTime());
+
+            Date  formatedDate = input.parse(selectedDate);  // parse input
+            bookingInfo.date =  dateFormat.format(formatedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
-        if (day<10){
-            sDay = "0"+day;
-        }else {
-            sDay = String.valueOf(day);
-        }
-        return year+"-"+sMonth+"-"+sDay;
+        listAdapter.notifyItemChanged(position);
+
+        if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
+            bookingInfoAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -464,32 +580,5 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         super.onDestroy();
         BookingActivity.lyReviewPost.setVisibility(View.GONE);
         BookingActivity.title_booking.setText(mParam1);
-    }
-
-    @Override
-    public void onButtonClick(int position, String buttonText, int selectedCount) {
-        BookingTimeSlot item =  bookingTimeSlots.get(position);
-
-        for (int i = 0;i<bookingTimeSlots.size();i++){
-            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
-            timeSlot.isSelected = "0";
-        }
-        listAdapter.notifyDataSetChanged();
-        // if (item.isSelected.equals("0"))
-        item.isSelected = "1";
-        bookingInfo.time = item.time;
-        //  else
-        //     item.isSelected = "0";
-        listAdapter.notifyItemChanged(position);
-
-        try {
-            Date  formatedDate = input.parse(selectedDate);  // parse input
-            bookingInfo.date =  dateFormat.format(formatedDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
-            bookingInfoAdapter.notifyDataSetChanged();
     }
 }

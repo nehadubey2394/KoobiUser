@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:layout_marginLeft="8dp"
+    android:background="@color/screen_bg_color">
+
+    <LinearLayout
+        android:id="@+id/lyServices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="2dp"
+        >
+        <TextView
+            android:id="@+id/tvSsName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:ems="12"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Evening Make up"
+            android:maxWidth="200dp"
+            />
+        <TextView
+            android:id="@+id/tvAsName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_color"
+            android:textSize="12sp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Hair Cut"
+            android:layout_marginTop="2dp"
+            android:maxWidth="200dp"
+            />
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        style="@style/My_Button_Small.Invert"
+        android:layout_width="72dp"
+        android:layout_height="28dp"
+        android:id="@+id/btnEditService"
+        android:text="@string/text_edit"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="2dp"
+        />
+
+    <View
+        android:id="@+id/vLine"
+        android:layout_width="wrap_content"
+        android:layout_height="0.5dp"
+        android:background="@color/gray2"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/lyServices"
+        />
+
+
+</RelativeLayout>

@@ -77,7 +77,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         frag.hideFilter(true);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -280,6 +279,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         params.put("artistId", item._id);
+        params.put("userId", String.valueOf(user.id));
         // params.put("appType", "user");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "artistDetail", new HttpResponceListner.Listener() {
@@ -302,6 +302,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.reviewCount = jsonObject.getString("reviewCount");
                         item.postCount = jsonObject.getString("postCount");
                         item.businessName = jsonObject.getString("businessName");
+                        if (jsonObject.has("address"))
+                            item.address = jsonObject.getString("address");
                         item.inCallpreprationTime = jsonObject.getString("inCallpreprationTime");
                         item.outCallpreprationTime = jsonObject.getString("outCallpreprationTime");
                         item.businessType = businessType;
@@ -526,7 +528,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 dialog.cancel();
-                BookingFragment4.bookingInfos.clear();
+                BookingFragment4.arrayListbookingInfo.clear();
                 BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
                 frag.hideFilter(false);
                 fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
@@ -548,11 +550,11 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
 
-        if (i==3 && BookingFragment4.bookingInfos.size()>0){
+        if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm);
-        }else  if (i==2 && BookingFragment4.bookingInfos.size()>0){
+        }else  if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm);
-        }else if (i==0 && BookingFragment4.bookingInfos.size()>0){
+        }else if (i==0 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm);
         }
         else if (i > 0) {
