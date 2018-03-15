@@ -2,10 +2,15 @@ package views.calender;
 
 import android.annotation.SuppressLint;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by dharmraj on 30/12/17.
@@ -143,5 +148,19 @@ public class CalendarHelper {
             return 1;
         }
         return 0;
+    }
+
+
+    public static String getStringYMDformatter(String inputDate){
+        DateFormat inputFormat  = new SimpleDateFormat("dd MMM yyyy");
+        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = inputFormat.parse(inputDate);
+            String outputDateStr = outputFormat.format(date);
+            return outputDateStr;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

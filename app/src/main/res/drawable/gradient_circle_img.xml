@@ -4,6 +4,5 @@
     <gradient
         android:startColor="@color/colorPrimary"
         android:endColor="@color/circle_gredient_end_color"
-        android:angle="0"
-        />
+        android:angle="0" />
 </shape>

@@ -17,15 +17,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.mualab.org.user.model.feeds.Feeds;
+import com.mualab.org.user.task.HttpResponceListner;
+import com.mualab.org.user.task.HttpTask;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
@@ -53,6 +62,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface Listener{
         void onCommentBtnClick(Feeds feed, int pos);
+        void onLikeListClick(Feeds feed);
     }
 
     public void clear(){
@@ -157,7 +167,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 textHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 textHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                textHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+                textHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
                 textHolder.tv_text.setText(feeds.caption);
                 break;
 
@@ -181,7 +191,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 imageHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 imageHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                imageHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+                imageHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
                 if(!TextUtils.isEmpty(feeds.caption)){
                     imageHolder.tv_text.setVisibility(View.VISIBLE);
@@ -206,15 +216,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                     @Override
                     public void onDoubleTap() {
-                        if (feeds.likeStatus.equals("0")) {
-                            feeds.likeCount++;
-                            feeds.likeStatus = "1";
-                        } /*else {
-                                feeds.likeCount--;
-                                feeds.likeStatus = "0";
-                            }*/
-                        notifyItemChanged(holder.getAdapterPosition(), ACTION_LIKE_IMAGE_CLICKED);
-                        //apiForLikes(feeds);
+                        int pos = holder.getAdapterPosition();
+                        Feeds feed = feedItems.get(pos);
+                        if(feed.isLike==0){
+                            feed.isLike = 1;
+                            feed.likeCount = ++feed.likeCount;
+                            apiForLikes(feeds);
+                        }
+                        notifyItemChanged(pos, ACTION_LIKE_IMAGE_CLICKED);
                     }
                 }));
 
@@ -295,7 +304,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 videoHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 videoHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 videoHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                videoHolder.btnLike.setImageResource(feeds.likeStatus.equals("1") ? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+                videoHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
                 if(!TextUtils.isEmpty(feeds.videoThumbnail)){
                     Picasso.with(videoHolder.ivFeedCenter.getContext())
@@ -366,11 +375,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = holder.getAdapterPosition();
-               /* Feeds feed = feedItems.get(adapterPosition);
-                Intent intent = new Intent(mContext, LikeActivity.class);
-                intent.putExtra("FeedId", feed.fId);
-                intent.putExtra("myUserId", feed.userId);
-                mContext.startActivity(intent);*/
+                Feeds feed = feedItems.get(adapterPosition);
+                if(listener!=null){
+                    listener.onLikeListClick(feed);
+                }
             }
         });
 
@@ -379,17 +387,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             public void onClick(View v) {
                 int adapterPosition = holder.getAdapterPosition();
                 Feeds feed = feedItems.get(adapterPosition);
-
-                if (feed.likeStatus.equals("0")) {
-                    feedItems.get(adapterPosition).likeCount++;
-                    feed.likeStatus = "1";
-                } else {
-                    feedItems.get(adapterPosition).likeCount--;
-                    feed.likeStatus = "0";
-                }
-
+                feed.isLike = feed.isLike==1?0:1;
+                feed.likeCount = feed.isLike==1?++feed.likeCount:--feed.likeCount;
                 notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
-                //apiForLikes(feed);
+                apiForLikes(feed);
             }
         });
 
@@ -449,6 +450,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = videoHolder.getAdapterPosition();
+                Feeds feed = feedItems.get(adapterPosition);
+                if(listener!=null){
+                    listener.onLikeListClick(feed);
+                }
                /* Feeds feed = feedItems.get(adapterPosition);
                 Intent intent = new Intent(mContext, LikeActivity.class);
                 intent.putExtra("FeedId", feed.fId);
@@ -462,17 +467,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             public void onClick(View v) {
                 int adapterPosition = videoHolder.getAdapterPosition();
                 Feeds feed = feedItems.get(adapterPosition);
-
-                if (feed.likeStatus.equals("0")) {
-                    feedItems.get(adapterPosition).likeCount++;
-                    feed.likeStatus = "1";
-                } else {
-                    feedItems.get(adapterPosition).likeCount--;
-                    feed.likeStatus = "0";
-                }
-
+                feed.isLike = feed.isLike==1?0:1;
+                feed.likeCount = feed.isLike==1?++feed.likeCount:--feed.likeCount;
                 notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
-                //  apiForLikes(feed);
+                apiForLikes(feed);
             }
         });
 
@@ -535,6 +533,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
+                Feeds feed = feedItems.get(adapterPosition);
+                if(listener!=null){
+                    listener.onLikeListClick(feed);
+                }
               /*  Feeds feed = feedItems.get(adapterPosition);
                 Intent intent = new Intent(mContext, LikeActivity.class);
                 intent.putExtra("FeedId", feed.fId);
@@ -548,17 +550,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
                 Feeds feed = feedItems.get(adapterPosition);
-
-                if (feed.likeStatus.equals("0")) {
-                    feedItems.get(adapterPosition).likeCount++;
-                    feed.likeStatus = "1";
-                } else {
-                    feedItems.get(adapterPosition).likeCount--;
-                    feed.likeStatus = "0";
-                }
-
+                feed.isLike = feed.isLike==1?0:1;
+                feed.likeCount = feed.isLike==1?++feed.likeCount:--feed.likeCount;
                 notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
-                // apiForLikes(feed);
+                apiForLikes(feed);
             }
         });
 
@@ -633,49 +628,47 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 */
 
-/*
     private void apiForLikes(final Feeds feed) {
 
         Map<String, String> map = new HashMap<>();
-        map.put("feedId", feed.fId);
-        WebServiceAPI api = new WebServiceAPI(mContext, "Img", new ResponseApi.Listener() {
+        map.putAll(Mualab.feedBasicInfo);
+        map.put("feedId", ""+feed._id);
+        map.put("likeById", ""+Mualab.getInstance().getSessionManager().getUser().id);
+        map.put("userId", ""+feed.userId);
+        map.put("type", "feed");// feed or comment
+
+        Mualab.getInstance().getRequestQueue().cancelAll("like"+feed._id);
+        new HttpTask(new HttpTask.Builder(mContext, "like", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
-               */
-/* Log.d("Responce",response);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     //String message = js.getString("message");
                     if(status.equalsIgnoreCase("success")){
 
-                        if(feed.likeStatus.equals("0")){
-                            feed.likeStatus = "1";
-                            feed.likeCount = String.valueOf(Integer.parseInt(feed.likeCount) + 1);
+                        /*if(feed.isLike == 0){
+                            feed.isLike = 1;
                             feed.likeCount++;
-
-                        } else if(feed.likeStatus.equals("1")){
-                            feed.likeStatus = "0";
-                            feed.likeCount=   String.valueOf(Integer.parseInt(feed.likeCount) - 1);
-                            feed.likeCount++;
-                        }
-                        notifyItemChanged(position);
+                        } else if(feed.isLike == 1){
+                            feed.isLike = 0;
+                            feed.likeCount--;
+                        }*/
+                        //notifyItemChanged(position);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }*//*
-
+                }
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
+
             }
-        });
-        api.enableProgressBar(false);
-        api.callApi("user/likes", Request.Method.POST, map);
+        })
+        .setParam(map)).execute("like"+feed._id);
 
     }
-*/
 
     static class FeedTextHolder extends RecyclerView.ViewHolder {
         public View vBgLike;
@@ -813,17 +806,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public void onDoubleTap(MotionEvent e) {
             int adapterPosition = getPosition();
             Feeds feed = feedItems.get(adapterPosition);
-            if (feed.likeStatus.equals("0")) {
-                feedItems.get(adapterPosition).likeCount++;
-                feed.likeStatus = "1";
+            if(feed.isLike==0){
+                feed.isLike = 1;
+                feed.likeCount = ++feed.likeCount;
+                apiForLikes(feed);
             }
-            else {
-                feedItems.get(adapterPosition).likeCount--;
-                feed.likeStatus = "0";
-            }
-
             notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
-            //apiForLikes(feed);
         }
 
         private int getPosition(){

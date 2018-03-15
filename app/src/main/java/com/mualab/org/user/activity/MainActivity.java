@@ -4,9 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.core.RjCamera;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
@@ -28,19 +25,18 @@ import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
+import com.mualab.org.user.model.User;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
-import com.mualab.org.user.util.media.FilePaths;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
 import org.json.JSONObject;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener {
+
     private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
     private int clickedId = 0;
     public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon;
@@ -48,14 +44,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     public RelativeLayout rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
 
-    private String lat,lng;
     public RefineSearchBoard item;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setStatusbarColor();
+
+        Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
+        Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);
+        Mualab.feedBasicInfo.put("age", "25");
+        Mualab.feedBasicInfo.put("gender", "Male");
+        Mualab.feedBasicInfo.put("city", "indore");
+        Mualab.feedBasicInfo.put("state", "MP");
+        Mualab.feedBasicInfo.put("country", "India");
 
         final NoConnectionDialog network =  new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
             @Override
@@ -81,12 +85,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             item = (RefineSearchBoard) bundle.getSerializable("refineSearchBoard");
         }
 
-
         initView();
-
-        addFragment(SearchBoardFragment.newInstance(item,""), false, R.id.fragment_place);
-
-
+        addFragment(SearchBoardFragment.newInstance(item,""), false);
     }
 
     private void initView() {
@@ -226,7 +226,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(SearchBoardFragment.newInstance(item, ""), false, R.id.fragment_place);
+                    replaceFragment(SearchBoardFragment.newInstance(item, ""), false);
                 }
                 break;
 
@@ -237,7 +237,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     tvHeaderTitle.setText("Mualab");
                     ibtnFeed.setImageResource(R.drawable.active_feeds_ico);
                     ivHeaderUser.setVisibility(View.VISIBLE);
-                    replaceFragment(new FeedsFragment(), false, R.id.fragment_place);
+                    replaceFragment(new FeedsFragment(), false);
                     ibtnChat.setVisibility(View.VISIBLE);
                     tvHeaderTitle.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.VISIBLE);
@@ -257,7 +257,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
                     tvHeaderTitle.setVisibility(View.VISIBLE);
-                    replaceFragment(new AddFeedFragment(), false, R.id.fragment_place);
+                    replaceFragment(new AddFeedFragment(), false);
                 }
                 break;
 
@@ -271,7 +271,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(new AddFeedFragment(), false, R.id.fragment_place);
+                    replaceFragment(new AddFeedFragment(), false);
                 }
                 break;
 
@@ -286,7 +286,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(new AddFeedFragment(), false, R.id.fragment_place);
+                    replaceFragment(new AddFeedFragment(), false);
                 }
                 break;
         }
@@ -300,39 +300,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         ibtnSearch.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.inactive_search_ico));
         ibtnNotification.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.inactive_notifications_ico));
 
-    }
-
-    public void addFragment(Fragment fragment, boolean addToBackStack, int containerId) {
-        String backStackName = fragment.getClass().getName();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
-        if (!fragmentPopped) {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_in,0,0);
-            transaction.add(containerId, fragment, backStackName);
-            if (addToBackStack)
-                transaction.addToBackStack(backStackName);
-            transaction.commit();
-        }
-
-    }
-
-    public void replaceFragment(Fragment fragment, boolean addToBackStack, int containerId) {
-        String backStackName = fragment.getClass().getName();
-        FragmentManager fm = getSupportFragmentManager();
-        int i = fm.getBackStackEntryCount();
-        while (i > 0) {
-            fm.popBackStackImmediate();
-            i--;
-        }
-        boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStackName, 0);
-        if (!fragmentPopped) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(containerId, fragment, backStackName).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            if (addToBackStack)
-                transaction.addToBackStack(backStackName);
-            transaction.commit();
-        }
     }
 
 

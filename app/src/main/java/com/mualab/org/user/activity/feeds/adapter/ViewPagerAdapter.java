@@ -23,6 +23,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 /**
  */
+
 public class ViewPagerAdapter extends PagerAdapter {
 
     private LayoutInflater mLayoutInflater;
@@ -30,7 +31,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     private List<String> ImagesList;
     private Listner listner;
     private MyOnDoubleTapListener tapListener;
-    private int px;
+    private static int px;
 
 
     public ViewPagerAdapter(Context context, List<String> imagesList, Listner listner) {
@@ -40,9 +41,13 @@ public class ViewPagerAdapter extends PagerAdapter {
         this.mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         tapListener = new MyOnDoubleTapListener(context);
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int width = dm.widthPixels;
+        //int width = dm.widthPixels;
         //int height = dm.heightPixels;
-        px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, dm);
+        px = (int) dm.xdpi;
+
+        if(px>380)
+            px=380;
+       // px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, dm);
 
     }
 

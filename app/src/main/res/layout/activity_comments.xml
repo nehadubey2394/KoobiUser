@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_comments"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@color/white"
+    tools:context=".activity.feeds.CommentsActivity">
+
+   <RelativeLayout
+       android:id="@+id/header"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+       <ImageView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:background="@drawable/leader_board_header_bg"
+           android:layout_alignParentTop="true"
+           />
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="?actionBarSize"
+           android:layout_alignParentTop="true"
+           android:layout_centerInParent="true"
+           app:layout_collapseMode="pin">
+
+           <ImageView
+               android:id="@+id/iv_back_press"
+               android:layout_width="48dp"
+               android:layout_height="48dp"
+               android:padding="12dp"
+               android:layout_alignParentLeft="true"
+               android:layout_centerInParent="true"
+               android:background="?attr/selectableItemBackgroundBorderless"
+               android:src="@drawable/back_icon"
+               android:tint="@color/white" />
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               style="@style/TextView"
+               android:layout_centerInParent="true"
+               android:layout_margin="5dp"
+               android:text="@string/comments"
+               android:textSize="18sp" />
+       </RelativeLayout>
+
+   </RelativeLayout>
+
+
+
+    <TextView
+        android:id="@+id/tv_no_comments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/TextView"
+        android:text="No Comments"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
+
+
+    <RelativeLayout
+        android:id="@+id/rl_composMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/gray" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:minHeight="50dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/ivCamera"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorPrimary"
+                android:padding="5dp"
+                android:src="@drawable/camera_ico"
+                android:tint="@color/white"
+                android:visibility="gone" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1">
+
+                <EditText
+                    android:id="@+id/ed_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    android:inputType="textShortMessage|textMultiLine"
+                    android:isScrollContainer="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray"
+                    android:maxLines="5"
+                    android:hint="@string/write_a_comments_here"/>
+
+                <!-- <EditText
+                     android:id="@+id/ed_comments"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_gravity="center"
+                     android:background="@null"
+                     android:padding="5dp"
+                     android:textSize="16sp"
+                     android:isScrollContainer="true"
+                     android:inputType="textShortMessage|textMultiLine"
+                     android:hint="Write a comments here..."/>-->
+            </FrameLayout>
+
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_post_comments"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                style="@style/My_Button.Invert"
+                android:layout_gravity="top"
+                android:layout_margin="5dp"
+                android:text="Post"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rl_composMsg"
+        android:layout_below="@+id/header"
+        android:layout_marginBottom="5dp"
+        tools:listitem="@layout/comments_item_layout"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+</RelativeLayout>
