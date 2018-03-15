@@ -19,4 +19,8 @@ public class Utility {
                 count / Math.pow(1000, exp),
                 "kMGTPE".charAt(exp-1));
     }
+
+    public int getTimeInMin(int hours,int min){
+        return hours*60 + min;
+    }
 }

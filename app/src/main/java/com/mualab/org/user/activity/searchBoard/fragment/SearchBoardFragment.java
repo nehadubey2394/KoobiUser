@@ -259,6 +259,7 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         params.put("subservice", subServiceId);
         params.put("sortSearch", sortSearch);
         params.put("sortType", sortType);
+        params.put("userId", String.valueOf(user.id));
         // params.put("appType", "user");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistSearch", new HttpResponceListner.Listener() {

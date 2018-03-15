@@ -40,6 +40,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     private Session session;
     private  ExpandableListView lvExpandable;
     private TextView tvNoData;
+    private   RelativeLayout lyOutcall;
 
     public BookingFragment2() {
         // Required empty public constructor
@@ -92,7 +93,8 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     private void setViewId(View rootView){
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
         ivOutcall = rootView.findViewById(R.id.ivOutcall);
-        RelativeLayout lyOutcall = rootView.findViewById(R.id.lyOutcall);
+        lyOutcall = rootView.findViewById(R.id.lyOutcall);
+        lyOutcall.setVisibility(View.VISIBLE);
 
         if (session.getIsOutCallFilter()){
             isOutCallSelect = true;
@@ -160,6 +162,13 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                 return false;
             }
         });
+    }
+
+    public void hideFilter(boolean isHide){
+        if (isHide)
+            lyOutcall.setVisibility(View.GONE);
+        else
+            lyOutcall.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -338,7 +347,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (BookingFragment4.bookingInfos!=null)
-            BookingFragment4.bookingInfos.clear();
+        if (BookingFragment4.arrayListbookingInfo!=null)
+            BookingFragment4.arrayListbookingInfo.clear();
     }
 }

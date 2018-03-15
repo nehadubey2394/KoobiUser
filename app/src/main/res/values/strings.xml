@@ -190,7 +190,9 @@
     <string name="text_select_time">Select Time</string>
     <string name="text_booking_info">Booking Info :</string>
     <string name="text_confirm_booking">Confirm Booking</string>
+    <string name="text_continue_booking">Continue Booking</string>
     <string name="text_add_more_services">Add More</string>
+    <string name="text_today">Today</string>
     <string name="text_re_book">Re-book</string>
 
     <!--calender-->

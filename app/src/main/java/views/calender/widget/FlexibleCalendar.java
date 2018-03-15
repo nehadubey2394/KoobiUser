@@ -32,6 +32,7 @@ public class FlexibleCalendar extends UICalendar {
     private CalendarListener mListener;
     private String sCurrentDay = "";
     private int mInitHeight = 0;
+    public boolean isFirstimeLoad = true;
 
     private Handler mHandler = new Handler();
     private boolean mIsWaitingForUpdate = false;
@@ -164,10 +165,16 @@ public class FlexibleCalendar extends UICalendar {
                     mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
                     txtDay.setBackgroundDrawable(getTodayItemBackgroundDrawable());
                     txtDay.setTextColor(getTodayItemTextColor());
+
+                    if (isFirstimeLoad)
+                        txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
+                    else
+                        txtDay.setBackgroundDrawable(getTodayItemBackgroundDrawable());
                 }
 
                 // set the selected item
                 if (isSelectedDay(day)) {
+                    isFirstimeLoad = false;
                     Calendar todayCal = Calendar.getInstance();
                     int cYear  = todayCal.get(Calendar.YEAR);
                     int cMonth  = todayCal.get(Calendar.MONTH)+1;
@@ -222,6 +229,7 @@ public class FlexibleCalendar extends UICalendar {
             rowCurrent.setLayoutParams(new TableLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
+
             for (int i = 0; i < 7; i++) {
                 View view = mInflater.inflate(R.layout.layout_day_of_week, null);
                 TextView txtDayOfWeek = view.findViewById(R.id.txt_day_of_week);
@@ -256,6 +264,7 @@ public class FlexibleCalendar extends UICalendar {
                 view.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        isFirstimeLoad = false;
                         onItemClicked(v, mAdapter.getItem(position));
                     }
                 });
@@ -285,7 +294,7 @@ public class FlexibleCalendar extends UICalendar {
 
     private void onItemClicked(View view, Day day) {
         select(day);
-
+        isFirstimeLoad  = false;
         //  Day day1 = getSelectedDay();
 
         Calendar cal = mAdapter.getCalendar();
