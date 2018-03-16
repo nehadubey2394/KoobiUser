@@ -75,9 +75,9 @@ public abstract class UICalendar extends LinearLayout {
     private Drawable mSelectedItemBackgroundDrawable =
             getResources().getDrawable(R.drawable.circle_green_solid_background);
     private Drawable mButtonLeftDrawable =
-            getResources().getDrawable(R.drawable.ic_navigate_before_black);
+            getResources().getDrawable(R.drawable.white_back_ico);
     private Drawable mButtonRightDrawable =
-            getResources().getDrawable(R.drawable.ic_navigate_before_black);
+            getResources().getDrawable(R.drawable.white_back_ico);
     private Day mSelectedItem = null;
 
     public UICalendar(Context context) {
@@ -190,7 +190,7 @@ public abstract class UICalendar extends LinearLayout {
             setSelectedItemBackgroundDrawable(
                     getResources().getDrawable(R.drawable.circle_green_solid_background));
             setButtonLeftDrawable(
-                    getResources().getDrawable(R.drawable.ic_navigate_before_black));
+                    getResources().getDrawable(R.drawable.white_back_ico));
             setButtonRightDrawable(
                     getResources().getDrawable(R.drawable.ic_navigate_next_white));
         } /*else {
