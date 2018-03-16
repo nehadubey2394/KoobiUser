@@ -17,14 +17,15 @@
         android:padding="5dp"
         android:orientation="horizontal">
 
-        <com.github.siyamed.shapeimageview.CircularImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_profileImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center|top"
+            android:background="@drawable/gradient_circle_img"
             android:src="@drawable/defoult_user_img"
-            app:siBorderColor="@color/light_gray"
-            app:siBorderWidth="1dp" />
+            app:civ_border_color="@color/transparent"
+            app:civ_border_width="1dp" />
 
         <LinearLayout
             android:layout_width="0dp"

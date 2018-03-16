@@ -40,7 +40,7 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="25dp"
-            android:layout_weight=".4">
+            android:layout_weight=".45">
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_follow"
@@ -48,7 +48,6 @@
                 android:layout_height="25dp"
                 style="@style/My_Button.Invert"
                 android:textSize="14sp"
-                android:text="Follow"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 
@@ -57,8 +56,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?android:attr/progressBarStyleSmall"
+                android:forceHasOverlappingRendering="true"
                 android:layout_centerInParent="true"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
         </RelativeLayout>
 

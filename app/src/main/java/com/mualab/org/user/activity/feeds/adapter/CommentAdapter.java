@@ -3,6 +3,7 @@ package com.mualab.org.user.activity.feeds.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(CommentAdapter.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(final CommentAdapter.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         final Comment commentListInfo = commentList.get(position);
 
         holder.iv_like.setImageResource(commentListInfo.isLike==1?
@@ -65,68 +66,27 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.iv_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                apiForCommentLike(commentListInfo, position);
+                apiForCommentLike(commentListInfo, position, holder);
             }
         });
 
-        Picasso.with(mContext).load(commentListInfo.profileImage).into(holder.iv_profileImage);
+        if(!TextUtils.isEmpty(commentListInfo.profileImage)){
+            Picasso.with(mContext).load(commentListInfo.profileImage)
+                    .placeholder(R.drawable.defoult_user_img)
+                    .error(R.drawable.defoult_user_img)
+                    .into(holder.iv_profileImage);
+        }else Picasso.with(mContext).load(R.drawable.defoult_user_img).into(holder.iv_profileImage);
+
         holder.tv_user_name.setText(commentListInfo.userName);
         holder.tv_comments.setText(commentListInfo.comment);
         holder.tv_like_count.setText(String.format("%s Like", commentListInfo.commentLikeCount));
-        holder.tv_comments_time.setText(commentListInfo.crd);
-
+        holder.tv_comments_time.setText(commentListInfo.timeElapsed);
     }
 
 
     @Override
     public int getItemCount() {
         return commentList.size();
-    }
-
-    private void apiForCommentLike(final Comment comment, final int position) {
-
-        Map<String, String> map = new HashMap<>();
-        map.putAll(Mualab.feedBasicInfo);
-        map.put("commentId", comment.id);
-        map.put("feedId", ""+feed._id);
-        map.put("likeById", ""+Mualab.currentUser.id);
-        map.put("userId", ""+feed.userId);
-        map.put("type", "comment");
-
-        new HttpTask(new HttpTask.Builder(mContext, "like", new HttpResponceListner.Listener() {
-            @Override
-            public void onResponse(String response, String apiName) {
-                try {
-
-                    JSONObject js = new JSONObject(response);
-                    String status = js.getString("status");
-                    //String message = js.getString("message");
-
-                    if (status.equalsIgnoreCase("success")) {
-                        if (comment.isLike==0) {
-                            comment.isLike = 1;
-                            comment.commentLikeCount++;
-                        } else {
-                            comment.isLike = 0;
-                            comment.commentLikeCount--;
-                        }
-                        if(listner!=null)
-                            listner.onItemChange();
-
-                    }
-                    notifyItemChanged(position);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void ErrorListener(VolleyError error) {
-
-            }
-        }));
-
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -143,4 +103,51 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             iv_like = itemView.findViewById(R.id.iv_like);
         }
     }
+
+    private void apiForCommentLike(final Comment comment, final int position, final ViewHolder holder) {
+
+        Map<String, String> map = new HashMap<>();
+        map.putAll(Mualab.feedBasicInfo);
+        map.put("commentId", ""+comment.id);
+        map.put("feedId", ""+feed._id);
+        map.put("likeById", ""+Mualab.currentUser.id);
+        map.put("userId", ""+comment.commentById);
+        map.put("type", "comment");
+
+        holder.iv_like.setEnabled(false);
+
+        new HttpTask(new HttpTask.Builder(mContext, "commentLike", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    holder.iv_like.setEnabled(true);
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    //String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+                        if (comment.isLike==0) {
+                            comment.isLike = 1;
+                            comment.commentLikeCount++;
+                        } else {
+                            comment.isLike = 0;
+                            comment.commentLikeCount--;
+                        }
+                    }
+                    notifyItemChanged(position);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                holder.iv_like.setEnabled(true);
+            }
+        }).setParam(map).setProgress(true)).execute("commentLike");
+
+    }
+
+
 }
