@@ -542,7 +542,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         listAdapter.notifyDataSetChanged();
         // if (item.isSelected.equals("0"))
         item.isSelected = "1";
-        bookingInfo.time = item.time;
+        bookingInfo.time = ","+item.time;
 
         String[] separated = bookingInfo.preperationTime.split(":");
         int minuts = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
