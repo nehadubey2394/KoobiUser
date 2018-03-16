@@ -522,16 +522,14 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void showAlertDailog(final FragmentManager fm){
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(BookingActivity.this);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(BookingActivity.this, R.style.MyDialogTheme);
+        alertDialog.setCancelable(false);
         alertDialog.setTitle("Alert!");
         alertDialog.setMessage("Are you sure you want to permanently remove all selected services?");
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 dialog.cancel();
-                BookingFragment4.arrayListbookingInfo.clear();
-                BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
-                frag.hideFilter(false);
-                fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
+                apiForCancleBooking(fm);
             }
         });
 
@@ -540,10 +538,75 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 dialog.cancel();
             }
         });
-
         // Showing Alert Message
         alertDialog.show();
+
     }
+
+    private void apiForCancleBooking(final FragmentManager fm){
+        Session session = Mualab.getInstance().getSessionManager();
+        User user = session.getUser();
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(BookingActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForCancleBooking(fm);
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("artistId", item._id);
+        params.put("userId", String.valueOf(user.id));
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "confirmBooking", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+                        BookingFragment4.arrayListbookingInfo.clear();
+                        BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
+                        frag.hideFilter(false);
+                        fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
+                    }else {
+                        MyToast.getInstance(BookingActivity.this).showDasuAlert(message);
+                    }
+                } catch (Exception e) {
+                    Progress.hide(BookingActivity.this);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                        //      MyToast.getInstance(BookingActivity.this).showSmallCustomToast(helper.error_Messages(error));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(true)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
+    }
+
 
     @Override
     public void onBackPressed() {
