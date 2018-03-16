@@ -60,7 +60,7 @@ public class UnfollowDialog {
         CircleImageView iv_profileImage =  dialog.findViewById(R.id.iv_profileImage);
 
         if(!TextUtils.isEmpty(profileImage))
-            Picasso.with(context).load(profileImage).into(iv_profileImage);
+            Picasso.with(context).load(profileImage).fit().into(iv_profileImage);
 
         tv_user_name.setText(String.format(context.getString(R.string.unfollow_user), userName));
         tv_cancel.setOnClickListener(new View.OnClickListener() {
