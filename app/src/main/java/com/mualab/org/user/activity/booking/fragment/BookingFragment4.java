@@ -498,6 +498,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 if (i > 0)
                                     fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             }
+                        }else  if (message.equals("Service already added") && !isAddMore){
+                            ((BookingActivity) mContext).addFragment(
+                                    BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
                         }
 
                         MyToast.getInstance(mContext).showDasuAlert(message);
