@@ -7,21 +7,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.feeds.adapter.LikeListAdapter;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
-import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 
@@ -38,13 +40,18 @@ import java.util.Map;
 public class LikeFragment extends Fragment {
 
     private Context mContext;
+    private MainActivity activity;
     private EditText ed_search;
-    private List<FeedLike> likedList;
+    private ProgressBar progress_bar;
+    private LinearLayout ll_loadingBox;
     private RecyclerView recyclerView;
+
+    private List<FeedLike> likedList;
     private LikeListAdapter likeListAdapter;
 
-
-    private TextView tv_no_likes_found;
+    private TextView tvMsg;
+    private TextView tvHeaderTitle;
+    private ImageView ivAppIcon,ibtnChat, ivHeaderBack;
     private int feedId;
     private int myUserId;
 
@@ -65,6 +72,9 @@ public class LikeFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+
+        if(context instanceof MainActivity)
+            activity = (MainActivity) context;
     }
 
     @Override
@@ -88,9 +98,30 @@ public class LikeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if(activity!=null){
+            tvHeaderTitle = activity.findViewById(R.id.tvHeaderTitle);
+            ivHeaderBack = activity.findViewById(R.id.ivHeaderBack);
+            ibtnChat = activity.findViewById(R.id.ibtnChat);
+            ivAppIcon = activity.findViewById(R.id.ivAppIcon);
+            tvHeaderTitle.setVisibility(View.VISIBLE);
+            ivHeaderBack.setVisibility(View.VISIBLE);
+            ivAppIcon.setVisibility(View.GONE);
+            ibtnChat.setVisibility(View.GONE);
+            tvHeaderTitle.setText(R.string.likes);
+
+            ivHeaderBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.onBackPressed();
+                }
+            });
+        }
+
         recyclerView = view.findViewById(R.id.recyclerView);
-        tv_no_likes_found = view.findViewById(R.id.tv_no_likes_found);
+        tvMsg = view.findViewById(R.id.tvMsg);
         ed_search = view.findViewById(R.id.ed_search);
+        ll_loadingBox = view.findViewById(R.id.ll_loadingBox);
+        progress_bar = view.findViewById(R.id.progress_bar);
 
 
         likeListAdapter = new LikeListAdapter(mContext, likedList, myUserId);
@@ -105,7 +136,10 @@ public class LikeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                apiForLikesList(ed_search.getText().toString());
+
+                String quary = ed_search.getText().toString();
+                if(!TextUtils.isEmpty(quary))
+                    apiForLikesList(0,quary);
             }
 
             @Override
@@ -114,13 +148,26 @@ public class LikeFragment extends Fragment {
             }
         });
 
-        apiForLikesList("");
+
+        ll_loadingBox.setVisibility(View.VISIBLE);
+        progress_bar.setVisibility(View.VISIBLE);
+        tvMsg.setText(getString(R.string.loading));
+        apiForLikesList(0,"");
     }
 
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        tvHeaderTitle.setVisibility(View.GONE);
+        ivHeaderBack.setVisibility(View.GONE);
+        ivAppIcon.setVisibility(View.VISIBLE);
+        ibtnChat.setVisibility(View.VISIBLE);
+        ibtnChat = null;
+        ivHeaderBack = null;
+        ll_loadingBox = null;
+        ivAppIcon = null;
+        tvHeaderTitle = null;
         ed_search = null;
         recyclerView = null;
         likeListAdapter = null;
@@ -128,11 +175,11 @@ public class LikeFragment extends Fragment {
     }
 
 
-    private void apiForLikesList(String search) {
+    private void apiForLikesList(final int page, String search) {
 
         Map<String, String> map = new HashMap<>();
         map.put("feedId", ""+feedId);
-        map.put("page", "0");
+        map.put("page", ""+page);
         map.put("limit", "20");
         map.put("search", search);
         map.put("userId", ""+myUserId);
@@ -142,6 +189,7 @@ public class LikeFragment extends Fragment {
             public void onResponse(String response, String apiName) {
                 try {
                     likedList.clear();
+                    progress_bar.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -155,20 +203,23 @@ public class LikeFragment extends Fragment {
                             likedList.add(likedListInfo);
                         }
                         if (likedList.size() == 0) {
-                            tv_no_likes_found.setVisibility(View.VISIBLE);
+                            tvMsg.setText(getString(R.string.no_like_yet));
+                            tvMsg.setVisibility(View.VISIBLE);
                         } else {
-                            tv_no_likes_found.setVisibility(View.GONE);
+                            ll_loadingBox.setVisibility(View.GONE);
                         }
                         likeListAdapter.notifyDataSetChanged();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    tvMsg.setText(getString(R.string.msg_some_thing_went_wrong));
+                    progress_bar.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
-
+                progress_bar.setVisibility(View.GONE);
             }
         }).setProgress(false)
         .setParam(map)).execute("likeList");

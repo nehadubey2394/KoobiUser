@@ -1,10 +1,13 @@
 package com.mualab.org.user.activity.feeds.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -21,7 +24,9 @@ import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.feeds.model.FeedLike;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.dialogs.UnfollowDialog;
 import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.task.HttpResponceListner;
@@ -151,7 +156,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         switch (feeds.feedType) {
             case "text":
-                final FeedTextHolder textHolder= ((FeedTextHolder) holder);
+                final FeedTextHolder textHolder = ((FeedTextHolder) holder);
 
                 if (!TextUtils.isEmpty(feeds.profileImage)) {
                     Picasso.with(mContext)
@@ -162,6 +167,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         .load(R.drawable.defoult_user_img)
                         .into(textHolder.ivProfile);
 
+                if (feeds.followingStatus == 1) {
+                    textHolder.btnFollow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
+                    textHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                    textHolder.btnFollow.setText(R.string.following);
+                } else {
+                    textHolder.btnFollow.setBackgroundResource(R.drawable.button_effect_invert);
+                    textHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                    textHolder.btnFollow.setText(R.string.follow);
+                }
                 textHolder.tvUserName.setText(feeds.userName);
                 textHolder.tvPostTime.setText(feeds.crd);
                 textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
@@ -184,6 +198,17 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         .load(R.drawable.defoult_user_img)
                         .into(imageHolder.ivProfile);
 
+                if (feeds.followingStatus == 1) {
+                    imageHolder.btnFollow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
+                    imageHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                    imageHolder.btnFollow.setText(R.string.following);
+                } else {
+                    imageHolder.btnFollow.setBackgroundResource(R.drawable.button_effect_invert);
+                    imageHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                    imageHolder.btnFollow.setText(R.string.follow);
+                }
+
+                imageHolder.btnFollow.setText(feeds.followingStatus==1?"Following":"Follow");
                 imageHolder.tvUserName.setText(feeds.userName);
                 imageHolder.tvPostTime.setText(feeds.crd);
                 imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
@@ -299,6 +324,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         .load(R.drawable.defoult_user_img)
                         .into(videoHolder.ivProfile);
 
+                if (feeds.followingStatus == 1) {
+                    videoHolder.btnFollow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
+                    videoHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                    videoHolder.btnFollow.setText(R.string.following);
+                } else {
+                    videoHolder.btnFollow.setBackgroundResource(R.drawable.button_effect_invert);
+                    videoHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                    videoHolder.btnFollow.setText(R.string.follow);
+                }
                 videoHolder.tvUserName.setText(feeds.userName);
                 videoHolder.tvPostTime.setText(feeds.crd);
                 videoHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
@@ -402,6 +436,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // shareDialog(feed, 0);
             }
         });
+
+        holder.btnFollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // holder.btnFollow.setEnabled(false);
+                int adapterPosition = holder.getAdapterPosition();
+                Feeds feed = feedItems.get(adapterPosition);
+                followUnfollow(feed, adapterPosition);
+            }
+        });
     }
 
     private void setupFeedVideoClickableViews(final FeedVideoHolder videoHolder) {
@@ -485,6 +529,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         });
 
         videoHolder.ivFeedCenter.setOnTouchListener(new MyOnDoubleTapListener(mContext, videoHolder));
+
+        videoHolder.btnFollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // videoHolder.btnFollow.setEnabled(false);
+                int adapterPosition = videoHolder.getAdapterPosition();
+                Feeds feed = feedItems.get(adapterPosition);
+                followUnfollow(feed, adapterPosition);
+            }
+        });
     }
 
     private void setupClickableViews(final CellFeedViewHolder cellFeedViewHolder) {
@@ -568,6 +622,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // shareDialog(feed, innerPosition);
             }
         });
+
+        cellFeedViewHolder.btnFollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //cellFeedViewHolder.btnFollow.setEnabled(false);
+                int adapterPosition = cellFeedViewHolder.getAdapterPosition();
+                Feeds feed = feedItems.get(adapterPosition);
+                followUnfollow(feed, adapterPosition);
+            }
+        });
     }
 
     private void addBottomDots(LinearLayout ll_dots, int totalSize, int currentPage) {
@@ -633,7 +697,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         Map<String, String> map = new HashMap<>();
         map.putAll(Mualab.feedBasicInfo);
         map.put("feedId", ""+feed._id);
-        map.put("likeById", ""+Mualab.getInstance().getSessionManager().getUser().id);
+        map.put("likeById", ""+Mualab.currentUser.id);
         map.put("userId", ""+feed.userId);
         map.put("type", "feed");// feed or comment
 
@@ -678,6 +742,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private TextView tvUserName, tvUserLocation, tvPostTime;
         private TextView tv_like_count, tv_comments_count;
         private SocialTextView tv_text;
+        private AppCompatButton btnFollow;
 
         private FeedTextHolder(View itemView) {
             super(itemView);
@@ -700,6 +765,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             vBgLike = itemView.findViewById(R.id.vBgLike);
             ivLike = itemView.findViewById(R.id.ivLike);
+            btnFollow = itemView.findViewById(R.id.btnFollow);
         }
     }
 
@@ -711,6 +777,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private TextView tvUserName, tvUserLocation, tvPostTime;
         private TextView tv_like_count, tv_comments_count;
         private SocialTextView tv_text;
+        private AppCompatButton btnFollow;
 
         private FeedVideoHolder(View itemView) {
             super(itemView);
@@ -731,6 +798,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             vBgLike = itemView.findViewById(R.id.vBgLike);
             ivLike =  itemView.findViewById(R.id.ivLike);
+            btnFollow = itemView.findViewById(R.id.btnFollow);
         }
     }
 
@@ -743,6 +811,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private TextView tvUserName, tvUserLocation, tvPostTime;
         private TextView tv_like_count, tv_comments_count;
         private SocialTextView tv_text;
+        private AppCompatButton btnFollow;
 
         private WeakReference<ViewPager> weakRefViewPager;
         private WeakReference<ViewPagerAdapter> weakRefAdapter;
@@ -768,6 +837,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             vBgLike = itemView.findViewById(R.id.vBgLike);
             ivLike =  itemView.findViewById(R.id.ivLike);
+            btnFollow = itemView.findViewById(R.id.btnFollow);
         }
     }
 
@@ -823,5 +893,54 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             return 0;
         }
+    }
+
+
+    private void followUnfollow(final Feeds feeds, final int position){
+
+        if(feeds.followingStatus==1){
+            new UnfollowDialog(mContext, feeds, new UnfollowDialog.UnfollowListner() {
+                @Override
+                public void onUnfollowClick(Dialog dialog) {
+                    dialog.dismiss();
+                    apiForFollowUnFollow(feeds, position);
+                }
+            });
+        }else apiForFollowUnFollow(feeds, position);
+
+    }
+
+    private void apiForFollowUnFollow(final Feeds feeds, final int position) {
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", ""+Mualab.currentUser.id);
+        map.put("followerId", ""+feeds.userId);
+
+        new HttpTask(new HttpTask.Builder(mContext, "followFollowing", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+                        if (feeds.followingStatus==0) {
+                            feeds.followingStatus = 1;
+                        } else if (feeds.followingStatus==1) {
+                            feeds.followingStatus = 0;
+                        }
+                    }
+                    notifyItemChanged(position);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    notifyItemChanged(position);
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                notifyItemChanged(position);
+            }
+        }).setParam(map)).execute("followFollowing");
     }
 }

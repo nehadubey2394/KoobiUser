@@ -54,16 +54,6 @@
 
 
 
-    <TextView
-        android:id="@+id/tv_no_comments"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/TextView"
-        android:text="No Comments"
-        android:textColor="@color/colorPrimary"
-        android:visibility="gone" />
-
-
     <RelativeLayout
         android:id="@+id/rl_composMsg"
         android:layout_width="match_parent"
@@ -146,14 +136,45 @@
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/rl_composMsg"
         android:layout_below="@+id/header"
-        android:layout_marginBottom="5dp"
-        tools:listitem="@layout/comments_item_layout"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        android:layout_marginBottom="5dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/comments_item_layout"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+        <LinearLayout
+            android:id="@+id/ll_loadingBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_centerInParent="true">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_no_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView"
+                android:text="@string/loading"
+                android:textColor="@color/black"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

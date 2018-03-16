@@ -115,6 +115,25 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
 
     private BaseListner baseListner;
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mContext = null;
+        tvImages = null;
+        tvVideos = null;
+        tvFeeds = null;
+        tv_msg = null;
+        ll_header = null;
+        edCaption = null;
+        iv_selectedImage = null;
+        ll_progress = null;
+        endlesScrollListener = null;
+        feedAdapter = null;
+        liveUserList = null;
+        feeds = null;
+        rvFeed = null;
+        user = null;
+    }
 
     public FeedsFragment() {
         // Required empty public constructor
@@ -483,7 +502,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
         intent.putExtra("feed_id", feed._id);
         intent.putExtra("feedPosition", pos);
         intent.putExtra("feed", feed);
-        startActivity(intent);
+        startActivityForResult(intent, Constant.ACTIVITY_COMMENT);
     }
 
     @Override
@@ -665,7 +684,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     feeds.clear();
                     //first clear the recycler view so items are not populated twice
                     feedAdapter.clear();
-                    apiForGetAllFeeds(0, 100, true);
+                    apiForGetAllFeeds(0, 10, true);
                     break;
 
                 case Constant.REQUEST_VIDEO_CAPTURE:
@@ -718,7 +737,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     if(CURRENT_FEED_STATE == Constant.FEED_STATE){
                         int pos = data.getIntExtra("feedPosition",0);
                         Feeds feed = (Feeds) data.getSerializableExtra("feed");
-                       // allfeedsList.get(pos).commentCount = feed.commentCount;
+                        feeds.get(pos).commentCount = feed.commentCount;
                         feedAdapter.notifyItemChanged(pos);
                     }
                     break;

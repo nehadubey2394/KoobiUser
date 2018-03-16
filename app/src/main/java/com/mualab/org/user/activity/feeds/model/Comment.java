@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 public class Comment {
 
     @SerializedName("_id")
-    public String id;
+    public int id;
 
     public String comment;
 
@@ -17,10 +17,9 @@ public class Comment {
     public int commentById;
     public int isLike;
 
-    public String crd;
-
     public String userName;
     public String firstName;
     public String lastName;
     public String profileImage;
+    public String timeElapsed;
 }

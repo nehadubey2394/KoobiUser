@@ -114,7 +114,10 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".activity.feeds.CommentsActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".activity.feeds.LikeActivity"/>
+
 
         <!-- Meta data -->
         <meta-data
@@ -145,7 +148,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activity.feeds.LikeActivity"></activity>
     </application>
 
 </manifest>

@@ -22,7 +22,7 @@
             android:background="@drawable/gradient_circle_img"
             android:src="@drawable/defoult_user_img"
             app:civ_border_color="@color/transparent"
-            app:civ_border_width="1dp"
+            app:civ_border_width="2dp"
             />
 
 
@@ -38,11 +38,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="40dp"
             android:background="@color/gray3"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="35dp">
+            android:layout_height="40dp">
 
             <TextView
                 android:id="@+id/tv_cancel"

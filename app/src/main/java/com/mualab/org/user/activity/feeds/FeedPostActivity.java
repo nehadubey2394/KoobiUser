@@ -372,18 +372,16 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 findViewById(R.id.iv_feedPost).setEnabled(false);
                 KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
                 if(ConnectionDetector.isConnected()){
-
+                    initProgressBar();
                     if (feedType == Constant.TEXT_STATE)
                         apiUploadTextFeed();
                     if (feedType == Constant.VIDEO_STATE) {
                         //String uri = mediaUri.uriList.get(0);
                         if (mUploadUri == null) {
-                            initProgressBar();
                             mDeleteCompressedMedia = true;
                             //saveTempAndCompress(uri);
                             uploadVideo(videoThumb);
                         }else {
-                            initProgressBar();
                             uploadVideo(videoThumb);
                         }
                         //sendToBackGroundService();
@@ -532,7 +530,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void apiUploadTextFeed(){
-        initProgressBar();
         Map<String, String> map = prepareCommonPostData();
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
@@ -587,7 +584,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     // uploadimage call
     private void apiCallForUploadImages() {
-        initProgressBar();
         Map<String, String> map = prepareCommonPostData();
         List<Uri>uris = new ArrayList<>();
         for(String uri: mediaUri.uriList)

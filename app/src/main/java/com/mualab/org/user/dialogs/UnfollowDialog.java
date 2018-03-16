@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
+import com.mualab.org.user.model.feeds.Feeds;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -27,10 +28,22 @@ public class UnfollowDialog {
     private UnfollowListner listner;
 
     public interface UnfollowListner{
-        void onUnfollowClick();
+        void onUnfollowClick(Dialog dialog);
     }
 
-    public UnfollowDialog(Context context, FeedLike feedLike, final UnfollowListner listner) {
+    public UnfollowDialog(Context context, FeedLike feedLike, final UnfollowListner listner){
+         UnfollowDialog(context,feedLike.userName, feedLike.profileImage, listner);
+    }
+
+    public UnfollowDialog(Context context, Feeds feeds, final UnfollowListner listner){
+        UnfollowDialog(context, feeds.userName, feeds.profileImage, listner);
+    }
+
+    public void UnfollowDialog(final Context context,
+                          final String userName,
+                          final String profileImage,
+                          final UnfollowListner listner) {
+
         this.listner = listner;
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -38,7 +51,7 @@ public class UnfollowDialog {
         dialog.setContentView(R.layout.dialog_unfollow);
         Window window = dialog.getWindow();
         assert window != null;
-        window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         TextView tv_cancel =  dialog.findViewById(R.id.tv_cancel);
@@ -46,10 +59,10 @@ public class UnfollowDialog {
         TextView tv_user_name =  dialog.findViewById(R.id.tv_user_name);
         CircleImageView iv_profileImage =  dialog.findViewById(R.id.iv_profileImage);
 
-        if(!TextUtils.isEmpty(feedLike.profileImage))
-            Picasso.with(context).load(feedLike.profileImage).into(iv_profileImage);
+        if(!TextUtils.isEmpty(profileImage))
+            Picasso.with(context).load(profileImage).into(iv_profileImage);
 
-        tv_user_name.setText(String.format(context.getString(R.string.unfollow_user), feedLike.userName));
+        tv_user_name.setText(String.format(context.getString(R.string.unfollow_user), userName));
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +74,7 @@ public class UnfollowDialog {
         tvUnfollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listner.onUnfollowClick();
+                listner.onUnfollowClick(dialog);
             }
         });
 
@@ -75,6 +88,8 @@ public class UnfollowDialog {
                 //ObjectAnimator.ofFloat(view, "translationY", view.getHeight(), 0.0f).start();
             }
         });
+
+        dialog.show();
     }
 
 }

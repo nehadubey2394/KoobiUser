@@ -1,9 +1,9 @@
 package com.mualab.org.user.activity.feeds.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -56,6 +56,7 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final FeedLike feedLike = likedList.get(position);
 
+        holder.progressBar.setVisibility(View.GONE);
         if(TextUtils.isEmpty(feedLike.profileImage)){
             Picasso.with(mContext).load(R.drawable.defoult_user_img).fit().into(holder.iv_profileImage);
         }else {
@@ -68,21 +69,27 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
         holder.tv_user_name.setText(feedLike.userName);
         holder.btn_follow.setVisibility(feedLike.id==myUserId?View.GONE:View.VISIBLE);
 
-        if (feedLike.followingStatus == 1) {
-
-            holder.btn_follow.setBackgroundResource(R.drawable.button_effect_invert);
-            holder.btn_follow.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
-            holder.btn_follow.setText("Following");
-
-        } else if (feedLike.followingStatus == 0) {
-            holder.btn_follow.setBackgroundResource(R.drawable.button_effect_invert);
-            holder.btn_follow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-            holder.btn_follow.setText("Follow");
+        if(feedLike.likeById==Mualab.currentUser.id){
+            holder.btn_follow.setVisibility(View.GONE);
+        }else {
+            holder.btn_follow.setVisibility(View.VISIBLE);
+            if (feedLike.followingStatus == 1) {
+                holder.btn_follow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
+                holder.btn_follow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                holder.btn_follow.setText(R.string.following);
+            } else if (feedLike.followingStatus == 0) {
+                holder.btn_follow.setBackgroundResource(R.drawable.button_effect_invert);
+                holder.btn_follow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                holder.btn_follow.setText(R.string.follow);
+            }
         }
+
+
 
         holder.btn_follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                holder.btn_follow.setEnabled(false);
                 followUnfollow(feedLike, position, holder);
             }
         });
@@ -94,7 +101,8 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
         if(feedLike.followingStatus==1){
             new UnfollowDialog(mContext, feedLike, new UnfollowDialog.UnfollowListner() {
                 @Override
-                public void onUnfollowClick() {
+                public void onUnfollowClick(Dialog dialog) {
+                    dialog.dismiss();
                     apiForFollowUnFollow(feedLike, position, holder);
                 }
             });
@@ -111,9 +119,12 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
 
         Map<String, String> map = new HashMap<>();
         map.put("userId", ""+Mualab.currentUser.id);
-        map.put("followerId", ""+feedLike.id);
+        map.put("followerId", ""+feedLike.likeById);
+
+        holder.btn_follow.setEnabled(false);
         holder.btn_follow.setText("");
         holder.progressBar.setVisibility(View.VISIBLE);
+
         new HttpTask(new HttpTask.Builder(mContext, "followFollowing", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -134,6 +145,7 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
                     notifyItemChanged(position);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    notifyItemChanged(position);
                 }
             }
 
@@ -144,9 +156,8 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
                 notifyItemChanged(position);
             }
         }).setParam(map)).execute("");
-
-
     }
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView iv_profileImage;
@@ -160,6 +171,8 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
             iv_profileImage = itemView.findViewById(R.id.iv_profileImage);
             btn_follow =  itemView.findViewById(R.id.btn_follow);
             progressBar =  itemView.findViewById(R.id.progress_bar);
+            progressBar.getIndeterminateDrawable()
+                    .setColorFilter(ContextCompat.getColor(mContext, R.color.white), PorterDuff.Mode.SRC_IN);
 
             btn_follow.setOnClickListener(new View.OnClickListener() {
                 @Override

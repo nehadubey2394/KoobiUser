@@ -1,15 +1,10 @@
 package com.mualab.org.user.activity.feeds.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Point;
-import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,7 +39,6 @@ public class ViewPagerAdapter extends PagerAdapter {
         //int width = dm.widthPixels;
         //int height = dm.heightPixels;
         px = (int) dm.xdpi;
-
         if(px>380)
             px=380;
        // px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, dm);
