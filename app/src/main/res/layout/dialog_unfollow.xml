@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="@color/white"
+    android:background="@color/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_profileImage"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/gradient_circle_img"
+            android:src="@drawable/defoult_user_img"
+            app:civ_border_color="@color/transparent"
+            app:civ_border_width="1dp"
+            />
+
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            style="@style/TextView"
+            android:textColor="@color/black"
+            android:text="@string/unfollow_user"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="30dp"
+            android:background="@color/gray3"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp">
+
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                style="@style/TextView.Medium"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/text_cancel"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/gray3"/>
+
+            <TextView
+                android:id="@+id/tvUnfollow"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                style="@style/TextView.Medium"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="Unfollow"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+</android.support.v7.widget.CardView>

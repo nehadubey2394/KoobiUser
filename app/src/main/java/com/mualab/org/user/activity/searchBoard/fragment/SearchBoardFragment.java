@@ -19,13 +19,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.SearchBoardAdapter;
 import com.mualab.org.user.application.Mualab;
@@ -62,7 +62,6 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     private boolean isFavClick = false;
     private RefineSearchBoard item;
     private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="",date;
-
 
     public static SearchBoardFragment newInstance(RefineSearchBoard item, String param2) {
         SearchBoardFragment fragment = new SearchBoardFragment();

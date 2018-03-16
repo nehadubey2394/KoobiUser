@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import de.hdodenhof.circleimageview.CircleImageView;
+import views.calender.CalendarHelper;
 
 public class Registration2Activity extends AppCompatActivity implements View.OnClickListener {
 
@@ -274,7 +275,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 params.put("contactNo", user.contactNo);
                 params.put("businessName", user.businessName);
                 params.put("gender", user.gender);
-                params.put("dob", user.dob);
+                params.put("dob", CalendarHelper.getStringYMDformatter(user.dob));
                /* params.put("address", address.stAddress1);
                 params.put("city", address.city);
                 params.put("state", address.state);

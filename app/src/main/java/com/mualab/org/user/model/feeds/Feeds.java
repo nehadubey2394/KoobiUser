@@ -35,7 +35,7 @@ public class Feeds implements Serializable {
     public String userName;
     public String profileImage;
 
-    public String likeStatus = "0";
+    public int isLike;
     public String videoThumbnail;
 
    // public String city;
@@ -45,12 +45,12 @@ public class Feeds implements Serializable {
     public String latitude;
     public int viewPagerlastPos = 0;
 
-    public class Feed{
+    public class Feed implements Serializable{
         public String feedPost;
         public String videoThumb;
     }
 
-    public class User{
+    public class User implements Serializable{
         public int _id;
         public String firstName;
         public String lastName;
