@@ -374,6 +374,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("date", selectedDate);
         params.put("currentTime", currentTime);
         params.put("serviceTime", bookingInfo.serviceTime);
+        params.put("userId", String.valueOf(user.id));
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistTimeSlot", new HttpResponceListner.Listener() {
             @Override
@@ -462,7 +463,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("serviceId", bookingInfo.sId);
         params.put("subServiceId", bookingInfo.ssId);
         params.put("artistServiceId", bookingInfo.msId);
-        params.put("serviceType", bookingInfo.serviceType);
+        params.put("serviceType", selectedDate);
         params.put("bookingDate", bookingInfo.date);
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
@@ -497,6 +498,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 if (i > 0)
                                     fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             }
+                        }else  if (message.equals("Service already added") && !isAddMore){
+                            ((BookingActivity) mContext).addFragment(
+                                    BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
                         }
 
                         MyToast.getInstance(mContext).showDasuAlert(message);
@@ -542,7 +546,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         listAdapter.notifyDataSetChanged();
         // if (item.isSelected.equals("0"))
         item.isSelected = "1";
-        bookingInfo.time = item.time;
+        bookingInfo.time = ","+item.time;
 
         String[] separated = bookingInfo.preperationTime.split(":");
         int minuts = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));

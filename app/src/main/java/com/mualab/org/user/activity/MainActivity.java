@@ -98,7 +98,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ibtnChat = findViewById(R.id.ibtnChat);
 
         ivAppIcon = findViewById(R.id.ivAppIcon);
-        ivAppIcon = findViewById(R.id.ivAppIcon);
         ivHeaderBack = findViewById(R.id.ivHeaderBack);
         ivHeaderUser = findViewById(R.id.ivHeaderUser);
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);

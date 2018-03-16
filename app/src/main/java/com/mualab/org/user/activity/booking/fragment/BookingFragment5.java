@@ -175,7 +175,6 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 break;
             case R.id.btnConfirmBooking:
                 apiForConfirmBooking();
-                MyToast.getInstance(mContext).showSmallCustomToast("Under Developement");
                 break;
         }
     }
