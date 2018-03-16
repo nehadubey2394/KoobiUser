@@ -615,7 +615,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm);
-        }else  if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){
+        }else if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm);
+        }
+        else  if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm);
         }else if (i==0 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm);

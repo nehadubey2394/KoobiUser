@@ -82,6 +82,7 @@
                             android:textSize="12sp" />
 
                     </LinearLayout>
+
                     <TextView
                         android:id="@+id/tvSpaciality"
                         android:layout_width="120dp"
