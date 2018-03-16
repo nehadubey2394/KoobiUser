@@ -374,6 +374,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("date", selectedDate);
         params.put("currentTime", currentTime);
         params.put("serviceTime", bookingInfo.serviceTime);
+
+        params.put("BookingTime", "");
+        params.put("bookingDate", "");
+        params.put("BookingId","");
+        params.put("bookingCount", "");
+        params.put("type", "");
+
         params.put("userId", String.valueOf(user.id));
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistTimeSlot", new HttpResponceListner.Listener() {
@@ -467,6 +474,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("bookingDate", bookingInfo.date);
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
+
+        params.put("bookingDate", "");
+        params.put("BookingId", "");
+
         params.put("userId", String.valueOf(user.id));
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "bookArtist", new HttpResponceListner.Listener() {
