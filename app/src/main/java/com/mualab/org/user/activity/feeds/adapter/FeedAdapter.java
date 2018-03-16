@@ -24,6 +24,8 @@ import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.feeds.FeedPostActivity;
+import com.mualab.org.user.activity.feeds.PreviewImageActivity;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.UnfollowDialog;
@@ -36,7 +38,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -226,13 +230,23 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 imageHolder.weakRefAdapter = new WeakReference<>(new ViewPagerAdapter(mContext, feeds.feed, new ViewPagerAdapter.Listner() {
                     @Override
                     public void onSingleTap() {
-                           /* int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
+                            int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
                             if (feeds.feedType.equalsIgnoreCase("image")) {
-                                Intent intent = new Intent(mContext, ImageViewActivity.class);
+                               /* Intent intent = new Intent(mContext, ImageViewActivity.class);
                                 intent.putExtra("imageArray", (Serializable) feeds.feed);
                                 intent.putExtra("startIndex", pos);
+                                mContext.startActivity(intent);*/
+
+                                List<String> list = new ArrayList<>();
+                                for(Feeds.Feed tmp: feeds.feedData){
+                                    list.add(tmp.feedPost);
+                                }
+                                Intent intent = new Intent(mContext, PreviewImageActivity.class);
+                                intent.putExtra("imageArray", (Serializable) list);
+                                intent.putExtra("startIndex", pos);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mContext.startActivity(intent);
-                            } else if (feeds.feedType.equalsIgnoreCase("video")) {
+                            } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
                                 mContext.startActivity(new Intent(Intent.ACTION_VIEW)
                                         .setDataAndType(Uri.parse(feeds.feed.get(pos)), "video/mp4")
                                         .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
@@ -860,9 +874,19 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             int adapterPosition = getPosition();
             Feeds feed = feedItems.get(adapterPosition);
             if (feed.feedType.equalsIgnoreCase("image")) {
-               /* mContext.startActivity(new Intent(mContext, ImageViewActivity.class)
+               /* mContext.startActivity(new Intent(mContext, PreviewImageActivity.class)
                         .setData(Uri.parse(feed.feed.get(0)))
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));*/
+                Intent intent = new Intent(mContext, PreviewImageActivity.class);
+                List<String> list = new ArrayList<>();
+                for(Feeds.Feed tmp: feed.feedData){
+                    list.add(tmp.feedPost);
+                }
+                intent.putExtra("imageArray", (Serializable) list);
+                intent.putExtra("startIndex", 0);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+
             } else if (feed.feedType.equalsIgnoreCase("video")) {
                 if(feed.feedThumb!=null && feed.feedThumb.size()>0){
                     mContext.startActivity(new Intent(Intent.ACTION_VIEW)

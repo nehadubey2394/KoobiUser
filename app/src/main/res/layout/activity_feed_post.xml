@@ -8,240 +8,318 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true"
     android:fitsSystemWindows="true"
-    android:background="#F5F5F5"
+    android:background="@color/white"
     tools:context=".activity.feeds.FeedPostActivity">
 
     <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@color/white">
+        android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/iv_back"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:padding="5dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="5dp"
-            android:tint="@color/colorPrimary"
-            android:src="@drawable/back_icon" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="New Post"
-            android:textColor="@color/colorPrimary"
-            android:textSize="20dp" />
-
-        <ImageView
-            android:id="@+id/iv_feedPost"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:padding="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/share_ico" />
-
-        <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray"
-            android:layout_alignParentBottom="true"/>
+            android:layout_height="wrap_content"
+            android:background="@drawable/leader_board_header_bg"
+            android:layout_alignParentTop="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:tint="@color/white"
+                android:src="@drawable/back_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:text="New Post"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/iv_feedPost"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:padding="5dp"
+                android:layout_marginRight="5dp"
+                android:tint="@color/white"
+                android:src="@drawable/share_ico" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <com.github.siyamed.shapeimageview.RoundedImageView
-                android:id="@+id/iv_selectedImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:transitionName="profile"
-                android:scaleType="centerCrop"
-                android:src="@drawable/gallery_placeholder"
-                app:siBorderColor="@color/colorPrimary"
-                app:siBorderWidth="1dp"
-                app:siRadius="3dp"
-                app:siSquare="true" />
-
-            <TextView
-                android:id="@+id/tvMediaSize"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:textColor="@color/white"
-                android:text="10"
-                android:layout_gravity="top|end"
-                android:padding="2dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                android:layout_margin="5dp"
-                android:visibility="gone"
-                android:background="@drawable/bg_ovel_dark_gray"/>
-
-        </FrameLayout>
 
 
-
-        <!-- <EditText
-             android:id="@+id/ed_caption"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:layout_margin="5dp"
-             android:background="@null"
-             android:gravity="top"
-             android:hint="Write a caption..."
-             android:padding="5dp"
-             android:textColor="@color/colorPrimary"
-             android:textSize="16sp" />-->
-
-        <com.hendraanggrian.widget.SocialAutoCompleteTextView
-            android:id="@+id/edCaption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/My_Edittext"
-            android:minLines="4"
-            android:maxLines="10"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:gravity="left|top"
-            android:hint="Write a caption..."
-            android:textColor="@color/black"
-            android:textColorHint="@color/black"
-            android:background="@null"
-            android:transitionName="text"
-            tools:ignore="UnusedAttribute"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-             />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray2"/>
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/ly_location"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/rectangular_grey_border"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="27dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/places_ic_search" />
-
-            <TextView
-                android:id="@+id/tv_loaction"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/TextView"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:gravity="center|left"
-                android:text="Add Loction"
-                android:textColor="@color/gray"/>
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.github.siyamed.shapeimageview.RoundedImageView
+                        android:id="@+id/iv_selectedImage"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:transitionName="profile"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/gallery_placeholder"
+                        app:siBorderColor="@color/colorPrimary"
+                        app:siBorderWidth="1dp"
+                        app:siRadius="3dp"
+                        app:siSquare="true" />
+
+                    <TextView
+                        android:id="@+id/tvMediaSize"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:textColor="@color/white"
+                        android:text="10"
+                        android:layout_gravity="top|end"
+                        android:padding="2dp"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:layout_margin="5dp"
+                        android:visibility="gone"
+                        android:background="@drawable/bg_ovel_dark_gray"/>
+
+                </FrameLayout>
 
 
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/rectangular_grey_border"
-            android:orientation="horizontal"
-            android:weightSum="1">
+                <!-- <EditText
+                     android:id="@+id/ed_caption"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_margin="5dp"
+                     android:background="@null"
+                     android:gravity="top"
+                     android:hint="Write a caption..."
+                     android:padding="5dp"
+                     android:textColor="@color/colorPrimary"
+                     android:textSize="16sp" />-->
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/facebook_ico" />
+                <com.hendraanggrian.widget.SocialAutoCompleteTextView
+                    android:id="@+id/edCaption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/My_Edittext"
+                    android:minLines="4"
+                    android:maxLines="10"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="left|top"
+                    android:hint="Write a caption..."
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:background="@null"
+                    android:transitionName="text"
+                    tools:ignore="UnusedAttribute"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    />
 
-            <TextView
-                android:layout_width="wrap_content"
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray2"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_weight=".9"
-                android:gravity="center|left"
-                android:text="Facebook"
-                android:textColor="@color/gray"
-                android:textSize="14dp" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/iv_fb_on"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_gravity="center|right"
-                android:src="@drawable/ic_switch_on" />
+                <LinearLayout
+                    android:id="@+id/ll_tagPepole"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_rounded_gray_broder_fill_gray"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/ic_tag" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TextView"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center|left"
+                        android:text="Tag Pepole"
+                        android:textColor="@color/dark_gray"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_tagService"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_rounded_gray_broder_fill_gray"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:padding="3dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/ic_tag" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TextView"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center|left"
+                        android:text="Tag Service"
+                        android:textColor="@color/dark_gray"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ly_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_rounded_gray_broder_fill_gray"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/ic_location_pin" />
+
+                    <TextView
+                        android:id="@+id/tv_loaction"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TextView"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center|left"
+                        android:text="Add Loction"
+                        android:textColor="@color/dark_gray"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/bg_rounded_gray_broder_fill_gray"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/facebook_ico" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight=".9"
+                        android:gravity="center|left"
+                        android:text="Facebook"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="14dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_fb_on"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center|right"
+                        android:src="@drawable/ic_switch_on" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/bg_rounded_gray_broder_fill_gray"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/instagram_ico" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight=".9"
+                        android:gravity="center|left"
+                        android:text="Instragram"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="14dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_twitter_on"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center|right"
+                        android:src="@drawable/ic_switch_off" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/rectangular_grey_border"
-            android:orientation="horizontal"
-            android:weightSum="1">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/instagram_ico" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_weight=".9"
-                android:gravity="center|left"
-                android:text="Instragram"
-                android:textColor="@color/gray"
-                android:textSize="14dp" />
-
-            <ImageView
-                android:id="@+id/iv_twitter_on"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_gravity="center|right"
-                android:src="@drawable/ic_switch_on" />
-
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </LinearLayout>
 

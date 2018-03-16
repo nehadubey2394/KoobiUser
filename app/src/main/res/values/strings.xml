@@ -311,7 +311,7 @@
     <string name="mcam_image_preview_error_message">Could not decode bitmap</string>
     <string name="no_data_available">No data available!</string>
     <string name="there_are_no_available_slots_please_select_another_day">There are no available slots. Please select another day.</string>
-    <string name="write_a_comments_here">write a comments here</string>
+    <string name="write_a_comments_here">write a comments here...</string>
     <string name="unfollow_user">Unfollow <b>@%s?</b></string>
     <string name="no_comment_yet">No Comment yet</string>
     <string name="following">Following</string>

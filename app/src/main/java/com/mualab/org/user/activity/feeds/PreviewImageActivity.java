@@ -141,8 +141,10 @@ public class PreviewImageActivity extends AppCompatActivity {
             //final LinearLayout ll_Dot = itemView.findViewById(R.id.ll_Dot);
             final ImageView photoView = itemView.findViewById(R.id.photo_view);
             //Picasso.with(context).load(imagesList.get(position)).into(new ImageViewTarget(photoView, progress_bar));
+
+            final String url = String.valueOf(imagesList.get(position));
             Picasso.with(context)
-                    .load(String.valueOf(imagesList.get(position)))
+                    .load(url)
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.OFFLINE)
                     .into(photoView, new Callback() {
@@ -153,18 +155,13 @@ public class PreviewImageActivity extends AppCompatActivity {
 
                         @Override
                         public void onError() {
-                            Picasso.with(context).load(R.drawable.gallery_placeholder).into(photoView);
+                            Picasso.with(context).load(url)
+                                    .fit()
+                                    .placeholder(R.drawable.gallery_placeholder)
+                                    .error(R.drawable.gallery_placeholder).into(photoView);
                             progress_bar.setVisibility(View.GONE);
                         }
                     });
-
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
 
             container.addView(itemView);
             return itemView;

@@ -258,6 +258,8 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.iv_feedPost).setOnClickListener(this);
         findViewById(R.id.ly_location).setOnClickListener(this);
         findViewById(R.id.iv_back).setOnClickListener(this);
+        findViewById(R.id.ll_tagPepole).setOnClickListener(this);
+        findViewById(R.id.ll_tagService).setOnClickListener(this);
 
         //hashtagAdapter = new HashtagAdapter(this);
         edCaption.setThreshold(1);
@@ -368,6 +370,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         else getAllTags();
 
         switch (v.getId()) {
+
+            case R.id.ll_tagPepole:
+            case R.id.ll_tagService:
+                MyToast.getInstance(this).showSmallMessage(getString(R.string.under_development));
+                break;
+
             case R.id.iv_feedPost:
                 findViewById(R.id.iv_feedPost).setEnabled(false);
                 KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
