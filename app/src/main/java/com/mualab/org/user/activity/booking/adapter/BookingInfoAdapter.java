@@ -45,7 +45,7 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final BookingInfo item = artistsList.get(position);
 
-        holder.tvDateAndTime.setText(item.date+" "+item.time);
+        holder.tvDateAndTime.setText(item.date+","+item.time);
         holder.tvPrice.setText("£"+item.price);
         holder.tvServiceName.setText(item.sServiceName);
     }
