@@ -21,7 +21,7 @@ import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.SubServices;
 import com.mualab.org.user.session.Session;
-import com.mualab.org.user.util.Utility;
+import com.mualab.org.user.util.Util;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private  final int VIEWTYPE_LOADER = 2;
     private  boolean isOutCallSelect;
     private SubServices subServices;
-    private Utility utility;
+    private Util utility;
     // Constructor of the class
     public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices) {
         this.context = context;
@@ -45,7 +45,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.item = item;
         this.isOutCallSelect = isOutCallSelect;
         this.subServices = subServices;
-        utility = new Utility(context);
+        utility = new Util(context);
     }
 
     @Override

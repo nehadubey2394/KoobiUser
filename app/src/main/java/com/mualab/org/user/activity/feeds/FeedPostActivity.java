@@ -29,6 +29,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -383,10 +385,19 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 findViewById(R.id.iv_feedPost).setEnabled(false);
                 KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
                 if(ConnectionDetector.isConnected()){
-                    initProgressBar();
-                    if (feedType == Constant.TEXT_STATE)
-                        apiUploadTextFeed();
-                    if (feedType == Constant.VIDEO_STATE) {
+
+                    if (feedType == Constant.TEXT_STATE){
+                        if(!TextUtils.isEmpty(caption)){
+                            initProgressBar();
+                            apiUploadTextFeed();
+                        } else {
+                            Animation shake = AnimationUtils.loadAnimation(FeedPostActivity.this, R.anim.shake);
+                            edCaption.startAnimation(shake);
+                            findViewById(R.id.iv_feedPost).setEnabled(true);
+                        }
+
+                    }else if (feedType == Constant.VIDEO_STATE) {
+                        initProgressBar();
                         //String uri = mediaUri.uriList.get(0);
                         if (mUploadUri == null) {
                             mDeleteCompressedMedia = true;
@@ -396,10 +407,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                             uploadVideo(videoThumb);
                         }
                         //sendToBackGroundService();
-                    } else if (feedType == Constant.IMAGE_STATE)
+                    } else if (feedType == Constant.IMAGE_STATE){
+                        initProgressBar();
                         apiCallForUploadImages();
-                }
-                else {
+                    }
+
+                } else {
                     findViewById(R.id.iv_feedPost).setEnabled(true);
                     MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
                              getString(R.string.error_msg_network));

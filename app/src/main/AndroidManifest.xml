@@ -108,16 +108,14 @@
         <activity android:name=".activity.story.draj_camera.CaptureActivity2" />
         <activity android:name=".activity.story.NewStoryActivity" />
         <activity android:name=".activity.feeds.PreviewImageActivity" />
-
         <activity
             android:name=".activity.story.core.CaptureStoreActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".activity.feeds.CommentsActivity"
+        <activity
+            android:name=".activity.feeds.CommentsActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".activity.feeds.LikeActivity"/>
-
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.feeds.LikeActivity" />
 
         <!-- Meta data -->
         <meta-data
@@ -148,6 +146,10 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <activity android:name=".activity.gellery.GalleryActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>

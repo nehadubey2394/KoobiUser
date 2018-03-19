@@ -36,6 +36,7 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.activity.MainActivity;
@@ -61,6 +62,7 @@ import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.util.WrapContentLinearLayoutManager;
 import com.mualab.org.user.util.media.ImageVideoUtil;
 import com.mualab.org.user.util.media.PathUtil;
 import com.zhihu.matisse.Matisse;
@@ -83,8 +85,12 @@ import static android.app.Activity.RESULT_OK;
 /*
  * Dharmraj acharya
  * */
-public class FeedsFragment extends Fragment implements View.OnClickListener,
+public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         FeedAdapter.Listener, LiveUserAdapter.Listner {
+
+    public static String TAG = FeedsFragment.class.getName();
+
+    int fragCount;
 
     private int CURRENT_FEED_STATE = 0;
     // ui components delecration
@@ -118,7 +124,8 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mContext = null;
+        Mualab.getInstance().cancelPendingRequests(TAG);
+        /*mContext = null;
         tvImages = null;
         tvVideos = null;
         tvFeeds = null;
@@ -132,7 +139,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
         liveUserList = null;
         feeds = null;
         rvFeed = null;
-        user = null;
+        user = null;*/
     }
 
     public FeedsFragment() {
@@ -150,9 +157,10 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
     }
 
 
-    public static FeedsFragment newInstance(String param1) {
+    public static FeedsFragment newInstance(int instance) {
         FeedsFragment fragment = new FeedsFragment();
         Bundle args = new Bundle();
+        args.putInt(ARGS_INSTANCE, instance);
         fragment.setArguments(args);
         return fragment;
     }
@@ -160,6 +168,11 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            fragCount = getArguments().getInt(ARGS_INSTANCE);
+        }
+
         user = Mualab.getInstance().getSessionManager().getUser();
         feeds = new ArrayList<>();
         liveUserList = new ArrayList<>();
@@ -203,7 +216,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        LinearLayoutManager lm = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
+        WrapContentLinearLayoutManager lm = new WrapContentLinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
         rvFeed.setItemAnimator(new FeedItemAnimator());
         rvFeed.setLayoutManager(lm);
         rvFeed.setHasFixedSize(true);
@@ -218,8 +231,13 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
 
         rvFeed.setAdapter(feedAdapter);
         rvFeed.addOnScrollListener(endlesScrollListener);
+
+        if(feeds!=null && feeds.size()==0)
+            updateViewType(R.id.ly_feeds);
         getStoryList();
-        updateViewType(R.id.ly_feeds);
+
+       // ((MainActivity)getActivity()).updateToolbarTitle((fragCount == 0) ? "Home" : "Sub Home "+fragCount);
+
     }
 
     @Override
@@ -300,7 +318,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
         tvImages.setTextColor(getResources().getColor(R.color.text_color));
         tvFeeds.setTextColor(getResources().getColor(R.color.text_color));
         endlesScrollListener.resetState();
-
+        int prevSize = feeds.size();
         switch (id) {
             case R.id.ly_feeds:
                 //addRemoveHeader(true);
@@ -310,6 +328,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     feeds.clear();
                     feedType = "";
                     CURRENT_FEED_STATE = Constant.FEED_STATE;
+                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
                     apiForGetAllFeeds(0, 10, true);
                     //ParseAndUpdateUI(loadAllFeedJSONFromAsset());
                 }
@@ -322,6 +341,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     feeds.clear();
                     feedType = "image";
                     CURRENT_FEED_STATE = Constant.IMAGE_STATE;
+                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
                     apiForGetAllFeeds( 0, 10, true);
                     //ParseAndUpdateUI(loadImageJSONFromAsset());
                 }
@@ -335,6 +355,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     feeds.clear();
                     feedType = "video";
                     CURRENT_FEED_STATE = Constant.VIDEO_STATE;
+                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
                     apiForGetAllFeeds( 0, 10, true);
                     //ParseAndUpdateUI(loadVideoJSONFromAsset());
                 }
@@ -344,13 +365,6 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
         lastFeedTypeId = id;
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //Progress.hide(mContext);
-        Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
-    }
 
     private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
         Session session = Mualab.getInstance().getSessionManager();
@@ -408,7 +422,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                 .setMethod(Request.Method.POST)
                 .setProgress(false)
                 .setBodyContentType(HttpTask.ContentType.X_WWW_FORM_URLENCODED))
-                .execute(this.getClass().getName());
+                .execute(TAG);
         ll_progress.setVisibility(isEnableProgress?View.VISIBLE:View.GONE);
     }
 
@@ -524,7 +538,6 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
-                    Progress.hide(mContext);
                     if (status.equalsIgnoreCase("success")) {
                         JSONArray array = js.getJSONArray("myStoryList");
 
@@ -560,7 +573,7 @@ public class FeedsFragment extends Fragment implements View.OnClickListener,
                 .setParam(params)
                 .setProgress(false)
                 .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
-                .execute("getMyStoryUser");
+                .execute(TAG);
     }
 
 

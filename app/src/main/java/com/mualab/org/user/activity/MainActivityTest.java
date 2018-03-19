@@ -3,13 +3,10 @@ package com.mualab.org.user.activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
-import android.os.Handler;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,14 +17,13 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.gellery.GalleryActivity;
-import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
@@ -36,12 +32,14 @@ import com.mualab.org.user.util.FragmentHistory;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import views.fragnev.FragNavController;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivityTest extends BaseActivity implements View.OnClickListener,
+ BaseFragment.FragmentNavigation, FragNavController.TransactionListener, FragNavController.RootFragmentListener{
 
     private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
     private int clickedId = 0;
@@ -49,7 +47,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public TextView tvHeaderTitle;
     public RelativeLayout rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
+
     public RefineSearchBoard item;
+
+    private BottomTab bottomTab;
+    private String[] TABS = { "SearchBoard", "Feed", "AddFeed", "Explore", "Profile"};
 
 
     @Override
@@ -66,7 +68,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Mualab.feedBasicInfo.put("state", "MP");
         Mualab.feedBasicInfo.put("country", "India");
 
-        final NoConnectionDialog network =  new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
+        final NoConnectionDialog network =  new NoConnectionDialog(MainActivityTest.this, new NoConnectionDialog.Listner() {
             @Override
             public void onNetworkChange(Dialog dialog, boolean isConnected) {
                 if(isConnected){
@@ -91,7 +93,68 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         initView();
-        addFragment(SearchBoardFragment.newInstance(item,""), false);
+       // addFragment(SearchBoardFragment.newInstance(item,""), false);
+
+
+
+        fragmentHistory = new FragmentHistory();
+        mNavController = FragNavController.newBuilder(savedInstanceState,
+                getSupportFragmentManager(), R.id.fragment_place)
+                .transactionListener(this)
+                .rootFragmentListener(this, TABS.length)
+                .build();
+
+        switchTab(0);
+        bottomTab = new BottomTab(new OnBottomTabSelectedListener() {
+            @Override
+            public void onTabSelected(int position) {
+                fragmentHistory.push(position);
+                updateTabSelection(position);
+                switchTab(position);
+            }
+
+            @Override
+            public void onTabUnselected(int position) {
+
+            }
+
+            @Override
+            public void onTabReselected(int position) {
+                mNavController.clearStack();
+                switchTab(position);
+            }
+        });
+    }
+
+
+    class BottomTab {
+
+        private int lastTabId;
+        private int currentTabId;
+        private int position;
+        private OnBottomTabSelectedListener listener;
+
+        public BottomTab(OnBottomTabSelectedListener listener){
+            this.listener = listener;
+        }
+
+        public void clickTabIcon(int position, int tabId){
+            this.lastTabId = currentTabId;
+            this.currentTabId = tabId;
+            this.position = position;
+
+            if(lastTabId==tabId)
+                listener.onTabReselected(position);
+            else listener.onTabSelected(position);
+        }
+    }
+
+
+
+    private interface OnBottomTabSelectedListener{
+        void onTabSelected(int position);
+        void onTabUnselected(int position);
+        void onTabReselected(int position);
     }
 
 
@@ -222,7 +285,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.ivAppIcon :
                 break;
 
-            case R.id.ibtnLeaderBoard :
+            case R.id.ibtnLeaderBoard : bottomTab.clickTabIcon(0, view.getId()); break;
+            case R.id.ibtnFeed : bottomTab.clickTabIcon(1, view.getId()); break;
+            case R.id.ibtnAddFeed : bottomTab.clickTabIcon(2, view.getId()); break;
+            case R.id.ibtnSearch : bottomTab.clickTabIcon(3, view.getId()); break;
+            case R.id.ibtnNotification : bottomTab.clickTabIcon(4, view.getId()); break;
+
+           /* case R.id.ibtnLeaderBoard :
                 if (clickedId!=1){
                     setInactiveTab();
                     clickedId = 1;
@@ -254,7 +323,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.ibtnAddFeed :
                 startActivity(new Intent(MainActivity.this, GalleryActivity.class));
-               /* if (clickedId!=3) {
+                *//*if (clickedId!=3) {
                     setInactiveTab();
                     clickedId = 3;
                     tvHeaderTitle.setText(getString(R.string.title_searchboard));
@@ -267,7 +336,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     startActivity(new Intent(MainActivity.this, GalleryActivity.class));
                     //replaceFragment(new AddFeedFragment(), false);
-                }*/
+                }*//*
                 break;
 
             case R.id.ibtnSearch :
@@ -297,7 +366,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     ivAppIcon.setVisibility(View.GONE);
                     replaceFragment(new AddFeedFragment(), false);
                 }
-                break;
+                break;*/
         }
     }
 
@@ -317,7 +386,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
           /* Handle double click to finish activity*/
-        Handler handler = new Handler();
+        /*Handler handler = new Handler();
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
         if (i > 0) {
@@ -337,6 +406,45 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             handler.removeCallbacks(runnable);
             super.onBackPressed();
+        }*/
+
+        /*Dharmraj Acharya*/
+
+        if (!mNavController.isRootFragment()) {
+            mNavController.popFragment();
+
+        } else {
+            Handler handler = new Handler();
+            if (fragmentHistory.isEmpty()) {
+
+                if (!doubleBackToExitPressedOnce){
+                    doubleBackToExitPressedOnce = true;
+                    MySnackBar.showSnackbar(this, findViewById(R.id.lyCoordinatorLayout), "Click again to exit");
+                    handler.postDelayed(runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            doubleBackToExitPressedOnce = false;
+                        }
+                    }, 2000);
+
+                }else {
+                    handler.removeCallbacks(runnable);
+                    super.onBackPressed();
+                }
+
+            } else {
+
+                if (fragmentHistory.getStackSize() > 1) {
+                    int position = fragmentHistory.popPrevious();
+                    switchTab(position);
+                    updateTabSelection(position);
+
+                } else {
+                    switchTab(0);
+                    updateTabSelection(0);
+                    fragmentHistory.emptyStack();
+                }
+            }
         }
     }
 
@@ -378,5 +486,132 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void showToast(String str){
         if(!TextUtils.isEmpty(str))
             MyToast.getInstance(this).showSmallCustomToast(str);
+    }
+
+
+    /*Dharmraj Acharya*/
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mNavController != null) {
+            mNavController.onSaveInstanceState(outState);
+        }
+    }
+
+    private void initToolbar() {
+       // setSupportActionBar(toolbar);
+    }
+
+    private void updateTabSelection(int position){
+        setInactiveTab();
+        if(position==0){
+            clickedId = 1;
+            tvHeaderTitle.setText(getString(R.string.title_searchboard));
+            ibtnLeaderBoard.setImageResource(R.drawable.active_leaderboard_ico);
+            ivHeaderBack.setVisibility(View.GONE);
+            ivHeaderUser.setVisibility(View.VISIBLE);
+            tvHeaderTitle.setVisibility(View.VISIBLE);
+            ibtnChat.setVisibility(View.GONE);
+            ivAppIcon.setVisibility(View.GONE);
+        }else if(position==1){
+            clickedId = 2;
+            tvHeaderTitle.setText(getString(R.string.app_name));
+            ibtnFeed.setImageResource(R.drawable.active_feeds_ico);
+            ivHeaderUser.setVisibility(View.VISIBLE);
+            replaceFragment(FeedsFragment.newInstance(1), false);
+            ibtnChat.setVisibility(View.VISIBLE);
+            tvHeaderTitle.setVisibility(View.GONE);
+            ivAppIcon.setVisibility(View.VISIBLE);
+            ivHeaderBack.setVisibility(View.GONE);
+        }else if(position==2){
+            clickedId = 3;
+            tvHeaderTitle.setText(getString(R.string.title_searchboard));
+            ibtnAddFeed.setImageResource(R.drawable.active_add_ico);
+            tvHeaderTitle.setText(R.string.title_photo);
+            ivHeaderBack.setVisibility(View.GONE);
+            ivHeaderUser.setVisibility(View.GONE);
+            ibtnChat.setVisibility(View.GONE);
+            ivAppIcon.setVisibility(View.GONE);
+            tvHeaderTitle.setVisibility(View.VISIBLE);
+        }else if(position==3){
+            clickedId = 4;
+            tvHeaderTitle.setText(R.string.title_explore);
+            ibtnSearch.setImageResource(R.drawable.active_search_ico);
+            ivHeaderUser.setVisibility(View.VISIBLE);
+            tvHeaderTitle.setVisibility(View.VISIBLE);
+            ibtnChat.setVisibility(View.GONE);
+            ivAppIcon.setVisibility(View.GONE);
+        }else if(position==4){
+            clickedId = 5;
+            tvHeaderTitle.setText(getString(R.string.title_searchboard));
+            ibtnNotification.setImageResource(R.drawable.active_notifications_ico);
+            tvHeaderTitle.setText(R.string.title_notification);
+            ivHeaderUser.setVisibility(View.VISIBLE);
+            tvHeaderTitle.setVisibility(View.VISIBLE);
+            ibtnChat.setVisibility(View.GONE);
+            ivAppIcon.setVisibility(View.GONE);
+           // replaceFragment(new AddFeedFragment(), false);
+        }
+    }
+
+    private void switchTab(int position) {
+        mNavController.switchTab(position);
+    }
+
+    public void updateToolbarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+
+    private void updateToolbar() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
+        getSupportActionBar().setDisplayShowHomeEnabled(!mNavController.isRootFragment());
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_black);
+    }
+
+
+    private FragNavController mNavController;
+    private FragmentHistory fragmentHistory;
+
+    @Override
+    public void pushFragment(Fragment fragment) {
+        if (mNavController != null) {
+            mNavController.pushFragment(fragment);
+        }
+    }
+
+    @Override
+    public Fragment getRootFragment(int index) {
+        switch (index) {
+            case FragNavController.TAB1:
+                return new SearchBoardFragment();
+            case FragNavController.TAB2:
+                return new FeedsFragment();
+            case FragNavController.TAB3:
+                return new AddFeedFragment();
+            case FragNavController.TAB4:
+                return new AddFeedFragment();
+            case FragNavController.TAB5:
+                return new AddFeedFragment();
+        }
+        throw new IllegalStateException("Need to send an index that we know");
+    }
+
+    @Override
+    public void onTabTransaction(Fragment fragment, int index) {
+        // If we have a backstack, show the back button
+        if (getSupportActionBar() != null && mNavController != null) {
+            updateToolbar();
+        }
+    }
+
+    @Override
+    public void onFragmentTransaction(Fragment fragment, FragNavController.TransactionType transactionType) {
+        //do fragmentty stuff. Maybe change title, I'm not going to tell you how to live your life
+        // If we have a backstack, show the back button
+        if (getSupportActionBar() != null && mNavController != null) {
+            updateToolbar();
+        }
     }
 }
