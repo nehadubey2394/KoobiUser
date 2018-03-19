@@ -203,7 +203,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         params.put("bookingTime", firstBooking.time);
         // params.put("customerType", "1");
         params.put("voucherId", "");
-        params.put("paymentType", "");
+        params.put("paymentType", "1");
         params.put("location", firstBooking.artistAddress);
         params.put("userId", String.valueOf(user.id));
 

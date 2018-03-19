@@ -286,7 +286,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                             if (dayOfMonth==cDay){
                                 currentTime = getCurrentTime();
                             }else
-                                currentTime = "0:00 AM";
+                                currentTime = "12:00 AM";
 
                             apiForGetSlots();
                         }
@@ -376,7 +376,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("serviceTime", bookingInfo.serviceTime);
 
         params.put("BookingTime", "");
-        params.put("bookingDate", "");
+        params.put("bookingDate", selectedDate);
         params.put("BookingId","");
         params.put("bookingCount", "");
         params.put("type", "");
@@ -470,12 +470,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("serviceId", bookingInfo.sId);
         params.put("subServiceId", bookingInfo.ssId);
         params.put("artistServiceId", bookingInfo.msId);
-        params.put("serviceType", selectedDate);
-        params.put("bookingDate", bookingInfo.date);
+        params.put("serviceType", bookingInfo.serviceType);
+        params.put("bookingDate", selectedDate);
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
 
-        params.put("bookingDate", "");
         params.put("BookingId", "");
 
         params.put("userId", String.valueOf(user.id));
@@ -557,7 +556,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         listAdapter.notifyDataSetChanged();
         // if (item.isSelected.equals("0"))
         item.isSelected = "1";
-        bookingInfo.time = ","+item.time;
+        bookingInfo.time = item.time;
 
         String[] separated = bookingInfo.preperationTime.split(":");
         int minuts = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
