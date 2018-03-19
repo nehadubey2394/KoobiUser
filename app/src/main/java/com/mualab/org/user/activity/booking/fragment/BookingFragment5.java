@@ -107,7 +107,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         TextView tvTotalPrice = rootView.findViewById(R.id.tvTotalPrice);
 
         firstBooking = BookingFragment4.arrayListbookingInfo.get(pos);
-        tvBookingDate.setText(firstBooking.selectedDate);
+        tvBookingDate.setText(firstBooking.date);
         tvBookingTime.setText(firstBooking.time);
         tvStaffArtistName.setText(bookingInfo.artistName);
 

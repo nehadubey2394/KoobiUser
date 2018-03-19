@@ -68,7 +68,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private TextView tvNoSlot;
     private BookingInfo bookingInfo;
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
-    private SimpleDateFormat input;
+    private SimpleDateFormat input,dateFormat;
     private FlexibleCalendar viewCalendar;
 
     public BookingFragment4() {
@@ -154,11 +154,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
         viewCalendar.setAdapter(adapter);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMMM yyyy");
+        dateFormat = new SimpleDateFormat("EEE, d MMMM yyyy");
         dateFormat.setTimeZone(cal.getTimeZone());
         input = new SimpleDateFormat("yyyy-MM-dd");
 
         selectedDate = getCurrentDate();
+        bookingInfo.selectedDate = selectedDate;
         currentTime = getCurrentTime();
         dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-2;
 
@@ -222,6 +223,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 viewCalendar.isFirstimeLoad = true;
                 Calendar cal = Calendar.getInstance();
                 selectedDate = getCurrentDate();
+                bookingInfo.selectedDate = selectedDate;
                 CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
                 viewCalendar.setAdapter(adapter);
                 viewCalendar.expand(500);
@@ -478,7 +480,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("subServiceId", bookingInfo.ssId);
         params.put("artistServiceId", bookingInfo.msId);
         params.put("serviceType", bookingInfo.serviceType);
-        params.put("bookingDate", bookingInfo.date);
+        params.put("bookingDate", selectedDate);
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
 
@@ -569,26 +571,27 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         //  String[] separated = bookingInfo.time.split(":");
         //   int minuts1 = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
 
-        int min2  = Integer.parseInt(bookingInfo.endTime);
+        if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
+            int min2  = Integer.parseInt(bookingInfo.endTime);
 
-        // int finalMin = minuts1+min2;
+            // int finalMin = minuts1+min2;
 
-        SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
-        Date d;
-        try {
-            d = df.parse(item.time);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(d);
-            cal.add(Calendar.MINUTE, min2);
-            bookingInfo.endTime = df.format(cal.getTime());
+            SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+            Date d;
+            try {
+                d = df.parse(item.time);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(d);
+                cal.add(Calendar.MINUTE, min2);
+                bookingInfo.endTime = df.format(cal.getTime());
 
-            Date  formatedDate = input.parse(selectedDate);  // parse input
-            // bookingInfo.date =  dateFormat.format(formatedDate);
-            bookingInfo.date =  selectedDate;
-        } catch (ParseException e) {
-            e.printStackTrace();
+                Date  formatedDate = input.parse(selectedDate);  // parse input
+                bookingInfo.date =  dateFormat.format(formatedDate);
+                bookingInfo.selectedDate =  selectedDate;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-
         //    }
 
         listAdapter.notifyItemChanged(position);
