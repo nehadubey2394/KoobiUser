@@ -111,7 +111,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         tvOpeningTime.setOnClickListener(this);
 
-        apiForGetBusinessTime();
+        apiForGetArtistDetail();
 
         // addFragment(new BookingFragment2(), false, R.id.flBookingContainer);
 
@@ -255,7 +255,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    private void apiForGetBusinessTime(){
+    private void apiForGetArtistDetail(){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -265,7 +265,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
                         dialog.dismiss();
-                        apiForGetBusinessTime();
+                        apiForGetArtistDetail();
                     }
                 }
             }).show();

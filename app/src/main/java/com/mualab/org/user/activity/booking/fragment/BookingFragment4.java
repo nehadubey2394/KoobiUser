@@ -68,7 +68,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private TextView tvNoSlot;
     private BookingInfo bookingInfo;
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
-    private SimpleDateFormat dateFormat,input;
+    private SimpleDateFormat input;
     private FlexibleCalendar viewCalendar;
 
     public BookingFragment4() {
@@ -154,7 +154,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
         viewCalendar.setAdapter(adapter);
 
-        dateFormat = new SimpleDateFormat("EEE, d MMMM yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMMM yyyy");
         dateFormat.setTimeZone(cal.getTimeZone());
         input = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -171,8 +171,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 if (info.msId.equals(bookingInfo.msId)) {
                     isMatch=true;
                     bookingInfo = info;
-                    bookingInfo.date = "Select date";
-                    bookingInfo.time = "and time";
+                    //  bookingInfo.date = "Select date";
+                    //   bookingInfo.time = "and time";
                     MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
                     break;
                 }
@@ -208,7 +208,14 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnCOnfirmBooking:
-                apiForContinueBooking(false);
+                if (bookingTimeSlots.size() != 0){
+                    if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
+                        apiForContinueBooking(false);
+                    } else {
+                        MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
+                    }
+                } else
+                    MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
                 break;
 
             case R.id.btnToday:
@@ -218,14 +225,14 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
                 viewCalendar.setAdapter(adapter);
                 viewCalendar.expand(500);
-                apiForGetSlots();
                 setCalenderClickListner();
+                apiForGetSlots();
                 break;
 
             case R.id.btnAddMoreService:
 
                 if (bookingTimeSlots.size() != 0){
-                    if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("0:00 AM")) {
+                    if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                         apiForContinueBooking(true);
                     } else {
                         MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
@@ -471,7 +478,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("subServiceId", bookingInfo.ssId);
         params.put("artistServiceId", bookingInfo.msId);
         params.put("serviceType", bookingInfo.serviceType);
-        params.put("bookingDate", selectedDate);
+        params.put("bookingDate", bookingInfo.date);
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
 
@@ -558,8 +565,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         item.isSelected = "1";
         bookingInfo.time = item.time;
 
-        String[] separated = bookingInfo.preperationTime.split(":");
-        int minuts = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
+        //   if (bookingInfo.time.contains(":")){
+        //  String[] separated = bookingInfo.time.split(":");
+        //   int minuts1 = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
+
+        int min2  = Integer.parseInt(bookingInfo.endTime);
+
+        // int finalMin = minuts1+min2;
 
         SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
         Date d;
@@ -567,14 +579,17 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
             d = df.parse(item.time);
             Calendar cal = Calendar.getInstance();
             cal.setTime(d);
-            cal.add(Calendar.MINUTE, minuts);
+            cal.add(Calendar.MINUTE, min2);
             bookingInfo.endTime = df.format(cal.getTime());
 
             Date  formatedDate = input.parse(selectedDate);  // parse input
-            bookingInfo.date =  dateFormat.format(formatedDate);
+            // bookingInfo.date =  dateFormat.format(formatedDate);
+            bookingInfo.date =  selectedDate;
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        //    }
 
         listAdapter.notifyItemChanged(position);
 
