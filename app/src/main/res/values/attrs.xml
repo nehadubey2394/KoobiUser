@@ -167,7 +167,7 @@
     </declare-styleable>
 
 
-    <declare-styleable name="UICalendar">
+    <declare-styleable name="MyUICalendar">
 
         <attr name="style" format="enum">
             <enum name="light" value="0" />

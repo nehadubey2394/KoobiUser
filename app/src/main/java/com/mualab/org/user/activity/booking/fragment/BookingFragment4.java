@@ -52,7 +52,7 @@ import java.util.Map;
 
 import views.calender.data.CalendarAdapter;
 import views.calender.data.Day;
-import views.calender.widget.FlexibleCalendar;
+import views.calender.widget.MyFlexibleCalendar;
 
 
 public class BookingFragment4 extends Fragment implements View.OnClickListener,CustomAdapterButtonListener{
@@ -69,7 +69,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private BookingInfo bookingInfo;
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
     private SimpleDateFormat input,dateFormat;
-    private FlexibleCalendar viewCalendar;
+    //private MyFlexibleCalendar viewCalendar;
+    private  View rootView;
 
     public BookingFragment4() {
         // Required empty public constructor
@@ -107,7 +108,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_booking4, container, false);
+        rootView = inflater.inflate(R.layout.fragment_booking4, container, false);
         initView();
         setView(rootView);
         // Inflate the layout for this fragment
@@ -147,7 +148,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         rycBookingInfo.setNestedScrollingEnabled(false);
         rycBookingInfo.setAdapter(bookingInfoAdapter);
 
-        viewCalendar =  rootView.findViewById(R.id.calendar);
+        MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
 
         // init calendar
         Calendar cal = Calendar.getInstance();
@@ -188,7 +189,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         bookingInfoAdapter.notifyDataSetChanged();
 
         // bind events of calendar
-        setCalenderClickListner();
+        setCalenderClickListner(viewCalendar);
 
         apiForGetSlots();
 
@@ -220,14 +221,16 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 break;
 
             case R.id.btnToday:
+                MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
                 viewCalendar.isFirstimeLoad = true;
                 Calendar cal = Calendar.getInstance();
-                selectedDate = getCurrentDate();
-                bookingInfo.selectedDate = selectedDate;
                 CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
                 viewCalendar.setAdapter(adapter);
                 viewCalendar.expand(500);
-                setCalenderClickListner();
+                setCalenderClickListner(viewCalendar);
+
+                selectedDate = getCurrentDate();
+                bookingInfo.selectedDate = selectedDate;
                 apiForGetSlots();
                 break;
 
@@ -246,8 +249,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         }
     }
 
-    private void setCalenderClickListner(){
-        viewCalendar.setCalendarListener(new FlexibleCalendar.CalendarListener() {
+    private void setCalenderClickListner(final MyFlexibleCalendar viewCalendar){
+        viewCalendar.setCalendarListener(new MyFlexibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
                 Day day = viewCalendar.getSelectedDay();

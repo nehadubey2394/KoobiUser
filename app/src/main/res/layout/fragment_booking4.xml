@@ -49,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <views.calender.widget.FlexibleCalendar
+                    <views.calender.widget.MyFlexibleCalendar
                         android:id="@+id/calendar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -57,7 +57,10 @@
                         custom:textColor="@color/black"
                         custom:firstDayOfWeek="sunday"  android:background="@drawable/bg_rounded_rectangle"
                         android:overScrollMode="never"
-                        custom:state="collapsed" />
+                        custom:state="collapsed"
+                        custom:todayItem_background="@drawable/circle_blue_solid_background"
+                        custom:selectedItem_background="@drawable/circle_green_solid_background"
+                        />
 
                 </LinearLayout>
 
