@@ -11,7 +11,7 @@ public class FeedLike {
     @SerializedName("_id")
     public int id;
     public int likeById;
-    public int followingStatus;
+    public int followerStatus;
     public String profileImage = "";
     public String fullName;
     public String userName;

@@ -15,7 +15,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
-import com.mualab.org.user.util.Utility;
+import com.mualab.org.user.util.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ArrayList<ArtistsSearchBoard> artistsList;
-    private Utility utility;
+    private Util utility;
     private boolean showLoader;
 
     private  final int VIEWTYPE_ITEM = 1;
@@ -33,7 +33,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public SearchBoardAdapter(Context context, ArrayList<ArtistsSearchBoard> artistsList) {
         this.context = context;
         this.artistsList = artistsList;
-        utility = new Utility(context);
+        utility = new Util(context);
     }
 
     @Override

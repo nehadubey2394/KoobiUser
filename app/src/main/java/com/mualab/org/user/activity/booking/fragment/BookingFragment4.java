@@ -34,7 +34,7 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
-import com.mualab.org.user.util.Utility;
+import com.mualab.org.user.util.Util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -547,7 +547,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onButtonClick(int position, String buttonText, int selectedCount) {
         BookingTimeSlot item =  bookingTimeSlots.get(position);
 
-        Utility utility = new Utility(mContext);
+        Util utility = new Util(mContext);
 
         for (int i = 0;i<bookingTimeSlots.size();i++){
             BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
