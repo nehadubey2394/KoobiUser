@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/parentView"
-    android:background="@color/screen_bg_color">
+    android:background="@color/white">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -18,7 +18,7 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/screen_bg_color"
+            android:background="@color/white"
             app:expandedTitleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -36,7 +36,8 @@
                     android:layout_marginBottom="5dp"
                     android:orientation="horizontal"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                    app:reverseLayout="false" />
+                    app:reverseLayout="false"
+                    tools:listitem="@layout/live_user_image_item"/>
 
                 <LinearLayout
                     android:id="@+id/ll_header"
@@ -183,7 +184,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:progressTintMode="multiply"
-            android:progressTint="@color/colorPrimary"/>
+            android:progressTint="@color/colorPrimary"
+            tools:ignore="UnusedAttribute" />
 
         <TextView
             android:id="@+id/tv_msg"

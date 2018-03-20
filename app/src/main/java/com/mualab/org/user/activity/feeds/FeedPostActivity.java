@@ -4,10 +4,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -46,10 +46,12 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.hendraanggrian.socialview.Mention;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.FilteredAdapter;
 import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
@@ -93,6 +95,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private boolean isFbShared = true, isTwitteron = true;
     private Double lat, lng;
     private TagAdapter tagAdapter;
+    private UserSuggessionAdapter mentionAdapter;
     private SocialAutoCompleteTextView edCaption;
     private TextView tvMediaSize;
     private List<String> hashTags = new ArrayList<>();
@@ -146,7 +149,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         ivShareFbOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (isFbShared) {
                     ivShareFbOn.setImageResource(R.drawable.ic_switch_off);
                     isFbShared = false;
@@ -177,7 +179,18 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 Log.d("editing", s.toString());
                 lastTxt = s.toString();
                 if (lastTxt.length() > 1)
-                    getDropDown(lastTxt);
+                    getDropDown(lastTxt, "");
+                return null;
+            }
+        });
+
+        edCaption.setMentionTextChangedListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence s) {
+                Log.d("editing", s.toString());
+                lastTxt = s.toString();
+                if (lastTxt.length() > 1)
+                    getDropDown(lastTxt, "user");
                 return null;
             }
         });
@@ -207,14 +220,15 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         checkLocationPermisssion();
     }
 
-    private void getDropDown(String tag) {
+    private void getDropDown(String tag, final String type) {
         Map<String, String> map = new HashMap<>();
         map.put("search", tag);
+        map.put("type", type);
         map.put("page", "0");
         map.put("limit", "5");
+        Mualab.getInstance().getRequestQueue().cancelAll("TAG_SEARCH");
 
-
-        new HttpTask(new HttpTask.Builder(this, "user/allTag", new HttpResponceListner.Listener() {
+        new HttpTask(new HttpTask.Builder(this, "tagSearch", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
 
@@ -223,11 +237,25 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     hashTags.clear();
                     tagAdapter.clear();
 
-                    if (object.has("tags")) {
-                        JSONArray array = object.getJSONArray("tags");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject obj = array.getJSONObject(i);
-                            hashTags.add(obj.getString("tag").replace("#", ""));
+                    if (object.has("allTags")) {
+                        JSONArray array = object.getJSONArray("allTags");
+                        if(type.equals("user")){
+                            mentionAdapter.clear();
+
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject obj = array.getJSONObject(i);
+                                String fullname = obj.getString("firstName") +" "+ obj.getString("lastName");
+                                String username = obj.getString("userName");
+                                String profileImage = obj.getString("profileImage");
+                                mentionAdapter.add(new Mention(username, fullname, profileImage));
+                            }
+                            mentionAdapter.notifyDataSetChanged();
+                        }else {
+
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject obj = array.getJSONObject(i);
+                                hashTags.add(obj.getString("tag").replace("#", ""));
+                            }
                         }
                     }
                 } catch (JSONException e) {
@@ -244,10 +272,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             public void ErrorListener(VolleyError error) {
 
             }})
-                .setBody(map, HttpTask.ContentType.X_WWW_FORM_URLENCODED)
+                .setParam(map)
                 .setProgress(false))
-                .execute("TAG");
-        Mualab.getInstance().getRequestQueue().cancelAll("TAG");
+                .execute("TAG_SEARCH");
         lastTxt = tag;
     }
 
@@ -271,6 +298,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         edCaption.setHashtagEnabled(true);
         edCaption.setHyperlinkEnabled(true);
 
+        mentionAdapter = new UserSuggessionAdapter(this);
+        mentionAdapter.clear();
+        edCaption.setMentionAdapter(mentionAdapter);
+        Resources.Theme theme  = getResources().newTheme();
+        theme.applyStyle(R.style.Theme_AppCompat_Light, true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mentionAdapter.setDropDownViewTheme(theme);
+        }
         tagAdapter = new TagAdapter(this);
         edCaption.setHashtagAdapter(tagAdapter);
     }
@@ -602,7 +637,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             map.put("latitude", "");
             map.put("longitude", "");
         }
-
         return map;
     }
 
@@ -699,6 +733,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private class TagAdapter extends FilteredAdapter<String> {
+
         final Filter filter = new SocialFilter() {
             @Override
             public CharSequence convertResultToString(Object resultValue) {

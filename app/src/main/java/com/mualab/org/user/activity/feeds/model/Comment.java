@@ -22,4 +22,5 @@ public class Comment {
     public String lastName;
     public String profileImage;
     public String timeElapsed;
+    public String type;
 }
