@@ -183,6 +183,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         ptMinuts = utility.getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
 
                         bookingInfo.serviceTime = "00:"+(ptMinuts+ctMinuts);
+                        bookingInfo.endTime = ""+(ptMinuts+ctMinuts);
 
                     }
 

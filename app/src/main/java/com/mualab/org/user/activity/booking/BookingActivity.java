@@ -111,7 +111,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         tvOpeningTime.setOnClickListener(this);
 
-        apiForGetBusinessTime();
+        apiForGetArtistDetail();
 
         // addFragment(new BookingFragment2(), false, R.id.flBookingContainer);
 
@@ -255,7 +255,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    private void apiForGetBusinessTime(){
+    private void apiForGetArtistDetail(){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -265,7 +265,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
                         dialog.dismiss();
-                        apiForGetBusinessTime();
+                        apiForGetArtistDetail();
                     }
                 }
             }).show();
@@ -521,7 +521,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void showAlertDailog(final FragmentManager fm){
+    private void showAlertDailog(final FragmentManager fm,final int fCont){
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(BookingActivity.this, R.style.MyDialogTheme);
         alertDialog.setCancelable(false);
         alertDialog.setTitle("Alert!");
@@ -529,7 +529,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 dialog.cancel();
-                apiForCancleBooking(fm);
+                apiForCancleBooking(fm,fCont);
             }
         });
 
@@ -543,7 +543,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void apiForCancleBooking(final FragmentManager fm){
+    private void apiForCancleBooking(final FragmentManager fm,final int fCont){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -553,7 +553,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
                         dialog.dismiss();
-                        apiForCancleBooking(fm);
+                        apiForCancleBooking(fm,fCont);
                     }
                 }
             }).show();
@@ -563,7 +563,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         params.put("artistId", item._id);
         params.put("userId", String.valueOf(user.id));
 
-        HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "confirmBooking", new HttpResponceListner.Listener() {
+        HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "deleteAllBookService", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
@@ -573,9 +573,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (status.equalsIgnoreCase("success")) {
                         BookingFragment4.arrayListbookingInfo.clear();
-                        BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
-                        frag.hideFilter(false);
-                        fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
+                        if (fCont==0){
+                            fm.popBackStack();
+                        }else {
+                            fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
+                            BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
+                            frag.hideFilter(false);
+                        }
                     }else {
                         MyToast.getInstance(BookingActivity.this).showDasuAlert(message);
                     }
@@ -612,16 +616,17 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
-
-        if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
-            showAlertDailog(fm);
-        }else if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
-            showAlertDailog(fm);
+        if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm,i);
         }
-        else  if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){
-            showAlertDailog(fm);
-        }else if (i==0 && BookingFragment4.arrayListbookingInfo.size()>0){
-            showAlertDailog(fm);
+        else if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm,i);
+        }
+        else if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm,i);
+        }
+        else if (i==0 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm,i);
         }
         else if (i > 0) {
             fm.popBackStack();
