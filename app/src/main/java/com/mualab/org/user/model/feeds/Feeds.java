@@ -25,6 +25,7 @@ public class Feeds implements Serializable {
     public String location;
     public int likeCount;
     public int commentCount;
+    @SerializedName("followerStatus")
     public int followingStatus;
     public String crd;
 

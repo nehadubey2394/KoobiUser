@@ -73,11 +73,11 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
             holder.btn_follow.setVisibility(View.GONE);
         }else {
             holder.btn_follow.setVisibility(View.VISIBLE);
-            if (feedLike.followingStatus == 1) {
+            if (feedLike.followerStatus == 1) {
                 holder.btn_follow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
                 holder.btn_follow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
                 holder.btn_follow.setText(R.string.following);
-            } else if (feedLike.followingStatus == 0) {
+            } else if (feedLike.followerStatus == 0) {
                 holder.btn_follow.setBackgroundResource(R.drawable.button_effect_invert);
                 holder.btn_follow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
                 holder.btn_follow.setText(R.string.follow);
@@ -98,7 +98,7 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
 
     private void followUnfollow(final FeedLike feedLike, final int position, final ViewHolder holder ){
 
-        if(feedLike.followingStatus==1){
+        if(feedLike.followerStatus==1){
             new UnfollowDialog(mContext, feedLike, new UnfollowDialog.UnfollowListner() {
                 @Override
                 public void onUnfollowClick(Dialog dialog) {
@@ -136,10 +136,10 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
-                        if (feedLike.followingStatus==0) {
-                            feedLike.followingStatus = 1;
-                        } else if (feedLike.followingStatus==1) {
-                            feedLike.followingStatus = 0;
+                        if (feedLike.followerStatus==0) {
+                            feedLike.followerStatus = 1;
+                        } else if (feedLike.followerStatus==1) {
+                            feedLike.followerStatus = 0;
                         }
                     }
                     notifyItemChanged(position);

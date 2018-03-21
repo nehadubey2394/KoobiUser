@@ -67,6 +67,7 @@ public class ViewPagerAdapter extends PagerAdapter {
                // .fit()
                 .resize(px,px)
                 .centerCrop()
+                .onlyScaleDown() //
                 .placeholder(R.drawable.gallery_placeholder)
                 .into(postImages);
         container.addView(itemView);
