@@ -70,7 +70,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private BookingInfo bookingInfo;
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
     private SimpleDateFormat input,dateFormat;
-    private boolean alreadyAddedFound = false;
+    private boolean alreadyAddedFound = false,isEdit = false;
     //private MyFlexibleCalendar viewCalendar;
     private  View rootView;
 
@@ -78,11 +78,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         // Required empty public constructor
     }
 
-    public static BookingFragment4 newInstance(String param1, String mParam2, BookingInfo bookingInfo) {
+    public static BookingFragment4 newInstance(String param1,boolean isEdit,BookingInfo bookingInfo) {
         BookingFragment4 fragment = new BookingFragment4();
         Bundle args = new Bundle();
         args.putString("param1", param1);
-        args.putString("param2", mParam2);
+        args.putBoolean("param2", isEdit);
         args.putSerializable("param3", bookingInfo);
         fragment.setArguments(args);
         return fragment;
@@ -102,7 +102,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
-            // artistId = getArguments().getString("param2")  ;
+            isEdit = getArguments().getBoolean("param2")  ;
             bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
         }
     }
@@ -188,8 +188,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
             alreadyAddedFound = false;
             arrayListbookingInfo.add(bookingInfo);
         }
-
-        Collections.reverse(arrayListbookingInfo);
+        if (!alreadyAddedFound)
+            Collections.reverse(arrayListbookingInfo);
 
         bookingInfoAdapter.notifyDataSetChanged();
 
@@ -295,7 +295,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                         if (year==cYear && month==cMonth && dayOfMonth<cDay){
                             Log.i("","can't select previous date");
                         }else {
-                            if (!alreadyAddedFound){
+                            if (!alreadyAddedFound || isEdit){
                                 bookingInfo.date = "Select date";
                                 bookingInfo.time = "and time";
                                 bookingInfoAdapter.notifyDataSetChanged();
@@ -392,11 +392,21 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("currentTime", currentTime);
         params.put("serviceTime", bookingInfo.serviceTime);
 
-        params.put("BookingTime", "");
+        params.put("bookingTime", "");
         params.put("bookingDate", selectedDate);
-        params.put("BookingId","");
+        params.put("bookingId","");
         params.put("bookingCount", "");
-        params.put("type", "");
+
+        if (isEdit) {
+            params.put("type", "edit");
+        }
+        else {
+            params.put("type", "");
+        }
+        params.put("bookingTime", "");
+        params.put("bookingDate", "");
+        params.put("bookingId","");
+        params.put("bookingCount", "");
 
         params.put("userId", String.valueOf(user.id));
 
@@ -488,7 +498,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
 
-        params.put("BookingId", "");
+        if (isEdit) {
+            params.put("bookingId", bookingInfo.bookingId);
+        }else
+            params.put("bookingId", "");
 
         params.put("userId", String.valueOf(user.id));
 
@@ -501,8 +514,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        bookingInfo.bookingId = js.getString("bookingId");
+
                         if (isAddMore) {
-                            FragmentManager fm = getActivity().getSupportFragmentManager();
+                            FragmentManager fm = ((BookingActivity)mContext).getSupportFragmentManager();
                             int count = fm.getBackStackEntryCount();
                             for (int i = 0; i < count; ++i) {
                                 if (i > 0)
@@ -558,7 +573,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
     @Override
     public void onButtonClick(int position, String buttonText, int selectedCount) {
-        if (!alreadyAddedFound){
+        if (!alreadyAddedFound || isEdit){
             BookingTimeSlot item =  bookingTimeSlots.get(position);
             Utility utility = new Utility(mContext);
 

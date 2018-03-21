@@ -15,9 +15,11 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment3;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
+import com.mualab.org.user.model.booking.BookingServices3;
 
 import java.util.ArrayList;
 
@@ -73,13 +75,15 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             btnEditService.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    BookingInfo info = artistsList.get(getAdapterPosition());
+
                     FragmentManager fm = context.getSupportFragmentManager();
                     int count = fm.getBackStackEntryCount();
                     for (int i = 0; i < count; ++i) {
-                        if (i > 3)
+                        if (i > 0)
                             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     }
-                    BookingInfo info = artistsList.get(getAdapterPosition());
+
                     ((BookingActivity)context).addFragment(
                             BookingFragment3.newInstance(true,info.subServices,item,item.isOutCallSelected), true, R.id.flBookingContainer);
                 }

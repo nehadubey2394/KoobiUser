@@ -223,7 +223,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
                     if (status.equalsIgnoreCase("success")) {
                         MyToast.getInstance(mContext).showDasuAlert(message);
-                        getActivity().finish();
+                        ((BookingActivity)mContext).finish();
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert(message);
                     }

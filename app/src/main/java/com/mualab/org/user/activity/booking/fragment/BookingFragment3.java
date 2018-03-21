@@ -28,8 +28,7 @@ public class BookingFragment3 extends Fragment {
     private String mParam1;
     private SubServices subServices;
     private ArtistsSearchBoard item;
-    private  boolean isOutCallSelect,fromConfirmBooking;
-    private RelativeLayout lyOutcall;
+    private  boolean isOutCallSelect,fromConfirmBooking = false;
 
     public BookingFragment3() {
         // Required empty public constructor
@@ -76,7 +75,10 @@ public class BookingFragment3 extends Fragment {
     }
 
     private void initView(){
-        ArrayList<BookingServices3> arrayList = subServices.artistservices;
+
+        ArrayList<BookingServices3> arrayList;
+        arrayList = subServices.artistservices;
+
         adapter = new Booking3ServiceAdapter(mContext, arrayList,item,isOutCallSelect, subServices,fromConfirmBooking);
         // arrayList.clear();
         // addService();

@@ -53,8 +53,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         switch (viewType) {
             case VIEWTYPE_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.searchboard_item_layout, parent, false);
-                ViewHolder viewHolder = new ViewHolder(view);
-                return viewHolder;
+                return new ViewHolder(view);
 
             case VIEWTYPE_LOADER:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more_view, parent, false);
@@ -122,7 +121,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.tvServices.setText(services);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDistance,tvServices,tvArtistName,tvRating;
         ImageView ivProfile;
         AppCompatButton btnBook;
@@ -147,17 +146,6 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     intent.putExtra("item",item);
                     intent.putExtra("mParam","1");
                     context.startActivity(intent);
-
-                  /*  if (item.businessType.equals("independent")){
-                        intent.putExtra("item",item);
-                        intent.putExtra("mParam","1");
-                        context.startActivity(intent);
-                    }else {
-                        intent.putExtra("item",item);
-                        intent.putExtra("mParam","");
-                        context.startActivity(intent);
-                    }*/
-
                 }
             });
         }

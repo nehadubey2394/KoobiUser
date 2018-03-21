@@ -29,17 +29,19 @@ public class BookingFragment1 extends Fragment {
     private String mParam1;
     private ArtistsSearchBoard item;
     private BookingInfo bookingInfo;
+    private boolean isEdit;
 
     public BookingFragment1() {
         // Required empty public constructor
     }
 
-    public static BookingFragment1 newInstance(String param1, ArtistsSearchBoard  item,BookingInfo bookingInfo) {
+    public static BookingFragment1 newInstance(String param1, ArtistsSearchBoard  item,BookingInfo bookingInfo,boolean isEdit) {
         BookingFragment1 fragment = new BookingFragment1();
         Bundle args = new Bundle();
         args.putString("param1", param1);
         args.putParcelable("param2", item);
         args.putSerializable("param3", bookingInfo);
+        args.putBoolean("param4", isEdit);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,6 +53,7 @@ public class BookingFragment1 extends Fragment {
             mParam1 = getArguments().getString("param1");
             item = getArguments().getParcelable("param2")  ;
             bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
+            isEdit = getArguments().getBoolean("param4");
         }
     }
 
@@ -73,7 +76,7 @@ public class BookingFragment1 extends Fragment {
     private void initView(){
         // staffList = new ArrayList<>();
         ArrayList<BookingStaff> staffList = item.staffList;
-        staffAdapter = new BookingSelectStaffAdapter(mContext,item, staffList,mParam1,bookingInfo);
+        staffAdapter = new BookingSelectStaffAdapter(mContext,item, staffList,mParam1,bookingInfo,isEdit);
     }
 
     private void setViewId(View rootView){

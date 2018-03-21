@@ -336,14 +336,16 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                             BookingServices3 services3 = new BookingServices3();
 
                                             services3._id = jsonObject3.getString("_id");
+                                            services3.setSelected(false);
+                                            services3.setBooked(false);
                                             services3.title = jsonObject3.getString("title");
                                             services3.completionTime = jsonObject3.getString("completionTime");
                                             services3.outCallPrice = jsonObject3.getString("outCallPrice");
                                             services3.inCallPrice = jsonObject3.getString("inCallPrice");
 
                                             if (!services3.outCallPrice.equals("0") || !services3.outCallPrice.equals("null")){
-                                                services3.isOutCall = true;
-                                                subServices.isOutCall = true;
+                                                services3.isOutCall3 = true;
+                                                subServices.isOutCall2 = true;
                                                 services.isOutCall = true;
                                             }
                                             subServices.artistservices.add(services3);
@@ -575,6 +577,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         BookingFragment4.arrayListbookingInfo.clear();
                         if (fCont==0){
                             fm.popBackStack();
+                            finish();
                         }else {
                             fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
                             BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
@@ -623,6 +626,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             showAlertDailog(fm,i);
         }
         else if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm,i);
+        }
+        else if (i==1 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
         }
         else if (i==0 && BookingFragment4.arrayListbookingInfo.size()>0){

@@ -29,14 +29,16 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     private String serviceTitle;
     private BookingInfo bookingInfo;
     private  ArtistsSearchBoard item;
+    private boolean isEdit;
 
     // Constructor of the class
-    public BookingSelectStaffAdapter(Context context, ArtistsSearchBoard item, ArrayList<BookingStaff> artistsList, String serviceTitle, BookingInfo bookingInfo) {
+    public BookingSelectStaffAdapter(Context context, ArtistsSearchBoard item, ArrayList<BookingStaff> artistsList, String serviceTitle, BookingInfo bookingInfo,boolean isEdit) {
         this.context = context;
         this.artistsList = artistsList;
         this.serviceTitle = serviceTitle;
         this.bookingInfo = bookingInfo;
         this.item = item;
+        this.isEdit = isEdit;
     }
 
     @Override
@@ -87,7 +89,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
             BookingStaff bookingStaff = artistsList.get(getAdapterPosition());
 
             ((BookingActivity)context).addFragment(
-                    BookingFragment4.newInstance("Booking",bookingStaff._id,bookingInfo), true, R.id.flBookingContainer);
+                    BookingFragment4.newInstance("Booking",isEdit,bookingInfo), true, R.id.flBookingContainer);
 
         }
     }

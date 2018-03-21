@@ -23,6 +23,9 @@
     <dimen name="day_circle_stroke_width">1dp</dimen>
 
 
+    <dimen name="shadow_width">2.5dp</dimen>
+
+
 
     <dimen name="mcam_toolbar_elevation">4dp</dimen>
     <dimen name="mcam_content_inset_less">12dp</dimen>

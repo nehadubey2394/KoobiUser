@@ -51,7 +51,7 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.tvDateAndTime.setText(item.date+", "+item.time);
 
         holder.tvPrice.setText("£"+item.price);
-        holder.tvServiceName.setText(item.sServiceName);
+        holder.tvServiceName.setText(item.artistService);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
