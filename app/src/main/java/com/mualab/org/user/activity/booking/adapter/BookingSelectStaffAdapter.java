@@ -13,6 +13,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.BookingStaff;
@@ -27,13 +28,15 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     private ArrayList<BookingStaff> artistsList;
     private String serviceTitle;
     private BookingInfo bookingInfo;
+    private  ArtistsSearchBoard item;
 
     // Constructor of the class
-    public BookingSelectStaffAdapter(Context context, ArrayList<BookingStaff> artistsList, String serviceTitle, BookingInfo bookingInfo) {
+    public BookingSelectStaffAdapter(Context context, ArtistsSearchBoard item, ArrayList<BookingStaff> artistsList, String serviceTitle, BookingInfo bookingInfo) {
         this.context = context;
         this.artistsList = artistsList;
         this.serviceTitle = serviceTitle;
         this.bookingInfo = bookingInfo;
+        this.item = item;
     }
 
     @Override

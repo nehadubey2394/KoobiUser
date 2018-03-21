@@ -30,7 +30,6 @@ public class BookingFragment1 extends Fragment {
     private ArtistsSearchBoard item;
     private BookingInfo bookingInfo;
 
-
     public BookingFragment1() {
         // Required empty public constructor
     }
@@ -74,7 +73,7 @@ public class BookingFragment1 extends Fragment {
     private void initView(){
         // staffList = new ArrayList<>();
         ArrayList<BookingStaff> staffList = item.staffList;
-        staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,mParam1,bookingInfo);
+        staffAdapter = new BookingSelectStaffAdapter(mContext,item, staffList,mParam1,bookingInfo);
     }
 
     private void setViewId(View rootView){

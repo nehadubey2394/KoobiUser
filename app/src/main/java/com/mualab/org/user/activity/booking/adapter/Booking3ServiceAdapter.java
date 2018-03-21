@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
@@ -29,23 +31,23 @@ import java.util.ArrayList;
 public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ArrayList<BookingServices3> artistsList;
-    private boolean showLoader;
+    private boolean showLoader,isOutCallSelect,fromConfirmBooking;
     private String serviceTitle;
     private ArtistsSearchBoard item;
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
-    private  boolean isOutCallSelect;
     private SubServices subServices;
     private Utility utility;
     // Constructor of the class
-    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, String serviceTitle,ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices) {
+    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices,boolean fromConfirmBooking) {
         this.context = context;
         this.artistsList = artistsList;
-        this.serviceTitle = serviceTitle;
         this.item = item;
         this.isOutCallSelect = isOutCallSelect;
         this.subServices = subServices;
+        this.fromConfirmBooking = fromConfirmBooking;
         utility = new Utility(context);
+        this.serviceTitle = subServices.subServiceName;
     }
 
     @Override
@@ -117,11 +119,17 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             prise = Double.parseDouble(item.inCallPrice);
         }
         holder.tvAmount.setText(""+prise);
+
+        if (fromConfirmBooking){
+            holder.sample1.setSwipeEnabled(true);
+        }else
+            holder.sample1.setSwipeEnabled(false);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tvAmount,tvLastService,tvTime;
         LinearLayout lyServiceDetail;
+        private SwipeLayout sample1;
         private ViewHolder(View itemView)
         {
             super(itemView);
@@ -129,6 +137,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             lyServiceDetail = itemView.findViewById(R.id.lyServiceDetail);
             tvLastService = itemView.findViewById(R.id.tvLastService);
             tvTime = itemView.findViewById(R.id.tvTime);
+            sample1 = itemView.findViewById(R.id.sample1);
 
             lyServiceDetail.setOnClickListener(this);
 
@@ -143,16 +152,25 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     BookingServices3 services3 = artistsList.get(getAdapterPosition());
 
                     BookingInfo bookingInfo = new BookingInfo();
+                    //add data from artist main services
                     bookingInfo.artistService = services3.title;
                     bookingInfo.msId = services3._id;
                     bookingInfo.time = services3.completionTime;
+
+                    //data from subservices
                     bookingInfo.sServiceName = subServices.subServiceName;
                     bookingInfo.ssId = subServices.subServiceId;
                     bookingInfo.sId = subServices.serviceId;
+                    bookingInfo.artistsList.addAll(artistsList);
+                    bookingInfo.subServices = subServices;
+                    bookingInfo.isOutCallSelect = isOutCallSelect;
+
+                    //add data from services
                     bookingInfo.artistName = item.userName;
                     bookingInfo.profilePic = item.profileImage;
                     bookingInfo.artistId = item._id;
                     bookingInfo.artistAddress = item.address;
+                    bookingInfo.item = item;
                     bookingInfo.userId = String.valueOf(user.id);
 
                     if (isOutCallSelect) {
@@ -190,7 +208,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     if (((BookingActivity)context).item.businessType.equals("independent")){
                         ((BookingActivity)context).addFragment(
-                                BookingFragment4.newInstance(serviceTitle,item._id,bookingInfo), true, R.id.flBookingContainer);
+                                BookingFragment4.newInstance(subServices.subServiceName,item._id,bookingInfo), true, R.id.flBookingContainer);
 
                     }else {
                         ((BookingActivity)context).addFragment(

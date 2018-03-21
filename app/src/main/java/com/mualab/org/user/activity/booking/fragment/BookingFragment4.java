@@ -26,6 +26,7 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingTimeSlot;
@@ -69,6 +70,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private BookingInfo bookingInfo;
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
     private SimpleDateFormat input,dateFormat;
+    private boolean alreadyAddedFound = false;
     //private MyFlexibleCalendar viewCalendar;
     private  View rootView;
 
@@ -76,7 +78,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         // Required empty public constructor
     }
 
-    public static BookingFragment4 newInstance(String param1, String mParam2,BookingInfo bookingInfo) {
+    public static BookingFragment4 newInstance(String param1, String mParam2, BookingInfo bookingInfo) {
         BookingFragment4 fragment = new BookingFragment4();
         Bundle args = new Bundle();
         args.putString("param1", param1);
@@ -173,14 +175,17 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 if (info.msId.equals(bookingInfo.msId)) {
                     isMatch=true;
                     bookingInfo = info;
-                    //  bookingInfo.date = "Select date";
-                    //   bookingInfo.time = "and time";
+                    alreadyAddedFound = true;
                     MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
                     break;
                 }
             }
-            if (!isMatch)arrayListbookingInfo.add(bookingInfo);
+            if (!isMatch){
+                alreadyAddedFound = false;
+                arrayListbookingInfo.add(bookingInfo);
+            }
         }else{
+            alreadyAddedFound = false;
             arrayListbookingInfo.add(bookingInfo);
         }
 
@@ -210,7 +215,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnCOnfirmBooking:
-                if (bookingTimeSlots.size() != 0){
+                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                         apiForContinueBooking(false);
                     } else {
@@ -236,7 +241,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
             case R.id.btnAddMoreService:
 
-                if (bookingTimeSlots.size() != 0){
+                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                         apiForContinueBooking(true);
                     } else {
@@ -290,11 +295,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                         if (year==cYear && month==cMonth && dayOfMonth<cDay){
                             Log.i("","can't select previous date");
                         }else {
-                            bookingInfo.date = "Select date";
-                            bookingInfo.time = "and time";
-
-                            bookingInfoAdapter.notifyDataSetChanged();
-
+                            if (!alreadyAddedFound){
+                                bookingInfo.date = "Select date";
+                                bookingInfo.time = "and time";
+                                bookingInfoAdapter.notifyDataSetChanged();
+                            }
                             if (dayOfMonth==cDay){
                                 currentTime = getCurrentTime();
                             }else
@@ -414,10 +419,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 BookingTimeSlot item = new BookingTimeSlot();
                                 item.time = jsonArray.getString(j);
                                 item.isSelected = "0";
-                               /* if (j==0){
-                                    bookingInfo.time = item.time;
-                                    bookingInfoAdapter.notifyDataSetChanged();
-                                }*/
                                 bookingTimeSlots.add(item);
                             }
                         }else {
@@ -524,8 +525,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                             ((BookingActivity) mContext).addFragment(
                                     BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
                         }
-
-                        MyToast.getInstance(mContext).showDasuAlert(message);
+                        if (!message.equals("Service already added"))
+                            MyToast.getInstance(mContext).showDasuAlert(message);
                     }
                 } catch (Exception e) {
                     Progress.hide(mContext);
@@ -557,50 +558,46 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
     @Override
     public void onButtonClick(int position, String buttonText, int selectedCount) {
-        BookingTimeSlot item =  bookingTimeSlots.get(position);
+        if (!alreadyAddedFound){
+            BookingTimeSlot item =  bookingTimeSlots.get(position);
+            Utility utility = new Utility(mContext);
 
-        Utility utility = new Utility(mContext);
-
-        for (int i = 0;i<bookingTimeSlots.size();i++){
-            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
-            timeSlot.isSelected = "0";
-        }
-        listAdapter.notifyDataSetChanged();
-        // if (item.isSelected.equals("0"))
-        item.isSelected = "1";
-        bookingInfo.time = item.time;
-
-        //   if (bookingInfo.time.contains(":")){
-        //  String[] separated = bookingInfo.time.split(":");
-        //   int minuts1 = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
-
-        if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
-            int min2  = Integer.parseInt(bookingInfo.endTime);
-
-            // int finalMin = minuts1+min2;
-
-            SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
-            Date d;
-            try {
-                d = df.parse(item.time);
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(d);
-                cal.add(Calendar.MINUTE, min2);
-                bookingInfo.endTime = df.format(cal.getTime());
-
-                Date  formatedDate = input.parse(selectedDate);  // parse input
-                bookingInfo.date =  dateFormat.format(formatedDate);
-                bookingInfo.selectedDate =  selectedDate;
-            } catch (ParseException e) {
-                e.printStackTrace();
+            for (int i = 0;i<bookingTimeSlots.size();i++){
+                BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
+                timeSlot.isSelected = "0";
             }
+
+            listAdapter.notifyDataSetChanged();
+            // if (item.isSelected.equals("0"))
+            item.isSelected = "1";
+            bookingInfo.time = item.time;
+
+            if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
+                int min2  = Integer.parseInt(bookingInfo.endTime);
+
+                // int finalMin = minuts1+min2;
+
+                SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+                Date d;
+                try {
+                    d = df.parse(item.time);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(d);
+                    cal.add(Calendar.MINUTE, min2);
+                    bookingInfo.endTime = df.format(cal.getTime());
+
+                    Date  formatedDate = input.parse(selectedDate);  // parse input
+                    bookingInfo.date =  dateFormat.format(formatedDate);
+                    bookingInfo.selectedDate =  selectedDate;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            listAdapter.notifyItemChanged(position);
+
+            if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
+                bookingInfoAdapter.notifyDataSetChanged();
         }
-        //    }
-
-        listAdapter.notifyItemChanged(position);
-
-        if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
-            bookingInfoAdapter.notifyDataSetChanged();
     }
 
     @Override

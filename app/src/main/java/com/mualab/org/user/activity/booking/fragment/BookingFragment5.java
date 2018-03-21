@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.session.Session;
@@ -49,6 +51,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     private BookedServicesAdapter adapter;
     private ArrayList<BookingInfo> selectedServices;
     int pos = BookingFragment4.arrayListbookingInfo.size()-1;
+    private ArtistsSearchBoard item;
 
     public BookingFragment5() {
         // Required empty public constructor
@@ -70,6 +73,9 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         BookingActivity.tvBuisnessName.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             bookingInfo = (BookingInfo) getArguments().getSerializable("bookingInfo");
+            if (bookingInfo != null)
+                item = bookingInfo.item;
+
         }
     }
 
@@ -91,7 +97,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
     private void initView(){
         selectedServices = new ArrayList<>();
-        adapter = new BookedServicesAdapter(mContext, selectedServices);
+        adapter = new BookedServicesAdapter((AppCompatActivity) getActivity(), selectedServices,item);
     }
 
     private void setViewId(View rootView){
@@ -216,6 +222,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        MyToast.getInstance(mContext).showDasuAlert(message);
                         getActivity().finish();
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert(message);

@@ -92,6 +92,7 @@
                         android:gravity="right|center_vertical"
                         android:maxLines="2"
                         android:padding="2dp"
+                        android:visibility="gone"
                         android:text="Make up Artist"
                         android:layout_marginRight="6dp"
                         android:layout_centerVertical="true"
@@ -175,7 +176,7 @@
                 <android.support.v7.widget.AppCompatButton
                     style="@style/My_Button_Small.Invert"
                     android:id="@+id/btnEditDate"
-                    android:layout_width="72dp"
+                    android:layout_width="70dp"
                     android:layout_height="28dp"
                     android:text="@string/text_edit"
                     android:layout_alignParentRight="true"
@@ -298,7 +299,6 @@
                     android:gravity="center"
                     android:layout_gravity="center_vertical"
                     android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
                     android:orientation="horizontal" android:background="@drawable/bg_white_circle_gray_strock"
                     android:padding="5dp">
 
@@ -312,31 +312,36 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/roboto_medium"
-                    android:text="@string/text_services"
+                    android:orientation="vertical"
                     android:layout_toRightOf="@+id/lyServices"
                     android:layout_marginLeft="10dp"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    />
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="4dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/text_services"
+                        />
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rycSelectedServ"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never"
+                        android:nestedScrollingEnabled="true"
+                        android:scrollbars="none"
+                        />
+                </LinearLayout>
 
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rycSelectedServ"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="52dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginTop="-5dp"
-                android:overScrollMode="never"
-                android:nestedScrollingEnabled="true"
-                android:scrollbars="none" />
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -397,7 +402,7 @@
                 <android.support.v7.widget.AppCompatButton
                     style="@style/My_Button_Small.Invert"
                     android:id="@+id/btnVcApply"
-                    android:layout_width="72dp"
+                    android:layout_width="70dp"
                     android:layout_height="28dp"
                     android:text="@string/text_apply"
                     android:layout_alignParentRight="true"
