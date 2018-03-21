@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -33,6 +34,7 @@ import com.image.cropper.CropImage;
 import com.image.cropper.CropImageView;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.authentication.Registration2Activity;
 import com.mualab.org.user.activity.feeds.adapter.CommentAdapter;
 import com.mualab.org.user.activity.feeds.model.Comment;
 import com.mualab.org.user.application.Mualab;
@@ -62,7 +64,6 @@ public class CommentsActivity extends AppCompatActivity {
     private ProgressBar progress_bar;
     private AppCompatButton btn_post_comments;
     private RecyclerView recyclerView;
-    ImageView ivCamera;
 
     private Feeds feed;
     private int feedPosition;
@@ -90,13 +91,12 @@ public class CommentsActivity extends AppCompatActivity {
         btn_post_comments =  findViewById(R.id.btn_post_comments);
         ll_loadingBox =  findViewById(R.id.ll_loadingBox);
         progress_bar =  findViewById(R.id.progress_bar);
-        ivCamera =  findViewById(R.id.ivCamera);
 
-
+        ImageView ivCamera = findViewById(R.id.ivCamera);
         ivCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImagePicker.pickImage(CommentsActivity.this);
+                getPermissionAndPicImage();
             }
         });
 
@@ -174,6 +174,20 @@ public class CommentsActivity extends AppCompatActivity {
         }
     }
 
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+
+            case Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ImagePicker.pickImage(CommentsActivity.this);
+                } else {
+                    MyToast.getInstance(CommentsActivity.this).showSmallMessage("Need read gallery or camera permission for pick or tack image.");
+                }
+            }
+            break;
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -188,7 +202,8 @@ public class CommentsActivity extends AppCompatActivity {
                 if (imageUri != null) {
                     CropImage.activity(imageUri).setCropShape(CropImageView.CropShape.RECTANGLE).
                             setAspectRatio(400, 400)
-                            .setMaxCropResultSize(600, 600).start(this);
+                            .setMinCropResultSize(600,600)
+                            .setMaxCropResultSize(1000, 1000).start(this);
                 } else {
                     MyToast.getInstance(CommentsActivity.this).showSmallMessage(
                             getString(R.string.msg_some_thing_went_wrong));

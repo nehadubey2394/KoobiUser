@@ -625,7 +625,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         map.put("feedType", feedTypetxt);
         map.put("caption", caption);
         map.put("location", address);
-        map.put("tags", tages);
+        map.put("tag", tages);
         map.put("serviceTagId", tages);
         map.put("userId", ""+session.getUser().id);
 

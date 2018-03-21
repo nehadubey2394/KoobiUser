@@ -24,6 +24,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.feeds.adapter.LikeListAdapter;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 
@@ -31,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,7 @@ import java.util.Map;
 
 public class LikeFragment extends Fragment {
 
+    private static String TAG = LikeFragment.class.getName();
     private Context mContext;
     private MainActivity activity;
     private EditText ed_search;
@@ -159,6 +162,7 @@ public class LikeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
         tvHeaderTitle.setVisibility(View.GONE);
         ivHeaderBack.setVisibility(View.GONE);
         ivAppIcon.setVisibility(View.VISIBLE);
@@ -222,6 +226,6 @@ public class LikeFragment extends Fragment {
                 progress_bar.setVisibility(View.GONE);
             }
         }).setProgress(false)
-        .setParam(map)).execute("likeList");
+        .setParam(map)).execute(TAG);
     }
 }

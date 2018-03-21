@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    app:cardCornerRadius="0dp"
-    android:layout_margin="2dp"
-    app:cardElevation="4dp"
-    app:cardBackgroundColor="@color/screen_bg_color">-->
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -33,23 +23,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <View
-            android:id="@+id/vBgLike"
-            android:layout_width="250dp"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:background="@drawable/bg_like_circle_background"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/ivLike"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="center"
-            android:src="@drawable/inactive_like_ico"
-            android:visibility="invisible"
-            />
-
         <LinearLayout
             android:id="@+id/ll_Dot"
             android:layout_width="wrap_content"
@@ -63,13 +36,6 @@
 
     </RelativeLayout>
 
-
-    <!--<View
-        android:layout_width="match_parent"
-        android:layout_height="0.1dip"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dip"
-        android:background="@color/gray2"/>-->
 
     <include layout="@layout/feed_item_footer"
         android:layout_width="match_parent"

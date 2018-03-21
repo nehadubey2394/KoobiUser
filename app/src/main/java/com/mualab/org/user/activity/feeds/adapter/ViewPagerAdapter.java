@@ -16,6 +16,9 @@ import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import com.mualab.org.user.util.ScreenUtils;
+
 /**
  */
 
@@ -26,7 +29,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     private List<String> ImagesList;
     private Listner listner;
     private MyOnDoubleTapListener tapListener;
-    private static int px;
+    private static int widthPixels;
 
 
     public ViewPagerAdapter(Context context, List<String> imagesList, Listner listner) {
@@ -35,14 +38,8 @@ public class ViewPagerAdapter extends PagerAdapter {
         this.listner = listner;
         this.mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         tapListener = new MyOnDoubleTapListener(context);
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        //int width = dm.widthPixels;
-        //int height = dm.heightPixels;
-        px = (int) dm.xdpi;
-        if(px>380)
-            px=380;
-       // px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, dm);
-
+        widthPixels = ScreenUtils.getScreenWidth(context);
+        widthPixels = widthPixels>=1080?1080:widthPixels;
     }
 
     @Override
@@ -65,7 +62,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         Picasso.with(context)
                 .load(ImagesList.get(position))
                // .fit()
-                .resize(px,px)
+                .resize(widthPixels,widthPixels)
                 .centerCrop()
                 .onlyScaleDown() //
                 .placeholder(R.drawable.gallery_placeholder)
