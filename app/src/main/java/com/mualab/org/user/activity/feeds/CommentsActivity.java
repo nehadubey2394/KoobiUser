@@ -101,6 +101,8 @@ public class CommentsActivity extends AppCompatActivity {
         });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
@@ -274,7 +276,7 @@ public class CommentsActivity extends AppCompatActivity {
                         }
                         //recyclerView.smoothScrollToPosition(0);
                         commentAdapter.notifyDataSetChanged();
-                        recyclerView.scrollToPosition(commentList.size()-1);
+                       // recyclerView.scrollToPosition(commentList.size()-1);
                     }else {
 
                         if(commentList.size()==0) {
