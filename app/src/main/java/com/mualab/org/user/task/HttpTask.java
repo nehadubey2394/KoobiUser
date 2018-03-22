@@ -9,6 +9,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.mualab.org.user.application.Mualab;
@@ -248,6 +249,9 @@ public class HttpTask {
         request.setShouldCache(shouldCache);
         if(progress)
             Progress.show(context);
+        request.setRetryPolicy(new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Mualab.getInstance().addToRequestQueue(request, TAG);
     }
 

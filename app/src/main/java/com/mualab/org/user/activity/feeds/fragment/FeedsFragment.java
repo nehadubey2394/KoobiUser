@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.feeds.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -39,7 +39,6 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.CameraActivity;
-import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
@@ -259,20 +258,20 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     intent.putExtra("mediaUri", mediaUri);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation(getActivity(), (View)iv_selectedImage, "profile");
+                            makeSceneTransitionAnimation((Activity) mContext, iv_selectedImage, "profile");
                 }else if (!TextUtils.isEmpty(caption)) {
                     intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", caption);
                     intent.putExtra("feedType", Constant.TEXT_STATE);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation(getActivity(), (View)edCaption, "text");
+                            makeSceneTransitionAnimation((Activity) mContext, edCaption, "text");
                    // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.under_development));
                 }
 
                 if (intent != null) {
                     if(options!=null)
-                    startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
+                        startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
                     else startActivityForResult(intent, Constant.POST_FEED_DATA);
                 }else {
                     Animation shake = AnimationUtils.loadAnimation(mContext, R.anim.shake);

@@ -77,6 +77,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     .into(holder.iv_profileImage);
         }else Picasso.with(mContext).load(R.drawable.defoult_user_img).into(holder.iv_profileImage);
 
+
+        if(commentListInfo.type.equals("image")){
+            holder.ivImg.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(commentListInfo.comment)
+                    .placeholder(R.drawable.gallery_placeholder)
+                    .error(R.drawable.gallery_placeholder)
+                    .into(holder.ivImg);
+            holder.tv_comments.setVisibility(View.GONE);
+        }else {
+            holder.tv_comments.setVisibility(View.VISIBLE);
+            holder.ivImg.setVisibility(View.GONE);
+            holder.tv_comments.setText(commentListInfo.comment);
+        }
+
         holder.tv_user_name.setText(commentListInfo.userName);
         holder.tv_comments.setText(commentListInfo.comment);
         holder.tv_like_count.setText(String.format("%s Like", commentListInfo.commentLikeCount));
@@ -90,7 +104,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView iv_profileImage, iv_like;
+        ImageView iv_profileImage,ivImg, iv_like;
         TextView tv_user_name, tv_comments, tv_comments_time, tv_like_count;
 
         public ViewHolder(View itemView) {
@@ -100,6 +114,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             tv_comments_time = itemView.findViewById(R.id.tv_comments_time);
             tv_like_count = itemView.findViewById(R.id.tv_like_count);
             iv_profileImage = itemView.findViewById(R.id.iv_profileImage);
+            ivImg = itemView.findViewById(R.id.ivImg);
             iv_like = itemView.findViewById(R.id.iv_like);
         }
     }

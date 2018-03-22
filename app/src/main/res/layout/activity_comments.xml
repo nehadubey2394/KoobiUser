@@ -83,11 +83,10 @@
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/primary_bg_round"
                 android:padding="5dp"
                 android:src="@drawable/camera_ico"
-                android:tint="@color/white"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <FrameLayout
                 android:layout_width="0dp"

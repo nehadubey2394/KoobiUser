@@ -24,9 +24,7 @@ import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.PreviewImageActivity;
-import com.mualab.org.user.activity.feeds.model.FeedLike;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.UnfollowDialog;
 import com.mualab.org.user.listner.OnDoubleTapListener;
@@ -47,6 +45,7 @@ import java.util.Map;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
+import views.cv.ResizableTextView;
 
 
 /**
@@ -187,6 +186,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 textHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
                 textHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
                 textHolder.tv_text.setText(feeds.caption);
+                //ResizableTextView.doResizeTextView(textHolder.tv_text, 50 , "View More", true);
                 break;
 
             case "image":{
