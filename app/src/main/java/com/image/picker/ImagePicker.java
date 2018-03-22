@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -23,6 +24,7 @@ import com.mualab.org.user.R;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -242,9 +244,79 @@ public final class ImagePicker {
                 selectedImage = imageReturnedIntent.getData();
             }
             Log.i(TAG, "selectedImage: " + selectedImage);
+            bm = getImageResized(context, selectedImage);
+            int rotation = ImageRotator.getRotation(context, selectedImage, isCamera);
+            bm = ImageRotator.rotate(bm, rotation);
+            return Uri.parse(ImageUtils.savePicture(context, bm, String.valueOf(selectedImage.getPath().hashCode())));
         }
         return selectedImage;
     }
+
+
+    /**
+     * Called after launching the picker with the same values of Activity.getImageFromResult
+     * in order to resolve the result and get the image path.
+     *
+     * @param context             context.
+     * @param requestCode         used to identify the pick image action.
+     * @param resultCode          -1 means the result is OK.
+     * @param imageReturnedIntent returned intent where is the image data.
+     * @return path to the saved image.
+     */
+    @Nullable
+    public static String getImagePathFromResult(Context context, int requestCode, int resultCode,
+                                                Intent imageReturnedIntent) {
+        Log.i(TAG, "getImagePathFromResult() called with: " + "resultCode = [" + resultCode + "]");
+        Uri selectedImage = null;
+        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST_CODE) {
+            File imageFile = ImageUtils.getTemporalFile(context, String.valueOf(PICK_IMAGE_REQUEST_CODE));
+            boolean isCamera = (imageReturnedIntent == null
+                    || imageReturnedIntent.getData() == null
+                    || imageReturnedIntent.getData().toString().contains(imageFile.toString()));
+            if (isCamera) {
+                return imageFile.getAbsolutePath();
+            } else {
+                selectedImage = imageReturnedIntent.getData();
+            }
+            Log.i(TAG, "selectedImage: " + selectedImage);
+        }
+        if (selectedImage == null) {
+            return null;
+        }
+        return getFilePathFromUri(context, selectedImage);
+    }
+
+
+
+
+    /**
+     * Get stream, save the picture to the temp file and return path.
+     *
+     * @param context context
+     * @param uri uri of the incoming file
+     * @return path to the saved image.
+     */
+    private static String getFilePathFromUri(Context context, Uri uri) {
+        InputStream is = null;
+        if (uri.getAuthority() != null) {
+            try {
+                is = context.getContentResolver().openInputStream(uri);
+                Bitmap bmp = BitmapFactory.decodeStream(is);
+                return ImageUtils.savePicture(context, bmp, String.valueOf(uri.getPath().hashCode()));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+
 
     private static File getTemporalFile(Context context) {
         return new File(context.getExternalCacheDir(), TEMP_IMAGE_NAME);

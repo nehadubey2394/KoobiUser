@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -55,9 +56,6 @@ import views.cv.ResizableTextView;
 @SuppressWarnings("WeakerAccess")
 public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
-    public static final String ACTION_LIKE_IMAGE_CLICKED = "action_like_image_button";
-    public static final int VIEW_TYPE_DEFAULT = 1;
     protected boolean showLoader;
     private final int TEXT_TYPE = 0;
     private final int IMAGE_TYPE = 1;
@@ -184,7 +182,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 textHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 textHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                textHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+                textHolder.likeIcon.setChecked(feeds.isLike==1);
+               // textHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
                 textHolder.tv_text.setText(feeds.caption);
                 //ResizableTextView.doResizeTextView(textHolder.tv_text, 50 , "View More", true);
                 break;
@@ -220,7 +219,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 imageHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 imageHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                imageHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+                imageHolder.likeIcon.setChecked(feeds.isLike==1);
+                //imageHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
                 if(!TextUtils.isEmpty(feeds.caption)){
                     imageHolder.tv_text.setVisibility(View.VISIBLE);
@@ -262,7 +262,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             feed.likeCount = ++feed.likeCount;
                             apiForLikes(feeds);
                         }
-                        notifyItemChanged(pos, ACTION_LIKE_IMAGE_CLICKED);
+                        notifyItemChanged(pos);
                     }
                 }));
 
@@ -352,7 +352,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 videoHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 videoHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 videoHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                videoHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+                videoHolder.likeIcon.setChecked(feeds.isLike==1);
+                //videoHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
                 if(!TextUtils.isEmpty(feeds.videoThumbnail)){
                     Picasso.with(videoHolder.ivFeedCenter.getContext())
@@ -430,14 +431,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
-        holder.btnLike.setOnClickListener(new View.OnClickListener() {
+        holder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPosition = holder.getAdapterPosition();
                 Feeds feed = feedItems.get(adapterPosition);
                 feed.isLike = feed.isLike==1?0:1;
                 feed.likeCount = feed.isLike==1?++feed.likeCount:--feed.likeCount;
-                notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
+                notifyItemChanged(adapterPosition);
                 apiForLikes(feed);
             }
         });
@@ -520,14 +521,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
-        videoHolder.btnLike.setOnClickListener(new View.OnClickListener() {
+        videoHolder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPosition = videoHolder.getAdapterPosition();
                 Feeds feed = feedItems.get(adapterPosition);
                 feed.isLike = feed.isLike==1?0:1;
                 feed.likeCount = feed.isLike==1?++feed.likeCount:--feed.likeCount;
-                notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
+                notifyItemChanged(adapterPosition);
                 apiForLikes(feed);
             }
         });
@@ -613,14 +614,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
-        cellFeedViewHolder.btnLike.setOnClickListener(new View.OnClickListener() {
+        cellFeedViewHolder.likeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
                 Feeds feed = feedItems.get(adapterPosition);
                 feed.isLike = feed.isLike==1?0:1;
                 feed.likeCount = feed.isLike==1?++feed.likeCount:--feed.likeCount;
-                notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
+                notifyItemChanged(adapterPosition);
                 apiForLikes(feed);
             }
         });
@@ -749,9 +750,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class FeedTextHolder extends RecyclerView.ViewHolder {
-        public View vBgLike;
+
+        public CheckBox likeIcon;
         public ImageView ivLike;
-        public ImageView ivProfile, ivShare, btnLike, ivComments, ivFeedCenter;
+        public ImageView ivProfile, ivShare, ivComments, ivFeedCenter; //btnLike
         private LinearLayout ly_like_count, ly_comments;
         private TextView tvUserName, tvUserLocation, tvPostTime;
         private TextView tv_like_count, tv_comments_count;
@@ -763,7 +765,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ivProfile =  itemView.findViewById(R.id.iv_user_image);
             ivShare =  itemView.findViewById(R.id.iv_share);
-            btnLike = itemView.findViewById(R.id.btnLike);
+            //btnLike = itemView.findViewById(R.id.btnLike);
             ivComments = itemView.findViewById(R.id.iv_comments);
             ivFeedCenter = itemView.findViewById(R.id.ivFeedCenter);
 
@@ -777,15 +779,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ly_like_count = itemView.findViewById(R.id.ly_like_count);
             ly_comments = itemView.findViewById(R.id.ly_comments);
 
-            vBgLike = itemView.findViewById(R.id.vBgLike);
             ivLike = itemView.findViewById(R.id.ivLike);
             btnFollow = itemView.findViewById(R.id.btnFollow);
+            likeIcon = itemView.findViewById(R.id.likeIcon);
         }
     }
 
     public static class FeedVideoHolder extends RecyclerView.ViewHolder {
-        public ImageView ivProfile, ivShare, btnLike, ivComments, ivFeedCenter;
-        public View vBgLike;
+        public ImageView ivProfile, ivShare, ivComments, ivFeedCenter;
+        public CheckBox likeIcon;
         public ImageView ivLike;
         private LinearLayout ly_like_count, ly_comments;
         private TextView tvUserName, tvUserLocation, tvPostTime;
@@ -798,7 +800,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ivProfile =  itemView.findViewById(R.id.iv_user_image);
             ivShare =  itemView.findViewById(R.id.iv_share);
-            btnLike =  itemView.findViewById(R.id.btnLike);
             ivComments =  itemView.findViewById(R.id.iv_comments);
             ivFeedCenter =  itemView.findViewById(R.id.ivFeedCenter);
             tvUserName = itemView.findViewById(R.id.tv_user_name);
@@ -809,17 +810,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ly_like_count = itemView.findViewById(R.id.ly_like_count);
             ly_comments = itemView.findViewById(R.id.ly_comments);
             tv_comments_count = itemView.findViewById(R.id.tv_comments_count);
-
-            vBgLike = itemView.findViewById(R.id.vBgLike);
             ivLike =  itemView.findViewById(R.id.ivLike);
             btnFollow = itemView.findViewById(R.id.btnFollow);
+            likeIcon = itemView.findViewById(R.id.likeIcon);
         }
     }
 
     static class CellFeedViewHolder extends RecyclerView.ViewHolder {
-        public ImageView ivProfile, ivShare, btnLike, ivComments;
-        public View vBgLike;
+        public ImageView ivProfile, ivShare, ivComments;
         public ImageView ivLike;
+        public CheckBox likeIcon;
         private LinearLayout ly_like_count, ly_comments, ll_Dot;
         private RelativeLayout rl_imageView;
         private TextView tvUserName, tvUserLocation, tvPostTime;
@@ -835,7 +835,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             ivProfile =  itemView.findViewById(R.id.iv_user_image);
             ivShare =  itemView.findViewById(R.id.iv_share);
-            btnLike =  itemView.findViewById(R.id.btnLike);
             ivComments =  itemView.findViewById(R.id.iv_comments);
             tvUserName = itemView.findViewById(R.id.tv_user_name);
             tvUserLocation = itemView.findViewById(R.id.tv_location);
@@ -848,10 +847,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tv_comments_count = itemView.findViewById(R.id.tv_comments_count);
             rl_imageView = itemView.findViewById(R.id.rl_imageView);
             weakRefViewPager = new WeakReference<>((ViewPager) itemView.findViewById(R.id.viewpager));
-
-            vBgLike = itemView.findViewById(R.id.vBgLike);
             ivLike =  itemView.findViewById(R.id.ivLike);
             btnFollow = itemView.findViewById(R.id.btnFollow);
+            likeIcon = itemView.findViewById(R.id.likeIcon);
         }
     }
 
@@ -905,7 +903,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 feed.likeCount = ++feed.likeCount;
                 apiForLikes(feed);
             }
-            notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
+            notifyItemChanged(adapterPosition);
         }
 
         private int getPosition(){

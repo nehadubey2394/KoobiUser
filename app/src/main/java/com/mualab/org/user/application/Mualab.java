@@ -10,6 +10,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.mualab.org.user.BuildConfig;
+import com.mualab.org.user.model.Location;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
 
@@ -27,6 +28,7 @@ public class Mualab extends Application {
 
     public static Mualab mInstance;
     public static User currentUser;
+    public static Location currentLocation;
     public static DatabaseReference ref;
 
     private Session session;
@@ -44,6 +46,7 @@ public class Mualab extends Application {
         super.onCreate();
         mInstance = this;
         mInstance.getSessionManager();
+        currentLocation = new Location();
         FirebaseApp.initializeApp(this);
        // ref = FirebaseDatabase.getInstance().getReference();
     }
