@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,10 +102,15 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         //  holder.ivProfile.setImageResource(item.profilePic);
 
-        if (!item.profileImage.equals("")){
-            Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
-                    fit().into(holder.ivProfile);
+        if (!TextUtils.isEmpty(item.profileImage)){
+            Picasso.with(context).load(item.profileImage)
+                    .fit()
+                    .placeholder(R.drawable.defoult_user_img)
+                    .into(holder.ivProfile);
+        }else {
+            Picasso.with(context).load(R.drawable.defoult_user_img).into(holder.ivProfile);
         }
+
         String services = "";
         if (item.service.size()!=0){
             for (int i=0; i<item.service.size(); i++){

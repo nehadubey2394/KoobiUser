@@ -72,6 +72,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         if(!TextUtils.isEmpty(commentListInfo.profileImage)){
             Picasso.with(mContext).load(commentListInfo.profileImage)
+                    .fit()
                     .placeholder(R.drawable.defoult_user_img)
                     .error(R.drawable.defoult_user_img)
                     .into(holder.iv_profileImage);
@@ -81,6 +82,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         if(commentListInfo.type.equals("image")){
             holder.ivImg.setVisibility(View.VISIBLE);
             Picasso.with(mContext).load(commentListInfo.comment)
+                    .fit()
                     .placeholder(R.drawable.gallery_placeholder)
                     .error(R.drawable.gallery_placeholder)
                     .into(holder.ivImg);
@@ -161,8 +163,5 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 holder.iv_like.setEnabled(true);
             }
         }).setParam(map).setProgress(true)).execute("commentLike");
-
     }
-
-
 }

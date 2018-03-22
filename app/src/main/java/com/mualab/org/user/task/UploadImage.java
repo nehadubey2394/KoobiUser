@@ -13,6 +13,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.image.picker.ImageUtils;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.application.multipleFileUpload.MultiPartRequest;
 import com.mualab.org.user.application.multipleFileUpload.StringParser;
@@ -57,15 +58,21 @@ public class UploadImage {
 
         List<File> images = new ArrayList<>();
         for (int index = 0, size = mSelectedImages.size(); index < size; index++) {
+
             Uri uri = mSelectedImages.get(index);
-            String authority =uri.getAuthority();
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(),uri);
-                File file = FileUtils.savebitmap(mContext, bitmap, "tmp"+index);
-                images.add(file);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(uri.toString().contains("/storage/emulated/0/Android/data/com.mualab.org.user/cache/i_prefix")){
+                String str = uri.toString().replace("/storage/emulated/0/Android/data/com.mualab.org.user/cache/","");
+                images.add(new File(mContext.getExternalCacheDir(), str));
+            }else {
+                String authority =uri.getAuthority();
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(),uri);
+                    File file = FileUtils.savebitmap(mContext, bitmap, "tmp"+index);
+                    images.add(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

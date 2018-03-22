@@ -42,7 +42,6 @@ import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
-import com.mualab.org.user.activity.feeds.adapter.FeedItemAnimator;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.activity.story.StoreActivityTest;
 import com.mualab.org.user.application.Mualab;
@@ -216,7 +215,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         super.onViewCreated(view, savedInstanceState);
 
         WrapContentLinearLayoutManager lm = new WrapContentLinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
-        rvFeed.setItemAnimator(new FeedItemAnimator());
+        rvFeed.setItemAnimator(null);
         rvFeed.setLayoutManager(lm);
         rvFeed.setHasFixedSize(true);
 

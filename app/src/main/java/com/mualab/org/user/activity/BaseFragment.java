@@ -14,6 +14,7 @@ public class BaseFragment extends Fragment {
     public static final String ARGS_INSTANCE = "com.mualab.org.user";
 
     FragmentNavigation mFragmentNavigation;
+    protected Context mContext;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,6 +26,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof FragmentNavigation) {
             mFragmentNavigation = (FragmentNavigation) context;
         }

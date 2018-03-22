@@ -2,7 +2,6 @@ package com.mualab.org.user.activity.searchBoard.fragment;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -10,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,13 +17,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import com.android.volley.VolleyError;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.MainActivity;
+
+import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.SearchBoardAdapter;
 import com.mualab.org.user.application.Mualab;
@@ -42,6 +45,7 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.LocationDetector;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -49,16 +53,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class SearchBoardFragment extends Fragment implements View.OnClickListener {
+public class SearchBoardFragment extends BaseFragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private Context mContext;
+    public static String TAG = SearchBoardFragment.class.getName();
+
     private RecyclerView rvSearchBoard;
     private ImageView ivStar;
+    private TextView tv_msg;
+    private ProgressBar progress_bar;
+    private LinearLayout ll_loadingBox;
 
     private SearchBoardAdapter listAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private ArrayList<ArtistsSearchBoard>artistsList;
-    private String mParam1;
     private boolean isFavClick = false;
     private RefineSearchBoard item;
     private String subServiceId = "",mainServId = "",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="",date;
@@ -71,11 +78,6 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         return fragment;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,9 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         // Inflate the layout for this fragment
         rvSearchBoard = view.findViewById(R.id.rvSearchBoard);
         ivStar = view.findViewById(R.id.ivStar);
+        tv_msg = view.findViewById(R.id.tv_msg);
+        progress_bar = view.findViewById(R.id.progress_bar);
+        ll_loadingBox = view.findViewById(R.id.ll_loadingBox);
         CardView cvFilter = view.findViewById(R.id.cvFilter);
         CardView cvFavourite = view.findViewById(R.id.cvFavourite);
         cvFilter.setOnClickListener(this);
@@ -141,8 +146,19 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         rvSearchBoard.addOnScrollListener(scrollListener);
 
 
-        if(artistsList.size()==0)
+        if(artistsList.size()==0){
+            ll_loadingBox.setVisibility(View.VISIBLE);
+            progress_bar.setVisibility(View.VISIBLE);
+            tv_msg.setText(getString(R.string.loading));
             getDeviceLocation();
+        }
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
     }
 
     @Override
@@ -190,6 +206,9 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                             if (location != null) {
                                 double latitude = location.getLatitude();
                                 double longitude = location.getLongitude();
+                                Mualab.currentLocation.lat = latitude;
+                                Mualab.currentLocation.lng = longitude;
+
                                 if (lng.equals("") && lat.equals("")){
                                     lat = String.valueOf(latitude);
                                     lng = String.valueOf(longitude);
@@ -200,6 +219,8 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                     });
 
                 }else {
+                    progress_bar.setVisibility(View.GONE);
+                    tv_msg.setText("Need enable location and permission for search near by artist.");
                     locationDetector.showLocationSettingDailod(getActivity());
                 }
             }
@@ -230,8 +251,6 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
     }
 
     private void apiForGetArtist(final int page, final boolean isLoadMore){
-        Session session = Mualab.getInstance().getSessionManager();
-        User user = session.getUser();
 
         if (!ConnectionDetector.isConnected()) {
             new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
@@ -258,14 +277,14 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
         params.put("subservice", subServiceId);
         params.put("sortSearch", sortSearch);
         params.put("sortType", sortType);
-        params.put("userId", String.valueOf(user.id));
+        params.put("userId", String.valueOf(Mualab.currentUser.id));
         // params.put("appType", "user");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistSearch", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
-                    Progress.hide(mContext);
+                    progress_bar.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -283,40 +302,37 @@ public class SearchBoardFragment extends Fragment implements View.OnClickListene
                                 artistsList.add(item);
 
                             }
+                            ll_loadingBox.setVisibility(View.GONE);
                             listAdapter.notifyDataSetChanged();
                         }else {
-                            if (page==0)
+                            if (page==0){
+                                tv_msg.setText("No Artist available on this location");
                                 MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
+                            }
                         }
-                    }else {
-                        MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
 
+                    }else {
+                        if (page==0){
+                            tv_msg.setText("No Artist available on this location");
+                            MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
+                        }
                     }
                     //  showToast(message);
                 } catch (Exception e) {
-                    Progress.hide(mContext);
+                    tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
                     e.printStackTrace();
                 }
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
-               /* try{
-                    Helper helper = new Helper();
-                    if (helper.error_Messages(error).contains("Session")){
-                        Mualab.getInstance().getSessionManager().logout();
-                        //  MyToast.getInstance(mContext).showSmallCustomToast(helper.error_Messages(error));
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-*/
-
+                progress_bar.setVisibility(View.GONE);
+                tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
             }})
-                .setAuthToken(user.authToken)
-                .setProgress(!isLoadMore)
+                .setAuthToken(Mualab.currentUser.authToken)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
 
-        task.execute(this.getClass().getName());
+        task.execute(TAG);
     }
 }
