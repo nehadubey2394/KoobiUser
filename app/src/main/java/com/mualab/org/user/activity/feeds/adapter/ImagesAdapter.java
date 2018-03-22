@@ -13,6 +13,7 @@ import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.model.feeds.Feeds;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     if(position==0){
                         holder.iv_gridFirstPos.setVisibility(View.VISIBLE);
                         holder.iv_grid.setVisibility(View.GONE);
-                        Glide.with(holder.iv_gridFirstPos.getContext())
+                        Picasso.with(holder.iv_gridFirstPos.getContext())
                                 .load(url)
                                 .placeholder(R.drawable.gallery_placeholder)
                                 .into(holder.iv_gridFirstPos);
@@ -79,7 +80,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         holder.iv_gridFirstPos.setVisibility(View.GONE);
                         holder.iv_grid.setVisibility(View.VISIBLE);
 
-                        Glide.with(holder.iv_grid.getContext())
+                        Picasso.with(holder.iv_grid.getContext())
                                 .load(url)
                                 .placeholder(R.drawable.gallery_placeholder)
                                 .into(holder.iv_grid);

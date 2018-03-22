@@ -2,8 +2,12 @@ package com.mualab.org.user.activity.feeds;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -18,16 +22,22 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.image.cropper.CropImage;
+import com.image.cropper.CropImageView;
+import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.CommentAdapter;
 import com.mualab.org.user.activity.feeds.model.Comment;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.constants.Constant;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.task.HttpResponceListner;
@@ -38,6 +48,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +62,7 @@ public class CommentsActivity extends AppCompatActivity {
     private ProgressBar progress_bar;
     private AppCompatButton btn_post_comments;
     private RecyclerView recyclerView;
+    ImageView ivCamera;
 
     private Feeds feed;
     private int feedPosition;
@@ -78,6 +90,15 @@ public class CommentsActivity extends AppCompatActivity {
         btn_post_comments =  findViewById(R.id.btn_post_comments);
         ll_loadingBox =  findViewById(R.id.ll_loadingBox);
         progress_bar =  findViewById(R.id.progress_bar);
+        ivCamera =  findViewById(R.id.ivCamera);
+
+
+        ivCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ImagePicker.pickImage(CommentsActivity.this);
+            }
+        });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -118,7 +139,7 @@ public class CommentsActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(commnets)){
                     btn_post_comments.setEnabled(false);
                     KeyboardUtil.hideKeyboard(btn_post_comments, CommentsActivity.this);
-                    apiForAddComments(commnets);
+                    apiForAddComments(commnets, null);
                 }else {
                     Animation shake = AnimationUtils.loadAnimation(CommentsActivity.this, R.anim.shake);
                     btn_post_comments.startAnimation(shake);
@@ -134,6 +155,63 @@ public class CommentsActivity extends AppCompatActivity {
         tv_no_comments.setText(getString(R.string.loading));
         getCommentList(0);
     }
+
+
+
+    // check permission or Get image from camera or gallery
+    public void getPermissionAndPicImage() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY);
+            } else {
+                ImagePicker.pickImage(this);
+            }
+        } else {
+            ImagePicker.pickImage(this);
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Bitmap bitmap = null;
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == 234) {
+                //Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
+                Uri imageUri = ImagePicker.getImageURIFromResult(this, requestCode, resultCode, data);
+                if (imageUri != null) {
+                    CropImage.activity(imageUri).setCropShape(CropImageView.CropShape.RECTANGLE).
+                            setAspectRatio(400, 400)
+                            .setMaxCropResultSize(600, 600).start(this);
+                } else {
+                    MyToast.getInstance(CommentsActivity.this).showSmallMessage(
+                            getString(R.string.msg_some_thing_went_wrong));
+                }
+
+            } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                try {
+                    if (result != null)
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result.getUri());
+
+                    if (bitmap != null) {
+                        apiForAddComments("", bitmap);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -213,13 +291,15 @@ public class CommentsActivity extends AppCompatActivity {
         .setParam(map)).execute(TAG);
     }
 
-    private void apiForAddComments(final String comments) {
+    private void apiForAddComments(final String comments, final Bitmap bitmap) {
 
         Map<String, String> map = new HashMap<>();
         map.putAll(Mualab.feedBasicInfo);
         map.put("feedId", ""+feed._id);
         map.put("postUserId", ""+feed.userId);
-        map.put("comment", comments);
+        map.put("type", bitmap==null?"text":"image");
+        if(comments!=null)
+            map.put("comment", comments);
 
         new HttpTask(new HttpTask.Builder(this, "addComment", new HttpResponceListner.Listener() {
             @Override
@@ -281,7 +361,7 @@ public class CommentsActivity extends AppCompatActivity {
                     tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));
                 }
             }}).setProgress(true)
-                .setParam(map)).execute(TAG);
+                .setParam(map)).postImage("comment", bitmap);
     }
 
 

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:gravity="center_vertical"
+    android:padding="4dp"
+    android:background="@color/white">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_profileImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/defoult_user_img"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/iv_profileImage"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_name"
+            style="@style/TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:text="Dharmraj Acharya"/>
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            style="@style/TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray"
+            android:textSize="10sp"
+            android:text="Dharmraj Acharya"/>
+    </LinearLayout>
+
+</LinearLayout>
