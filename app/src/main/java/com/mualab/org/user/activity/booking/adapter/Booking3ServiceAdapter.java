@@ -34,7 +34,7 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
-import com.mualab.org.user.util.Utility;
+import com.mualab.org.user.util.Util;
 
 import org.json.JSONObject;
 
@@ -50,7 +50,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private String serviceTitle,bookingId="";
     private ArtistsSearchBoard item;
     private SubServices subServices;
-    private Utility utility;
+    private Util utility;
     // Constructor of the class
     public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices,boolean fromConfirmBooking) {
         this.context = context;
@@ -59,7 +59,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.isOutCallSelect = isOutCallSelect;
         this.subServices = subServices;
         this.fromConfirmBooking = fromConfirmBooking;
-        utility = new Utility(context);
+        utility = new Util(context);
         this.serviceTitle = subServices.subServiceName;
     }
 

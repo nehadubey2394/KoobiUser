@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.facebook.internal.Utility;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
@@ -35,7 +36,6 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
-import com.mualab.org.user.util.Utility;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -575,7 +575,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onButtonClick(int position, String buttonText, int selectedCount) {
         if (!alreadyAddedFound || isEdit){
             BookingTimeSlot item =  bookingTimeSlots.get(position);
-            Utility utility = new Utility(mContext);
 
             for (int i = 0;i<bookingTimeSlots.size();i++){
                 BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
