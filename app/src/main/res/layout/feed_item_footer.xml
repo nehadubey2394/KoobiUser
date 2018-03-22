@@ -3,8 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="40dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
     android:gravity="center_vertical">
 
     <LinearLayout
@@ -16,7 +14,7 @@
         <LinearLayout
             android:id="@+id/ly_like_count"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:orientation="horizontal">
@@ -24,14 +22,15 @@
             <CheckBox
                 android:id="@+id/likeIcon"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:clickable="true"
-                android:button="@null"
-                android:stateListAnimator="@animator/scale"
-                android:checked="false"
+                android:layout_height="match_parent"
                 android:background="@drawable/like_icon"
-                android:focusable="true" />
+                android:button="@null"
+                android:layout_marginLeft="5dp"
+                android:checked="false"
+                android:clickable="true"
+                android:focusable="true"
+                android:stateListAnimator="@animator/scale"
+                app:layout_constraintLeft_toLeftOf="parent" />
 
             <TextView
                 android:id="@+id/tv_like_count"
@@ -100,28 +99,6 @@
 
     </LinearLayout>
 
-  <!--  <LinearLayout
-        android:id="@+id/ll_Dot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center_vertical"
-        android:layout_toLeftOf="@+id/tv_post_time"
-        android:orientation="horizontal" />-->
-
-    <!--<TextView
-        android:id="@+id/tv_post_time"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:gravity="right|center"
-        android:layout_toLeftOf="@+id/iv_share"
-        android:fontFamily="@font/roboto_regular"
-        android:maxLines="1"
-        android:visibility="visible"
-        android:textSize="10sp"
-        android:text="Dharmraj adj fkldjasfklj lkdjasfkls"/>-->
 
     <ImageView
         android:id="@+id/iv_share"
@@ -129,9 +106,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
         android:background="?selectableItemBackgroundBorderless"
         android:padding="4dp"
-        android:src="@drawable/share_ico"
-        />
+        android:src="@drawable/share_ico" />
 
 </RelativeLayout>

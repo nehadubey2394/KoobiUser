@@ -255,7 +255,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                     @Override
                     public void onDoubleTap() {
-                        int pos = holder.getAdapterPosition();
+                        int pos = imageHolder.getAdapterPosition();
                         Feeds feed = feedItems.get(pos);
                         if(feed.isLike==0){
                             feed.isLike = 1;
@@ -263,6 +263,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             apiForLikes(feeds);
                         }
                         notifyItemChanged(pos);
+                    }
+
+                    @Override
+                    public void onLongPress() {
+
                     }
                 }));
 

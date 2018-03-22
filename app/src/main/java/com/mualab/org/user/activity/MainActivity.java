@@ -3,10 +3,7 @@ package com.mualab.org.user.activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.os.Handler;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -32,14 +29,12 @@ import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
-import com.mualab.org.user.util.FragmentHistory;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import views.fragnev.FragNavController;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -119,19 +114,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderBack.setOnClickListener(this);
         ibtnChat.setOnClickListener(this);
         ivAppIcon.setOnClickListener(this);
-//        findViewById(R.id.btnLogout).setOnClickListener(this);
         ibtnLeaderBoard.setImageResource(R.drawable.active_leaderboard_ico);
         tvHeaderTitle.setText(getString(R.string.title_searchboard));
         ivHeaderBack.setVisibility(View.GONE);
-
-       /* LocationDetector locationDetector = new LocationDetector();
-        if ((locationDetector.checkLocationPermission(MainActivity.this)) ){
-            if (locationDetector.isLocationEnabled(MainActivity.this) ) {
-                getDeviceLocation();
-            }else {
-                locationDetector.showLocationSettingDailod(MainActivity.this);
-            }
-        }*/
     }
 
     private final static int DEFAULT_BITRATE = 1024000;
@@ -241,7 +226,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (clickedId!=2) {
                     setInactiveTab();
                     clickedId = 2;
-                    tvHeaderTitle.setText("Mualab");
+                    tvHeaderTitle.setText(getString(R.string.app_name));
                     ibtnFeed.setImageResource(R.drawable.active_feeds_ico);
                     ivHeaderUser.setVisibility(View.VISIBLE);
                     replaceFragment(FeedsFragment.newInstance(1), false);

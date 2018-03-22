@@ -57,7 +57,6 @@ import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.MediaUri;
-import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.task.UploadImage;
@@ -90,7 +89,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private ArrayList<String> tagList = new ArrayList<>();
     private TextView tvLoaction;
     private ImageView ivShareFbOn, ivShareTwitterOn, iv_postimage;
-    private Session session;
 
     private boolean isFbShared = true, isTwitteron = true;
     private Double lat, lng;
@@ -134,7 +132,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_post);
         setStatusbarColor();
-        session = Mualab.getInstance().getSessionManager();
 
         Intent intent;
         if ((intent = getIntent()) != null) {
@@ -386,7 +383,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         ivShareFbOn = null;
         ivShareTwitterOn= null;
         iv_postimage = null;
-        session = null;
         lat = lng = null;
         tagAdapter = null;
         edCaption = null;
@@ -603,7 +599,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
             }})
-                .setAuthToken(session.getAuthToken())
+                .setAuthToken(Mualab.currentUser.authToken)
                 .setProgress(false)
                 .setParam(map))
                // .setBody(map, HttpTask.ContentType.FORM_DATA))
@@ -627,7 +623,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         map.put("location", address);
         map.put("tag", tages);
         map.put("serviceTagId", tages);
-        map.put("userId", ""+session.getUser().id);
+        map.put("userId", ""+Mualab.currentUser.id);
 
         if (lat != null && lng != null) {
             map.put("latitude", "" + lat);
@@ -647,7 +643,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         for(String uri: mediaUri.uriList)
             uris.add(Uri.parse(uri));
         new UploadImage(FeedPostActivity.this,
-                session.getAuthToken(),
+                Mualab.currentUser.authToken,
                 map,
                 uris,
                 new UploadImage.Listner() {
@@ -814,7 +810,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
             }})
-                .setAuthToken(session.getAuthToken())
+                .setAuthToken(Mualab.currentUser.authToken)
                 .setParam(map)
                 .setProgress(false))
                 .postFile("feed", tempFile, videoThumb);
@@ -831,7 +827,8 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         new VideoCompressor().execute();
     }
 
-    class VideoCompressor extends AsyncTask<Void, Void, String> {
+    @SuppressLint("StaticFieldLeak")
+    private class VideoCompressor extends AsyncTask<Void, Void, String> {
 
         @Override
         protected void onPreExecute() {
