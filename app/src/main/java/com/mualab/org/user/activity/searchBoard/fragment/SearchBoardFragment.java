@@ -121,6 +121,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             }else
                 day = item.day;
             date = item.date;
+
+            Mualab.currentLocation.lat = Double.parseDouble(lat);
+            Mualab.currentLocation.lng = Double.parseDouble(lng);
+
         }
     }
 
@@ -220,7 +224,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
                 }else {
                     progress_bar.setVisibility(View.GONE);
-                    tv_msg.setText("Need enable location and permission for search near by artist.");
+                    tv_msg.setText(R.string.gps_permission_alert);
                     locationDetector.showLocationSettingDailod(getActivity());
                 }
             }
@@ -299,6 +303,19 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                                 Gson gson = new Gson();
                                 JSONObject jsonObject = artistArray.getJSONObject(i);
                                 ArtistsSearchBoard item = gson.fromJson(String.valueOf(jsonObject), ArtistsSearchBoard.class);
+                                String services = "";
+                                if (item.service.size()!=0){
+                                    for (int j=0; j<2; j++){
+                                        if (services.equals("")){
+                                            services = item.service.get(j).title;
+                                        }else {
+                                            services = services + ", "+  item.service.get(j).title;
+                                        }
+                                    }
+                                }else {
+                                    services = "NA";
+                                }
+                                item.categoryName = services;
                                 artistsList.add(item);
 
                             }
@@ -306,14 +323,14 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                             listAdapter.notifyDataSetChanged();
                         }else {
                             if (page==0){
-                                tv_msg.setText("No Artist available on this location");
+                                tv_msg.setText(R.string.no_artist_found);
                                 MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
                             }
                         }
 
                     }else {
                         if (page==0){
-                            tv_msg.setText("No Artist available on this location");
+                            tv_msg.setText(R.string.no_artist_found);
                             MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
                         }
                     }

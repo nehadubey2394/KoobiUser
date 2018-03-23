@@ -1,7 +1,10 @@
 package com.mualab.org.user.activity.booking.adapter;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,20 +13,28 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.booking.BookingActivity;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment3;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
+import com.mualab.org.user.model.booking.BookingServices3;
 
 import java.util.ArrayList;
 
 
 public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
+    private AppCompatActivity context;
     private ArrayList<BookingInfo> artistsList;
-
+    private ArtistsSearchBoard item;
+    private  boolean fromConfirmBooking;
     // Constructor of the class
-    public BookedServicesAdapter(Context context, ArrayList<BookingInfo> artistsList) {
+    public BookedServicesAdapter(AppCompatActivity context, ArrayList<BookingInfo> artistsList, ArtistsSearchBoard item) {
         this.context = context;
         this.artistsList = artistsList;
+        this.item = item;
+        this.fromConfirmBooking = fromConfirmBooking;
     }
 
     @Override
@@ -64,7 +75,13 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             btnEditService.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MyToast.getInstance(context).showSmallCustomToast("Under Developement");
+                    BookingInfo info = artistsList.get(getAdapterPosition());
+
+                    FragmentManager fm = context.getSupportFragmentManager();
+                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+                    ((BookingActivity)context).addFragment(
+                            BookingFragment3.newInstance(true,info.subServices,item,item.isOutCallSelected), true, R.id.flBookingContainer);
                 }
             });
         }

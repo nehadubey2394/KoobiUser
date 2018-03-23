@@ -3,18 +3,27 @@ package com.mualab.org.user.activity.booking.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookedServicesAdapter;
@@ -22,6 +31,7 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.session.Session;
@@ -39,16 +49,22 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static com.mualab.org.user.constants.Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE;
+
 
 public class BookingFragment5 extends Fragment implements View.OnClickListener{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
     // TODO: Rename and change types of parameters
-    private String mParam1,totalPrice;
+    private String mParam1,totalPrice,location="";
     private BookingInfo bookingInfo,firstBooking;
     private BookedServicesAdapter adapter;
     private ArrayList<BookingInfo> selectedServices;
     int pos = BookingFragment4.arrayListbookingInfo.size()-1;
+    private ArtistsSearchBoard item;
+    private TextView tvArtistLoc;
 
     public BookingFragment5() {
         // Required empty public constructor
@@ -70,6 +86,9 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         BookingActivity.tvBuisnessName.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             bookingInfo = (BookingInfo) getArguments().getSerializable("bookingInfo");
+            if (bookingInfo != null)
+                item = bookingInfo.item;
+
         }
     }
 
@@ -91,7 +110,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
     private void initView(){
         selectedServices = new ArrayList<>();
-        adapter = new BookedServicesAdapter(mContext, selectedServices);
+        adapter = new BookedServicesAdapter((AppCompatActivity) getActivity(), selectedServices,item);
     }
 
     private void setViewId(View rootView){
@@ -101,7 +120,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         AppCompatButton btnConfirmBooking = rootView.findViewById(R.id.btnConfirmBooking);
         CircleImageView ivSelectStaffProfile = rootView.findViewById(R.id.ivSelectStaffProfile);
         TextView tvStaffArtistName = rootView.findViewById(R.id.tvStaffArtistName);
-        TextView tvArtistLoc = rootView.findViewById(R.id.tvArtistLoc);
+        tvArtistLoc = rootView.findViewById(R.id.tvArtistLoc);
         TextView tvBookingDate = rootView.findViewById(R.id.tvBookingDate);
         TextView tvBookingTime = rootView.findViewById(R.id.tvBookingTime);
         TextView tvTotalPrice = rootView.findViewById(R.id.tvTotalPrice);
@@ -171,7 +190,19 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 MyToast.getInstance(mContext).showSmallCustomToast("Under Developement");
                 break;
             case R.id.btnEditLocation:
-                MyToast.getInstance(mContext).showSmallCustomToast("Under Developement");
+                if (!ConnectionDetector.isConnected()) {
+                    new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
+                        @Override
+                        public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                            if(isConnected){
+                                dialog.dismiss();
+                                getLocation();
+                            }
+                        }
+                    }).show();
+                }else
+                    getLocation();
+
                 break;
             case R.id.btnConfirmBooking:
                 apiForConfirmBooking();
@@ -204,7 +235,12 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         // params.put("customerType", "1");
         params.put("voucherId", "");
         params.put("paymentType", "1");
-        params.put("location", firstBooking.artistAddress);
+
+        if (item.serviceType.equals("2") && !location.equals(""))
+            params.put("location", location);
+        else
+            params.put("location", firstBooking.artistAddress);
+
         params.put("userId", String.valueOf(user.id));
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "confirmBooking", new HttpResponceListner.Listener() {
@@ -216,7 +252,8 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
-                        getActivity().finish();
+                        MyToast.getInstance(mContext).showDasuAlert(message);
+                        ((BookingActivity)mContext).finish();
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert(message);
                     }
@@ -248,4 +285,58 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         task.execute(this.getClass().getName());
     }
 
+    private void getLocation() {
+        try {
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                    .build(((BookingActivity)mContext));
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(mContext, data);
+                LatLng latLng = place.getLatLng();
+                distance(latLng.latitude,latLng.longitude,place);
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(mContext, data);
+                // TODO: Handle the error.
+                Log.i("", status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
+    private void distance (double lat_b, double lng_b,Place place )
+    {
+        double earthRadius = 3958.75;
+        double latDiff = Math.toRadians(lat_b-item.latitude);
+        double lngDiff = Math.toRadians(lng_b-item.longitude);
+        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+                Math.cos(Math.toRadians(item.longitude)) * Math.cos(Math.toRadians(lat_b)) *
+                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double distance = earthRadius * c;
+
+        double radius = Double.parseDouble(item.radius);
+        // int meterConversion = 1609;
+
+        // double diff = distance * meterConversion;
+
+        if (radius>=distance) {
+            tvArtistLoc.setText(place.getName());
+            location = ""+place.getName();
+        }
+        else
+            MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
+
+    }
 }

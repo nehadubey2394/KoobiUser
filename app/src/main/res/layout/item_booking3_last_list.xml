@@ -8,110 +8,118 @@
     android:layout_margin="4dp"
     app:clickToClose="true">
 
-    <!--
-        <LinearLayout
-            android:tag="side"
-            android:id="@+id/left_swipe_wrapper"
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:tag="side"
+        android:id="@+id/left_swipe_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_color"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        >
+
+        <View
+            android:layout_width="4dp"
             android:layout_height="match_parent"
-            android:background="@color/screen_bg_color"
+            />
+
+       <!-- <LinearLayout
+            android:id="@+id/lyEdit"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:background="@color/primary_blue"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="2dp"
+            android:orientation="vertical"
+            android:clickable="true"
             >
 
-            <View
-                android:layout_width="4dp"
-                android:layout_height="match_parent"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/edit_ico"
+                android:padding="4dp"
+                android:backgroundTint="@color/white"
                 />
 
-            <LinearLayout
-                android:id="@+id/lyEdit"
-                android:layout_width="64dp"
-                android:layout_height="match_parent"
-                android:background="@color/primary_blue"
+            <TextView
+                android:id="@+id/tvEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_edit"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:clickable="true"
-                >
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:paddingRight="2dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/roboto_medium"
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/edit_ico"
-                    android:padding="4dp"
-                    android:backgroundTint="@color/white"
-                    />
-
-                <TextView
-                    android:id="@+id/tvEdit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_edit"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:paddingRight="2dp"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/roboto_medium"
-
-                    />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="7dp"
-                android:layout_height="match_parent"
                 />
-
-            <LinearLayout
-                android:id="@+id/lyRemove"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:background="@color/darkred"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:clickable="true"
-                >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/delete_ico"
-                    />
-
-                <TextView
-                    android:id="@+id/tvDelete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_remove"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/roboto_medium"
-                    />
-
-            </LinearLayout>
 
         </LinearLayout>
-    -->
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        <View
+            android:layout_width="7dp"
+            android:layout_height="match_parent"
+            />-->
+
+        <LinearLayout
+            android:id="@+id/lyRemove"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@color/darkred"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/delete_ico"
+                />
+
+            <TextView
+                android:id="@+id/tvDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_remove"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/roboto_medium"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.loopeer.shadow.ShadowView
+        android:id="@+id/lyFrontView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardBackgroundColor="@color/white"
         android:layout_gravity="center_vertical"
-        app:cardCornerRadius="0dp"
-        app:cardUseCompatPadding="true"
-        app:cardElevation="2dp"
-        >
 
+        app:cornerRadiusBL="1dp"
+        app:cornerRadiusBR="1dp"
+        app:cornerRadiusTL="1dp"
+        app:cornerRadiusTR="@dimen/shadow_width"
+        app:shadowMarginLeft="0dp"
+        app:shadowMarginBottom="@dimen/shadow_width"
+        app:shadowMarginTop="0dp"
+        app:shadowMarginRight="@dimen/shadow_width"
+        app:shadowRadius="1dp"
+        app:shadowColor="@color/gray2"
+        app:backgroundColor="@color/white"
+        >
         <RelativeLayout
+            android:id="@+id/rlFront"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
@@ -209,5 +217,116 @@
             </LinearLayout>
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </com.loopeer.shadow.ShadowView>
+
+<!--    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/white"
+        android:layout_gravity="center_vertical"
+        app:cardCornerRadius="0dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="2dp"
+        >
+                <RelativeLayout
+            android:id="@+id/rlFront"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            >
+            <View
+                android:id="@+id/lineView"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:background="@color/colorPrimary"/>
+
+            <LinearLayout
+                android:id="@+id/lyServiceDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/lineView"
+                android:layout_marginLeft="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvLastService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_medium"
+                    android:maxLines="2"
+                    android:padding="2dp"
+                    android:text="zero Trim"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="2"
+                    android:padding="2dp"
+                    android:text="10 min"
+                    android:textColor="@color/grey"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="8dp"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0.8dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/day_disabled_text_color"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="right|center_vertical"
+                    android:maxLines="2"
+                    android:padding="2dp"
+                    android:text="£"
+                    android:textColor="@color/grey"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="right|center_vertical"
+                    android:maxLines="2"
+                    android:padding="2dp"
+                    android:text="250"
+                    android:textColor="@color/grey"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>-->
+
 </com.daimajia.swipe.SwipeLayout>

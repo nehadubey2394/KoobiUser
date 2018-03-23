@@ -20,7 +20,7 @@ import views.calender.view.LockScrollView;
 /**
  * Created by AzureChen on 15/8/9.
  */
-public abstract class UICalendar extends LinearLayout {
+public abstract class MyUICalendar extends LinearLayout {
 
     // Style
     public static final int STYLE_LIGHT  = 0;
@@ -69,9 +69,9 @@ public abstract class UICalendar extends LinearLayout {
     private int mTodayItemTextColor = Color.WHITE;
     private int mSelectedItemTextColor = Color.WHITE;
 
-   // private Drawable mTodayItemBackgroundDrawable = getResources().getDrawable(R.drawable.circle_black_stroke_background);
+    // private Drawable mTodayItemBackgroundDrawable = getResources().getDrawable(R.drawable.circle_black_stroke_background);
     private Drawable mTodayItemBackgroundDrawable =
-           getResources().getDrawable(R.drawable.circle_blue_solid_background);
+            getResources().getDrawable(R.drawable.circle_blue_solid_background);
     private Drawable mSelectedItemBackgroundDrawable =
             getResources().getDrawable(R.drawable.circle_green_solid_background);
     private Drawable mButtonLeftDrawable =
@@ -80,20 +80,20 @@ public abstract class UICalendar extends LinearLayout {
             getResources().getDrawable(R.drawable.white_back_ico);
     private Day mSelectedItem = null;
 
-    public UICalendar(Context context) {
+    public MyUICalendar(Context context) {
         this(context, null);
     }
 
-    public UICalendar(Context context, AttributeSet attrs) {
+    public MyUICalendar(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public UICalendar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MyUICalendar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         init(context);
         TypedArray attributes = context.getTheme().obtainStyledAttributes(
-                attrs, R.styleable.UICalendar, defStyleAttr, 0);
+                attrs, R.styleable.MyUICalendar, defStyleAttr, 0);
         setAttributes(attributes);
         attributes.recycle();
     }
@@ -125,18 +125,18 @@ public abstract class UICalendar extends LinearLayout {
 
     protected void setAttributes(TypedArray attrs) {
         // set attributes by the values from XML
-        setStyle(attrs.getInt(R.styleable.UICalendar_style, mStyle));
-        setShowWeek(attrs.getBoolean(R.styleable.UICalendar_showWeek, mShowWeek));
-        setFirstDayOfWeek(attrs.getInt(R.styleable.UICalendar_firstDayOfWeek, mFirstDayOfWeek));
-        setState(attrs.getInt(R.styleable.UICalendar_state, mState));
+        setStyle(attrs.getInt(R.styleable.MyUICalendar_style, mStyle));
+        setShowWeek(attrs.getBoolean(R.styleable.MyUICalendar_showWeek, mShowWeek));
+        setFirstDayOfWeek(attrs.getInt(R.styleable.MyUICalendar_firstDayOfWeek, mFirstDayOfWeek));
+        setState(attrs.getInt(R.styleable.MyUICalendar_state, mState));
 
-        setTextColor(attrs.getColor(R.styleable.UICalendar_textColor, mTextColor));
-        setPrimaryColor(attrs.getColor(R.styleable.UICalendar_primaryColor, mPrimaryColor));
+        setTextColor(attrs.getColor(R.styleable.MyUICalendar_textColor, mTextColor));
+        setPrimaryColor(attrs.getColor(R.styleable.MyUICalendar_primaryColor, mPrimaryColor));
 
         setTodayItemTextColor(attrs.getColor(
-                R.styleable.UICalendar_todayItem_textColor, mTodayItemTextColor));
+                R.styleable.MyUICalendar_todayItem_textColor, mTodayItemTextColor));
         Drawable todayItemBackgroundDrawable =
-                attrs.getDrawable(R.styleable.UICalendar_todayItem_background);
+                attrs.getDrawable(R.styleable.MyUICalendar_todayItem_background);
         if (todayItemBackgroundDrawable != null) {
             setTodayItemBackgroundDrawable(todayItemBackgroundDrawable);
         } else {
@@ -144,9 +144,9 @@ public abstract class UICalendar extends LinearLayout {
         }
 
         setSelectedItemTextColor(attrs.getColor(
-                R.styleable.UICalendar_selectedItem_textColor, mSelectedItemTextColor));
+                R.styleable.MyUICalendar_selectedItem_textColor, mSelectedItemTextColor));
         Drawable selectedItemBackgroundDrawable =
-                attrs.getDrawable(R.styleable.UICalendar_selectedItem_background);
+                attrs.getDrawable(R.styleable.MyUICalendar_selectedItem_background);
         if (selectedItemBackgroundDrawable != null) {
             setSelectedItemBackgroundDrawable(selectedItemBackgroundDrawable);
         } else {
@@ -154,7 +154,7 @@ public abstract class UICalendar extends LinearLayout {
         }
 
         Drawable buttonLeftDrawable =
-                attrs.getDrawable(R.styleable.UICalendar_buttonLeft_drawable);
+                attrs.getDrawable(R.styleable.MyUICalendar_buttonLeft_drawable);
         if (buttonLeftDrawable != null) {
             setButtonLeftDrawable(buttonLeftDrawable);
         } else {
@@ -162,7 +162,7 @@ public abstract class UICalendar extends LinearLayout {
         }
 
         Drawable buttonRightDrawable =
-                attrs.getDrawable(R.styleable.UICalendar_buttonRight_drawable);
+                attrs.getDrawable(R.styleable.MyUICalendar_buttonRight_drawable);
         if (buttonRightDrawable != null) {
             setButtonRightDrawable(buttonRightDrawable);
         } else {
@@ -330,8 +330,8 @@ public abstract class UICalendar extends LinearLayout {
 
     public void setButtonLeftDrawable(Drawable buttonLeftDrawable) {
         this.mButtonLeftDrawable = buttonLeftDrawable;
-       // mBtnPrevMonth.setImageDrawable(buttonLeftDrawable);
-       // mBtnPrevWeek.setImageDrawable(buttonLeftDrawable);
+        // mBtnPrevMonth.setImageDrawable(buttonLeftDrawable);
+        // mBtnPrevWeek.setImageDrawable(buttonLeftDrawable);
     }
 
     public Drawable getButtonRightDrawable() {
@@ -340,8 +340,8 @@ public abstract class UICalendar extends LinearLayout {
 
     public void setButtonRightDrawable(Drawable buttonRightDrawable) {
         this.mButtonRightDrawable = buttonRightDrawable;
-      //  mBtnNextMonth.setImageDrawable(buttonRightDrawable);
-      //  mBtnNextWeek.setImageDrawable(buttonRightDrawable);
+        //  mBtnNextMonth.setImageDrawable(buttonRightDrawable);
+        //  mBtnNextWeek.setImageDrawable(buttonRightDrawable);
     }
 
     public Day getSelectedItem() {

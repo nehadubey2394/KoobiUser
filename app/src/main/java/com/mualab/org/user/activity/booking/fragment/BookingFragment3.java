@@ -22,25 +22,22 @@ import java.util.ArrayList;
 
 
 public class BookingFragment3 extends Fragment {
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private ArrayList<BookingServices3>arrayList;
     private Booking3ServiceAdapter adapter;
     private Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private SubServices subServices;
     private ArtistsSearchBoard item;
-    private  boolean isOutCallSelect;
-    private RelativeLayout lyOutcall;
+    private  boolean isOutCallSelect,fromConfirmBooking = false;
 
     public BookingFragment3() {
         // Required empty public constructor
     }
 
-    public static BookingFragment3 newInstance(String param1, SubServices subServices, ArtistsSearchBoard item, boolean isOutCallSelect) {
+    public static BookingFragment3 newInstance(boolean fromConfirmBooking,SubServices subServices, ArtistsSearchBoard item, boolean isOutCallSelect) {
         BookingFragment3 fragment = new BookingFragment3();
         Bundle args = new Bundle();
-        args.putString("param1", param1);
+        args.putSerializable("param1", fromConfirmBooking);
         args.putSerializable("param2", subServices);
         args.putParcelable("param3", item);
         args.putBoolean("param4", isOutCallSelect);
@@ -54,7 +51,7 @@ public class BookingFragment3 extends Fragment {
         BookingActivity.lyReviewPost.setVisibility(View.GONE);
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString("param1");
+            fromConfirmBooking = getArguments().getBoolean("param1");
             isOutCallSelect = getArguments().getBoolean("param4");
             subServices = (SubServices) getArguments().getSerializable("param2");
             item = getArguments().getParcelable("param3");
@@ -78,8 +75,17 @@ public class BookingFragment3 extends Fragment {
     }
 
     private void initView(){
-        arrayList = subServices.artistservices;
-        adapter = new Booking3ServiceAdapter(mContext,arrayList,mParam1,item,isOutCallSelect, subServices);
+
+        ArrayList<BookingServices3> arrayList;
+
+       // if (fromConfirmBooking)
+       //     arrayList = subServices.bookedArtistServices;
+      //  else
+            arrayList = subServices.artistservices;
+
+
+        adapter = new Booking3ServiceAdapter(mContext, arrayList,item,isOutCallSelect, subServices,fromConfirmBooking);
+
         // arrayList.clear();
         // addService();
     }

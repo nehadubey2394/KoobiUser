@@ -21,33 +21,33 @@ import views.calender.data.Event;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by neha on 15/2/18.
  */
-public class FlexibleCalendar extends UICalendar {
+public class MyFlexibleCalendar extends MyUICalendar {
 
     private CalendarAdapter mAdapter;
     private CalendarListener mListener;
     private String sCurrentDay = "";
     private int mInitHeight = 0;
     public boolean isFirstimeLoad = true;
+    public boolean isTodayLoad = true;
 
     private Handler mHandler = new Handler();
     private boolean mIsWaitingForUpdate = false;
 
     private int mCurrentWeekIndex;
 
-    public FlexibleCalendar(Context context) {
+    public MyFlexibleCalendar(Context context) {
         super(context);
     }
 
-    public FlexibleCalendar(Context context, AttributeSet attrs) {
+    public MyFlexibleCalendar(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public FlexibleCalendar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MyFlexibleCalendar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -174,26 +174,27 @@ public class FlexibleCalendar extends UICalendar {
 
                 // set the selected item
                 if (isSelectedDay(day)) {
-                    isFirstimeLoad = false;
-                    Calendar todayCal = Calendar.getInstance();
-                    int cYear  = todayCal.get(Calendar.YEAR);
-                    int cMonth  = todayCal.get(Calendar.MONTH)+1;
-                    int cDay  = todayCal.get(Calendar.DAY_OF_MONTH);
+                    if (!isFirstimeLoad){
+                        Calendar todayCal = Calendar.getInstance();
+                        int cYear  = todayCal.get(Calendar.YEAR);
+                        int cMonth  = todayCal.get(Calendar.MONTH)+1;
+                        int cDay  = todayCal.get(Calendar.DAY_OF_MONTH);
 
-                    int year = day.getYear();
-                    int month =  day.getMonth()+1;
-                    int dayOfMonth =  day.getDay();
+                        int year = day.getYear();
+                        int month =  day.getMonth()+1;
+                        int dayOfMonth =  day.getDay();
 
-                    if (year>=cYear && month>=cMonth){
-                        if (year==cYear && month==cMonth && dayOfMonth<cDay){
-                            MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
+                        if (year>=cYear && month>=cMonth){
+                            if (year==cYear && month==cMonth && dayOfMonth<cDay){
+                                MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
+                            }else {
+                                mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+                                txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
+                                txtDay.setTextColor(getSelectedItemTextColor());
+                            }
                         }else {
-                            mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
-                            txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
-                            txtDay.setTextColor(getSelectedItemTextColor());
+                            MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
                         }
-                    }else {
-                        MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
                     }
                 }
             }

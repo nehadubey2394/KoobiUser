@@ -301,6 +301,11 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.ratingCount = jsonObject.getString("ratingCount");
                         item.reviewCount = jsonObject.getString("reviewCount");
                         item.postCount = jsonObject.getString("postCount");
+
+                        item.latitude = Double.parseDouble(jsonObject.getString("latitude"));
+                        item.longitude = Double.parseDouble(jsonObject.getString("longitude"));
+                        item.radius = jsonObject.getString("radius");
+
                         item.businessName = jsonObject.getString("businessName");
                         if (jsonObject.has("address"))
                             item.address = jsonObject.getString("address");
@@ -336,14 +341,16 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                             BookingServices3 services3 = new BookingServices3();
 
                                             services3._id = jsonObject3.getString("_id");
+                                            services3.setSelected(false);
+                                            services3.setBooked(false);
                                             services3.title = jsonObject3.getString("title");
                                             services3.completionTime = jsonObject3.getString("completionTime");
                                             services3.outCallPrice = jsonObject3.getString("outCallPrice");
                                             services3.inCallPrice = jsonObject3.getString("inCallPrice");
 
                                             if (!services3.outCallPrice.equals("0") || !services3.outCallPrice.equals("null")){
-                                                services3.isOutCall = true;
-                                                subServices.isOutCall = true;
+                                                services3.isOutCall3 = true;
+                                                subServices.isOutCall2 = true;
                                                 services.isOutCall = true;
                                             }
                                             subServices.artistservices.add(services3);
@@ -575,8 +582,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         BookingFragment4.arrayListbookingInfo.clear();
                         if (fCont==0){
                             fm.popBackStack();
+                            finish();
                         }else {
-                            fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
+                            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
                             frag.hideFilter(false);
                         }
@@ -616,13 +624,17 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
-        if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
+        /*if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
         }
-        else if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
+        else*/
+        if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
         }
         else if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm,i);
+        }
+        else if (i==1 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
         }
         else if (i==0 && BookingFragment4.arrayListbookingInfo.size()>0){

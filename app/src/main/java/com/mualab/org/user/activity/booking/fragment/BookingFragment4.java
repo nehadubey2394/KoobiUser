@@ -1,9 +1,15 @@
 package com.mualab.org.user.activity.booking.fragment;
 
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
@@ -16,6 +22,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
@@ -23,9 +32,11 @@ import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
 import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingTimeSlot;
@@ -34,7 +45,7 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
-import com.mualab.org.user.util.Util;
+import com.mualab.org.user.util.LocationDetector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,14 +63,14 @@ import java.util.Map;
 
 import views.calender.data.CalendarAdapter;
 import views.calender.data.Day;
-import views.calender.widget.FlexibleCalendar;
+import views.calender.widget.MyFlexibleCalendar;
 
 
 public class BookingFragment4 extends Fragment implements View.OnClickListener,CustomAdapterButtonListener{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
     // TODO: Rename and change types of parameters
-    private String mParam1,artistId,selectedDate,sMonth= "",sDay,currentTime;
+    private String mParam1,artistId,selectedDate,sMonth= "",sDay,currentTime,lat="",lng="";
     private ArrayList<BookingTimeSlot> bookingTimeSlots;
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
@@ -69,17 +80,19 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     private BookingInfo bookingInfo;
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
     private SimpleDateFormat input,dateFormat;
-    private FlexibleCalendar viewCalendar;
+    private boolean alreadyAddedFound = false,isEdit = false;
+    //private MyFlexibleCalendar viewCalendar;
+    private  View rootView;
 
     public BookingFragment4() {
         // Required empty public constructor
     }
 
-    public static BookingFragment4 newInstance(String param1, String mParam2,BookingInfo bookingInfo) {
+    public static BookingFragment4 newInstance(String param1,boolean isEdit,BookingInfo bookingInfo) {
         BookingFragment4 fragment = new BookingFragment4();
         Bundle args = new Bundle();
         args.putString("param1", param1);
-        args.putString("param2", mParam2);
+        args.putBoolean("param2", isEdit);
         args.putSerializable("param3", bookingInfo);
         fragment.setArguments(args);
         return fragment;
@@ -99,7 +112,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
-            // artistId = getArguments().getString("param2")  ;
+            isEdit = getArguments().getBoolean("param2")  ;
             bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
         }
     }
@@ -107,9 +120,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_booking4, container, false);
+        rootView = inflater.inflate(R.layout.fragment_booking4, container, false);
         initView();
-        setView(rootView);
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -126,6 +138,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
         listAdapter.setCustomListener(BookingFragment4.this);
         bookingInfoAdapter = new BookingInfoAdapter(mContext, arrayListbookingInfo);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setView(rootView);
     }
 
     private void setView(View rootView){
@@ -147,7 +165,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         rycBookingInfo.setNestedScrollingEnabled(false);
         rycBookingInfo.setAdapter(bookingInfoAdapter);
 
-        viewCalendar =  rootView.findViewById(R.id.calendar);
+        MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
 
         // init calendar
         Calendar cal = Calendar.getInstance();
@@ -159,8 +177,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         input = new SimpleDateFormat("yyyy-MM-dd");
 
         selectedDate = getCurrentDate();
-        bookingInfo.selectedDate = selectedDate;
         currentTime = getCurrentTime();
+
+        bookingInfo.selectedDate = selectedDate;
+
         dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-2;
 
         bookingInfo.date = "Select date";
@@ -172,23 +192,40 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 if (info.msId.equals(bookingInfo.msId)) {
                     isMatch=true;
                     bookingInfo = info;
-                    //  bookingInfo.date = "Select date";
-                    //   bookingInfo.time = "and time";
-                    MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
+                    alreadyAddedFound = true;
+
+                    if (!isEdit)
+                        MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
                     break;
                 }
             }
-            if (!isMatch)arrayListbookingInfo.add(bookingInfo);
+            if (!isMatch){
+                alreadyAddedFound = false;
+                arrayListbookingInfo.add(bookingInfo);
+            }
         }else{
+            alreadyAddedFound = false;
             arrayListbookingInfo.add(bookingInfo);
         }
 
-        Collections.reverse(arrayListbookingInfo);
+        if (isEdit){
+            bookingInfo.date = "Select date";
+            bookingInfo.time = "and time";
+            bookingInfo.endTime = bookingInfo.editEndTime;
+        }
+
+        if (!alreadyAddedFound || isEdit)
+            Collections.reverse(arrayListbookingInfo);
 
         bookingInfoAdapter.notifyDataSetChanged();
 
         // bind events of calendar
-        setCalenderClickListner();
+        setCalenderClickListner(viewCalendar);
+
+        if (Mualab.currentLocation!=null){
+            lat = String.valueOf(Mualab.currentLocation.lat);
+            lng = String.valueOf(Mualab.currentLocation.lng);
+        }
 
         apiForGetSlots();
 
@@ -209,7 +246,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnCOnfirmBooking:
-                if (bookingTimeSlots.size() != 0){
+                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                         apiForContinueBooking(false);
                     } else {
@@ -220,20 +257,22 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                 break;
 
             case R.id.btnToday:
+                MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
                 viewCalendar.isFirstimeLoad = true;
                 Calendar cal = Calendar.getInstance();
-                selectedDate = getCurrentDate();
-                bookingInfo.selectedDate = selectedDate;
                 CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
                 viewCalendar.setAdapter(adapter);
                 viewCalendar.expand(500);
-                setCalenderClickListner();
+                setCalenderClickListner(viewCalendar);
+
+                selectedDate = getCurrentDate();
+                bookingInfo.selectedDate = selectedDate;
                 apiForGetSlots();
                 break;
 
             case R.id.btnAddMoreService:
 
-                if (bookingTimeSlots.size() != 0){
+                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                         apiForContinueBooking(true);
                     } else {
@@ -246,8 +285,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         }
     }
 
-    private void setCalenderClickListner(){
-        viewCalendar.setCalendarListener(new FlexibleCalendar.CalendarListener() {
+    private void setCalenderClickListner(final MyFlexibleCalendar viewCalendar){
+        viewCalendar.setCalendarListener(new MyFlexibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
                 Day day = viewCalendar.getSelectedDay();
@@ -257,6 +296,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
                 Date date = new Date(day.getYear(), day.getMonth(), day.getDay()-1);
                 dayId = date.getDay()-1;
+
+                if (dayId==-1){
+                    dayId = 6;
+                }
 
                 int month = day.getMonth()+1;
 
@@ -287,11 +330,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                         if (year==cYear && month==cMonth && dayOfMonth<cDay){
                             Log.i("","can't select previous date");
                         }else {
-                            bookingInfo.date = "Select date";
-                            bookingInfo.time = "and time";
-
-                            bookingInfoAdapter.notifyDataSetChanged();
-
+                            if (!alreadyAddedFound || isEdit){
+                                bookingInfo.date = "Select date";
+                                bookingInfo.time = "and time";
+                                bookingInfoAdapter.notifyDataSetChanged();
+                            }
                             if (dayOfMonth==cDay){
                                 currentTime = getCurrentTime();
                             }else
@@ -384,11 +427,19 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("currentTime", currentTime);
         params.put("serviceTime", bookingInfo.serviceTime);
 
-        params.put("BookingTime", "");
-        params.put("bookingDate", selectedDate);
-        params.put("BookingId","");
+        if (isEdit) {
+            params.put("type", "edit");
+            params.put("bookingId",bookingInfo.bookingId);
+        }
+        else {
+            params.put("type", "");
+            params.put("bookingId","");
+        }
+        params.put("bookingTime", "");
+        params.put("bookingDate", "");
         params.put("bookingCount", "");
-        params.put("type", "");
+        params.put("latitude", lat);
+        params.put("longitude", lng);
 
         params.put("userId", String.valueOf(user.id));
 
@@ -411,10 +462,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                                 BookingTimeSlot item = new BookingTimeSlot();
                                 item.time = jsonArray.getString(j);
                                 item.isSelected = "0";
-                               /* if (j==0){
-                                    bookingInfo.time = item.time;
-                                    bookingInfoAdapter.notifyDataSetChanged();
-                                }*/
                                 bookingTimeSlots.add(item);
                             }
                         }else {
@@ -483,8 +530,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("bookingDate", selectedDate);
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
+        params.put("price", String.valueOf(bookingInfo.price));
 
-        params.put("BookingId", "");
+        if (isEdit) {
+            params.put("type", "edit");
+            params.put("bookingId",bookingInfo.bookingId);
+        }else
+            params.put("bookingId", "");
 
         params.put("userId", String.valueOf(user.id));
 
@@ -497,13 +549,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        if (js.has("bookingId"))
+                            bookingInfo.bookingId = js.getString("bookingId");
+
                         if (isAddMore) {
-                            FragmentManager fm = getActivity().getSupportFragmentManager();
-                            int count = fm.getBackStackEntryCount();
-                            for (int i = 0; i < count; ++i) {
-                                if (i > 0)
-                                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            }
+                            clearBackStack();
                         }
                         else {
                             ((BookingActivity) mContext).addFragment(
@@ -511,18 +561,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                         }
                     }else {
                         if (message.equals("Service already added") && isAddMore){
-                            FragmentManager fm = getActivity().getSupportFragmentManager();
-                            int count = fm.getBackStackEntryCount();
-                            for (int i = 0; i < count; ++i) {
-                                if (i > 0)
-                                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            }
+                            clearBackStack();
                         }else  if (message.equals("Service already added") && !isAddMore){
                             ((BookingActivity) mContext).addFragment(
                                     BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
                         }
-
-                        MyToast.getInstance(mContext).showDasuAlert(message);
+                        if (!message.equals("Service already added"))
+                            MyToast.getInstance(mContext).showDasuAlert(message);
                     }
                 } catch (Exception e) {
                     Progress.hide(mContext);
@@ -556,48 +601,51 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onButtonClick(int position, String buttonText, int selectedCount) {
         BookingTimeSlot item =  bookingTimeSlots.get(position);
 
-        Util utility = new Util(mContext);
-
         for (int i = 0;i<bookingTimeSlots.size();i++){
             BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
             timeSlot.isSelected = "0";
         }
+
         listAdapter.notifyDataSetChanged();
         // if (item.isSelected.equals("0"))
         item.isSelected = "1";
-        bookingInfo.time = item.time;
 
-        //   if (bookingInfo.time.contains(":")){
-        //  String[] separated = bookingInfo.time.split(":");
-        //   int minuts1 = utility.getTimeInMin(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
+        if (!alreadyAddedFound || isEdit){
+            bookingInfo.time = item.time;
 
-        if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
-            int min2  = Integer.parseInt(bookingInfo.endTime);
+            if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
+                int min2  = Integer.parseInt(bookingInfo.endTime);
 
-            // int finalMin = minuts1+min2;
+                // int finalMin = minuts1+min2;
 
-            SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
-            Date d;
-            try {
-                d = df.parse(item.time);
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(d);
-                cal.add(Calendar.MINUTE, min2);
-                bookingInfo.endTime = df.format(cal.getTime());
+                SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+                Date d;
+                try {
+                    d = df.parse(item.time);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(d);
+                    cal.add(Calendar.MINUTE, min2);
+                    bookingInfo.endTime = df.format(cal.getTime());
 
-                Date  formatedDate = input.parse(selectedDate);  // parse input
-                bookingInfo.date =  dateFormat.format(formatedDate);
-                bookingInfo.selectedDate =  selectedDate;
-            } catch (ParseException e) {
-                e.printStackTrace();
+                    Date  formatedDate = input.parse(selectedDate);  // parse input
+                    bookingInfo.date =  dateFormat.format(formatedDate);
+                    bookingInfo.selectedDate =  selectedDate;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
+            listAdapter.notifyItemChanged(position);
+
+            if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
+                bookingInfoAdapter.notifyDataSetChanged();
+        }else {
+            MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
         }
-        //    }
+    }
 
-        listAdapter.notifyItemChanged(position);
-
-        if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
-            bookingInfoAdapter.notifyDataSetChanged();
+    private void clearBackStack() {
+        FragmentManager fm = ((BookingActivity)mContext).getSupportFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override

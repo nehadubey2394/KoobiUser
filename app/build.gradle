@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.mualab.org.user"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -61,6 +61,7 @@ dependencies {
     implementation files('libs/aspectjrt-1.7.3 (1).jar')
 
     compile 'com.zhihu.android:matisse:0.4.3'
+    compile 'com.loopeer.lib:shadow:0.0.4-beta2'
     implementation group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.1'
     compile 'io.nlopez.smartlocation:library:3.3.3'
 

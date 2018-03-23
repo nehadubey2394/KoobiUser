@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
@@ -54,8 +52,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         switch (viewType) {
             case VIEWTYPE_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.searchboard_item_layout, parent, false);
-                ViewHolder viewHolder = new ViewHolder(view);
-                return viewHolder;
+                return new ViewHolder(view);
 
             case VIEWTYPE_LOADER:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more_view, parent, false);
@@ -103,16 +100,11 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         //  holder.ivProfile.setImageResource(item.profilePic);
 
-        if (!TextUtils.isEmpty(item.profileImage)){
-            Picasso.with(context).load(item.profileImage)
-                    .fit()
-                    .placeholder(R.drawable.defoult_user_img)
-                    .into(holder.ivProfile);
-        }else {
-            Picasso.with(context).load(R.drawable.defoult_user_img).into(holder.ivProfile);
+        if (!item.profileImage.equals("")){
+            Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
+                    fit().into(holder.ivProfile);
         }
-
-        String services = "";
+      /*  String services = "";
         if (item.service.size()!=0){
             for (int i=0; i<item.service.size(); i++){
                 if (services.equals("")){
@@ -123,12 +115,11 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         }else {
             services = "NA";
-        }
-
-        holder.tvServices.setText(services);
+        }*/
+        holder.tvServices.setText(item.categoryName);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDistance,tvServices,tvArtistName,tvRating;
         ImageView ivProfile;
         AppCompatButton btnBook;
@@ -153,17 +144,6 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     intent.putExtra("item",item);
                     intent.putExtra("mParam","1");
                     context.startActivity(intent);
-
-                  /*  if (item.businessType.equals("independent")){
-                        intent.putExtra("item",item);
-                        intent.putExtra("mParam","1");
-                        context.startActivity(intent);
-                    }else {
-                        intent.putExtra("item",item);
-                        intent.putExtra("mParam","");
-                        context.startActivity(intent);
-                    }*/
-
                 }
             });
         }

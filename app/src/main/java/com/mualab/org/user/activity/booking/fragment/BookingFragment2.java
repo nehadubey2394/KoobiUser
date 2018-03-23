@@ -193,7 +193,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         Services servicesItem = services.get(groupPosition);
         SubServices subServices = servicesItem.arrayList.get(childPosition);
         ((BookingActivity)mContext).addFragment(
-                BookingFragment3.newInstance(subServices.subServiceName,subServices,item,isOutCallSelect), true, R.id.flBookingContainer);
+                BookingFragment3.newInstance(false,subServices,item,isOutCallSelect), true, R.id.flBookingContainer);
     }
 
     public void OutCallFilter() {
@@ -229,7 +229,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                                     newServices3.title = services3.title;
                                     newServices3.completionTime = services3.completionTime;
                                     newServices3.inCallPrice = services3.inCallPrice;
-                                    newServices3.isOutCall = true;
+                                    newServices3.isOutCall3 = true;
                                     services3ArrayList.add(newServices3);
                                     newSubServise.artistservices.add(newServices3);
                                 }
@@ -239,7 +239,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
                         if (outCallPrice > 0 && newSubServise.artistservices.size()!=0) {
                             newSubServise._id = subServices._id;
-                            newSubServise.isOutCall = true;
+                            newSubServise.isOutCall2 = true;
                             newSubServise.serviceId = subServices.serviceId;
                             newSubServise.subServiceId = subServices.subServiceId;
                             newSubServise.subServiceName = subServices.subServiceName;
@@ -307,7 +307,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
                                 newServices3.title = services3.title;
                                 newServices3.completionTime = services3.completionTime;
                                 newServices3.inCallPrice = services3.inCallPrice;
-                                newServices3.isOutCall = true;
+                                newServices3.isOutCall3 = true;
                                 services3ArrayList.add(newServices3);
                                 newSubServise.artistservices.add(newServices3);
                             }
@@ -317,7 +317,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
                     if (inCallPrice > 0 && services3ArrayList.size()!=0) {
                         newSubServise._id = subServices._id;
-                        newSubServise.isOutCall = true;
+                        newSubServise.isOutCall2 = true;
                         newSubServise.serviceId = subServices.serviceId;
                         newSubServise.subServiceId = subServices.subServiceId;
                         newSubServise.subServiceName = subServices.subServiceName;

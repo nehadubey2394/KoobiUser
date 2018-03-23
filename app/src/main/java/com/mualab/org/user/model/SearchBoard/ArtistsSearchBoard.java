@@ -44,12 +44,14 @@ public class ArtistsSearchBoard implements Parcelable {
 }
 ]*/
     public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,
-            lastName,distance,ratingCount,businessType,serviceType,inCallpreprationTime,outCallpreprationTime,address;
+            lastName,distance,ratingCount,businessType,serviceType,inCallpreprationTime,outCallpreprationTime,address,categoryName,radius;
     public  boolean isOutCallSelected = false;
 
     public  ArrayList<ArtistServices>service;
     public  ArrayList<Services>allService = new ArrayList<>();
     public ArrayList<BookingStaff>staffList = new ArrayList<>();
+
+    public double latitude,longitude;
 
     @Override
     public int describeContents() {
@@ -71,6 +73,8 @@ public class ArtistsSearchBoard implements Parcelable {
         parcel.writeString(businessType);
         parcel.writeString(serviceType);
         parcel.writeString(address);
+        parcel.writeString(categoryName);
+        parcel.writeString(radius);
     }
 
     private ArtistsSearchBoard(Parcel in) {
@@ -87,6 +91,8 @@ public class ArtistsSearchBoard implements Parcelable {
         businessType = in.readString();
         serviceType = in.readString();
         address = in.readString();
+        categoryName = in.readString();
+        radius = in.readString();
     }
 
     public static final Creator<ArtistsSearchBoard> CREATOR = new Creator<ArtistsSearchBoard>() {
