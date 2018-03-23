@@ -254,7 +254,20 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case R.id.rlRefineLocation:
-                getAddress();
+                if (!ConnectionDetector.isConnected()) {
+                    new NoConnectionDialog(RefineArtistActivity.this, new NoConnectionDialog.Listner() {
+                        @Override
+                        public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                            if(isConnected){
+                                dialog.dismiss();
+                                getAddress();
+                            }
+                        }
+                    }).show();
+                }else {
+                    getAddress();
+                }
+
                 break;
 
             case R.id.rlDnT:

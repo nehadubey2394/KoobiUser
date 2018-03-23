@@ -78,11 +78,7 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     BookingInfo info = artistsList.get(getAdapterPosition());
 
                     FragmentManager fm = context.getSupportFragmentManager();
-                    int count = fm.getBackStackEntryCount();
-                    for (int i = 0; i < count; ++i) {
-                        if (i > 0)
-                            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    }
+                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
                     ((BookingActivity)context).addFragment(
                             BookingFragment3.newInstance(true,info.subServices,item,item.isOutCallSelected), true, R.id.flBookingContainer);

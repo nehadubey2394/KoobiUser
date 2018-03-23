@@ -76,7 +76,6 @@
                 android:maxLines="1"
                 android:maxWidth="120dp"
                 android:padding="2dp"
-                android:text="40 miles away"
                 android:textColor="@color/grey"
                 android:textSize="11sp" />
 
@@ -115,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:rating="5"
+                android:rating="0"
                 android:numStars="5"
                 android:scaleX=".6"
                 android:scaleY=".6"
@@ -135,7 +134,6 @@
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:padding="1dp"
-                android:text="(450000)"
                 android:textColor="@color/text_color"
                 android:textSize="10sp" />
 
@@ -144,8 +142,9 @@
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btnBook"
             style="@style/My_Button_Small.Invert"
-            android:layout_width="60dp"
-            android:layout_height="22dp"
+            android:layout_width="62dp"
+            android:layout_height="24dp"
+            android:padding="2dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="2dp"

@@ -104,7 +104,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(holder.ivProfile);
         }
-        String services = "";
+      /*  String services = "";
         if (item.service.size()!=0){
             for (int i=0; i<item.service.size(); i++){
                 if (services.equals("")){
@@ -115,9 +115,8 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         }else {
             services = "NA";
-        }
-
-        holder.tvServices.setText(services);
+        }*/
+        holder.tvServices.setText(item.categoryName);
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

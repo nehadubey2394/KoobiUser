@@ -16,7 +16,6 @@ public class BookingInfo implements Serializable {
     public transient String artistService,sServiceName,date,time,sId,ssId,msId,artistName,profilePic,artistId,serviceType,endTime,editEndTime,preperationTime,serviceTime,userId,artistAddress,selectedDate,bookingId="";
     public transient double price;
     public transient int id;
-    public transient ArrayList<BookingServices3> artistsList = new ArrayList<>();
     public transient SubServices subServices;
     public transient  boolean isOutCallSelect;
     public transient ArtistsSearchBoard item;

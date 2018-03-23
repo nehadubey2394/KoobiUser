@@ -1,9 +1,15 @@
 package com.mualab.org.user.activity.booking.fragment;
 
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatButton;
@@ -16,6 +22,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
@@ -23,6 +32,7 @@ import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
 import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
@@ -35,6 +45,8 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
+import com.mualab.org.user.util.LocationDetector;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -58,7 +70,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
     // TODO: Rename and change types of parameters
-    private String mParam1,artistId,selectedDate,sMonth= "",sDay,currentTime;
+    private String mParam1,artistId,selectedDate,sMonth= "",sDay,currentTime,lat="",lng="";
     private ArrayList<BookingTimeSlot> bookingTimeSlots;
     private TimeSlotAdapter listAdapter;
     private BookingInfoAdapter bookingInfoAdapter;
@@ -110,7 +122,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_booking4, container, false);
         initView();
-        setView(rootView);
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -127,6 +138,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
         listAdapter.setCustomListener(BookingFragment4.this);
         bookingInfoAdapter = new BookingInfoAdapter(mContext, arrayListbookingInfo);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setView(rootView);
     }
 
     private void setView(View rootView){
@@ -160,12 +177,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         input = new SimpleDateFormat("yyyy-MM-dd");
 
         selectedDate = getCurrentDate();
-        bookingInfo.selectedDate = selectedDate;
         currentTime = getCurrentTime();
-     /*   if (cal.get(GregorianCalendar.DAY_OF_WEEK)==7)
-            dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-1;
-        else
-            dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-2;*/
+
+        bookingInfo.selectedDate = selectedDate;
 
         dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-2;
 
@@ -197,16 +211,21 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         if (isEdit){
             bookingInfo.date = "Select date";
             bookingInfo.time = "and time";
-            //   bookingInfo.endTime = bookingInfo.editEndTime;
+            bookingInfo.endTime = bookingInfo.editEndTime;
         }
 
-        if (!alreadyAddedFound)
+        if (!alreadyAddedFound || isEdit)
             Collections.reverse(arrayListbookingInfo);
 
         bookingInfoAdapter.notifyDataSetChanged();
 
         // bind events of calendar
         setCalenderClickListner(viewCalendar);
+
+        if (Mualab.currentLocation!=null){
+            lat = String.valueOf(Mualab.currentLocation.lat);
+            lng = String.valueOf(Mualab.currentLocation.lng);
+        }
 
         apiForGetSlots();
 
@@ -419,8 +438,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("bookingTime", "");
         params.put("bookingDate", "");
         params.put("bookingCount", "");
-        params.put("latitude", "");
-        params.put("longitude", "");
+        params.put("latitude", lat);
+        params.put("longitude", lng);
 
         params.put("userId", String.valueOf(user.id));
 
@@ -530,7 +549,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
-                        bookingInfo.bookingId = js.getString("bookingId");
+                        if (js.has("bookingId"))
+                            bookingInfo.bookingId = js.getString("bookingId");
 
                         if (isAddMore) {
                             clearBackStack();
@@ -579,17 +599,18 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
     @Override
     public void onButtonClick(int position, String buttonText, int selectedCount) {
+        BookingTimeSlot item =  bookingTimeSlots.get(position);
+
+        for (int i = 0;i<bookingTimeSlots.size();i++){
+            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
+            timeSlot.isSelected = "0";
+        }
+
+        listAdapter.notifyDataSetChanged();
+        // if (item.isSelected.equals("0"))
+        item.isSelected = "1";
+
         if (!alreadyAddedFound || isEdit){
-            BookingTimeSlot item =  bookingTimeSlots.get(position);
-
-            for (int i = 0;i<bookingTimeSlots.size();i++){
-                BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
-                timeSlot.isSelected = "0";
-            }
-
-            listAdapter.notifyDataSetChanged();
-            // if (item.isSelected.equals("0"))
-            item.isSelected = "1";
             bookingInfo.time = item.time;
 
             if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
@@ -617,6 +638,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
             if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
                 bookingInfoAdapter.notifyDataSetChanged();
+        }else {
+            MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
         }
     }
 
@@ -624,6 +647,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         FragmentManager fm = ((BookingActivity)mContext).getSupportFragmentManager();
         fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

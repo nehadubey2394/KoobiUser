@@ -301,6 +301,11 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.ratingCount = jsonObject.getString("ratingCount");
                         item.reviewCount = jsonObject.getString("reviewCount");
                         item.postCount = jsonObject.getString("postCount");
+
+                        item.latitude = Double.parseDouble(jsonObject.getString("latitude"));
+                        item.longitude = Double.parseDouble(jsonObject.getString("longitude"));
+                        item.radius = jsonObject.getString("radius");
+
                         item.businessName = jsonObject.getString("businessName");
                         if (jsonObject.has("address"))
                             item.address = jsonObject.getString("address");
@@ -579,7 +584,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             fm.popBackStack();
                             finish();
                         }else {
-                            fm.popBackStack(null,fm.POP_BACK_STACK_INCLUSIVE);
+                            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
                             frag.hideFilter(false);
                         }
@@ -619,10 +624,11 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
-        if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
+        /*if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
         }
-        else if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
+        else*/
+        if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
         }
         else if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){

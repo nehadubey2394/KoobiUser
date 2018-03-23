@@ -183,6 +183,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_centerVertical="true"
                     android:padding="2dp"
+                    android:visibility="gone"
                     />
 
                 <View
@@ -251,7 +252,7 @@
                         android:textColor="@color/text_color"
                         android:textSize="12sp"
                         android:fontFamily="@font/roboto_regular"
-                        android:ems="12"
+                        android:ems="14"
                         android:maxLines="2"
                         android:text="The Shed Chester Street Manchester"
                         />

@@ -77,9 +77,15 @@ public class BookingFragment3 extends Fragment {
     private void initView(){
 
         ArrayList<BookingServices3> arrayList;
-        arrayList = subServices.artistservices;
+
+       // if (fromConfirmBooking)
+       //     arrayList = subServices.bookedArtistServices;
+      //  else
+            arrayList = subServices.artistservices;
+
 
         adapter = new Booking3ServiceAdapter(mContext, arrayList,item,isOutCallSelect, subServices,fromConfirmBooking);
+
         // arrayList.clear();
         // addService();
     }

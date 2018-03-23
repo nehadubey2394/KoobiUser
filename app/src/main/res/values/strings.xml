@@ -322,5 +322,7 @@
 
     <string name="read_more">show more</string>
     <string name="read_less">show less</string>
+    <string name="gps_permission_alert">Need enable location and permission for search near by artist.</string>
+    <string name="no_artist_found">No Artist available on this location</string>
 
 </resources>
