@@ -161,13 +161,20 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/mSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvFeed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_marginRight="5dp" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
     <LinearLayout
@@ -196,6 +203,8 @@
             android:text="@string/loading"
             android:textColor="@color/text_color" />
     </LinearLayout>
+
+
 
 
 </android.support.design.widget.CoordinatorLayout>

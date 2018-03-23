@@ -254,7 +254,7 @@ public class CommentsActivity extends AppCompatActivity {
         map.put("feedId", ""+feed._id);
         map.put("userId",  ""+Mualab.currentUser.id);
         map.put("page",  ""+pageNo);
-        map.put("limit",  "5");
+        map.put("limit",  "20");
 
         new HttpTask(new HttpTask.Builder(this, "commentList", new HttpResponceListner.Listener() {
             @Override

@@ -387,9 +387,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void setupTextFeedClickableViews(final FeedTextHolder holder) {
 
         //SetFont.setfontRagular(holder.tv_text, mContext);
-        holder.tv_text.setHashtagColorRes(R.color.colorPrimary);
+        /*holder.tv_text.setHashtagColorRes(R.color.colorPrimary);
         holder.tv_text.setMentionColorRes(R.color.black);
-        holder.tv_text.setHyperlinkColorRes(R.color.blue);
+        holder.tv_text.setHyperlinkColorRes(R.color.blue);*/
+
+        holder.tv_text.setHashtagColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        holder.tv_text.setMentionColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+
 
         holder.tv_text.setOnHyperlinkClickListener(new Function2<SocialView, CharSequence, Unit>() {
             @Override
@@ -471,9 +475,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void setupFeedVideoClickableViews(final FeedVideoHolder videoHolder) {
 
         //SetFont.setfontRagular(videoHolder.tv_text, mContext);
-        videoHolder.tv_text.setHashtagColorRes(R.color.colorPrimary);
-        videoHolder.tv_text.setHyperlinkColorRes(R.color.blue);
-        videoHolder.tv_text.setMentionColorRes(R.color.black);
+        videoHolder.tv_text.setHashtagColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        videoHolder.tv_text.setMentionColor(ContextCompat.getColor(mContext, R.color.colorAccent));
 
         videoHolder.tv_text.setOnHyperlinkClickListener(new Function2<SocialView, CharSequence, Unit>() {
             @Override
@@ -564,9 +567,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void setupClickableViews(final CellFeedViewHolder cellFeedViewHolder) {
 
         // SetFont.setfontRagular(cellFeedViewHolder.tv_text, mContext);
-        cellFeedViewHolder.tv_text.setHashtagColorRes(R.color.colorPrimary);
-        cellFeedViewHolder.tv_text.setMentionColorRes(R.color.black);
-        cellFeedViewHolder.tv_text.setHyperlinkColorRes(R.color.blue);
+        cellFeedViewHolder.tv_text.setHashtagColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        cellFeedViewHolder.tv_text.setMentionColor(ContextCompat.getColor(mContext, R.color.colorAccent));
 
         cellFeedViewHolder.tv_text.setOnHyperlinkClickListener(new Function2<SocialView, CharSequence, Unit>() {
             @Override
