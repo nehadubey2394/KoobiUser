@@ -15,5 +15,4 @@ public class SubServices implements Serializable{
     public boolean isOutCall2;
     @SerializedName("artistservices")
     public   ArrayList<BookingServices3>artistservices = new ArrayList<>();
-
 }

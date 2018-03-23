@@ -10,7 +10,21 @@ import java.io.Serializable;
  */
 
 public class BookingServices3 implements Serializable{
-    public String _id,title,completionTime,inCallPrice,outCallPrice;
+    @SerializedName("_id")
+    public String _id;
+
+    @SerializedName("title")
+    public String title;
+
+    @SerializedName("completionTime")
+    public String completionTime;
+
+    @SerializedName("inCallPrice")
+    public String inCallPrice;
+
+    @SerializedName("outCallPrice")
+    public String outCallPrice;
+
     @SerializedName("isSelected")
     private boolean isSelected;
 
@@ -31,7 +45,6 @@ public class BookingServices3 implements Serializable{
     }
 
     @SerializedName("isBooked")
-
     private boolean isBooked;
     @SerializedName("isOutCall3")
     public boolean isOutCall3;

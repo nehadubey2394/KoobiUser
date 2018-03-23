@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.facebook.internal.Utility;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
@@ -36,7 +35,6 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -164,6 +162,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         selectedDate = getCurrentDate();
         bookingInfo.selectedDate = selectedDate;
         currentTime = getCurrentTime();
+     /*   if (cal.get(GregorianCalendar.DAY_OF_WEEK)==7)
+            dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-1;
+        else
+            dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-2;*/
+
         dayId = cal.get(GregorianCalendar.DAY_OF_WEEK)-2;
 
         bookingInfo.date = "Select date";
@@ -176,7 +179,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     isMatch=true;
                     bookingInfo = info;
                     alreadyAddedFound = true;
-                    MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
+
+                    if (!isEdit)
+                        MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
                     break;
                 }
             }
@@ -188,6 +193,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
             alreadyAddedFound = false;
             arrayListbookingInfo.add(bookingInfo);
         }
+
+        if (isEdit){
+            bookingInfo.date = "Select date";
+            bookingInfo.time = "and time";
+            //   bookingInfo.endTime = bookingInfo.editEndTime;
+        }
+
         if (!alreadyAddedFound)
             Collections.reverse(arrayListbookingInfo);
 
@@ -265,6 +277,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
                 Date date = new Date(day.getYear(), day.getMonth(), day.getDay()-1);
                 dayId = date.getDay()-1;
+
+                if (dayId==-1){
+                    dayId = 6;
+                }
 
                 int month = day.getMonth()+1;
 
@@ -392,21 +408,19 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("currentTime", currentTime);
         params.put("serviceTime", bookingInfo.serviceTime);
 
-        params.put("bookingTime", "");
-        params.put("bookingDate", selectedDate);
-        params.put("bookingId","");
-        params.put("bookingCount", "");
-
         if (isEdit) {
             params.put("type", "edit");
+            params.put("bookingId",bookingInfo.bookingId);
         }
         else {
             params.put("type", "");
+            params.put("bookingId","");
         }
         params.put("bookingTime", "");
         params.put("bookingDate", "");
-        params.put("bookingId","");
         params.put("bookingCount", "");
+        params.put("latitude", "");
+        params.put("longitude", "");
 
         params.put("userId", String.valueOf(user.id));
 
@@ -497,9 +511,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         params.put("bookingDate", selectedDate);
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
+        params.put("price", String.valueOf(bookingInfo.price));
 
         if (isEdit) {
-            params.put("bookingId", bookingInfo.bookingId);
+            params.put("type", "edit");
+            params.put("bookingId",bookingInfo.bookingId);
         }else
             params.put("bookingId", "");
 
@@ -517,12 +533,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                         bookingInfo.bookingId = js.getString("bookingId");
 
                         if (isAddMore) {
-                            FragmentManager fm = ((BookingActivity)mContext).getSupportFragmentManager();
-                            int count = fm.getBackStackEntryCount();
-                            for (int i = 0; i < count; ++i) {
-                                if (i > 0)
-                                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            }
+                            clearBackStack();
                         }
                         else {
                             ((BookingActivity) mContext).addFragment(
@@ -530,12 +541,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                         }
                     }else {
                         if (message.equals("Service already added") && isAddMore){
-                            FragmentManager fm = getActivity().getSupportFragmentManager();
-                            int count = fm.getBackStackEntryCount();
-                            for (int i = 0; i < count; ++i) {
-                                if (i > 0)
-                                    fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            }
+                            clearBackStack();
                         }else  if (message.equals("Service already added") && !isAddMore){
                             ((BookingActivity) mContext).addFragment(
                                     BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
@@ -614,6 +620,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         }
     }
 
+    private void clearBackStack() {
+        FragmentManager fm = ((BookingActivity)mContext).getSupportFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.daimajia.swipe.SwipeLayout;
+import com.facebook.internal.Utility;
 import com.loopeer.shadow.ShadowView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
@@ -214,7 +215,8 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                         bookingInfo.serviceTime = "00:"+(ptMinuts+ctMinuts);
                         bookingInfo.endTime = ""+(ptMinuts+ctMinuts);
-
+                        //  if (fromConfirmBooking)
+                        //  bookingInfo.editEndTime = ""+(ptMinuts+ctMinuts);
                     }
 
 
@@ -224,7 +226,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                                     BookingFragment4.newInstance(subServices.subServiceName,true,bookingInfo), true, R.id.flBookingContainer);
                         }else {
                             ((BookingActivity)context).addFragment(
-                                    BookingFragment4.newInstance(subServices.subServiceName,false,bookingInfo), false, R.id.flBookingContainer);
+                                    BookingFragment4.newInstance(subServices.subServiceName,false,bookingInfo), true, R.id.flBookingContainer);
                         }
 
 
