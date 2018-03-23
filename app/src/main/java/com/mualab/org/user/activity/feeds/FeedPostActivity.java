@@ -17,9 +17,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -37,14 +40,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.hendraanggrian.socialview.Mention;
 import com.hendraanggrian.socialview.SocialView;
@@ -57,13 +69,15 @@ import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.MediaUri;
-import com.mualab.org.user.session.Session;
+import com.mualab.org.user.model.booking.Address;
+import com.mualab.org.user.task.GioAddressTask;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.task.UploadImage;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.KeyboardUtil;
 import com.mualab.org.user.util.LocationDetector;
+import com.mualab.org.user.util.LocationUtil;
 import com.mualab.org.user.util.media.ImageVideoUtil;
 import com.mualab.org.user.videocompressor.video.MediaController;
 
@@ -90,10 +104,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private ArrayList<String> tagList = new ArrayList<>();
     private TextView tvLoaction;
     private ImageView ivShareFbOn, ivShareTwitterOn, iv_postimage;
-    private Session session;
 
     private boolean isFbShared = true, isTwitteron = true;
-    private Double lat, lng;
+    //private Double lat, lng;
     private TagAdapter tagAdapter;
     private UserSuggessionAdapter mentionAdapter;
     private SocialAutoCompleteTextView edCaption;
@@ -103,7 +116,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private int feedType;
     private String caption;
     private String lastTxt;
-    private String isShare = "", tages = "", address;
+    private String isShare = "", tages = "";
 
     private MediaUri mediaUri;
     private AlertDialog mAlertDialog;
@@ -113,6 +126,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     private File tempFile;
     private Bitmap videoThumb;
+
+    private Address address;
+
+    private Handler handler;
+    private Runnable runnable;
 
     /*private BroadcastReceiver receiverUpComplete = new BroadcastReceiver() {
 
@@ -126,7 +144,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
-       // FeedPostActivity.this.registerReceiver(receiverUpComplete, new IntentFilter("FILTER"));
+        // FeedPostActivity.this.registerReceiver(receiverUpComplete, new IntentFilter("FILTER"));
     }
 
     @Override
@@ -134,7 +152,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_post);
         setStatusbarColor();
-        session = Mualab.getInstance().getSessionManager();
 
         Intent intent;
         if ((intent = getIntent()) != null) {
@@ -199,15 +216,15 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
 
-                if(mediaUri!=null && mediaUri.uriList!=null&& mediaUri.uriList.size()>0){
+                if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
 
-                    if(mediaUri.mediaType == Constant.IMAGE_STATE){
+                    if (mediaUri.mediaType == Constant.IMAGE_STATE) {
 
                         Intent intent = new Intent(FeedPostActivity.this, PreviewImageActivity.class);
                         intent.putExtra("imageArray", (Serializable) mediaUri.uriList);
                         intent.putExtra("startIndex", 0);
                         startActivity(intent);
-                    }else if(mediaUri.mediaType == Constant.VIDEO_STATE){
+                    } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
 
                         startActivity(new Intent(Intent.ACTION_VIEW)
                                 .setDataAndType(Uri.parse(mediaUri.uriList.get(0)), "video/mp4")
@@ -217,8 +234,19 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        checkLocationPermisssion();
+
+        handler = new Handler();
+        handler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                handler = null;
+                runnable = null;
+                //checkLocationPermisssion();
+                initProgressBar();
+            }
+        }, 800);
     }
+
 
     private void getDropDown(String tag, final String type) {
         Map<String, String> map = new HashMap<>();
@@ -239,18 +267,18 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
                     if (object.has("allTags")) {
                         JSONArray array = object.getJSONArray("allTags");
-                        if(type.equals("user")){
+                        if (type.equals("user")) {
                             mentionAdapter.clear();
 
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject obj = array.getJSONObject(i);
-                                String fullname = obj.getString("firstName") +" "+ obj.getString("lastName");
+                                String fullname = obj.getString("firstName") + " " + obj.getString("lastName");
                                 String username = obj.getString("userName");
                                 String profileImage = obj.getString("profileImage");
                                 mentionAdapter.add(new Mention(username, fullname, profileImage));
                             }
                             mentionAdapter.notifyDataSetChanged();
-                        }else {
+                        } else {
 
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject obj = array.getJSONObject(i);
@@ -271,7 +299,8 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void ErrorListener(VolleyError error) {
 
-            }})
+            }
+        })
                 .setParam(map)
                 .setProgress(false))
                 .execute("TAG_SEARCH");
@@ -285,7 +314,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         iv_postimage = findViewById(R.id.iv_selectedImage);
         edCaption = findViewById(R.id.edCaption);
         tvMediaSize = findViewById(R.id.tvMediaSize);
-       // progressBar = findViewById(R.id.progress_bar);
+        // progressBar = findViewById(R.id.progress_bar);
 
         findViewById(R.id.iv_feedPost).setOnClickListener(this);
         findViewById(R.id.ly_location).setOnClickListener(this);
@@ -297,11 +326,13 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         edCaption.setThreshold(1);
         edCaption.setHashtagEnabled(true);
         edCaption.setHyperlinkEnabled(true);
+        edCaption.setHashtagColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        edCaption.setMentionColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         mentionAdapter = new UserSuggessionAdapter(this);
         mentionAdapter.clear();
         edCaption.setMentionAdapter(mentionAdapter);
-        Resources.Theme theme  = getResources().newTheme();
+        Resources.Theme theme = getResources().newTheme();
         theme.applyStyle(R.style.Theme_AppCompat_Light, true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mentionAdapter.setDropDownViewTheme(theme);
@@ -319,9 +350,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
 
 
-        if(mediaUri!=null && mediaUri.uriList!=null&& mediaUri.uriList.size()>0){
+        if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
 
-            if(mediaUri.mediaType == Constant.IMAGE_STATE){
+            if (mediaUri.mediaType == Constant.IMAGE_STATE) {
 
                 try {
                     feedType = Constant.IMAGE_STATE;
@@ -330,11 +361,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
                     Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
                             BitmapFactory.decodeFile(
-                                    ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)),
+                                    ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size() - 1)),
                                             this)), 200, 200);
                     iv_postimage.setImageBitmap(ThumbImage);
 
-                    if(mediaUri.uriList.size()>1){
+                    if (mediaUri.uriList.size() > 1) {
                         tvMediaSize.setVisibility(View.VISIBLE);
                         tvMediaSize.setText(String.format("%d", mediaUri.uriList.size()));
                     }
@@ -350,7 +381,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else if(mediaUri.mediaType == Constant.VIDEO_STATE){
+            } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
 
                 feedType = Constant.VIDEO_STATE;
                 if (mediaUri.isFromGallery) {
@@ -372,7 +403,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     iv_postimage.setImageBitmap(videoThumb);
                 // Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mSelectdVideo), this);
             }
-        }else {
+        } else {
             feedType = Constant.TEXT_STATE;
             iv_postimage.setVisibility(View.GONE);
         }
@@ -384,16 +415,15 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         tagList = null;
         tvLoaction = null;
         ivShareFbOn = null;
-        ivShareTwitterOn= null;
+        ivShareTwitterOn = null;
         iv_postimage = null;
-        session = null;
-        lat = lng = null;
         tagAdapter = null;
         edCaption = null;
         tvMediaSize = null;
         hashTags = null;
         caption = null;
-        lastTxt = isShare = tages = address = null;
+        lastTxt = isShare = tages = null;
+        address = null;
         mediaUri = null;
         mAlertDialog = null;
         mDeleteCompressedMedia = false;
@@ -417,41 +447,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 break;
 
             case R.id.iv_feedPost:
-                findViewById(R.id.iv_feedPost).setEnabled(false);
-                KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
-                if(ConnectionDetector.isConnected()){
-
-                    if (feedType == Constant.TEXT_STATE){
-                        if(!TextUtils.isEmpty(caption)){
-                            initProgressBar();
-                            apiUploadTextFeed();
-                        } else {
-                            Animation shake = AnimationUtils.loadAnimation(FeedPostActivity.this, R.anim.shake);
-                            edCaption.startAnimation(shake);
-                            findViewById(R.id.iv_feedPost).setEnabled(true);
-                        }
-
-                    }else if (feedType == Constant.VIDEO_STATE) {
-                        initProgressBar();
-                        //String uri = mediaUri.uriList.get(0);
-                        if (mUploadUri == null) {
-                            mDeleteCompressedMedia = true;
-                            //saveTempAndCompress(uri);
-                            uploadVideo(videoThumb);
-                        }else {
-                            uploadVideo(videoThumb);
-                        }
-                        //sendToBackGroundService();
-                    } else if (feedType == Constant.IMAGE_STATE){
-                        initProgressBar();
-                        apiCallForUploadImages();
-                    }
-
-                } else {
-                    findViewById(R.id.iv_feedPost).setEnabled(true);
-                    MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
-                             getString(R.string.error_msg_network));
-                }
+                feedPostPrerareData();
                 break;
 
             case R.id.iv_back:
@@ -467,56 +463,95 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     // TODO: Handle the error.
                 } catch (GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
-                }break;
+                }
+                break;
         }
     }
 
-
-    private void initProgressBar(){
-        LayoutInflater li = LayoutInflater.from(this);
-        View layout = li.inflate(R.layout.layout_processing_dialog, null);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                150, FrameLayout.LayoutParams.WRAP_CONTENT);
-        layout.setLayoutParams(params);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setView(layout);
-
-        //mAlertDialog.setTitle("Prepare data for uploading video..");
-        mAlertDialog = alertDialogBuilder.create();
-        mAlertDialog.setCancelable(false);
-        mAlertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        mAlertDialog.show();
+    private void showToast(String text) {
+        if (!TextUtils.isEmpty(text))
+            MyToast.getInstance(this).showSmallMessage(text);
     }
 
-    private void showProgressBar(){
-        if(mAlertDialog != null){
+    /*prepare data before post to server*/
+    private void feedPostPrerareData() {
+
+        findViewById(R.id.iv_feedPost).setEnabled(false);
+        KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
+
+        if (address == null || TextUtils.isEmpty(address.latitude)) {
+            findViewById(R.id.iv_feedPost).setEnabled(true);
+            checkLocationPermisssion();
+            return;
+        }
+
+
+        if (ConnectionDetector.isConnected()) {
+
+            if (feedType == Constant.TEXT_STATE) {
+                if (!TextUtils.isEmpty(caption)) {
+                    showProgressBar();
+                    apiUploadTextFeed();
+                } else {
+                    Animation shake = AnimationUtils.loadAnimation(FeedPostActivity.this, R.anim.shake);
+                    edCaption.startAnimation(shake);
+                    findViewById(R.id.iv_feedPost).setEnabled(true);
+                }
+
+            } else if (feedType == Constant.VIDEO_STATE) {
+                showProgressBar();
+                //String uri = mediaUri.uriList.get(0);
+                if (mUploadUri == null) {
+                    mDeleteCompressedMedia = true;
+                    //saveTempAndCompress(uri);
+                    uploadVideo(videoThumb);
+                } else {
+                    uploadVideo(videoThumb);
+                }
+                //sendToBackGroundService();
+            } else if (feedType == Constant.IMAGE_STATE) {
+                showProgressBar();
+                apiCallForUploadImages();
+            }
+
+        } else {
+            findViewById(R.id.iv_feedPost).setEnabled(true);
+            MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
+                    getString(R.string.error_msg_network));
+        }
+    }
+
+    private void initProgressBar() {
+
+        if(mAlertDialog==null){
+            LayoutInflater li = LayoutInflater.from(this);
+            View layout = li.inflate(R.layout.layout_processing_dialog, null);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    150, FrameLayout.LayoutParams.WRAP_CONTENT);
+            layout.setLayoutParams(params);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setView(layout);
+
+            //mAlertDialog.setTitle("Prepare data for uploading video..");
+            mAlertDialog = alertDialogBuilder.create();
+            mAlertDialog.setCancelable(false);
+            mAlertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+    }
+
+    private void showProgressBar() {
+        if (mAlertDialog != null) {
             mAlertDialog.show();
         }
     }
 
-    private void hideProgressBar(){
-        if(mAlertDialog != null){
+    private void hideProgressBar() {
+        if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
     }
 
     private void sendToBackGroundService() {
-        address = TextUtils.isEmpty(address) ? "" : address;
-        Map<String, String> map = new HashMap<>();
-        map.put("feedType", "video");
-        map.put("caption", caption);
-        map.put("isShare", isShare);
-        map.put("city", address);
-        map.put("tags", tages);
-
-        if (lat != null && lng != null) {
-            map.put("latitude", "" + lat);
-            map.put("longitude", "" + lng);
-        } else {
-            map.put("latitude", "");
-            map.put("longitude", "");
-        }
-
       /*  if (Constant.isVideoUploading) {
             Toast.makeText(this, "Please wait until your upload is complete", Toast.LENGTH_SHORT).show();
         } else {
@@ -539,11 +574,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             findViewById(R.id.ly_location).setEnabled(true);
             if (resultCode == -1) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
-                LatLng latLng = place.getLatLng();
-                address = place.getAddress().toString();
-                lat = latLng.latitude;
-                lng = latLng.longitude;
-                tvLoaction.setText(address);
+                address = new LocationUtil().getAddressDetails(place);
+
+                if(TextUtils.isEmpty(place.getName())){
+                    address.placeName = place.getLocale() + ","+ place.getLocale().getCountry();
+                }
+                tvLoaction.setText(address.placeName);
 
                 Log.i("Tag", "Place: " + place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
@@ -551,12 +587,28 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 // TODO: Handle the error.
                 Log.i("tag", status.getStatusMessage());
             }
+        }else if(requestCode == Constant.REQUEST_CHECK_SETTINGS){
+
+            final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    // All required changes were successfully made
+                    getLocation();
+                    break;
+                case Activity.RESULT_CANCELED:
+                    // The user was asked to change settings, but chose not to
+
+                default:
+                    break;
+            }
         }
     }
 
     @Override
     public void onBackPressed() {
         KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
+        if(handler!=null)
+            handler.removeCallbacks(runnable);
         super.onBackPressed();
     }
 
@@ -575,10 +627,10 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void resetView() {
-        if(tempFile!=null){
-            try{
+        if (tempFile != null) {
+            try {
                 tempFile.delete();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -588,7 +640,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    private void apiUploadTextFeed(){
+    private void apiUploadTextFeed() {
         Map<String, String> map = prepareCommonPostData();
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
@@ -602,17 +654,18 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             public void ErrorListener(VolleyError error) {
                 findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
-            }})
-                .setAuthToken(session.getAuthToken())
+            }
+        })
+                .setAuthToken(Mualab.currentUser.authToken)
                 .setProgress(false)
                 .setParam(map))
-               // .setBody(map, HttpTask.ContentType.FORM_DATA))
-                .postImage(null,null);
+                // .setBody(map, HttpTask.ContentType.FORM_DATA))
+                .postImage(null, null);
     }
 
 
-    private Map<String, String> prepareCommonPostData(){
-        address = TextUtils.isEmpty(address) ? "" : address;
+    private Map<String, String> prepareCommonPostData() {
+        //address = TextUtils.isEmpty(address) ? "" : address;
         String feedTypetxt = "";
         if (feedType == Constant.TEXT_STATE)
             feedTypetxt = "text";
@@ -624,18 +677,19 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         Map<String, String> map = new HashMap<>();
         map.put("feedType", feedTypetxt);
         map.put("caption", caption);
-        map.put("location", address);
         map.put("tag", tages);
         map.put("serviceTagId", tages);
-        map.put("userId", ""+session.getUser().id);
+        map.put("userId", "" + Mualab.currentUser.id);
+        map.put("location", address.placeName);
+        map.put("city", address.city);
+        map.put("country", address.country);
 
-        if (lat != null && lng != null) {
-            map.put("latitude", "" + lat);
-            map.put("longitude", "" + lng);
-        } else {
-            checkLocationPermisssion();
+        if (TextUtils.isEmpty(address.latitude) || TextUtils.isEmpty(address.longitude)) {
             map.put("latitude", "");
             map.put("longitude", "");
+        } else {
+            map.put("latitude", "" + address.latitude);
+            map.put("longitude", "" + address.longitude);
         }
         return map;
     }
@@ -643,43 +697,43 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     // uploadimage call
     private void apiCallForUploadImages() {
         Map<String, String> map = prepareCommonPostData();
-        List<Uri>uris = new ArrayList<>();
-        for(String uri: mediaUri.uriList)
+        List<Uri> uris = new ArrayList<>();
+        for (String uri : mediaUri.uriList)
             uris.add(Uri.parse(uri));
         new UploadImage(FeedPostActivity.this,
-                session.getAuthToken(),
+                Mualab.currentUser.authToken,
                 map,
                 uris,
                 new UploadImage.Listner() {
-            @Override
-            public void onResponce(String responce) {
-                findViewById(R.id.iv_feedPost).setEnabled(true);
-                hideProgressBar();
-                parseResponce(responce);
-            }
+                    @Override
+                    public void onResponce(String responce) {
+                        findViewById(R.id.iv_feedPost).setEnabled(true);
+                        hideProgressBar();
+                        parseResponce(responce);
+                    }
 
-            @Override
-            public void onError(String error) {
-                findViewById(R.id.iv_feedPost).setEnabled(true);
-                hideProgressBar();
-                MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
-            }
-        }).execute();
+                    @Override
+                    public void onError(String error) {
+                        findViewById(R.id.iv_feedPost).setEnabled(true);
+                        hideProgressBar();
+                        MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
+                    }
+                }).execute();
     }
 
-    private void parseResponce(String responce){
+    private void parseResponce(String responce) {
         try {
             JSONObject js = new JSONObject(responce);
             String status = js.getString("status");
-             String message = js.getString("message");
+            String message = js.getString("message");
             if (status.equalsIgnoreCase("success")) {
                 resetView();
                 setResult(Activity.RESULT_OK);
                 finish();
-            }else {
+            } else {
                 MyToast.getInstance(this).showSmallMessage(message);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -704,31 +758,78 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             } else {
                 getLocation();
             }
-        }else {
+        } else {
             getLocation();
         }
     }
 
 
-    private void getLocation(){
+
+
+
+    /*Rj*/
+
+    private FusedLocationProviderClient mFusedLocationClient;
+
+
+
+    private void getLocation() {
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(FeedPostActivity.this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    // Logic to handle location object
+                    new GioAddressTask(FeedPostActivity.this,
+                            new LatLng(location.getLatitude(), location.getLongitude()),
+                            new GioAddressTask.LocationListner() {
+                                @Override
+                                public void onSuccess(Address adr) {
+                                    address = adr;
+                                    feedPostPrerareData();
+                                }
+                            }).execute();
+
+                }else getCurrentLocation();
+            }
+        });
+
+
+    }
+
+    private void getCurrentLocation(){
         LocationDetector locationDetector = new LocationDetector();
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (locationDetector.isLocationEnabled(this) && locationDetector.checkLocationPermission(this)) {
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(FeedPostActivity.this);
+        if (locationDetector.isLocationEnabled(FeedPostActivity.this) && locationDetector.checkLocationPermission(FeedPostActivity.this)) {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(
-                    this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    // Got last known location. In some rare situations this can be null.
-                    if (location != null) {
-                        lat = location.getLatitude();
-                        lng = location.getLongitude();
-                        address = "Indore";
-                    }
-                }
-            });
+                    FeedPostActivity.this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                new GioAddressTask(FeedPostActivity.this,
+                                        new LatLng(location.getLatitude(), location.getLongitude()),
+                                        new GioAddressTask.LocationListner() {
+                                            @Override
+                                            public void onSuccess(Address adr) {
+                                                address = adr;
+                                                feedPostPrerareData();
+                                            }
+                                        }).execute();
+                            }
+                        }
+                    });
 
         }else {
-            locationDetector.showLocationSettingDailod(this);
+            locationDetector.showLocationSettingDailod(FeedPostActivity.this);
         }
     }
 
@@ -814,7 +915,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 findViewById(R.id.iv_feedPost).setEnabled(true);
                 hideProgressBar();
             }})
-                .setAuthToken(session.getAuthToken())
+                .setAuthToken(Mualab.currentUser.authToken)
                 .setParam(map)
                 .setProgress(false))
                 .postFile("feed", tempFile, videoThumb);
@@ -831,7 +932,8 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         new VideoCompressor().execute();
     }
 
-    class VideoCompressor extends AsyncTask<Void, Void, String> {
+    @SuppressLint("StaticFieldLeak")
+    private class VideoCompressor extends AsyncTask<Void, Void, String> {
 
         @Override
         protected void onPreExecute() {

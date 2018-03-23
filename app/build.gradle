@@ -62,5 +62,7 @@ dependencies {
 
     compile 'com.zhihu.android:matisse:0.4.3'
     implementation group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.1'
+    compile 'io.nlopez.smartlocation:library:3.3.3'
+
 }
 apply plugin: 'com.google.gms.google-services'

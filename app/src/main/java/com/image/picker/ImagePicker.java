@@ -244,10 +244,10 @@ public final class ImagePicker {
                 selectedImage = imageReturnedIntent.getData();
             }
             Log.i(TAG, "selectedImage: " + selectedImage);
-            bm = getImageResized(context, selectedImage);
+           /* bm = getImageResized(context, selectedImage);
             int rotation = ImageRotator.getRotation(context, selectedImage, isCamera);
             bm = ImageRotator.rotate(bm, rotation);
-            return Uri.parse(ImageUtils.savePicture(context, bm, String.valueOf(selectedImage.getPath().hashCode())));
+            return Uri.parse(ImageUtils.savePicture(context, bm, String.valueOf(selectedImage.getPath().hashCode())));*/
         }
         return selectedImage;
     }

@@ -17,7 +17,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -84,7 +86,7 @@ import static android.app.Activity.RESULT_OK;
  * Dharmraj acharya
  * */
 public class FeedsFragment extends BaseFragment implements View.OnClickListener,
-        FeedAdapter.Listener, LiveUserAdapter.Listner {
+        FeedAdapter.Listener, LiveUserAdapter.Listner, AppBarLayout.OnOffsetChangedListener {
 
     public static String TAG = FeedsFragment.class.getName();
 
@@ -95,6 +97,9 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
     private Context mContext;
     private TextView  tvImages, tvVideos, tvFeeds,tv_msg;
     private LinearLayout ll_header;
+
+    private AppBarLayout appBarLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private LiveUserAdapter liveUserAdapter;
     private ArrayList<LiveUserInfo> liveUserList;
@@ -118,6 +123,8 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
     private MediaUri mediaUri;
 
     private BaseListner baseListner;
+
+    boolean isPulltoRefrash = false;
 
     @Override
     public void onDestroyView() {
@@ -201,6 +208,9 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         rvFeed = view.findViewById(R.id.rvFeed);
         tv_msg = view.findViewById(R.id.tv_msg);
         ll_progress = view.findViewById(R.id.ll_progress);
+        appBarLayout = view.findViewById(R.id.appbar);
+        mSwipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
+
 
         view.findViewById(R.id.ly_images).setOnClickListener(this);
         view.findViewById(R.id.ly_videos).setOnClickListener(this);
@@ -234,8 +244,42 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             updateViewType(R.id.ly_feeds);
         getStoryList();
 
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                endlesScrollListener.resetState();
+                isPulltoRefrash = true;
+                apiForGetAllFeeds(0, 10, true);
+            }
+        });
+
        // ((MainActivity)getActivity()).updateToolbarTitle((fragCount == 0) ? "Home" : "Sub Home "+fragCount);
 
+    }
+
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+        if (i == 0) {
+            mSwipeRefreshLayout.setEnabled(true);
+        } else {
+            mSwipeRefreshLayout.setEnabled(false);
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        appBarLayout.addOnOffsetChangedListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        appBarLayout.removeOnOffsetChangedListener(this);
     }
 
     @Override
@@ -434,6 +478,15 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
                 JSONArray array = js.getJSONArray("AllFeeds");
+
+
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    int prevSize = feeds.size();
+                    feeds.clear();
+                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
+                }
+
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
                     JSONObject jsonObject = array.getJSONObject(i);

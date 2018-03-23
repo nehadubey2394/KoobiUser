@@ -8,6 +8,7 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:ellipsize="marquee"
     android:textSize="14sp"
+    android:textColor="@color/black"
     android:fontFamily="@font/roboto_regular"
     android:textAppearance="@style/TextAppearance.AppCompat.Title"
     android:singleLine="true" />

@@ -101,6 +101,8 @@ public class CommentsActivity extends AppCompatActivity {
         });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
@@ -252,7 +254,7 @@ public class CommentsActivity extends AppCompatActivity {
         map.put("feedId", ""+feed._id);
         map.put("userId",  ""+Mualab.currentUser.id);
         map.put("page",  ""+pageNo);
-        map.put("limit",  "5");
+        map.put("limit",  "20");
 
         new HttpTask(new HttpTask.Builder(this, "commentList", new HttpResponceListner.Listener() {
             @Override
@@ -274,7 +276,7 @@ public class CommentsActivity extends AppCompatActivity {
                         }
                         //recyclerView.smoothScrollToPosition(0);
                         commentAdapter.notifyDataSetChanged();
-                        recyclerView.scrollToPosition(commentList.size()-1);
+                       // recyclerView.scrollToPosition(commentList.size()-1);
                     }else {
 
                         if(commentList.size()==0) {
