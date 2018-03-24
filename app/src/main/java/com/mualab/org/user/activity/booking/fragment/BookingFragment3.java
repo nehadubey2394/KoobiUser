@@ -37,7 +37,7 @@ public class BookingFragment3 extends Fragment {
     public static BookingFragment3 newInstance(boolean fromConfirmBooking,SubServices subServices, ArtistsSearchBoard item, boolean isOutCallSelect) {
         BookingFragment3 fragment = new BookingFragment3();
         Bundle args = new Bundle();
-        args.putSerializable("param1", fromConfirmBooking);
+        args.putBoolean("param1", fromConfirmBooking);
         args.putSerializable("param2", subServices);
         args.putParcelable("param3", item);
         args.putBoolean("param4", isOutCallSelect);

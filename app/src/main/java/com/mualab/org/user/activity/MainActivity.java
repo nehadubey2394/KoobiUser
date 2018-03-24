@@ -1,21 +1,9 @@
 package com.mualab.org.user.activity;
 
-import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -28,27 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
@@ -66,14 +36,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProvider.REQUEST_CHECK_SETTINGS;
 
 
-public class MainActivity extends BaseActivity implements View.OnClickListener,
-        GoogleApiClient.ConnectionCallbacks,
+public class MainActivity extends BaseActivity implements View.OnClickListener
+        /*GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        ResultCallback<LocationSettingsResult> {
+        ResultCallback<LocationSettingsResult>*/ {
 
     public static String TAG = MainActivity.class.getName();
 
@@ -127,13 +96,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         initView();
         addFragment(SearchBoardFragment.newInstance(item, ""), false);
 
-        checkLocationPermissionAndGetLocation();
+      /*  checkLocationPermissionAndGetLocation();
 
         // Kick off the process of building the GoogleApiClient, LocationRequest, and
         // LocationSettingsRequest objects.
         buildGoogleApiClient();
         createLocationRequest();
-        buildLocationSettingsRequest();
+        buildLocationSettingsRequest();*/
     }
 
 
@@ -236,9 +205,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             }*/
         }
 
-        if (requestCode == Constant.LOCATION_SETTINGS_REQUEST) {
+       /* if (requestCode == Constant.LOCATION_SETTINGS_REQUEST) {
             getLocation();
-        }
+        }*/
     }
 
     @Override
@@ -417,6 +386,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
 
+    /*
+
     private void checkLocationPermissionAndGetLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (this.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -432,7 +403,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    /*Get Current Location*/
+    *//*Get Current Location*//*
     private LocationManager locationManager;
 
     void getLocation() {
@@ -508,9 +479,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
 
-    /**
+    *//**
      * Requests location updates from the FusedLocationApi.
-     */
+     *//*
     protected void startLocationUpdates() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -578,5 +549,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                         "not created.");
                 break;
         }
-    }
+    }*/
 }
