@@ -650,4 +650,12 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             super.onBackPressed();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Session session = Mualab.getInstance().getSessionManager();
+        session.setUserChangedLocLat("");
+        session.setUserChangedLocLng("");
+    }
 }
