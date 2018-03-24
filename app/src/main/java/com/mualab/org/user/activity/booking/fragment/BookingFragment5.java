@@ -235,6 +235,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
             case R.id.btnConfirmBooking:
                 isEditLoc = true;
+                isConfirmbookingClicked =true;
                 if (bookingInfo.serviceType.equals("2")){
                     if (cLng!=0.0 && cLat!=0.0){
                         distance(cLat,cLng);
@@ -381,7 +382,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
         if (radius>=distance) {
 
-            if (isEditLoc)
+            if (isEditLoc && isConfirmbookingClicked)
                 apiForConfirmBooking();
                 //else if (isConfirmbookingClicked)
                 //     apiForConfirmBooking();
