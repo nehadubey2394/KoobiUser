@@ -69,6 +69,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public interface Listener{
         void onCommentBtnClick(Feeds feed, int pos);
         void onLikeListClick(Feeds feed);
+        void onFeedClick(Feeds feed, int index);
     }
 
     public void clear(){
@@ -237,7 +238,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 intent.putExtra("startIndex", pos);
                                 mContext.startActivity(intent);*/
 
-                                List<String> list = new ArrayList<>();
+                               /* List<String> list = new ArrayList<>();
                                 for(Feeds.Feed tmp: feeds.feedData){
                                     list.add(tmp.feedPost);
                                 }
@@ -245,7 +246,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 intent.putExtra("imageArray", (Serializable) list);
                                 intent.putExtra("startIndex", pos);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                mContext.startActivity(intent);
+                                mContext.startActivity(intent);*/
+                                listener.onFeedClick(feeds, pos);
+
                             } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
                                 mContext.startActivity(new Intent(Intent.ACTION_VIEW)
                                         .setDataAndType(Uri.parse(feeds.feed.get(pos)), "video/mp4")
@@ -882,7 +885,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                /* mContext.startActivity(new Intent(mContext, PreviewImageActivity.class)
                         .setData(Uri.parse(feed.feed.get(0)))
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));*/
-                Intent intent = new Intent(mContext, PreviewImageActivity.class);
+                /*Intent intent = new Intent(mContext, PreviewImageActivity.class);
                 List<String> list = new ArrayList<>();
                 for(Feeds.Feed tmp: feed.feedData){
                     list.add(tmp.feedPost);
@@ -890,7 +893,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 intent.putExtra("imageArray", (Serializable) list);
                 intent.putExtra("startIndex", 0);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+                mContext.startActivity(intent);*/
+
+                listener.onFeedClick(feed, adapterPosition);
 
             } else if (feed.feedType.equalsIgnoreCase("video")) {
                 if(feed.feedThumb!=null && feed.feedThumb.size()>0){

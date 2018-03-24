@@ -159,6 +159,7 @@ public class LikeFragment extends Fragment {
                 String quary = ed_search.getText().toString();
                 likedList.clear();
                 scrollListener.resetState();
+                likeListAdapter.notifyDataSetChanged();
                 apiForLikesList(0, TextUtils.isEmpty(quary)?"":quary);
             }
 
@@ -204,7 +205,7 @@ public class LikeFragment extends Fragment {
         map.put("limit", "20");
         map.put("search", search.toLowerCase());
         map.put("userId", ""+myUserId);
-
+        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
         new HttpTask(new HttpTask.Builder(mContext, "likeList", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -223,12 +224,20 @@ public class LikeFragment extends Fragment {
                             likedList.add(likedListInfo);
                         }
                         if (likedList.size() == 0) {
+                            ll_loadingBox.setVisibility(View.VISIBLE);
                             tvMsg.setText(getString(R.string.no_like_yet));
                             tvMsg.setVisibility(View.VISIBLE);
                         } else {
                             ll_loadingBox.setVisibility(View.GONE);
                         }
                         likeListAdapter.notifyDataSetChanged();
+                    }else {
+                        if (likedList.size() == 0) {
+                            tvMsg.setText(getString(R.string.no_like_yet));
+                            tvMsg.setVisibility(View.VISIBLE);
+                        } else {
+                            ll_loadingBox.setVisibility(View.GONE);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

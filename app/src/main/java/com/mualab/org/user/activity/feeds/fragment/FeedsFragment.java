@@ -10,6 +10,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -25,8 +27,10 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -66,6 +70,7 @@ import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.WrapContentLinearLayoutManager;
 import com.mualab.org.user.util.media.ImageVideoUtil;
 import com.mualab.org.user.util.media.PathUtil;
+import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -263,6 +268,22 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                 Log.e(TAG, "onLoadMore: ");
             }
         });
+
+        rvFeed.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                if(e.getAction() == MotionEvent.ACTION_UP)
+                    hideQuickView();
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent event) {
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }});
     }
 
 
@@ -452,6 +473,13 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void ErrorListener(VolleyError error) {
                 ll_progress.setVisibility(View.GONE);
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(false, 500);
+                    int prevSize = feeds.size();
+                    feeds.clear();
+                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
+                }
                 //MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
             }})
                 .setAuthToken(user.authToken)
@@ -465,6 +493,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
     private void ParseAndUpdateUI(final String response) {
 
+        boolean isSuccess = false;
         try {
             JSONObject js = new JSONObject(response);
             String status = js.getString("status");
@@ -473,15 +502,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
                 JSONArray array = js.getJSONArray("AllFeeds");
-
-
-                if(isPulltoRefrash){
-                    isPulltoRefrash = false;
-                    mRefreshLayout.stopRefresh(true, 500);
-                    int prevSize = feeds.size();
-                    feeds.clear();
-                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
-                }
+                isSuccess = true;
 
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
@@ -520,6 +541,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             } else if (status.equals("fail") && feeds.size()==0) {
                 rvFeed.setVisibility(View.GONE);
                 tv_msg.setVisibility(View.VISIBLE);
+                isSuccess = true;
                 feedAdapter.notifyDataSetChanged();
                /* if (type == Constant.IMAGE_STATE) {
                     imagesAdapter.notifyDataSetChanged();
@@ -529,6 +551,15 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     feedAdapter.notifyDataSetChanged();
                 }*/
             }
+
+            if(isPulltoRefrash){
+                isPulltoRefrash = false;
+                mRefreshLayout.stopRefresh(isSuccess, 500);
+                int prevSize = feeds.size();
+                feeds.clear();
+                feedAdapter.notifyItemRangeRemoved(0, prevSize);
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -571,6 +602,11 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         if(baseListner!=null){
             baseListner.addFragment(LikeFragment.newInstance(feed._id, user.id), true);
         }
+    }
+
+    @Override
+    public void onFeedClick(Feeds feed, int index) {
+        publicationQuickView(feed, index);
     }
 
 
@@ -878,5 +914,40 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             intent.putExtra("BUNDLE", args);
             startActivity(intent);
         }
+    }
+
+
+    /*Rj*/
+    Dialog builder;
+    public void publicationQuickView(Feeds feeds, int index){
+        View view = getLayoutInflater().inflate( R.layout.dialog_image_detail_view, null);
+
+        ImageView postImage = view.findViewById(R.id.ivFeedCenter);
+        ImageView profileImage =  view.findViewById(R.id.ivUserProfile);
+        TextView tvUsername =  view.findViewById(R.id.txtUsername);
+        tvUsername.setText(feeds.userName);
+
+        view.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideQuickView();
+            }
+        });
+
+        Picasso.with(mContext).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
+        if(TextUtils.isEmpty(feeds.profileImage))
+            Picasso.with(mContext).load(R.drawable.defoult_user_img).noPlaceholder().into(profileImage);
+        else Picasso.with(mContext).load(feeds.profileImage).noPlaceholder().into(profileImage);
+
+        builder = new Dialog(mContext);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        builder.setContentView(view);
+        builder.show();
+    }
+
+    public void hideQuickView(){
+        if(builder != null) builder.dismiss();
     }
 }
