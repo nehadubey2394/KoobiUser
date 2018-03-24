@@ -27,6 +27,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.adapter.AdapterBusinessDays;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment5;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
@@ -61,7 +62,7 @@ import java.util.Map;
 public class BookingActivity extends AppCompatActivity implements View.OnClickListener,
         HideFilterListener {
     public ArtistsSearchBoard item;
-    private String mParam1;
+    private String mParam1,calScreenName = "com.mualab.org.user.activity.booking.fragment.BookingFragment5";
     public static TextView title_booking,tvBuisnessName;
     public static LinearLayout lyReviewPost;
     public static LinearLayout lyArtistDetail;
@@ -584,9 +585,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             fm.popBackStack();
                             finish();
                         }else {
-                            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                           /* fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
-                            frag.hideFilter(false);
+                            frag.hideFilter(false);*/
+                            finish();
                         }
                     }else {
                         MyToast.getInstance(BookingActivity.this).showDasuAlert(message);
@@ -622,13 +624,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onBackPressed() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.flBookingContainer);
+
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
-        /*if (i==4 && BookingFragment4.arrayListbookingInfo.size()>0){
-            showAlertDailog(fm,i);
+
+        if (currentFragment instanceof BookingFragment5 && BookingFragment4.arrayListbookingInfo.size()>0){
+            fm.popBackStack();
         }
-        else*/
-        if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
+        else if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
         }
         else if (i==2 && BookingFragment4.arrayListbookingInfo.size()>0){

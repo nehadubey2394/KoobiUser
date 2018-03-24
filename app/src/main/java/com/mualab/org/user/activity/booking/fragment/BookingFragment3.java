@@ -95,6 +95,8 @@ public class BookingFragment3 extends Fragment {
         RecyclerView rvLastService = rootView.findViewById(R.id.rvLastService);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvLastService.setLayoutManager(layoutManager);
+       // rvLastService.setMotionEventSplittingEnabled(false);
+
         rvLastService.setAdapter(adapter);
     }
 

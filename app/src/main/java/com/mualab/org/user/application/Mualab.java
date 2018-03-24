@@ -29,6 +29,7 @@ public class Mualab extends Application {
     public static Mualab mInstance;
     public static User currentUser;
     public static Location currentLocation;
+    public static Location currentLocationForBooking;
     public static DatabaseReference ref;
 
     private Session session;
@@ -47,6 +48,7 @@ public class Mualab extends Application {
         mInstance = this;
         mInstance.getSessionManager();
         currentLocation = new Location();
+        currentLocationForBooking = new Location();
         FirebaseApp.initializeApp(this);
        // ref = FirebaseDatabase.getInstance().getReference();
     }
