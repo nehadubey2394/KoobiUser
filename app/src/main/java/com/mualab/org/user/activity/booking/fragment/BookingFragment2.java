@@ -50,7 +50,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     public static BookingFragment2 newInstance(ArtistsSearchBoard item, String param2) {
         BookingFragment2 fragment = new BookingFragment2();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PARAM1, item);
+        args.putSerializable(ARG_PARAM1, item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +61,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
         BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
-            item =  getArguments().getParcelable("param1");
+            item = (ArtistsSearchBoard) getArguments().getSerializable("param1");
         }
     }
 
@@ -97,7 +97,6 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         lyOutcall.setVisibility(View.VISIBLE);
 
         if (session.getIsOutCallFilter()){
-            isOutCallSelect = true;
             isOutCallSelect = true;
             ivOutcall.setImageResource(R.drawable.active_check_box);
         }else

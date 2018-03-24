@@ -18,5 +18,8 @@ public class Services implements Serializable{
     public String serviceName;
     @SerializedName("subServies")
     public ArrayList<SubServices> arrayList = new ArrayList<>();
-    public boolean isExpand = false,isSubItemChecked = false;
+    @SerializedName("isExpand")
+    public boolean isExpand = false;
+    @SerializedName("isSubItemChecked")
+    public  boolean isSubItemChecked = false;
 }

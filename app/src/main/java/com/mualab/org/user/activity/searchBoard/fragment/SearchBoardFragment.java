@@ -394,7 +394,6 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                         BookingFragment4.arrayListbookingInfo.clear();
 
                     }else {
-                        apiForDeleteAllPendingBooking();
                     }
                 } catch (Exception e) {
                     Progress.hide(mContext);

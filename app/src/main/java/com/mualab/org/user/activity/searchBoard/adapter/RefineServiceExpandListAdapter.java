@@ -8,6 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
@@ -21,6 +22,7 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
     private Context activity;
     private ArrayList<RefineServices> parentArrayList;
     private ArrayList<RefineSubServices> childtems;
+    private boolean isChecked = false;
 
     public RefineServiceExpandListAdapter(Context activity, ArrayList<RefineServices> parents) {
         this.parentArrayList = parents;
@@ -176,6 +178,7 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
         holder.tvSubSerName = convertView.findViewById(R.id.tvSubSerName);
         //     holder.ivDropDown2 =  convertView.findViewById(R.id.ivDropDown2);
         holder.checkbox2 =  convertView.findViewById(R.id.checkbox2);
+        holder.rlCheckBox =  convertView.findViewById(R.id.rlCheckBox);
         holder.tvSubSerName.setText(subServices.title);
 
         holder.checkbox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -186,6 +189,23 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
                     subServices.isChecked = "1";
                     subServices.isSubItemChecked = true;
                 }else {
+                    holder.checkbox2.setChecked(false);
+                    subServices.isChecked = "0";
+                    subServices.isSubItemChecked = false;
+                }
+            }
+        });
+
+        holder.rlCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isChecked){
+                    isChecked = true;
+                    holder.checkbox2.setChecked(true);
+                    subServices.isChecked = "1";
+                    subServices.isSubItemChecked = true;
+                }else {
+                    isChecked = false;
                     holder.checkbox2.setChecked(false);
                     subServices.isChecked = "0";
                     subServices.isSubItemChecked = false;
@@ -206,6 +226,7 @@ public class RefineServiceExpandListAdapter extends BaseExpandableListAdapter {
         //  ImageView checkbox2;
         TextView tvSubSerName;
         CheckBox checkbox2;
+        RelativeLayout rlCheckBox;
     }
 
     @Override
