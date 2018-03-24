@@ -109,6 +109,26 @@ public class Session {
         this.editor.commit();
     }
 
+    public String getUserChangedLocLat() {
+        return mypref.getString("lat", "");
+    }
+
+
+    public void setUserChangedLocLat(String lat){
+        editor.putString("lat", lat);
+        this.editor.commit();
+    }
+
+    public String getUserChangedLocLng() {
+        return mypref.getString("lng", "");
+    }
+
+
+    public void setUserChangedLocLng(String lng){
+        editor.putString("lng", lng);
+        this.editor.commit();
+    }
+
     public boolean getIsFirebaseLogin() {
         return mypref.getBoolean(IS_FIrebaseLogin, false);
     }
