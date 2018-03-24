@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -25,6 +26,7 @@ import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.feeds.adapter.LikeListAdapter;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 
@@ -32,7 +34,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ public class LikeFragment extends Fragment {
     private ProgressBar progress_bar;
     private LinearLayout ll_loadingBox;
     private RecyclerView recyclerView;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     private List<FeedLike> likedList;
     private LikeListAdapter likeListAdapter;
@@ -127,6 +129,21 @@ public class LikeFragment extends Fragment {
         progress_bar = view.findViewById(R.id.progress_bar);
 
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                String quary = ed_search.getText().toString();
+                apiForLikesList(page, TextUtils.isEmpty(quary)?"":quary);
+            }
+        };
+
+
+        // Adds the scroll listener to RecyclerView
+        recyclerView.addOnScrollListener(scrollListener);
+
         likeListAdapter = new LikeListAdapter(mContext, likedList, myUserId);
         recyclerView.setAdapter(likeListAdapter);
 
@@ -139,10 +156,10 @@ public class LikeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 String quary = ed_search.getText().toString();
-                if(!TextUtils.isEmpty(quary))
-                    apiForLikesList(0,quary);
+                likedList.clear();
+                scrollListener.resetState();
+                apiForLikesList(0, TextUtils.isEmpty(quary)?"":quary);
             }
 
             @Override
@@ -155,6 +172,7 @@ public class LikeFragment extends Fragment {
         ll_loadingBox.setVisibility(View.VISIBLE);
         progress_bar.setVisibility(View.VISIBLE);
         tvMsg.setText(getString(R.string.loading));
+        likedList.clear();
         apiForLikesList(0,"");
     }
 
@@ -178,21 +196,19 @@ public class LikeFragment extends Fragment {
         likedList = null;
     }
 
-
     private void apiForLikesList(final int page, String search) {
 
         Map<String, String> map = new HashMap<>();
         map.put("feedId", ""+feedId);
         map.put("page", ""+page);
         map.put("limit", "20");
-        map.put("search", search);
+        map.put("search", search.toLowerCase());
         map.put("userId", ""+myUserId);
 
         new HttpTask(new HttpTask.Builder(mContext, "likeList", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
-                    likedList.clear();
                     progress_bar.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");

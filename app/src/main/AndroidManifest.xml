@@ -115,7 +115,6 @@
             android:name=".activity.feeds.CommentsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activity.feeds.LikeActivity" />
 
         <!-- Meta data -->
         <meta-data
