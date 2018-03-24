@@ -7,14 +7,15 @@ import com.mualab.org.user.model.ArtistServices;
 import com.mualab.org.user.model.booking.BookingStaff;
 import com.mualab.org.user.model.booking.Services;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by mindiii on 16/1/18.
  */
-public class ArtistsSearchBoard implements Parcelable {
+public class ArtistsSearchBoard implements Serializable {
 
-    public ArtistsSearchBoard(){}
+    // public ArtistsSearchBoard(){}
 
     /*"_id":1,
 "userName":"pankaj",
@@ -53,7 +54,7 @@ public class ArtistsSearchBoard implements Parcelable {
 
     public double latitude,longitude;
 
-    @Override
+ /*   @Override
     public int describeContents() {
         return 0;
     }
@@ -105,5 +106,5 @@ public class ArtistsSearchBoard implements Parcelable {
         public ArtistsSearchBoard[] newArray(int size) {
             return new ArtistsSearchBoard[size];
         }
-    };
+    };*/
 }

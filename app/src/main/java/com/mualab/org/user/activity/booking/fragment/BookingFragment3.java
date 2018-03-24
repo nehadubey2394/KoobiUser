@@ -37,9 +37,9 @@ public class BookingFragment3 extends Fragment {
     public static BookingFragment3 newInstance(boolean fromConfirmBooking,SubServices subServices, ArtistsSearchBoard item, boolean isOutCallSelect) {
         BookingFragment3 fragment = new BookingFragment3();
         Bundle args = new Bundle();
-        args.putSerializable("param1", fromConfirmBooking);
+        args.putBoolean("param1", fromConfirmBooking);
         args.putSerializable("param2", subServices);
-        args.putParcelable("param3", item);
+        args.putSerializable("param3", item);
         args.putBoolean("param4", isOutCallSelect);
         fragment.setArguments(args);
         return fragment;
@@ -54,7 +54,7 @@ public class BookingFragment3 extends Fragment {
             fromConfirmBooking = getArguments().getBoolean("param1");
             isOutCallSelect = getArguments().getBoolean("param4");
             subServices = (SubServices) getArguments().getSerializable("param2");
-            item = getArguments().getParcelable("param3");
+            item = (ArtistsSearchBoard) getArguments().getSerializable("param3");
         }
     }
 
@@ -78,10 +78,10 @@ public class BookingFragment3 extends Fragment {
 
         ArrayList<BookingServices3> arrayList;
 
-       // if (fromConfirmBooking)
-       //     arrayList = subServices.bookedArtistServices;
-      //  else
-            arrayList = subServices.artistservices;
+        // if (fromConfirmBooking)
+        //     arrayList = subServices.bookedArtistServices;
+        //  else
+        arrayList = subServices.artistservices;
 
 
         adapter = new Booking3ServiceAdapter(mContext, arrayList,item,isOutCallSelect, subServices,fromConfirmBooking);
@@ -95,7 +95,7 @@ public class BookingFragment3 extends Fragment {
         RecyclerView rvLastService = rootView.findViewById(R.id.rvLastService);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvLastService.setLayoutManager(layoutManager);
-       // rvLastService.setMotionEventSplittingEnabled(false);
+        // rvLastService.setMotionEventSplittingEnabled(false);
 
         rvLastService.setAdapter(adapter);
     }

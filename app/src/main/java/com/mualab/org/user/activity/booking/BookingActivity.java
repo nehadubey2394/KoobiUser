@@ -84,7 +84,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_booking);
 
         Intent i = getIntent();
-        item =  i.getParcelableExtra("item");
+        item = (ArtistsSearchBoard) i.getSerializableExtra("item");
         mParam1 = i.getStringExtra("mParam");
         businessType = item.businessType;
         initView();

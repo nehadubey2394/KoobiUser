@@ -26,6 +26,7 @@ import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
+import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
@@ -363,5 +364,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void showToast(String str){
         if(!TextUtils.isEmpty(str))
             MyToast.getInstance(this).showSmallCustomToast(str);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Session session = Mualab.getInstance().getSessionManager();
+        session.setIsOutCallFilter(false);
     }
 }
