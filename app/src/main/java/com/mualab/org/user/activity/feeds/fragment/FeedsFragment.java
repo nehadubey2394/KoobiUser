@@ -502,7 +502,14 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
                 JSONArray array = js.getJSONArray("AllFeeds");
-                isSuccess = true;
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(true, 500);
+                    int prevSize = feeds.size();
+                    feeds.clear();
+                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
+                }
+
 
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
@@ -541,7 +548,12 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             } else if (status.equals("fail") && feeds.size()==0) {
                 rvFeed.setVisibility(View.GONE);
                 tv_msg.setVisibility(View.VISIBLE);
-                isSuccess = true;
+
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(false, 500);
+
+                }
                 feedAdapter.notifyDataSetChanged();
                /* if (type == Constant.IMAGE_STATE) {
                     imagesAdapter.notifyDataSetChanged();
@@ -551,15 +563,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     feedAdapter.notifyDataSetChanged();
                 }*/
             }
-
-            if(isPulltoRefrash){
-                isPulltoRefrash = false;
-                mRefreshLayout.stopRefresh(isSuccess, 500);
-                int prevSize = feeds.size();
-                feeds.clear();
-                feedAdapter.notifyItemRangeRemoved(0, prevSize);
-            }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
