@@ -234,10 +234,10 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.btnConfirmBooking:
-                isConfirmbookingClicked = true;
+                isEditLoc = true;
                 if (bookingInfo.serviceType.equals("2")){
                     if (cLng!=0.0 && cLat!=0.0){
-                        distance(Mualab.currentLocationForBooking.lat,Mualab.currentLocationForBooking.lng);
+                        distance(cLat,cLng);
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert("Enter your location");
                     }
@@ -380,10 +380,18 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         // double diff = distance * meterConversion;
 
         if (radius>=distance) {
-            if (isConfirmbookingClicked && isEditLoc)
+
+            if (isEditLoc)
                 apiForConfirmBooking();
-            else if (isConfirmbookingClicked)
-                apiForConfirmBooking();
+                //else if (isConfirmbookingClicked)
+                //     apiForConfirmBooking();
+
+           /* else if (isConfirmbookingClicked)
+                apiForConfirmBooking();*/
+            else {
+                MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
+            }
+
         }
         else {
             if (isEditLoc)
