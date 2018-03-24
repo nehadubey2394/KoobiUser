@@ -32,7 +32,6 @@
     <string name="phone_number">Phone Number</string>
     <string name="continue_txt">Continue</string>
     <string name="country_activity">Choose a country</string>
-    <string name="search">Search</string>
 
     <string name="welcome_to">Welcome to\n<b>Mualab</b></string>
     <string name="verify_phone_no">Verify</string>
@@ -324,5 +323,6 @@
     <string name="read_less">show less</string>
     <string name="gps_permission_alert">Need enable location and permission for search near by artist.</string>
     <string name="no_artist_found">No Artist available on this location</string>
+    <string name="search">Search</string>
 
 </resources>
