@@ -75,7 +75,8 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     private ArtistsSearchBoard item;
     private TextView tvArtistLoc;
     private double cLat,cLng;
-    private boolean isConfirmbookingClicked = false;
+    private boolean isConfirmbookingClicked = false,isEditLoc = false;
+    private Session session;
 
     public BookingFragment5() {
         // Required empty public constructor
@@ -120,13 +121,13 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     }
 
     private void initView(){
+        session = Mualab.getInstance().getSessionManager();
+        User user = session.getUser();
         selectedServices = new ArrayList<>();
         adapter = new BookedServicesAdapter((AppCompatActivity) getActivity(), selectedServices,item);
     }
 
     private void setViewId(View rootView){
-        Session session = Mualab.getInstance().getSessionManager();
-        User user = session.getUser();
 
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
         AppCompatButton btnEditDate = rootView.findViewById(R.id.btnEditDate);
@@ -149,6 +150,12 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         if (Mualab.currentLocationForBooking!=null){
             cLat = Mualab.currentLocationForBooking.lat;
             cLng = Mualab.currentLocationForBooking.lng;
+            location = getCurrentAddress(cLat,cLng);
+        }
+
+        if (!session.getUserChangedLocLat().equals("") && !session.getUserChangedLocLng().equals("")){
+            cLat = Double.parseDouble(session.getUserChangedLocLat());
+            cLng = Double.parseDouble(session.getUserChangedLocLng());
             location = getCurrentAddress(cLat,cLng);
         }
 
@@ -221,26 +228,16 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 MyToast.getInstance(mContext).showSmallCustomToast("Under Developement");
                 break;
             case R.id.btnEditLocation:
+                isEditLoc = true;
                 isConfirmbookingClicked = false;
-                if (!ConnectionDetector.isConnected()) {
-                    new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
-                        @Override
-                        public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                            if(isConnected){
-                                dialog.dismiss();
-                                getLocation();
-                            }
-                        }
-                    }).show();
-                }else
-                    getLocation();
-
+                getLocation();
                 break;
+
             case R.id.btnConfirmBooking:
-                isConfirmbookingClicked = true;
+                isEditLoc = true;
                 if (bookingInfo.serviceType.equals("2")){
                     if (cLng!=0.0 && cLat!=0.0){
-                        distance(Mualab.currentLocationForBooking.lat,Mualab.currentLocationForBooking.lng);
+                        distance(cLat,cLng);
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert("Enter your location");
                     }
@@ -253,7 +250,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     }
 
     private void apiForConfirmBooking(){
-        Session session = Mualab.getInstance().getSessionManager();
+        final Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
         if (!ConnectionDetector.isConnected()) {
@@ -294,6 +291,11 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        if (isEditLoc){
+                            session.setUserChangedLocLat(String.valueOf(cLat));
+                            session.setUserChangedLocLng(String.valueOf(cLng));
+                        }
+
                         MyToast.getInstance(mContext).showDasuAlert(message);
                         ((BookingActivity)mContext).finish();
                     }else {
@@ -378,11 +380,25 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         // double diff = distance * meterConversion;
 
         if (radius>=distance) {
-            if (isConfirmbookingClicked)
+
+            if (isEditLoc)
                 apiForConfirmBooking();
+                //else if (isConfirmbookingClicked)
+                //     apiForConfirmBooking();
+
+           /* else if (isConfirmbookingClicked)
+                apiForConfirmBooking();*/
+            else {
+                MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
+            }
+
         }
-        else
+        else {
+            if (isEditLoc)
+                isEditLoc = false;
+
             MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
+        }
 
     }
 

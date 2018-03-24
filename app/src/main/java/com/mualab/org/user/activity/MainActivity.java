@@ -32,23 +32,15 @@ import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
 
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-public class MainActivity extends BaseActivity implements View.OnClickListener
-        /*GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener,
-        ResultCallback<LocationSettingsResult>*/ {
-
-    public static String TAG = MainActivity.class.getName();
-
-    private ImageButton ibtnLeaderBoard, ibtnFeed, ibtnAddFeed, ibtnSearch, ibtnNotification, ibtnChat;
+    private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
     private int clickedId = 0;
-    public ImageView ivHeaderBack, ivHeaderUser, ivAppIcon;
+    public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon;
     public TextView tvHeaderTitle;
     public RelativeLayout rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
@@ -62,17 +54,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
         setStatusbarColor();
 
         Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
-        Mualab.feedBasicInfo.put("userId", "" + Mualab.currentUser.id);
+        Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);
         Mualab.feedBasicInfo.put("age", "25");
         Mualab.feedBasicInfo.put("gender", "Male");
         Mualab.feedBasicInfo.put("city", "indore");
         Mualab.feedBasicInfo.put("state", "MP");
         Mualab.feedBasicInfo.put("country", "India");
 
-        final NoConnectionDialog network = new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
+        final NoConnectionDialog network =  new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
             @Override
             public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                if (isConnected) {
+                if(isConnected){
                     dialog.dismiss();
                 }
             }
@@ -82,28 +74,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
         networkChangeReceiver.setListner(new NetworkChangeReceiver.Listner() {
             @Override
             public void onNetworkChange(boolean isConnected) {
-                if (isConnected && network != null) {
+                if(isConnected && network!=null){
                     network.dismiss();
-                } else network.show();
+                }else network.show();
             }
         });
 
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
+        if (bundle!=null){
             item = (RefineSearchBoard) bundle.getSerializable("refineSearchBoard");
         }
 
         initView();
-        addFragment(SearchBoardFragment.newInstance(item, ""), false);
-
-      /*  checkLocationPermissionAndGetLocation();
-
-        // Kick off the process of building the GoogleApiClient, LocationRequest, and
-        // LocationSettingsRequest objects.
-        buildGoogleApiClient();
-        createLocationRequest();
-        buildLocationSettingsRequest();*/
+        addFragment(SearchBoardFragment.newInstance(item,""), false);
     }
+
+
 
 
     private void initView() {
@@ -137,8 +123,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
     private static final int RESULT_START_CAMERA = 4567;
     private static final int RESULT_START_VIDEO = 4589;
     private static final int RESULT_ADD_NEW_STORY = 7891;
-
-    public void openNewStoryActivity() {
+    public void openNewStoryActivity(){
         showToast(getString(R.string.under_development));
         /*Intent intent = new Intent(this, NewStoryActivity.class);
         startActivityForResult(intent, REQUEST_ADD_NEW_STORY);*/
@@ -188,7 +173,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == REQUEST_ADD_NEW_STORY) {
+        if(resultCode == RESULT_OK && requestCode==REQUEST_ADD_NEW_STORY){
 
             /*if(resultCode == 7891){
 
@@ -204,30 +189,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
                 }
             }*/
         }
-
-       /* if (requestCode == Constant.LOCATION_SETTINGS_REQUEST) {
-            getLocation();
-        }*/
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+        switch (view.getId()){
 
-            case R.id.ivHeaderBack:
+            case R.id.ivHeaderBack :
                 onBackPressed();
                 break;
 
-            case R.id.ibtnChat:
+            case R.id.ibtnChat :
                 openNewStoryActivity();
                 //MyToast.getInstance(MainActivity.this).showSmallCustomToast("Under developement");
                 break;
 
-            case R.id.ivAppIcon:
+            case R.id.ivAppIcon :
                 break;
 
-            case R.id.ibtnLeaderBoard:
-                if (clickedId != 1) {
+            case R.id.ibtnLeaderBoard :
+                if (clickedId!=1){
                     setInactiveTab();
                     clickedId = 1;
                     tvHeaderTitle.setText(getString(R.string.title_searchboard));
@@ -241,8 +222,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
                 }
                 break;
 
-            case R.id.ibtnFeed:
-                if (clickedId != 2) {
+            case R.id.ibtnFeed :
+                if (clickedId!=2) {
                     setInactiveTab();
                     clickedId = 2;
                     tvHeaderTitle.setText(getString(R.string.app_name));
@@ -256,7 +237,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
                 }
                 break;
 
-            case R.id.ibtnAddFeed:
+            case R.id.ibtnAddFeed :
                 startActivity(new Intent(MainActivity.this, GalleryActivity.class));
                /* if (clickedId!=3) {
                     setInactiveTab();
@@ -274,8 +255,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
                 }*/
                 break;
 
-            case R.id.ibtnSearch:
-                if (clickedId != 4) {
+            case R.id.ibtnSearch :
+                if (clickedId!=4) {
                     setInactiveTab();
                     clickedId = 4;
                     tvHeaderTitle.setText(R.string.title_explore);
@@ -288,8 +269,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
                 }
                 break;
 
-            case R.id.ibtnNotification:
-                if (clickedId != 5) {
+            case R.id.ibtnNotification :
+                if (clickedId!=5) {
                     setInactiveTab();
                     clickedId = 5;
                     tvHeaderTitle.setText(getString(R.string.title_searchboard));
@@ -305,7 +286,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    private void setInactiveTab() {
+    private void setInactiveTab(){
         rlHeader1.setVisibility(View.VISIBLE);
         ibtnLeaderBoard.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.inactive_leaderboard_ico));
         ibtnFeed.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.inactive_feeds_ico));
@@ -318,7 +299,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
 
     private boolean doubleBackToExitPressedOnce;
     private Runnable runnable;
-
     @Override
     public void onBackPressed() {
           /* Handle double click to finish activity*/
@@ -346,10 +326,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
     }
 
 
-    private void addMyStory(Bitmap bitmap) {
+    private void addMyStory( Bitmap bitmap){
 
-        if (ConnectionDetector.isConnected()) {
-            Map<String, String> map = new HashMap<>();
+        if(ConnectionDetector.isConnected()){
+            Map<String,String> map = new HashMap<>();
             map.put("type", "image");
 
             HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
@@ -362,7 +342,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
                         if (status.equalsIgnoreCase("success")) {
                             showToast(message);
                             finish();
-                        } else showToast(message);
+                        }
+                        else showToast(message);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -370,184 +351,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener
 
                 @Override
                 public void ErrorListener(VolleyError error) {
-                    Log.d("res:", "" + error.getLocalizedMessage());
-                }
-            })
+                    Log.d("res:", ""+error.getLocalizedMessage());
+                }})
                     .setParam(map)
                     .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
                     .setProgress(true));
             task.postImage("myStory", bitmap);
-        } else showToast(getString(R.string.error_msg_network));
+        }else showToast(getString(R.string.error_msg_network));
     }
 
-    private void showToast(String str) {
-        if (!TextUtils.isEmpty(str))
+    private void showToast(String str){
+        if(!TextUtils.isEmpty(str))
             MyToast.getInstance(this).showSmallCustomToast(str);
     }
-
-
-    /*
-
-    private void checkLocationPermissionAndGetLocation() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        Constant.MY_PERMISSIONS_REQUEST_LOCATION);
-            } else {
-                getLocation();
-            }
-        } else {
-            getLocation();
-        }
-    }
-
-    *//*Get Current Location*//*
-    private LocationManager locationManager;
-
-    void getLocation() {
-        try {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            assert locationManager != null;
-            boolean enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            // check if enabled and if not send user to the GSP settings
-            // Better solution would be to display a dialog and suggesting to
-            // go to the settings
-            if (!enabled) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(intent, Constant.LOCATION_SETTINGS_REQUEST);
-            } else {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5, this);
-            }
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Mualab.currentLocation.lat = location.getLatitude();
-        Mualab.currentLocation.lng = location.getLongitude();
-        locationManager.removeUpdates(this);
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        showToast("Please Enable GPS and Internet");
-        //chageLocationSetting();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-
-    protected GoogleApiClient mGoogleApiClient;
-    protected LocationRequest mLocationRequest;
-    protected LocationSettingsRequest mLocationSettingsRequest;
-    protected Location mCurrentLocation;
-    private FusedLocationProviderClient mFusedLocationClient;
-
-    protected synchronized void buildGoogleApiClient() {
-        Log.i(TAG, "Building GoogleApiClient");
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(100);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-
-    protected void buildLocationSettingsRequest() {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
-        mLocationSettingsRequest = builder.build();
-    }
-
-
-    *//**
-     * Requests location updates from the FusedLocationApi.
-     *//*
-    protected void startLocationUpdates() {
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations, this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                        }
-                    }
-                });
-    }
-
-
-    protected void checkLocationSettings() {
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(
-                        mGoogleApiClient,
-                        mLocationSettingsRequest);
-        result.setResultCallback(this);
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
-        final Status status = locationSettingsResult.getStatus();
-        switch (status.getStatusCode()) {
-            case LocationSettingsStatusCodes.SUCCESS:
-                Log.i(TAG, "All location settings are satisfied.");
-                startLocationUpdates();
-                break;
-            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to" +
-                        "upgrade location settings ");
-
-                try {
-                    // Show the dialog by calling startResolutionForResult(), and check the result
-                    // in onActivityResult().
-                    status.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
-                } catch (IntentSender.SendIntentException e) {
-                    Log.i(TAG, "PendingIntent unable to execute request.");
-                }
-                break;
-            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog " +
-                        "not created.");
-                break;
-        }
-    }*/
 }

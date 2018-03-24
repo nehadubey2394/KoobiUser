@@ -39,7 +39,7 @@ public class BookingFragment1 extends Fragment {
         BookingFragment1 fragment = new BookingFragment1();
         Bundle args = new Bundle();
         args.putString("param1", param1);
-        args.putParcelable("param2", item);
+        args.putSerializable("param2", item);
         args.putSerializable("param3", bookingInfo);
         args.putBoolean("param4", isEdit);
         fragment.setArguments(args);
@@ -51,7 +51,7 @@ public class BookingFragment1 extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
-            item = getArguments().getParcelable("param2")  ;
+            item = (ArtistsSearchBoard) getArguments().getSerializable("param2")  ;
             bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
             isEdit = getArguments().getBoolean("param4");
         }

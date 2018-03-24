@@ -35,7 +35,7 @@ public class BookingFragmentMain extends Fragment implements View.OnClickListene
         BookingFragmentMain fragment = new BookingFragmentMain();
         Bundle args = new Bundle();
         args.putString("mParam1", param1);
-        args.putParcelable("item", item);
+        args.putSerializable("item", item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,7 +65,7 @@ public class BookingFragmentMain extends Fragment implements View.OnClickListene
     }
 
     private void initView(View rootView){
-       // MainActivity.rlHeader1.setVisibility(View.GONE);
+        // MainActivity.rlHeader1.setVisibility(View.GONE);
         TextView title_booking = rootView.findViewById(R.id.tvHeaderTitle2);
         TextView tvArtistName = rootView.findViewById(R.id.tvArtistName);
         TextView tvOpeningTime = rootView.findViewById(R.id.tvOpeningTime);
@@ -105,12 +105,12 @@ public class BookingFragmentMain extends Fragment implements View.OnClickListene
     @Override
     public void onDestroy() {
         super.onDestroy();
-       // MainActivity.rlHeader1.setVisibility(View.VISIBLE);
+        // MainActivity.rlHeader1.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-      //  MainActivity.rlHeader1.setVisibility(View.VISIBLE);
+        //  MainActivity.rlHeader1.setVisibility(View.VISIBLE);
     }
 }
