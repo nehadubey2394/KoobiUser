@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -34,7 +36,6 @@ import com.image.cropper.CropImage;
 import com.image.cropper.CropImageView;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.authentication.Registration2Activity;
 import com.mualab.org.user.activity.feeds.adapter.CommentAdapter;
 import com.mualab.org.user.activity.feeds.model.Comment;
 import com.mualab.org.user.application.Mualab;
@@ -151,6 +152,22 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
 
+        /*ed_comments.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if(hasFocus){
+                    recyclerView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.scrollToPosition(0);
+                        }
+                    }, 100);
+                }
+
+            }
+        });*/
+
         commentList.clear();
         ll_loadingBox.setVisibility(View.VISIBLE);
         progress_bar.setVisibility(View.VISIBLE);
@@ -202,10 +219,12 @@ public class CommentsActivity extends AppCompatActivity {
                 //Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
                 Uri imageUri = ImagePicker.getImageURIFromResult(this, requestCode, resultCode, data);
                 if (imageUri != null) {
-                    CropImage.activity(imageUri).setCropShape(CropImageView.CropShape.RECTANGLE).
-                            setAspectRatio(400, 400)
-                            .setMinCropResultSize(600,600)
-                            .setMaxCropResultSize(1000, 1000).start(this);
+                    CropImage.activity(imageUri)
+                            .setCropShape(CropImageView.CropShape.RECTANGLE)
+                            .setAspectRatio(400, 300)
+                            .setMinCropResultSize(1000,800)
+                            .setMaxCropResultSize(1200, 1000)
+                            .start(this);
                 } else {
                     MyToast.getInstance(CommentsActivity.this).showSmallMessage(
                             getString(R.string.msg_some_thing_went_wrong));
@@ -276,7 +295,7 @@ public class CommentsActivity extends AppCompatActivity {
                         }
                         //recyclerView.smoothScrollToPosition(0);
                         commentAdapter.notifyDataSetChanged();
-                       // recyclerView.scrollToPosition(commentList.size()-1);
+                        recyclerView.scrollToPosition(0);
                     }else {
 
                         if(commentList.size()==0) {

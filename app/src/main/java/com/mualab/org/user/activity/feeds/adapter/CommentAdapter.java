@@ -82,7 +82,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         if(commentListInfo.type.equals("image")){
             holder.ivImg.setVisibility(View.VISIBLE);
             Picasso.with(mContext).load(commentListInfo.comment)
-                    .fit()
                     .placeholder(R.drawable.gallery_placeholder)
                     .error(R.drawable.gallery_placeholder)
                     .into(holder.ivImg);

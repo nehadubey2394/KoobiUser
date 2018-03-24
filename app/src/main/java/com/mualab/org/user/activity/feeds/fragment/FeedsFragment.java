@@ -23,6 +23,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,12 +82,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import views.refreshview.CircleHeaderView;
+import views.refreshview.OnRefreshListener;
+import views.refreshview.RjRefreshLayout;
+
 import static android.app.Activity.RESULT_OK;
 /*
  * Dharmraj acharya
  * */
 public class FeedsFragment extends BaseFragment implements View.OnClickListener,
-        FeedAdapter.Listener, LiveUserAdapter.Listner, AppBarLayout.OnOffsetChangedListener {
+        FeedAdapter.Listener, LiveUserAdapter.Listner {
 
     public static String TAG = FeedsFragment.class.getName();
 
@@ -98,8 +103,8 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
     private TextView  tvImages, tvVideos, tvFeeds,tv_msg;
     private LinearLayout ll_header;
 
-    private AppBarLayout appBarLayout;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    //private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RjRefreshLayout mRefreshLayout;
 
     private LiveUserAdapter liveUserAdapter;
     private ArrayList<LiveUserInfo> liveUserList;
@@ -130,7 +135,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
     public void onDestroyView() {
         super.onDestroyView();
         Mualab.getInstance().cancelPendingRequests(TAG);
-        /*mContext = null;
+        mContext = null;
         tvImages = null;
         tvVideos = null;
         tvFeeds = null;
@@ -144,7 +149,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         liveUserList = null;
         feeds = null;
         rvFeed = null;
-        user = null;*/
+        user = null;
     }
 
     public FeedsFragment() {
@@ -208,8 +213,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         rvFeed = view.findViewById(R.id.rvFeed);
         tv_msg = view.findViewById(R.id.tv_msg);
         ll_progress = view.findViewById(R.id.ll_progress);
-        appBarLayout = view.findViewById(R.id.appbar);
-        mSwipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
 
 
         view.findViewById(R.id.ly_images).setOnClickListener(this);
@@ -244,42 +247,34 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             updateViewType(R.id.ly_feeds);
         getStoryList();
 
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
+        final CircleHeaderView header = new CircleHeaderView(getContext());
+        mRefreshLayout.addHeader(header);
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(false);
                 endlesScrollListener.resetState();
                 isPulltoRefrash = true;
-                apiForGetAllFeeds(0, 10, true);
+                apiForGetAllFeeds(0, 10, false);
+            }
+
+            @Override
+            public void onLoadMore() {
+                Log.e(TAG, "onLoadMore: ");
             }
         });
-
-       // ((MainActivity)getActivity()).updateToolbarTitle((fragCount == 0) ? "Home" : "Sub Home "+fragCount);
-
     }
 
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-        if (i == 0) {
-            mSwipeRefreshLayout.setEnabled(true);
-        } else {
-            mSwipeRefreshLayout.setEnabled(false);
-        }
-    }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        appBarLayout.addOnOffsetChangedListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        appBarLayout.removeOnOffsetChangedListener(this);
     }
 
     @Override
@@ -482,6 +477,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
                 if(isPulltoRefrash){
                     isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(true, 500);
                     int prevSize = feeds.size();
                     feeds.clear();
                     feedAdapter.notifyItemRangeRemoved(0, prevSize);

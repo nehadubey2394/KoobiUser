@@ -190,6 +190,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         }
     }
 
+
     private void getDeviceLocation() {
 
         if (Build.VERSION.SDK_INT >= 23) {
