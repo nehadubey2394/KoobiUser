@@ -84,6 +84,7 @@ public class BookingFragment1 extends Fragment {
         RecyclerView rvBookingSelectStaff = rootView.findViewById(R.id.rvBookingSelectStaff);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvBookingSelectStaff.setLayoutManager(layoutManager);
+        rvBookingSelectStaff.setMotionEventSplittingEnabled(false);
         rvBookingSelectStaff.setAdapter(staffAdapter);
     }
 

@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.mualab.org.user.R;
 
 import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.SearchBoardAdapter;
 import com.mualab.org.user.application.Mualab;
@@ -44,6 +45,7 @@ import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.util.Helper;
 import com.mualab.org.user.util.LocationDetector;
 
 import org.json.JSONArray;
@@ -122,8 +124,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                 day = item.day;
             date = item.date;
 
-            Mualab.currentLocation.lat = Double.parseDouble(lat);
-            Mualab.currentLocation.lng = Double.parseDouble(lng);
+            if (!lat.equals("") && !lng.equals("")){
+                Mualab.currentLocationForBooking.lat = Double.parseDouble(lat);
+                Mualab.currentLocationForBooking.lng = Double.parseDouble(lng);
+            }
 
         }
     }
@@ -135,6 +139,8 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         rvSearchBoard.setLayoutManager(layoutManager);
         listAdapter = new SearchBoardAdapter(mContext, artistsList);
         rvSearchBoard.setAdapter(listAdapter);
+
+        apiForDeleteAllPendingBooking();
 
         if(scrollListener==null)
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
@@ -213,6 +219,9 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                                 double longitude = location.getLongitude();
                                 Mualab.currentLocation.lat = latitude;
                                 Mualab.currentLocation.lng = longitude;
+
+                                Mualab.currentLocationForBooking.lat = latitude;
+                                Mualab.currentLocationForBooking.lng = longitude;
 
                                 if (lng.equals("") && lat.equals("")){
                                     lat = String.valueOf(latitude);
@@ -353,4 +362,65 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
         task.execute(TAG);
     }
+
+    private void apiForDeleteAllPendingBooking(){
+        Session session = Mualab.getInstance().getSessionManager();
+        User user = session.getUser();
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForDeleteAllPendingBooking();
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", String.valueOf(user.id));
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "deleteUserBookService", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+                        BookingFragment4.arrayListbookingInfo.clear();
+
+                    }else {
+                        apiForDeleteAllPendingBooking();
+                    }
+                } catch (Exception e) {
+                    Progress.hide(mContext);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(false)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
+    }
+
 }

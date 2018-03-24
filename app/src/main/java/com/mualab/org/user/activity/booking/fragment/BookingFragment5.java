@@ -4,6 +4,8 @@ package com.mualab.org.user.activity.booking.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,8 +45,15 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -65,6 +74,8 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     int pos = BookingFragment4.arrayListbookingInfo.size()-1;
     private ArtistsSearchBoard item;
     private TextView tvArtistLoc;
+    private double cLat,cLng;
+    private boolean isConfirmbookingClicked = false;
 
     public BookingFragment5() {
         // Required empty public constructor
@@ -114,6 +125,9 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     }
 
     private void setViewId(View rootView){
+        Session session = Mualab.getInstance().getSessionManager();
+        User user = session.getUser();
+
         BookingActivity.title_booking.setText(getString(R.string.title_booking));
         AppCompatButton btnEditDate = rootView.findViewById(R.id.btnEditDate);
         AppCompatButton btnEditLocation = rootView.findViewById(R.id.btnEditLocation);
@@ -125,24 +139,31 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         TextView tvBookingTime = rootView.findViewById(R.id.tvBookingTime);
         TextView tvTotalPrice = rootView.findViewById(R.id.tvTotalPrice);
 
-        firstBooking = BookingFragment4.arrayListbookingInfo.get(pos);
-        tvBookingDate.setText(firstBooking.date);
-        tvBookingTime.setText(firstBooking.time);
         tvStaffArtistName.setText(bookingInfo.artistName);
 
         if (!bookingInfo.profilePic.equals("")){
             Picasso.with(mContext).load(bookingInfo.profilePic).placeholder(R.drawable.defoult_user_img).
                     fit().into(ivSelectStaffProfile);
         }
-        if (!bookingInfo.artistAddress.equals(""))
-            tvArtistLoc.setText(bookingInfo.artistAddress);
-        else
-            tvArtistLoc.setText("NA");
 
-        if (bookingInfo.serviceType.equals("2"))
+        if (Mualab.currentLocationForBooking!=null){
+            cLat = Mualab.currentLocationForBooking.lat;
+            cLng = Mualab.currentLocationForBooking.lng;
+            location = getCurrentAddress(cLat,cLng);
+        }
+
+        if (bookingInfo.serviceType.equals("2")){
             btnEditLocation.setVisibility(View.VISIBLE);
-        else
+            tvArtistLoc.setText(location);
+        }
+        else {
             btnEditLocation.setVisibility(View.GONE);
+            if (!bookingInfo.artistAddress.equals(""))
+                tvArtistLoc.setText(bookingInfo.artistAddress);
+            else
+                tvArtistLoc.setText("NA");
+        }
+
 
         RecyclerView rycBookingInfo = rootView.findViewById(R.id.rycSelectedServ);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(mContext);
@@ -152,6 +173,16 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
         selectedServices.clear();
         selectedServices.addAll(BookingFragment4.arrayListbookingInfo);
+
+        Collections.sort(selectedServices, new Comparator<BookingInfo>() {
+            public int compare(BookingInfo o1, BookingInfo o2) {
+                return o1.dateTime.compareTo(o2.dateTime);
+            }
+        });
+        firstBooking = selectedServices.get(0);
+        tvBookingDate.setText(firstBooking.date);
+        tvBookingTime.setText(firstBooking.time);
+
         adapter.notifyDataSetChanged();
 
         double price = 0;
@@ -190,6 +221,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 MyToast.getInstance(mContext).showSmallCustomToast("Under Developement");
                 break;
             case R.id.btnEditLocation:
+                isConfirmbookingClicked = false;
                 if (!ConnectionDetector.isConnected()) {
                     new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
                         @Override
@@ -205,7 +237,17 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
                 break;
             case R.id.btnConfirmBooking:
-                apiForConfirmBooking();
+                isConfirmbookingClicked = true;
+                if (bookingInfo.serviceType.equals("2")){
+                    if (cLng!=0.0 && cLat!=0.0){
+                        distance(Mualab.currentLocationForBooking.lat,Mualab.currentLocationForBooking.lng);
+                    }else {
+                        MyToast.getInstance(mContext).showDasuAlert("Enter your location");
+                    }
+                }else {
+                    apiForConfirmBooking();
+                }
+
                 break;
         }
     }
@@ -236,7 +278,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         params.put("voucherId", "");
         params.put("paymentType", "1");
 
-        if (item.serviceType.equals("2") && !location.equals(""))
+        if (bookingInfo.serviceType.equals("2") && !location.equals(""))
             params.put("location", location);
         else
             params.put("location", firstBooking.artistAddress);
@@ -303,7 +345,11 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(mContext, data);
                 LatLng latLng = place.getLatLng();
-                distance(latLng.latitude,latLng.longitude,place);
+                cLat = latLng.latitude;
+                cLng = latLng.longitude;
+                tvArtistLoc.setText(place.getName());
+                location = ""+place.getName();
+                distance(latLng.latitude,latLng.longitude);
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(mContext, data);
                 // TODO: Handle the error.
@@ -315,7 +361,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void distance (double lat_b, double lng_b,Place place )
+    private void distance (double lat_b, double lng_b)
     {
         double earthRadius = 3958.75;
         double latDiff = Math.toRadians(lat_b-item.latitude);
@@ -332,11 +378,31 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         // double diff = distance * meterConversion;
 
         if (radius>=distance) {
-            tvArtistLoc.setText(place.getName());
-            location = ""+place.getName();
+            if (isConfirmbookingClicked)
+                apiForConfirmBooking();
         }
         else
             MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
 
+    }
+
+    private String getCurrentAddress(double latitude, double longitude) {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(mContext, Locale.getDefault());
+        String sAddress = "";
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);   String address = addresses.get(0).getAddressLine(0);
+            String city = addresses.get(0).getLocality();
+            String state = addresses.get(0).getAdminArea();
+            String country = addresses.get(0).getCountryName();
+            String postalCode = addresses.get(0).getPostalCode();
+            String knownName = addresses.get(0).getFeatureName();
+            sAddress = knownName+" "+postalCode+" "+city+" "+state+" "+country;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sAddress;
     }
 }
