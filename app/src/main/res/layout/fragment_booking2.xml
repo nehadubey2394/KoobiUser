@@ -8,7 +8,6 @@
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
     android:clickable="true"
-    android:background="@color/white"
     android:focusable="true">
 
     <RelativeLayout

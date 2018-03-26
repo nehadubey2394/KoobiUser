@@ -23,7 +23,8 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
 import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
-import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
+import com.mualab.org.user.activity.booking.listner.DeleteServiceListener;
+import com.mualab.org.user.activity.booking.listner.TimeSlotClickListener;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
@@ -57,7 +58,7 @@ import views.calender.data.Day;
 import views.calender.widget.MyFlexibleCalendar;
 
 
-public class BookingFragment4 extends Fragment implements View.OnClickListener,CustomAdapterButtonListener{
+public class BookingFragment4 extends Fragment implements View.OnClickListener,TimeSlotClickListener,DeleteServiceListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
     // TODO: Rename and change types of parameters
@@ -128,7 +129,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         artistId = bookingInfo.artistId;
         listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
         listAdapter.setCustomListener(BookingFragment4.this);
-        bookingInfoAdapter = new BookingInfoAdapter(mContext, arrayListbookingInfo);
+        bookingInfoAdapter = new BookingInfoAdapter(mContext, arrayListbookingInfo,isEdit);
     }
 
     @Override
@@ -155,6 +156,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         rycBookingInfo.setLayoutManager(layoutManager2);
         rycBookingInfo.setNestedScrollingEnabled(false);
         rycBookingInfo.setAdapter(bookingInfoAdapter);
+        bookingInfoAdapter.setCustomListener(BookingFragment4.this);
 
         MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
 
@@ -184,11 +186,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
                     isMatch=true;
                     bookingInfo = info;
                     alreadyAddedFound = true;
-                    if (!isEdit || alreadyAddedFound)
-                        MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
                     break;
                 }
             }
+            if (!isEdit && alreadyAddedFound)
+                MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
+
             if (!isMatch){
                 alreadyAddedFound = false;
                 arrayListbookingInfo.add(bookingInfo);
@@ -239,14 +242,20 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnCOnfirmBooking:
-                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
-                    if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
-                        apiForContinueBooking(false);
-                    } else {
-                        MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
-                    }
-                } else
-                    MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
+                if (arrayListbookingInfo.size()!=0){
+                    bookingInfo = arrayListbookingInfo.get(0);
+                    if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
+                        if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
+                            apiForContinueBooking(false);
+                        } else {
+                            MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
+                        }
+                    } else
+                        MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
+                }else {
+                    MyToast.getInstance(mContext).showDasuAlert("No service added!");
+                }
+
                 break;
 
             case R.id.btnToday:
@@ -265,14 +274,19 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
 
             case R.id.btnAddMoreService:
 
-                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
-                    if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
-                        apiForContinueBooking(true);
-                    } else {
-                        MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
-                    }
-                } else
-                    MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
+                if (arrayListbookingInfo.size()!=0){
+                    if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
+                        if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
+                            apiForContinueBooking(true);
+                        } else {
+                            MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
+                        }
+                    } else
+                        MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
+
+                }else {
+                    clearBackStack();
+                }
 
                 break;
         }
@@ -370,32 +384,63 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         });
     }
 
-    private String getCurrentTime(){
-        Calendar cal = Calendar.getInstance();
-        Date currentLocalTime = cal.getTime();
-        DateFormat date = new SimpleDateFormat("hh:mm a");
-        System.out.println("currentTime"+date.format(currentLocalTime));
-        return date.format(currentLocalTime);
+    @Override
+    public void onButtonClick(int position, String buttonText, int selectedCount) {
+        BookingTimeSlot item =  bookingTimeSlots.get(position);
+
+        for (int i = 0;i<bookingTimeSlots.size();i++){
+            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
+            timeSlot.isSelected = "0";
+        }
+
+        listAdapter.notifyDataSetChanged();
+        // if (item.isSelected.equals("0"))
+        item.isSelected = "1";
+
+        if (!alreadyAddedFound || isEdit){
+            bookingInfo.time = item.time;
+
+            if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
+                int min2  = Integer.parseInt(bookingInfo.endTime);
+
+                // int finalMin = minuts1+min2;
+
+                SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+                Date d;
+                try {
+                    d = df.parse(item.time);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(d);
+                    cal.add(Calendar.MINUTE, min2);
+                    bookingInfo.endTime = df.format(cal.getTime());
+
+                    Date  formatedDate = input.parse(selectedDate);  // parse input
+                    bookingInfo.date =  dateFormat.format(formatedDate);
+                    bookingInfo.selectedDate =  selectedDate;
+
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat dateAndTimeFormate = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+
+                    String newDateTime = bookingInfo.selectedDate+""+" "+bookingInfo.time;
+
+                    bookingInfo.dateTime = dateAndTimeFormate.parse(newDateTime);
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            listAdapter.notifyItemChanged(position);
+
+            if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
+                bookingInfoAdapter.notifyDataSetChanged();
+        }else {
+            MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
+        }
     }
 
-    private String getCurrentDate(){
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH)+1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        if (month < 10){
-            sMonth = "0"+month;
-        }else {
-            sMonth = String.valueOf(month);
-        }
-
-        if (day<10){
-            sDay = "0"+day;
-        }else {
-            sDay = String.valueOf(day);
-        }
-        return year+"-"+sMonth+"-"+sDay;
+    @Override
+    public void onRemoveClick(int position) {
+        BookingInfo info = arrayListbookingInfo.get(position);
+        apiForDeleteBookedService(info);
     }
 
     private void apiForGetSlots(){
@@ -591,62 +636,116 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,C
         task.execute(this.getClass().getName());
     }
 
-    @Override
-    public void onButtonClick(int position, String buttonText, int selectedCount) {
-        BookingTimeSlot item =  bookingTimeSlots.get(position);
+    private void apiForDeleteBookedService(final BookingInfo info){
+        Session session = Mualab.getInstance().getSessionManager();
+        User user = session.getUser();
 
-        for (int i = 0;i<bookingTimeSlots.size();i++){
-            BookingTimeSlot timeSlot = bookingTimeSlots.get(i);
-            timeSlot.isSelected = "0";
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForDeleteBookedService(info);
+                    }
+                }
+            }).show();
         }
 
-        listAdapter.notifyDataSetChanged();
-        // if (item.isSelected.equals("0"))
-        item.isSelected = "1";
+        Map<String, String> params = new HashMap<>();
+        if (!info.bookingId.equals(""))
+            params.put("bookingId", info.bookingId);
+        // params.put("artistId", item._id);
+        // params.put("userId", String.valueOf(user.id));
 
-        if (!alreadyAddedFound || isEdit){
-            bookingInfo.time = item.time;
-
-            if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
-                int min2  = Integer.parseInt(bookingInfo.endTime);
-
-                // int finalMin = minuts1+min2;
-
-                SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
-                Date d;
+        HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "deleteBookService", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
                 try {
-                    d = df.parse(item.time);
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(d);
-                    cal.add(Calendar.MINUTE, min2);
-                    bookingInfo.endTime = df.format(cal.getTime());
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
 
-                    Date  formatedDate = input.parse(selectedDate);  // parse input
-                    bookingInfo.date =  dateFormat.format(formatedDate);
-                    bookingInfo.selectedDate =  selectedDate;
+                    if (status.equalsIgnoreCase("success")) {
+                       // arrayListbookingInfo.remove(bookingInfo);
+                        arrayListbookingInfo.remove(info);
+                        bookingInfoAdapter.notifyDataSetChanged();
 
-                    @SuppressLint("SimpleDateFormat") SimpleDateFormat dateAndTimeFormate = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+                     /*   if (BookingFragment4.arrayListbookingInfo.size()==0){
+                            BookingFragment4.arrayListbookingInfo.clear();
+                            ((BookingActivity)context).finish();
+                        }else {
+                            FragmentManager fm = ((BookingActivity)context).getSupportFragmentManager();
+                            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-                    String newDateTime = bookingInfo.selectedDate+""+" "+bookingInfo.time;
+                            BookingInfo bookingInfo = BookingFragment4.arrayListbookingInfo.get(0);
+                            ((BookingActivity)context).addFragment(
+                                    BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
+                        }*/
 
-                    bookingInfo.dateTime = dateAndTimeFormate.parse(newDateTime);
 
-                } catch (ParseException e) {
+                    }else {
+                        MyToast.getInstance(mContext).showDasuAlert(message);
+                    }
+                } catch (Exception e) {
+                    Progress.hide(mContext);
                     e.printStackTrace();
                 }
             }
-            listAdapter.notifyItemChanged(position);
 
-            if (!bookingInfo.date.equals("") && !bookingInfo.date.equals("Select date"))
-                bookingInfoAdapter.notifyDataSetChanged();
-        }else {
-            MyToast.getInstance(mContext).showDasuAlert("This service is already added,Select another service");
-        }
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                        //      MyToast.getInstance(BookingActivity.this).showSmallCustomToast(helper.error_Messages(error));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(true)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
     }
 
     private void clearBackStack() {
         FragmentManager fm = ((BookingActivity)mContext).getSupportFragmentManager();
         fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    private String getCurrentTime(){
+        Calendar cal = Calendar.getInstance();
+        Date currentLocalTime = cal.getTime();
+        DateFormat date = new SimpleDateFormat("hh:mm a");
+        System.out.println("currentTime"+date.format(currentLocalTime));
+        return date.format(currentLocalTime);
+    }
+
+    private String getCurrentDate(){
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH)+1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        if (month < 10){
+            sMonth = "0"+month;
+        }else {
+            sMonth = String.valueOf(month);
+        }
+
+        if (day<10){
+            sDay = "0"+day;
+        }else {
+            sDay = String.valueOf(day);
+        }
+        return year+"-"+sMonth+"-"+sDay;
     }
 
     @Override

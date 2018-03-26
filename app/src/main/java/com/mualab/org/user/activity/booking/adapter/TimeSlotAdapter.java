@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.booking.listner.CustomAdapterButtonListener;
+import com.mualab.org.user.activity.booking.listner.TimeSlotClickListener;
 import com.mualab.org.user.model.booking.BookingTimeSlot;
 
 import java.util.ArrayList;
@@ -19,10 +19,10 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHo
     private Context context;
     private String s = "";
     private ArrayList<BookingTimeSlot> itemList;
-    private CustomAdapterButtonListener customButtonListener = null;
-    // private CustomAdapterButtonListener customButtonListener = null;
+    private TimeSlotClickListener customButtonListener = null;
+    // private TimeSlotClickListener customButtonListener = null;
 
-    public void setCustomListener(CustomAdapterButtonListener customButtonListener){
+    public void setCustomListener(TimeSlotClickListener customButtonListener){
         this.customButtonListener = customButtonListener;
     }
 
@@ -31,7 +31,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHo
         this.context = context;
         this.itemList = itemList;
     }
-    /* public void setCustomListener(CustomAdapterButtonListener customButtonListener){
+    /* public void setCustomListener(TimeSlotClickListener customButtonListener){
          this.customButtonListener = customButtonListener;
      }
  */

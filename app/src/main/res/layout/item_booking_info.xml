@@ -1,62 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<com.daimajia.swipe.SwipeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="2dp"
-    android:background="@color/white"
-    >
+    android:id="@+id/sample1"
+    android:layout_height="56dp"
+    android:layout_margin="4dp"
+    app:clickToClose="true">
 
     <LinearLayout
+        android:tag="side"
+        android:id="@+id/left_swipe_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_color"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        >
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            />
+
+        <!-- <LinearLayout
+             android:id="@+id/lyEdit"
+             android:layout_width="64dp"
+             android:layout_height="match_parent"
+             android:background="@color/primary_blue"
+             android:gravity="center"
+             android:orientation="vertical"
+             android:clickable="true"
+             >
+
+             <ImageView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+                 android:background="@drawable/edit_ico"
+                 android:padding="4dp"
+                 android:backgroundTint="@color/white"
+                 />
+
+             <TextView
+                 android:id="@+id/tvEdit"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="@string/text_edit"
+                 android:gravity="center"
+                 android:layout_gravity="center"
+                 android:textColor="@color/white"
+                 android:textSize="12sp"
+                 android:paddingRight="2dp"
+                 android:layout_marginTop="5dp"
+                 android:fontFamily="@font/roboto_medium"
+
+                 />
+
+         </LinearLayout>
+
+         <View
+             android:layout_width="7dp"
+             android:layout_height="match_parent"
+             />-->
+
+        <LinearLayout
+            android:id="@+id/lyRemove"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@color/darkred"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/delete_ico"
+                />
+
+            <TextView
+                android:id="@+id/tvDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_remove"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/roboto_medium"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:padding="2dp"
+        android:background="@color/white"
+        >
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvDateAndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:padding="2dp"
+                android:text="Sun 10th Nov 2018, 10:00"
+                android:textColor="@color/primary_blue"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvServiceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:maxWidth="180dp"
+                android:padding="2dp"
+                android:text="Evening Makeup"
+                android:textColor="@color/text_color"
+                android:textSize="12sp" />
+
+        </LinearLayout>
         <TextView
-            android:id="@+id/tvDateAndTime"
+            android:id="@+id/tvPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:ellipsize="end"
             android:fontFamily="@font/roboto_medium"
-            android:gravity="center_vertical"
-            android:maxLines="1"
+            android:gravity="right|center_vertical"
+            android:maxLines="2"
             android:padding="2dp"
-            android:text="Sun 10th Nov 2018, 10:00"
+            android:text="£170"
+            android:layout_marginRight="6dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
             android:textColor="@color/primary_blue"
             android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/tvServiceName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:ellipsize="end"
-            android:fontFamily="@font/roboto_regular"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:maxWidth="180dp"
-            android:padding="2dp"
-            android:text="Evening Makeup"
-            android:textColor="@color/text_color"
-            android:textSize="12sp" />
+    </RelativeLayout>
 
-    </LinearLayout>
-    <TextView
-        android:id="@+id/tvPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:fontFamily="@font/roboto_medium"
-        android:gravity="right|center_vertical"
-        android:maxLines="2"
-        android:padding="2dp"
-        android:text="£170"
-        android:layout_marginRight="6dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/primary_blue"
-        android:textSize="14sp" />
-
-</RelativeLayout>
+</com.daimajia.swipe.SwipeLayout>

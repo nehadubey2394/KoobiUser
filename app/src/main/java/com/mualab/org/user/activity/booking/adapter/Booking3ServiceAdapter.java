@@ -85,12 +85,19 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         final BookingServices3 item = artistsList.get(position);
         holder.tvLastService.setText(item.title);
 
-        String CurrentString = item.completionTime;
-        if (CurrentString.contains(":")){
-            String[] separated = CurrentString.split(":");
+        String totalTime = item.completionTime;
+        if (totalTime.contains(":")){
+            String[] separated = totalTime.split(":");
             String hours = separated[0]+" hrs ";
             String min = separated[1]+" min";
-            holder.tvTime.setText(hours+min);
+
+            if (hours.equals("00 hrs "))
+                holder.tvTime.setText(min);
+            else if (!hours.equals("00 hrs ") && min.equals("00 min"))
+                holder.tvTime.setText(hours);
+            else
+                holder.tvTime.setText(hours+min);
+
         }
         double prise = 0.0;
         if (isOutCallSelect){

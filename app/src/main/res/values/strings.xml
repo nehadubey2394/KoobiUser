@@ -148,7 +148,7 @@
     <string name="text_out_call_services">Out Call Services</string>
     <string name="text_location">Location</string>
     <string name="text_service">Service</string>
-    <string name="text_date_and_time">Date and Time</string>
+    <string name="text_date_and_time">Date And Time</string>
     <string name="titel_refine">Refine</string>
     <string name="title_photo">Photo</string>
     <string name="title_explore">Explore</string>
@@ -189,7 +189,7 @@
     <string name="text_select_time">Select Time</string>
     <string name="text_booking_info">Booking Info :</string>
     <string name="text_confirm_booking">Confirm Booking</string>
-    <string name="text_continue_booking">Continue Booking</string>
+    <string name="text_continue_booking">Continue</string>
     <string name="text_add_more_services">Add More</string>
     <string name="text_today">Today</string>
     <string name="text_re_book">Re-book</string>
