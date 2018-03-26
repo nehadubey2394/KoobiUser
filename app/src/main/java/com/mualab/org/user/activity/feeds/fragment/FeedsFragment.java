@@ -934,6 +934,13 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             }
         });
 
+        view.findViewById(R.id.tvUnfollow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyToast.getInstance(mContext).showSmallCustomToast(getString(R.string.under_development));
+            }
+        });
+
         Picasso.with(mContext).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
 
         if(TextUtils.isEmpty(feeds.profileImage))
