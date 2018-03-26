@@ -50,6 +50,7 @@ public class Mualab extends Application {
         currentLocation = new Location();
         currentLocationForBooking = new Location();
         FirebaseApp.initializeApp(this);
+        session.setIsOutCallFilter(false);
        // ref = FirebaseDatabase.getInstance().getReference();
     }
 
