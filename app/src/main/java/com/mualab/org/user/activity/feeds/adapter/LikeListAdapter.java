@@ -125,6 +125,12 @@ public class LikeListAdapter extends RecyclerView.Adapter<LikeListAdapter.ViewHo
         holder.btn_follow.setText("");
         holder.progressBar.setVisibility(View.VISIBLE);
 
+        holder.progressBar.getIndeterminateDrawable()
+                .setColorFilter(feedLike.followerStatus==1?
+                                ContextCompat.getColor(mContext, R.color.colorAccent):
+                                ContextCompat.getColor(mContext, R.color.white)
+                        , PorterDuff.Mode.SRC_IN);
+
         new HttpTask(new HttpTask.Builder(mContext, "followFollowing", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {

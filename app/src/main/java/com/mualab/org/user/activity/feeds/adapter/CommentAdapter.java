@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,6 +130,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         map.put("likeById", ""+Mualab.currentUser.id);
         map.put("userId", ""+comment.commentById);
         map.put("type", "comment");
+
+        for (Map.Entry<String,String> entry : map.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            Log.d(key, value);
+            // do stuff
+        }
+
 
         holder.iv_like.setEnabled(false);
 

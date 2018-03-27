@@ -70,7 +70,7 @@ dependencies {
     compile 'com.zhihu.android:matisse:0.4.3'
     compile 'com.loopeer.lib:shadow:0.0.4-beta2'
     implementation group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.1'
-    compile 'io.nlopez.smartlocation:library:3.3.3'
+    //compile "io.reactivex.rxjava2:rxjava:2.1.0"
 
 }
 apply plugin: 'com.google.gms.google-services'

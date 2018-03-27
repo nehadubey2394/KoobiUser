@@ -131,6 +131,7 @@ public class LikeFragment extends Fragment {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setItemAnimator(null);
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
@@ -213,7 +214,7 @@ public class LikeFragment extends Fragment {
                     progress_bar.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
-                    String message = js.getString("message");
+                   // String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
                         JSONArray array = js.getJSONArray("likeList");
