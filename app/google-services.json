@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "1042960861163",
-    "firebase_url": "https://placesapidemo-1517555727811.firebaseio.com",
-    "project_id": "placesapidemo-1517555727811",
-    "storage_bucket": "placesapidemo-1517555727811.appspot.com"
+    "project_number": "186224022769",
+    "firebase_url": "https://koobi-89a2d.firebaseio.com",
+    "project_id": "koobi-89a2d",
+    "storage_bucket": "koobi-89a2d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1042960861163:android:fef7d01ce1724687",
+        "mobilesdk_app_id": "1:186224022769:android:fef7d01ce1724687",
         "android_client_info": {
           "package_name": "com.mualab.org.user"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1042960861163-jr7g6pkpup07hi0viaqcg0rrpen0ucgv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mualab.org.user",
-            "certificate_hash": "63d4a6f01d4cfb337f167654e3c3e87108d9b88a"
-          }
-        },
-        {
-          "client_id": "1042960861163-1bn0mum7avvbv3nnkj6m2gehjf9n3stb.apps.googleusercontent.com",
+          "client_id": "186224022769-h3bldvmjcs1fq9u5qrj7mag6uk0n24rl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAUhBo-MEP_tZlmMZSe2Cpsx1JR87hgZ6Y"
+          "current_key": "AIzaSyDLidKJVpM1QLv9mbTyTuqJiOAqGGbqMKA"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1042960861163-1bn0mum7avvbv3nnkj6m2gehjf9n3stb.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
