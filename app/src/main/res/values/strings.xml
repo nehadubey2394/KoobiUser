@@ -7,6 +7,10 @@
     <string name="consumer_secret">5ybeRqkBsxUpgxivX6ao4zD7vEkbUasUNbPzbNP1N9fUUL2oB1</string>
     <string name="fb_app">com.facebook.app.FacebookContentProvider{1950251375263506}</string>
 
+    <!--Notification-->
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_notification_channel_name" translatable="true">News</string>
+
     <!--LoginActivity-->
     <string name="signup_as_service_provider"><b>Sign up</b> as <b>Service Provider</b></string>
     <string name="email_or_username">Email Or Username</string>

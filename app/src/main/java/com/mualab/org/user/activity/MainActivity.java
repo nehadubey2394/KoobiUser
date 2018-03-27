@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.firebase.crash.FirebaseCrash;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.application.Mualab;
@@ -33,6 +34,8 @@ import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
 import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +56,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setStatusbarColor();
+
+        FirebaseCrash.log("Activity created");
+        FirebaseCrash.logcat(Log.ERROR, "MainActivity", "NPE caught");
+        FirebaseCrash.report(new FileNotFoundException());
 
         Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
         Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);
