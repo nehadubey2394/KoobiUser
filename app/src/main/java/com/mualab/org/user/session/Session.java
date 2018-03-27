@@ -129,6 +129,15 @@ public class Session {
         this.editor.commit();
     }
 
+    public String getUserChangedLocName() {
+        return mypref.getString("locName", "");
+    }
+
+    public void setUserChangedLocName(String locName){
+        editor.putString("locName", locName);
+        this.editor.commit();
+    }
+
     public boolean getIsFirebaseLogin() {
         return mypref.getBoolean(IS_FIrebaseLogin, false);
     }

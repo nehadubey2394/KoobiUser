@@ -392,6 +392,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
                     if (status.equalsIgnoreCase("success")) {
                         BookingFragment4.arrayListbookingInfo.clear();
+                        Session session = Mualab.getInstance().getSessionManager();
+                        session.setUserChangedLocLat("");
+                        session.setUserChangedLocLng("");
+                        session.setUserChangedLocName("");
 
                     }else {
                     }
