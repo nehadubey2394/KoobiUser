@@ -125,7 +125,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
     private String caption;
     private String feedType = "feeds";
-  //  private boolean inProgressAPI;
+    //  private boolean inProgressAPI;
     private int lastFeedTypeId;
     private PermissionType permissionType;
     private User user;
@@ -325,7 +325,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     options = ActivityOptionsCompat.
                             makeSceneTransitionAnimation((Activity) mContext, edCaption, "text");
-                   // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.under_development));
+                    // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.under_development));
                 }
 
                 if (intent != null) {
@@ -394,7 +394,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
             case R.id.ly_images:
                 tvImages.setTextColor(getResources().getColor(R.color.colorPrimary));
-               // addRemoveHeader(false);
+                // addRemoveHeader(false);
                 if (lastFeedTypeId != R.id.ly_images){
                     feeds.clear();
                     feedType = "image";
@@ -408,7 +408,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
             case R.id.ly_videos:
                 tvVideos.setTextColor(getResources().getColor(R.color.colorPrimary));
-               // addRemoveHeader(false);
+                // addRemoveHeader(false);
                 if (lastFeedTypeId != R.id.ly_videos){
                     feeds.clear();
                     feedType = "video";
@@ -466,7 +466,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     }else MyToast.getInstance(mContext).showSmallMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();
-                   // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
+                    // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
                 }
             }
 
@@ -498,7 +498,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             JSONObject js = new JSONObject(response);
             String status = js.getString("status");
             // String message = js.getString("message");
-           // inProgressAPI = false;
+            // inProgressAPI = false;
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
                 JSONArray array = js.getJSONArray("AllFeeds");
@@ -615,7 +615,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
     private void getStoryList(){
         Map<String, String> params = new HashMap<>();
-       // params.put("feedType", feedType);
+        // params.put("feedType", feedType);
 
         new HttpTask(new HttpTask.Builder(mContext, "getMyStoryUser", new HttpResponceListner.Listener() {
             @Override
@@ -727,7 +727,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-       // String filePath;
+        // String filePath;
 
         if (resultCode == RESULT_OK) {
 
@@ -768,7 +768,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                             Bitmap ThumbImage = ThumbnailUtils
                                     .extractThumbnail(BitmapFactory.decodeFile(
                                             ImageVideoUtil.generatePath(tmpUri.get(0), mContext)), 100, 100);
-                           // Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), Uri.parse(mediaUri.uri));
+                            // Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), Uri.parse(mediaUri.uri));
                             updatePostImageUI(ThumbImage);
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -6,21 +6,31 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
+import com.mualab.org.user.activity.booking.listner.DeleteServiceListener;
 import com.mualab.org.user.model.booking.BookingInfo;
+
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ArrayList<BookingInfo> artistsList;
+    private boolean isEdit = false;
+    private  String bookingId ="";
+    private DeleteServiceListener deleteServiceListener = null;
+
+    public void setCustomListener(DeleteServiceListener deleteServiceListener){
+        this.deleteServiceListener = deleteServiceListener;
+    }
 
     // Constructor of the class
-    public BookingInfoAdapter(Context context, ArrayList<BookingInfo> artistsList) {
+    public BookingInfoAdapter(Context context, ArrayList<BookingInfo> artistsList,boolean isEdit) {
+        this.isEdit = isEdit;
         this.context = context;
         this.artistsList = artistsList;
     }
@@ -52,10 +62,22 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         holder.tvPrice.setText("£"+item.price);
         holder.tvServiceName.setText(item.artistService);
+
+       // if (isEdit){
+            if (item.date.equals("Select date") && item.time.equals("and time")) {
+                holder.sample1.setSwipeEnabled(true);
+            }else {
+                holder.sample1.setSwipeEnabled(false);
+            }
+        /*}else {
+            holder.sample1.setSwipeEnabled(false);
+        }*/
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvPrice,tvServiceName,tvDateAndTime;
+        SwipeLayout sample1;
+        LinearLayout lyRemove;
         private ViewHolder(View itemView)
         {
             super(itemView);
@@ -63,6 +85,19 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvDateAndTime = itemView.findViewById(R.id.tvDateAndTime);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvServiceName = itemView.findViewById(R.id.tvServiceName);
+            sample1 = itemView.findViewById(R.id.sample1);
+            lyRemove = itemView.findViewById(R.id.lyRemove);
+
+            lyRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                 //   if (isEdit) {
+                        if (deleteServiceListener != null) {
+                            deleteServiceListener.onRemoveClick(getAdapterPosition());
+                        }
+                   // }
+                }
+            });
         }
     }
 

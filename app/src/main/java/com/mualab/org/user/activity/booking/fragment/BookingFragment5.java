@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -178,16 +179,29 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         rycBookingInfo.setNestedScrollingEnabled(false);
         rycBookingInfo.setAdapter(adapter);
 
-        selectedServices.clear();
-        selectedServices.addAll(BookingFragment4.arrayListbookingInfo);
+        ArrayList<BookingInfo> tempArray = new ArrayList<>();
+        tempArray.clear();
+        tempArray.addAll(BookingFragment4.arrayListbookingInfo);
 
-        Collections.sort(selectedServices, new Comparator<BookingInfo>() {
+        Collections.sort(tempArray, new Comparator<BookingInfo>() {
             public int compare(BookingInfo o1, BookingInfo o2) {
                 return o1.dateTime.compareTo(o2.dateTime);
             }
         });
+        selectedServices.clear();
+        selectedServices.addAll(tempArray);
+
         firstBooking = selectedServices.get(0);
-        tvBookingDate.setText(firstBooking.date);
+        SimpleDateFormat dfInput = new SimpleDateFormat("EEE, d MMMM yyyy");
+        SimpleDateFormat dfOutput = new SimpleDateFormat("d MMMM yyyy");
+        Date formatedDate = null;
+        try {
+            formatedDate = dfInput.parse(firstBooking.date);
+            tvBookingDate.setText(dfOutput.format(formatedDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         tvBookingTime.setText(firstBooking.time);
 
         adapter.notifyDataSetChanged();
@@ -199,7 +213,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             price = price+item.price;
         }
         totalPrice = String.valueOf(price);
-        tvTotalPrice.setText("£"+totalPrice);
+        tvTotalPrice.setText("Â£"+totalPrice);
         btnEditDate.setOnClickListener(this);
         btnEditLocation.setOnClickListener(this);
         btnConfirmBooking.setOnClickListener(this);
@@ -233,7 +247,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.btnConfirmBooking:
-                isConfirmbookingClicked =true;
+                isConfirmbookingClicked = true;
                 if (bookingInfo.serviceType.equals("2")){
                     if (cLng!=0.0 && cLat!=0.0){
                         distance(cLat,cLng);
@@ -290,11 +304,8 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
-                        if (isEditLoc){
-                            session.setUserChangedLocLat(String.valueOf(cLat));
-                            session.setUserChangedLocLng(String.valueOf(cLng));
-                        }
-
+                        session.setUserChangedLocLat("");
+                        session.setUserChangedLocLng("");
                         MyToast.getInstance(mContext).showDasuAlert(message);
                         ((BookingActivity)mContext).finish();
                     }else {
@@ -363,7 +374,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void distance (double lat_b, double lng_b)
+  /*  private void distance (double lat_b, double lng_b)
     {
         double earthRadius = 3958.75;
         double latDiff = Math.toRadians(lat_b-item.latitude);
@@ -380,8 +391,13 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         // double diff = distance * meterConversion;
 
         if (radius>=distance) {
+            if (isEditLoc){
+                session.setUserChangedLocLat(String.valueOf(cLat));
+                session.setUserChangedLocLng(String.valueOf(cLng));
+            }
             if (isConfirmbookingClicked)
                 apiForConfirmBooking();
+
         }
         else {
             if (isEditLoc)
@@ -390,6 +406,44 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
         }
 
+    }*/
+
+    private void distance(double lat2, double lon2) {
+        double theta = item.longitude - lon2;
+        double dist = Math.sin(deg2rad(item.latitude))
+                * Math.sin(deg2rad(lat2))
+                + Math.cos(deg2rad(item.latitude))
+                * Math.cos(deg2rad(lat2))
+                * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+
+        double radius = Double.parseDouble(item.radius);
+
+        if (radius>=dist) {
+            if (isEditLoc){
+                session.setUserChangedLocLat(String.valueOf(cLat));
+                session.setUserChangedLocLng(String.valueOf(cLng));
+            }
+            if (isConfirmbookingClicked)
+                apiForConfirmBooking();
+
+        }
+        else {
+            if (isEditLoc)
+                isEditLoc = false;
+
+            MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
+        }
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
     }
 
     private String getCurrentAddress(double latitude, double longitude) {
@@ -404,7 +458,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             String country = addresses.get(0).getCountryName();
             String postalCode = addresses.get(0).getPostalCode();
             String knownName = addresses.get(0).getFeatureName();
-            sAddress = knownName+" "+postalCode+" "+city+" "+state+" "+country;
+            sAddress = knownName+" "+city+" "+state+" "+country+" "+postalCode;
 
         } catch (IOException e) {
             e.printStackTrace();
