@@ -32,6 +32,7 @@ import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.booking.BookingInfo;
+import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.BookingTimeSlot;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
@@ -242,19 +243,20 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnCOnfirmBooking:
-                if (arrayListbookingInfo.size()!=0){
-                    bookingInfo = arrayListbookingInfo.get(0);
-                    if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
-                        if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
-                            apiForContinueBooking(false);
-                        } else {
-                            MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
-                        }
-                    } else
-                        MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
-                }else {
+                if (arrayListbookingInfo.size()==0){
                     MyToast.getInstance(mContext).showDasuAlert("No service added!");
+                    return;
                 }
+
+                // bookingInfo = arrayListbookingInfo.get(0);
+                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
+                    if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
+                        apiForContinueBooking(false);
+                    } else {
+                        MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
+                    }
+                } else
+                    MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
 
                 break;
 
@@ -440,7 +442,12 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     @Override
     public void onRemoveClick(int position) {
         BookingInfo info = arrayListbookingInfo.get(position);
-        apiForDeleteBookedService(info);
+        if (info.bookingId!=null && !info.bookingId.equals(""))
+            apiForDeleteBookedService(info);
+        else {
+            arrayListbookingInfo.remove(info);
+            bookingInfoAdapter.notifyDataSetChanged();
+        }
     }
 
     private void apiForGetSlots(){
@@ -667,7 +674,15 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
-                       // arrayListbookingInfo.remove(bookingInfo);
+
+                        for (int i=0; i<info.subServices.artistservices.size();i++){
+                            BookingServices3 bookingServices = info.subServices.artistservices.get(i);
+                            if (bookingServices._id.equals(info.msId)){
+                                bookingServices.setBooked(false);
+                                break;
+                            }
+
+                        }
                         arrayListbookingInfo.remove(info);
                         bookingInfoAdapter.notifyDataSetChanged();
 
