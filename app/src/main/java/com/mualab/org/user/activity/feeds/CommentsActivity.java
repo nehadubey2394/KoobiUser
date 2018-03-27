@@ -15,7 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -60,7 +62,7 @@ public class CommentsActivity extends AppCompatActivity {
     public static String TAG = CommentsActivity.class.getName();
 
     private TextView tv_no_comments;
-    private EditText ed_comments;
+    private EditText ed_comments,ed_search;
     private LinearLayout ll_loadingBox;
     private ProgressBar progress_bar;
     private AppCompatButton btn_post_comments;
@@ -69,6 +71,7 @@ public class CommentsActivity extends AppCompatActivity {
     private Feeds feed;
     private int feedPosition;
     private boolean isDataUpdated;
+    private String searchFilter = "";
 
     private CommentAdapter commentAdapter;
     private ArrayList<Comment> commentList = new ArrayList<>();
@@ -92,6 +95,7 @@ public class CommentsActivity extends AppCompatActivity {
         btn_post_comments =  findViewById(R.id.btn_post_comments);
         ll_loadingBox =  findViewById(R.id.ll_loadingBox);
         progress_bar =  findViewById(R.id.progress_bar);
+        ed_search = findViewById(R.id.ed_search);
 
         ImageView ivCamera = findViewById(R.id.ivCamera);
         ivCamera.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +113,7 @@ public class CommentsActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                getCommentList(page);
+                getCommentList(page, searchFilter);
             }
         };
 
@@ -152,27 +156,34 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
 
-        /*ed_comments.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        ed_search.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if(hasFocus){
-                    recyclerView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            recyclerView.scrollToPosition(0);
-                        }
-                    }, 100);
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-        });*/
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String quary = ed_search.getText().toString();
+                commentList.clear();
+                scrollListener.resetState();
+                commentAdapter.notifyDataSetChanged();
+                getCommentList(0, TextUtils.isEmpty(quary)?"":quary);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
 
         commentList.clear();
         ll_loadingBox.setVisibility(View.VISIBLE);
         progress_bar.setVisibility(View.VISIBLE);
         tv_no_comments.setText(getString(R.string.loading));
-        getCommentList(0);
+        searchFilter = "";
+        getCommentList(0, searchFilter);
     }
 
 
@@ -268,13 +279,14 @@ public class CommentsActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void getCommentList(int pageNo) {
+    private void getCommentList(int pageNo, String search) {
         Map<String, String> map = new HashMap<>();
         map.put("feedId", ""+feed._id);
         map.put("userId",  ""+Mualab.currentUser.id);
         map.put("page",  ""+pageNo);
+        map.put("search", search.toLowerCase());
         map.put("limit",  "20");
-
+        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
         new HttpTask(new HttpTask.Builder(this, "commentList", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -381,7 +393,7 @@ public class CommentsActivity extends AppCompatActivity {
                     if(!TextUtils.isEmpty(status) && status.equals("success")){
                         commentList.clear();
                         scrollListener.resetState();
-                        getCommentList(0);
+                        getCommentList(0, searchFilter = "");
                     } else if(commentList.size()==0) {
                         tv_no_comments.setVisibility(View.VISIBLE);
                         tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));

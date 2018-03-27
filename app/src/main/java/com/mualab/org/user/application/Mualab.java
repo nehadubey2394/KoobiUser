@@ -2,6 +2,7 @@ package com.mualab.org.user.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -41,6 +42,7 @@ public class Mualab extends Application {
     }
 
     public static Map<String, String> feedBasicInfo = new HashMap<>();
+
 
     @Override
     public void onCreate() {
@@ -94,6 +96,6 @@ public class Mualab extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        //  MultiDex.install(this);
+        MultiDex.install(this);
     }
 }
