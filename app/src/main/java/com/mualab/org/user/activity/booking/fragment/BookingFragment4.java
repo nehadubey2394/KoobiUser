@@ -165,7 +165,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         Calendar cal = Calendar.getInstance();
         CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
         viewCalendar.setAdapter(adapter);
-
         dateFormat = new SimpleDateFormat("EEE, d MMMM yyyy");
         dateFormat.setTimeZone(cal.getTimeZone());
         input = new SimpleDateFormat("yyyy-MM-dd");
