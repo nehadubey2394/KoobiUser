@@ -73,7 +73,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     private BookingInfo bookingInfo;
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
     private SimpleDateFormat input,dateFormat;
-    private boolean alreadyAddedFound = false,isEdit = false;
+    private boolean alreadyAddedFound = false,isEdit = false,isRemoved = false;
     //private MyFlexibleCalendar viewCalendar;
     private  View rootView;
 
@@ -246,15 +246,20 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                     MyToast.getInstance(mContext).showDasuAlert("No service added!");
                     return;
                 }
-
                 // bookingInfo = arrayListbookingInfo.get(0);
-                if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
+                if (arrayListbookingInfo.size()!=0 && isRemoved){
+                    ((BookingActivity) mContext).addFragment(
+                            BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
+                    return;
+                }
+                if (bookingTimeSlots.size() != 0){
+
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                         apiForContinueBooking(false);
                     } else {
                         MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
                     }
-                } else
+                }else
                     MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
 
                 break;
@@ -274,6 +279,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 break;
 
             case R.id.btnAddMoreService:
+                if (arrayListbookingInfo.size()!=0 && isRemoved){
+                    clearBackStack();
+                    return;
+                }
 
                 if (arrayListbookingInfo.size()!=0){
                     if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
@@ -339,8 +348,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                             Log.i("","can't select previous date");
                         }else {
                             if (!alreadyAddedFound || isEdit){
-                                bookingInfo.date = "Select date";
-                                bookingInfo.time = "and time";
+                                if (!isRemoved){
+                                    bookingInfo.date = "Select date";
+                                    bookingInfo.time = "and time";
+                                }
                                 bookingInfo.endTime = bookingInfo.editEndTime;
                                 bookingInfoAdapter.notifyDataSetChanged();
                             }
@@ -399,6 +410,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         item.isSelected = "1";
 
         if (!alreadyAddedFound || isEdit){
+            isRemoved = false;
             bookingInfo.time = item.time;
 
             if (!bookingInfo.endTime.contains(":") && !bookingInfo.endTime.contains("PM") && !bookingInfo.endTime.contains("AM")){
@@ -441,9 +453,17 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     @Override
     public void onRemoveClick(int position) {
         BookingInfo info = arrayListbookingInfo.get(position);
+        isRemoved = true;
         if (info.bookingId!=null && !info.bookingId.equals(""))
             apiForDeleteBookedService(info);
         else {
+            for (int i=0; i<info.subServices.artistservices.size();i++){
+                BookingServices3 bookingServices = info.subServices.artistservices.get(i);
+                if (bookingServices._id.equals(info.msId)){
+                    bookingServices.setBooked(false);
+                    break;
+                }
+            }
             arrayListbookingInfo.remove(info);
             bookingInfoAdapter.notifyDataSetChanged();
         }

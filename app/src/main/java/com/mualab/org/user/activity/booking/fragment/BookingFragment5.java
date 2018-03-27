@@ -157,7 +157,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         if (!session.getUserChangedLocLat().equals("") && !session.getUserChangedLocLng().equals("")){
             cLat = Double.parseDouble(session.getUserChangedLocLat());
             cLng = Double.parseDouble(session.getUserChangedLocLng());
-            location = getCurrentAddress(cLat,cLng);
+            location = session.getUserChangedLocName();
         }
 
         if (bookingInfo.serviceType.equals("2")){
@@ -213,7 +213,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             price = price+item.price;
         }
         totalPrice = String.valueOf(price);
-        tvTotalPrice.setText("Â£"+totalPrice);
+        tvTotalPrice.setText("£"+totalPrice);
         btnEditDate.setOnClickListener(this);
         btnEditLocation.setOnClickListener(this);
         btnConfirmBooking.setOnClickListener(this);
@@ -306,6 +306,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                     if (status.equalsIgnoreCase("success")) {
                         session.setUserChangedLocLat("");
                         session.setUserChangedLocLng("");
+                        session.setUserChangedLocName("");
                         MyToast.getInstance(mContext).showDasuAlert(message);
                         ((BookingActivity)mContext).finish();
                     }else {
@@ -425,6 +426,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             if (isEditLoc){
                 session.setUserChangedLocLat(String.valueOf(cLat));
                 session.setUserChangedLocLng(String.valueOf(cLng));
+                session.setUserChangedLocName(location);
             }
             if (isConfirmbookingClicked)
                 apiForConfirmBooking();
