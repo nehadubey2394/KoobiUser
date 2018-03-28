@@ -18,7 +18,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,23 +39,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.hendraanggrian.socialview.Mention;
 import com.hendraanggrian.socialview.SocialView;
@@ -116,7 +107,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private int feedType;
     private String caption;
     private String lastTxt;
-    private String isShare = "", tages = "";
+    private String tages = "";
 
     private MediaUri mediaUri;
     private AlertDialog mAlertDialog;
@@ -244,7 +235,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 //checkLocationPermisssion();
                 initProgressBar();
             }
-        }, 800);
+        }, 1000);
     }
 
 
@@ -422,7 +413,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         tvMediaSize = null;
         hashTags = null;
         caption = null;
-        lastTxt = isShare = tages = null;
+        lastTxt = tages = null;
         address = null;
         mediaUri = null;
         mAlertDialog = null;
@@ -525,7 +516,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
         if(mAlertDialog==null){
             LayoutInflater li = LayoutInflater.from(this);
-            View layout = li.inflate(R.layout.layout_processing_dialog, null);
+            @SuppressLint("InflateParams") View layout = li.inflate(R.layout.layout_processing_dialog, null);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     150, FrameLayout.LayoutParams.WRAP_CONTENT);
             layout.setLayoutParams(params);
@@ -577,7 +568,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 address = new LocationUtil().getAddressDetails(place);
 
                 if(TextUtils.isEmpty(place.getName())){
-                    address.placeName = place.getLocale() + ","+ place.getLocale().getCountry();
+                    String city = ""+place.getLocale();
+                    String country = place.getLocale().getCountry();
+                    if(TextUtils.isEmpty(city))
+                        city = "";
+
+                    if(!TextUtils.isEmpty(country))
+                        address.placeName = city + ", " + country;
+                    else address.placeName = city;
                 }
                 tvLoaction.setText(address.placeName);
 
@@ -681,8 +679,8 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         map.put("serviceTagId", tages);
         map.put("userId", "" + Mualab.currentUser.id);
         map.put("location", address.placeName);
-        map.put("city", address.city);
-        map.put("country", address.country);
+        map.put("city", TextUtils.isEmpty(address.city)?"":address.city);
+        map.put("country", TextUtils.isEmpty(address.country)?"":address.country);
 
         if (TextUtils.isEmpty(address.latitude) || TextUtils.isEmpty(address.longitude)) {
             map.put("latitude", "");
