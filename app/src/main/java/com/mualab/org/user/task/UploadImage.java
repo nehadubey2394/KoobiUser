@@ -53,7 +53,7 @@ public class UploadImage {
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public void execute() {
-        VolleyMySingleton volleySingleton = new VolleyMySingleton(mContext);
+       // VolleyMySingleton volleySingleton = new VolleyMySingleton(mContext);
         mRequest = Mualab.getInstance().getRequestQueue();
         mRequest.start();
 

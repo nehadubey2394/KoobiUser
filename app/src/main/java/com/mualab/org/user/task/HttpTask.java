@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.image.compressor.ImageCompressor;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.application.VolleyRequest.AppHelper;
 import com.mualab.org.user.application.VolleyRequest.VolleyMultipartRequest;
@@ -23,6 +24,7 @@ import com.mualab.org.user.util.media.FileUtils;
 
 import org.json.JSONObject;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -298,7 +300,16 @@ public class HttpTask {
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
                 if (key != null && bitmap != null) {
-                    params.put(key, new DataPart("tmpImage.jpg", AppHelper.getFileDataFromDrawable(bitmap), "image/jpeg"));
+                   // params.put(key, new DataPart("tmpImage.jpg", AppHelper.getFileDataFromDrawable(bitmap), "image/jpeg"));
+
+                    File file = FileUtils.savebitmap(context, bitmap, "tmp");
+                    try {
+                        params.put(key, new DataPart("tmpImage.jpg",
+                                AppHelper.getFileDataFromDrawable(
+                                        new ImageCompressor(context).compressToBitmap(file)), "image/jpeg"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 return params;
             }

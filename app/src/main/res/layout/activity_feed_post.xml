@@ -24,7 +24,9 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize">
+            android:layout_height="?actionBarSize"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
 
             <ImageView
                 android:id="@+id/iv_back"
@@ -33,17 +35,16 @@
                 android:padding="5dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="5dp"
                 android:tint="@color/white"
                 android:src="@drawable/back_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TextView"
+                style="@style/TextView.Bold"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:text="New Post"
+                android:text="@string/new_post"
                 android:textSize="18sp" />
 
             <ImageView
@@ -53,7 +54,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
                 android:padding="5dp"
-                android:layout_marginRight="5dp"
                 android:tint="@color/white"
                 android:src="@drawable/share_ico" />
 
@@ -94,7 +94,8 @@
                         app:siBorderColor="@color/colorPrimary"
                         app:siBorderWidth="1dp"
                         app:siRadius="3dp"
-                        app:siSquare="true" />
+                        app:siSquare="true"
+                        tools:ignore="UnusedAttribute" />
 
                     <TextView
                         android:id="@+id/tvMediaSize"
@@ -136,12 +137,12 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginLeft="8dp"
                     android:gravity="left|top"
-                    android:hint="Write a caption..."
+                    android:hint="@string/write_a_caption"
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:background="@null"
                     android:transitionName="text"
-                    tools:ignore="UnusedAttribute"
+                    tools:ignore="RtlHardcoded,UnusedAttribute"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     />
 
@@ -180,7 +181,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
                         android:gravity="center|left"
-                        android:text="Tag Pepole"
+                        android:text="@string/tag_people"
                         android:textColor="@color/dark_gray"/>
                 </LinearLayout>
 
@@ -207,7 +208,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
                         android:gravity="center|left"
-                        android:text="Tag Service"
+                        android:text="@string/tag_services"
                         android:textColor="@color/dark_gray"/>
                 </LinearLayout>
 
@@ -235,7 +236,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
                         android:gravity="center|left"
-                        android:text="Add Loction"
+                        android:text="@string/add_location"
                         android:textColor="@color/dark_gray"/>
 
 
@@ -260,13 +261,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        style="@style/TextView"
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
                         android:layout_weight=".9"
                         android:gravity="center|left"
-                        android:text="Facebook"
-                        android:textColor="@color/dark_gray"
-                        android:textSize="14dp" />
+                        android:text="@string/facebook"
+                        android:textColor="@color/dark_gray" />
 
                     <ImageView
                         android:id="@+id/iv_fb_on"
@@ -291,18 +292,18 @@
                         android:padding="5dp"
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
-                        android:src="@drawable/instagram_ico" />
+                        android:src="@drawable/instagram" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        style="@style/TextView"
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
                         android:layout_weight=".9"
                         android:gravity="center|left"
-                        android:text="Instragram"
-                        android:textColor="@color/dark_gray"
-                        android:textSize="14dp" />
+                        android:text="@string/instagram"
+                        android:textColor="@color/dark_gray" />
 
                     <ImageView
                         android:id="@+id/iv_twitter_on"

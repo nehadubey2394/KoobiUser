@@ -36,9 +36,13 @@
         <item name="android:textSize">10sp</item>
     </style>
 
-    <style name="tvStyle" parent="@android:style/TextAppearance">
+    <style name="tvStyle" parent="Widget.Design.TextInputLayout">
         <item name="android:textColor">@color/white</item>
         <item name="android:textColorHint">@color/white</item>
+        <item name="colorAccent">@android:color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
     </style>
 
     <style name="KeyBoardTextView">
