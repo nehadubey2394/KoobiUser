@@ -1,7 +1,5 @@
 package com.mualab.org.user.util;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.NetworkResponse;
