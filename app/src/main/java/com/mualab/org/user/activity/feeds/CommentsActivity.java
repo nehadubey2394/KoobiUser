@@ -232,9 +232,9 @@ public class CommentsActivity extends AppCompatActivity {
                 if (imageUri != null) {
                     CropImage.activity(imageUri)
                             .setCropShape(CropImageView.CropShape.RECTANGLE)
-                            .setAspectRatio(400, 300)
-                            .setMinCropResultSize(1000,800)
-                            .setMaxCropResultSize(1200, 1000)
+                            .setAspectRatio(4, 3)
+                            .setMinCropResultSize(800,600)
+                            //.setMaxCropResultSize(1200, 1000)
                             .start(this);
                 } else {
                     MyToast.getInstance(CommentsActivity.this).showSmallMessage(

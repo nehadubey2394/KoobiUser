@@ -328,5 +328,13 @@
     <string name="gps_permission_alert">Need enable location and permission for search near by artist.</string>
     <string name="no_artist_found">No Artist available on this location</string>
     <string name="search">Search</string>
+    <string name="tag_services">Tag Services</string>
+    <string name="tag_people">Tag People</string>
+    <string name="add_location">Add Location</string>
+    <string name="instagram">Instagram</string>
+    <string name="facebook">Facebook</string>
+    <string name="write_a_caption">Write a caption...</string>
+    <string name="new_post">New Post</string>
+    <string name="unfollow">Unfollow</string>
 
 </resources>

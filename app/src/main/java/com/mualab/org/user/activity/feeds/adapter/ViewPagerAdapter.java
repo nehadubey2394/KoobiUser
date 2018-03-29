@@ -56,6 +56,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View itemView = mLayoutInflater.inflate(R.layout.pager_layout, container, false);
+        ImageView postImages = itemView.findViewById(R.id.post_image);
         itemView.setOnTouchListener(tapListener);
         itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -63,7 +64,6 @@ public class ViewPagerAdapter extends PagerAdapter {
                 return false;
             }
         });
-        ImageView postImages = itemView.findViewById(R.id.post_image);
 
         Picasso.with(context)
                 .load(ImagesList.get(position))

@@ -38,12 +38,15 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.CameraActivity;
+import com.mualab.org.user.activity.ImageViewDialogActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
@@ -57,11 +60,9 @@ import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.SelectableDialog;
 import com.mualab.org.user.enums.PermissionType;
 import com.mualab.org.user.model.MediaUri;
-import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
-import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
@@ -78,7 +79,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,41 +98,58 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
     public static String TAG = FeedsFragment.class.getName();
 
-    int fragCount;
-
-    private int CURRENT_FEED_STATE = 0;
     // ui components delecration
     private Context mContext;
     private TextView  tvImages, tvVideos, tvFeeds,tv_msg;
     private LinearLayout ll_header;
-
-    //private SwipeRefreshLayout mSwipeRefreshLayout;
     private RjRefreshLayout mRefreshLayout;
-
-    private LiveUserAdapter liveUserAdapter;
-    private ArrayList<LiveUserInfo> liveUserList;
 
     private EditText edCaption;
     private ImageView iv_selectedImage;
     private LinearLayout ll_progress;
-    private EndlessRecyclerViewScrollListener endlesScrollListener;
+
+    /*Adapters*/
+    private LiveUserAdapter liveUserAdapter;
+    private ArrayList<LiveUserInfo> liveUserList;
+
     private FeedAdapter feedAdapter;
-    //private ImagesAdapter imagesAdapter;
     private RecyclerView rvFeed;
     private List<Feeds> feeds;
+    private EndlessRecyclerViewScrollListener endlesScrollListener;
 
+    /*required variables*/
     private String caption;
     private String feedType = "feeds";
-    //  private boolean inProgressAPI;
     private int lastFeedTypeId;
     private PermissionType permissionType;
-    private User user;
 
     private MediaUri mediaUri;
-
     private BaseListner baseListner;
+   // private int fragCount;
+    private int CURRENT_FEED_STATE = 0;
+    private boolean isPulltoRefrash = false;
 
-    boolean isPulltoRefrash = false;
+
+    public FeedsFragment() {
+        // Required empty public constructor
+    }
+
+    public static FeedsFragment newInstance(int instance) {
+        FeedsFragment fragment = new FeedsFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARGS_INSTANCE, instance);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+        if(context instanceof BaseListner){
+            baseListner = (BaseListner) mContext;
+        }
+    }
 
     @Override
     public void onDestroyView() {
@@ -152,49 +169,26 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         liveUserList = null;
         feeds = null;
         rvFeed = null;
-        user = null;
-    }
-
-    public FeedsFragment() {
-        // Required empty public constructor
     }
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-        if(context instanceof BaseListner){
-            baseListner = (BaseListner) mContext;
-        }
-    }
-
-
-    public static FeedsFragment newInstance(int instance) {
-        FeedsFragment fragment = new FeedsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARGS_INSTANCE, instance);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
+       /* if (getArguments() != null) {
             fragCount = getArguments().getInt(ARGS_INSTANCE);
-        }
+        }*/
 
-        user = Mualab.getInstance().getSessionManager().getUser();
         feeds = new ArrayList<>();
         liveUserList = new ArrayList<>();
         liveUserList.clear();
 
         LiveUserInfo me = new LiveUserInfo();
-        me.id = user.id;
+        me.id = Mualab.currentUser.id;
         me.userName = "My Story";
-        me.profileImage = user.profileImage;
+        me.profileImage = Mualab.currentUser.profileImage;
         me.storyCount = 0;
         liveUserList.add(me);
         Progress.hide(mContext);
@@ -217,11 +211,10 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         tv_msg = view.findViewById(R.id.tv_msg);
         ll_progress = view.findViewById(R.id.ll_progress);
 
-
         view.findViewById(R.id.ly_images).setOnClickListener(this);
         view.findViewById(R.id.ly_videos).setOnClickListener(this);
         view.findViewById(R.id.ly_feeds).setOnClickListener(this);
-        addRemoveHeader(true);
+        addRemoveHeader();
         liveUserAdapter = new LiveUserAdapter(mContext, liveUserList, this);
         rvMyStory.setAdapter(liveUserAdapter);
     }
@@ -327,9 +320,8 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                 }
 
                 if (intent != null) {
-                    if(options!=null)
-                        startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
-                    else startActivityForResult(intent, Constant.POST_FEED_DATA);
+                    startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
+                   // else startActivityForResult(intent, Constant.POST_FEED_DATA);
                 }else {
                     Animation shake = AnimationUtils.loadAnimation(mContext, R.anim.shake);
                     edCaption.startAnimation(shake);
@@ -348,8 +340,8 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         }
     }
 
-    private void addRemoveHeader(final boolean wantAddView){
-        if(wantAddView && ll_header.getChildCount()==0){
+    private void addRemoveHeader(){
+        if(ll_header.getChildCount()==0){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             @SuppressLint("InflateParams")
             View inflatedLayout= inflater.inflate(R.layout.post_add_header_layout, null, false);
@@ -386,7 +378,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     CURRENT_FEED_STATE = Constant.FEED_STATE;
                     feedAdapter.notifyItemRangeRemoved(0, prevSize);
                     apiForGetAllFeeds(0, 10, true);
-                    //ParseAndUpdateUI(loadAllFeedJSONFromAsset());
                 }
                 break;
 
@@ -399,7 +390,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     CURRENT_FEED_STATE = Constant.IMAGE_STATE;
                     feedAdapter.notifyItemRangeRemoved(0, prevSize);
                     apiForGetAllFeeds( 0, 10, true);
-                    //ParseAndUpdateUI(loadImageJSONFromAsset());
                 }
 
                 break;
@@ -413,7 +403,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     CURRENT_FEED_STATE = Constant.VIDEO_STATE;
                     feedAdapter.notifyItemRangeRemoved(0, prevSize);
                     apiForGetAllFeeds( 0, 10, true);
-                    //ParseAndUpdateUI(loadVideoJSONFromAsset());
                 }
                 break;
         }
@@ -423,8 +412,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
 
     private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
-        Session session = Mualab.getInstance().getSessionManager();
-        User user = session.getUser();
 
         if (!ConnectionDetector.isConnected()) {
             new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
@@ -446,7 +433,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         params.put("page", String.valueOf(page));
         params.put("limit", String.valueOf(feedLimit));
         params.put("type", "home");
-        params.put("userId", ""+user.id);
+        params.put("userId", ""+Mualab.currentUser.id);
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(mContext, "getAllFeeds", new HttpResponceListner.Listener() {
@@ -480,7 +467,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                 }
                 //MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
             }})
-                .setAuthToken(user.authToken)
+                .setAuthToken(Mualab.currentUser.authToken)
                 .setParam(params)
                 .setMethod(Request.Method.POST)
                 .setProgress(false)
@@ -491,12 +478,11 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
     private void ParseAndUpdateUI(final String response) {
 
-        boolean isSuccess = false;
         try {
             JSONObject js = new JSONObject(response);
             String status = js.getString("status");
             // String message = js.getString("message");
-            // inProgressAPI = false;
+
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
                 JSONArray array = js.getJSONArray("AllFeeds");
@@ -508,38 +494,46 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     feedAdapter.notifyItemRangeRemoved(0, prevSize);
                 }
 
-
+                Gson gson = new Gson();
                 for (int i = 0; i < array.length(); i++) {
-                    Gson gson = new Gson();
-                    JSONObject jsonObject = array.getJSONObject(i);
-                    Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
 
-                    /*tmp get data and set into actual json format*/
-                    Feeds.User user = feed.userInfo.get(0);
-                    feed.userName = user.userName;
-                    feed.fullName = user.firstName+" "+user.lastName;
-                    feed.profileImage = user.profileImage;
-                    feed.userId = user._id;
-                    feed.crd =feed.timeElapsed;
+                    try{
+                        JSONObject jsonObject = array.getJSONObject(i);
+                        Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
 
-
-                    if(feed.feedData!=null && feed.feedData.size()>0){
-
-                        feed.feed = new ArrayList<>();
-                        feed.feedThumb = new ArrayList<>();
-
-                        for(Feeds.Feed tmp :feed.feedData){
-                            feed.feed.add(tmp.feedPost);
-                            if(!TextUtils.isEmpty(feed.feedData.get(0).videoThumb))
-                                feed.feedThumb.add(tmp.feedPost);
+                        /*tmp get data and set into actual json format*/
+                        if(feed.userInfo!=null && feed.userInfo.size()>0){
+                            Feeds.User user = feed.userInfo.get(0);
+                            feed.userName = user.userName;
+                            feed.fullName = user.firstName+" "+user.lastName;
+                            feed.profileImage = user.profileImage;
+                            feed.userId = user._id;
+                            feed.crd =feed.timeElapsed;
                         }
 
-                        if(feed.feedType.equals("video"))
-                            feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+                        if(feed.feedData!=null && feed.feedData.size()>0){
+
+                            feed.feed = new ArrayList<>();
+                            feed.feedThumb = new ArrayList<>();
+
+                            for(Feeds.Feed tmp : feed.feedData){
+                                feed.feed.add(tmp.feedPost);
+                                if(!TextUtils.isEmpty(feed.feedData.get(0).videoThumb))
+                                    feed.feedThumb.add(tmp.feedPost);
+                            }
+
+                            if(feed.feedType.equals("video"))
+                                feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+                        }
+
+                        feeds.add(feed);
+
+                    }catch (JsonParseException e){
+                        e.printStackTrace();
+                        FirebaseCrash.log(e.getLocalizedMessage());
                     }
 
-                    feeds.add(feed);
-                }
+                } // loop end.
 
                 feedAdapter.notifyDataSetChanged();
 
@@ -553,22 +547,12 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
                 }
                 feedAdapter.notifyDataSetChanged();
-               /* if (type == Constant.IMAGE_STATE) {
-                    imagesAdapter.notifyDataSetChanged();
-                } else if (type == Constant.VIDEO_STATE) {
-                    imagesAdapter.notifyDataSetChanged();
-                } else if (type == Constant.FEED_STATE) {
-                    feedAdapter.notifyDataSetChanged();
-                }*/
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-            //inProgressAPI = false;
             feedAdapter.notifyDataSetChanged();
             //MyToast.getInstance(mContext).showSmallCustomToast(getString(R.string.alert_something_wenjt_wrong));
-        }finally {
-            //Progress.hide(mContext);
         }
     }
 
@@ -578,13 +562,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             int lastIndex = feeds.size()-1;
             feeds.remove(lastIndex);
             feedAdapter.notifyDataSetChanged();
-            /*if (type == Constant.IMAGE_STATE) {
-                imagesAdapter.notifyItemRemoved(lastIndex);
-            } else if (type == Constant.VIDEO_STATE) {
-                imagesAdapter.notifyItemRemoved(lastIndex);
-            } else if (type == Constant.FEED_STATE) {
-                feedAdapter.notifyItemRemoved(lastIndex);
-            }*/
         }
     }
 
@@ -601,13 +578,24 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onLikeListClick(Feeds feed) {
         if(baseListner!=null){
-            baseListner.addFragment(LikeFragment.newInstance(feed._id, user.id), true);
+            baseListner.addFragment(LikeFragment.newInstance(feed._id, Mualab.currentUser.id), true);
         }
     }
 
     @Override
-    public void onFeedClick(Feeds feed, int index) {
+    public void onFeedClick(Feeds feed, int index, View view) {
         publicationQuickView(feed, index);
+       /* */
+    }
+
+    @Override
+    public void onClickProfileImage(Feeds feed, ImageView v) {
+        /*Intent intent = new Intent(mContext, ImageViewDialogActivity.class);
+        intent.putExtra("feed", feed);
+        intent.putExtra("index", 0);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation((Activity) mContext, v, "image");
+        startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());*/
     }
 
 
@@ -621,7 +609,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
-                    String message = js.getString("message");
+                    //String message = js.getString("message");
                     if (status.equalsIgnoreCase("success")) {
                         JSONArray array = js.getJSONArray("myStoryList");
 
@@ -630,7 +618,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                             JSONObject jsonObject = array.getJSONObject(i);
                             LiveUserInfo live = gson.fromJson(String.valueOf(jsonObject), LiveUserInfo.class);
 
-                            if(live.id == user.id){
+                            if(live.id == Mualab.currentUser.id){
                                 LiveUserInfo me = liveUserList.get(0);
                                 me.firstName = live.firstName;
                                 me.lastName = live.lastName;
@@ -653,7 +641,6 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void ErrorListener(VolleyError error) {
             }})
-                .setAuthToken(user.authToken)
                 .setParam(params)
                 .setProgress(false)
                 .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
@@ -842,9 +829,9 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                 case Constant.ADD_STORY:
                     liveUserList.clear();
                     LiveUserInfo me = new LiveUserInfo();
-                    me.id = user.id;
+                    me.id = Mualab.currentUser.id;
                     me.userName = "My Story";
-                    me.profileImage = user.profileImage;
+                    me.profileImage = Mualab.currentUser.profileImage;
                     me.storyCount = 0;
                     liveUserList.add(me);
                     getStoryList();
@@ -905,12 +892,12 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     public void onClickedUserStory(LiveUserInfo storyUser, int position) {
-        if(storyUser.id==user.id && storyUser.storyCount==0){
+        if(storyUser.id==Mualab.currentUser.id && storyUser.storyCount==0){
             startActivityForResult(new Intent(mContext, CameraActivity.class), Constant.ADD_STORY);
         }else {
             Intent intent = new Intent(mContext, StoreActivityTest.class);
             Bundle args = new Bundle();
-            args.putSerializable("ARRAYLIST", (Serializable) liveUserList);
+            args.putSerializable("ARRAYLIST", liveUserList);
             args.putInt("position", position);
             intent.putExtra("BUNDLE", args);
             startActivity(intent);
@@ -919,8 +906,9 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
 
     /*Rj*/
-    Dialog builder;
+    private Dialog builder;
     public void publicationQuickView(Feeds feeds, int index){
+        @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate( R.layout.dialog_image_detail_view, null);
 
         ImageView postImage = view.findViewById(R.id.ivFeedCenter);
@@ -950,8 +938,10 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
 
         builder = new Dialog(mContext);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //noinspection ConstantConditions
         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         builder.setContentView(view);
+        builder.setCancelable(true);
         builder.show();
     }
 

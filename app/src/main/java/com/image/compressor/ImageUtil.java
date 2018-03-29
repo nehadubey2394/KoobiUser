@@ -3,7 +3,7 @@ package com.image.compressor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,7 +11,7 @@ import java.io.IOException;
 
 /**
  * Created by dharmraj on 27/3/18.
- */
+ **/
 
 public class ImageUtil {
     private ImageUtil() {
