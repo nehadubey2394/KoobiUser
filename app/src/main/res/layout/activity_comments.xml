@@ -59,15 +59,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:background="@color/white"
         android:orientation="horizontal">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/gray" />
+            android:background="@color/gray2" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -79,12 +79,14 @@
             <ImageButton
                 android:id="@+id/ivCamera"
                 android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/primary_bg_round"
-                android:padding="5dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
                 android:src="@drawable/camera_ico"
                 android:visibility="visible" />
 
@@ -105,7 +107,8 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
                     android:maxLines="5"
-                    android:hint="@string/write_a_comments_here"/>
+                    android:background="@null"
+                    android:hint="@string/write_a_comment_here"/>
 
                 <!-- <EditText
                      android:id="@+id/ed_comments"
@@ -123,8 +126,8 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_post_comments"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
+                android:layout_width="70dp"
+                android:layout_height="25dp"
                 style="@style/My_Button.Invert"
                 android:layout_gravity="top"
                 android:layout_marginBottom="10dp"

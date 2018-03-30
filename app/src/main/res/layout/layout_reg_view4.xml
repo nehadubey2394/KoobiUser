@@ -15,13 +15,14 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/app_logo_380x380" />
+            android:src="@drawable/app_logo_450x450" />
 
         <TextView
             style="@style/TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="5dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:textSize="18sp"
             android:text="@string/create_password"/>
@@ -30,6 +31,59 @@
 
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="26dp"
+        android:layout_marginRight="26dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edPwd"
+            style="@style/My_Edittext"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:maxLength="20"/>
+        <TextView
+            style="@style/TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            android:layout_marginTop="5dp"
+            android:padding="2dp"
+            android:text="@string/error_password_vailidation"/>
+
+
+        <EditText
+            android:id="@+id/edConfirmPwd"
+            style="@style/My_Edittext"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:hint="@string/confirm_password"
+            android:inputType="textPassword"
+            android:maxLength="20"
+            android:maxLines="1" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnContinue2"
+            style="@style/My_Button"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/button_effect"
+            android:text="@string/done"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+
+   <!-- <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
@@ -47,6 +101,7 @@
             style="@style/tvStyle"
             app:passwordToggleEnabled="true"
             android:textColorHint="@color/white"
+            app:errorEnabled="false"
             app:errorTextAppearance="@style/txtinputError_appearance">
 
             <EditText
@@ -78,6 +133,7 @@
             android:layout_marginTop="16dp"
             style="@style/tvStyle"
             android:textColorHint="@color/white"
+            app:errorEnabled="false"
             app:errorTextAppearance="@style/txtinputError_appearance">
 
             <EditText
@@ -95,13 +151,12 @@
             android:id="@+id/btnContinue2"
             style="@style/My_Button"
             android:layout_width="match_parent"
-            android:layout_height="35dip"
+            android:layout_height="35dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/button_effect"
-            android:text="@string/continue_txt"
-            android:textAllCaps="false"
-            android:textSize="18sp" />
+            android:text="@string/done"
+            android:textAllCaps="false" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 </LinearLayout>

@@ -19,6 +19,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="or">OR</string>
     <string name="don_t_have_an_account">Don\'t have an account? <b>Sign up</b></string>
+    <string name="already_have_an_account">Already have an account ? <b>Login</b></string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
     <string name="success">Success!</string>
@@ -62,7 +63,7 @@
     <string name="verify">Verify</string>
     <string name="submit">Submit</string>
     <string name="need_four_digite_code">You need to enter your 4 digit verification \n code to create your account.</string>
-    <string name="_0"><b>0</b></string>
+   <!-- <string name="_0"><b>0</b></string>
     <string name="_1"><b>1</b></string>
     <string name="_2"><b>2</b>\n<font size="12">ABC</font></string>
     <string name="_3"><b>3</b>\n<font size="12">DEF</font></string>
@@ -71,8 +72,19 @@
     <string name="_6"><b>6</b>\n<font size="12">MNO</font></string>
     <string name="_7"><b>7</b>\n<font size="12">PQRS</font></string>
     <string name="_8"><b>8</b>\n<font size="12">TUV</font></string>
-    <string name="_9"><b>9</b>\n<font size="12">WXYZ</font></string>
+    <string name="_9"><b>9</b>\n<font size="12">WXYZ</font></string>-->
     <string name="blank_string">\n</string>
+
+    <string name="_0">0</string>
+    <string name="_1">1</string>
+    <string name="_2">2\n<font size="10">ABC</font></string>
+    <string name="_3">3\n<font size="10">DEF</font></string>
+    <string name="_4">4\n<font size="10">GHI</font></string>
+    <string name="_5">5\n<font size="10">JKL</font></string>
+    <string name="_6">6\n<font size="10">MNO</font></string>
+    <string name="_7">7\n<font size="10">PQRS</font></string>
+    <string name="_8">8\n<font size="10">TUV</font></string>
+    <string name="_9">9\n<font size="10">WXYZ</font></string>
 
 
     <!--Validation text-->
@@ -99,7 +111,7 @@
     <string name="error_invalid_password_uppercase_character">Your password must have at least one uppercase character.</string>
     <string name="error_invalid_password_digit_character">Your password must have at least one digit character.</string>
     <string name="error_confirm_password_not_match">Password and confirm password do not match.</string>
-    <string name="error_password_vailidation">Use at least 8 character, include both one uppercase letter and one number.</string>
+    <string name="error_password_vailidation">Use at least 8 characters, include both one uppercase letter and one number.</string>
 
     <string name="error_phone_no_reuired">Please enter a phone number</string>
     <string name="error_phone_no_length">Phone number min 4 and max 15</string>
@@ -314,7 +326,7 @@
     <string name="mcam_image_preview_error_message">Could not decode bitmap</string>
     <string name="no_data_available">No data available!</string>
     <string name="there_are_no_available_slots_please_select_another_day">There are no available slots. Please select another day.</string>
-    <string name="write_a_comments_here">write a comments here...</string>
+    <string name="write_a_comment_here">write a comment here…</string>
     <string name="unfollow_user">Unfollow <b>@%s?</b></string>
     <string name="no_comment_yet">No Comment yet</string>
     <string name="following">Following</string>
@@ -327,14 +339,16 @@
     <string name="read_less">show less</string>
     <string name="gps_permission_alert">Need enable location and permission for search near by artist.</string>
     <string name="no_artist_found">No Artist available on this location</string>
-    <string name="search">Search</string>
+    <string name="search">Search…</string>
     <string name="tag_services">Tag Services</string>
     <string name="tag_people">Tag People</string>
     <string name="add_location">Add Location</string>
     <string name="instagram">Instagram</string>
     <string name="facebook">Facebook</string>
-    <string name="write_a_caption">Write a caption...</string>
+    <string name="write_a_caption">Write a caption…</string>
     <string name="new_post">New Post</string>
     <string name="unfollow">Unfollow</string>
+    <string name="enter_your_email_id_and_phone_no">Enter your Email id and phone \nnumber</string>
+    <string name="done">Done</string>
 
 </resources>

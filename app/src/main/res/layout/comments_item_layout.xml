@@ -74,7 +74,7 @@
                         android:padding="5dp"
                         style="@style/TextView"
                         android:textSize="12sp"
-                        android:text="6 Like"
+                        android:text="6 Likes"
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
 

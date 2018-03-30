@@ -34,6 +34,7 @@ import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.JsonUtils;
 import com.mualab.org.user.util.KeyboardUtil;
+import com.mualab.org.user.util.StatusBarUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +52,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private ViewSwitcher viewSwitcher;
     private View progressView1, progressView2;
     //Reg_View1
-    private TextInputLayout input_layout_email, input_layout_phone;
+    //private TextInputLayout input_layout_email, input_layout_phone;
     private TextView tvCountryCode;
     private EditText ed_email, edPhoneNumber;
 
@@ -77,6 +78,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
         //if(ScreenUtils.hasSoftKeys(getWindowManager(), this)) findViewById(R.id.nevSoftBar).setVisibility(View.VISIBLE);
         initViews();
         countries = JsonUtils.loadCountries(this);
@@ -121,13 +123,18 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void showToast(String msg){
-        MyToast.getInstance(this).showSmallCustomToast(msg);
+        MyToast.getInstance(this).showDasuAlert(msg);
         // Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+
+            case R.id.alreadyHaveAnAccount:
+                finish();
+                break;
 
             case R.id.btnContinue1:
                 if(validateEmail() && validatePhone()){
@@ -226,17 +233,19 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private boolean validateEmail() {
         String email = ed_email.getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
-            input_layout_email.setError(getString(R.string.error_email_required));
+            //input_layout_email.setError(getString(R.string.error_email_required));
+            showToast(getString(R.string.error_email_required));
             ed_email.requestFocus();
             return false;
         }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            input_layout_email.setError(getString(R.string.error_invalid_email));
+            //input_layout_email.setError(getString(R.string.error_invalid_email));
+            showToast(getString(R.string.error_invalid_email));
             ed_email.requestFocus();
             return false;
-        } else {
+        } /*else {
             input_layout_email.setErrorEnabled(false);
-        }
+        }*/
 
         return true;
     }
@@ -244,23 +253,28 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private boolean validatePhone() {
         String phone = edPhoneNumber.getText().toString().trim();
         if (TextUtils.isEmpty(phone)) {
-            input_layout_phone.setError(getString(R.string.error_phone_no_reuired));
+            //input_layout_phone.setError(getString(R.string.error_phone_no_reuired));
+            showToast(getString(R.string.error_phone_no_reuired));
             edPhoneNumber.requestFocus();
             return false;
         } else if (phone.length() < 4 || phone.length()>15) {
-            input_layout_phone.setError(getString(R.string.error_phone_no_length));
+            showToast(getString(R.string.error_phone_no_length));
+            //input_layout_phone.setError(getString(R.string.error_phone_no_length));
             edPhoneNumber.requestFocus();
             return false;
-        } else {
+        } /*else {
             input_layout_phone.setErrorEnabled(false);
-        }
+        }*/
         return true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
+
+        if(requestCode==2){
+            finish();
+        }else if (resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case 1003: {
                     Country country = (Country) data.getSerializableExtra("country");
@@ -320,8 +334,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         progressView1.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent));
 
         /* view 1 */
-        input_layout_email = findViewById(R.id.input_layout_email);
-        input_layout_phone = findViewById(R.id.input_layout_phone);
+       /* input_layout_email = findViewById(R.id.input_layout_email);
+        input_layout_phone = findViewById(R.id.input_layout_phone);*/
         tvCountryCode = findViewById(R.id.tvCountryCode);
         ed_email = findViewById(R.id.ed_email);
         edPhoneNumber = findViewById(R.id.edPhoneNumber);
@@ -329,6 +343,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.btnContinue1).setOnClickListener(this);
         findViewById(R.id.tvCountryCode).setOnClickListener(this);
         findViewById(R.id.tv_resend_otp).setOnClickListener(this);
+        findViewById(R.id.alreadyHaveAnAccount).setOnClickListener(this);
         tvCountryCode.setOnClickListener(this);
 
         //Reg_View2
@@ -362,8 +377,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 break;
 
             case 2:
-                startActivity(new Intent(RegistrationActivity.this, Registration2Activity.class)
-                        .putExtra(Constant.USER, user));
+                startActivityForResult(new Intent(RegistrationActivity.this, Registration2Activity.class)
+                        .putExtra(Constant.USER, user),2);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 break;
         }
@@ -492,42 +507,41 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
 
     private void parseApiResponce(String response){
-        String status = "";
-        String message = "";
-        String otp = "";
         try {
             JSONObject object = new JSONObject(response);
-            status = object.getString("status");
-            message = object.getString("message");
-            otp = object.getString("otp");
+            String status = object.getString("status");
+            String message = object.getString("message");
+
+            if (status.equalsIgnoreCase("success")) {
+                apiOTP = object.getString("otp");
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("email", user.email);
+                    jsonObject.put("phone", user.contactNo);
+                    jsonObject.put("code", user.countryCode);
+                    jsonObject.put("otp", apiOTP);
+                    SharedPreferanceUtils.setParam(RegistrationActivity.this, "OTP", jsonObject.toString());
+                    final AppCompatButton btnResendOtp = findViewById(R.id.tv_resend_otp);
+                    btnResendOtp.setEnabled(true);
+                    //startTimear();
+                    if(!isResendOTP)
+                        nextScreen();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            } else if (apiOTP.equals("already exist")) {
+                showToast("This number already registered");
+            } else if (status.equalsIgnoreCase("fail")) {
+                showToast(message);
+
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        if (status.equalsIgnoreCase("success")) {
-            apiOTP = otp;
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("email", user.email);
-                jsonObject.put("phone", user.contactNo);
-                jsonObject.put("code", user.countryCode);
-                jsonObject.put("otp", apiOTP);
-                SharedPreferanceUtils.setParam(RegistrationActivity.this, "OTP", jsonObject.toString());
-                final AppCompatButton btnResendOtp = findViewById(R.id.tv_resend_otp);
-                btnResendOtp.setEnabled(true);
-                //startTimear();
-                if(!isResendOTP)
-                    nextScreen();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-        } else if (otp.equals("already exist")) {
-            showToast("This number already registered");
-        } else if (status.equalsIgnoreCase("fail")) {
-            showToast(message);
-
-        }
     }
 
 
