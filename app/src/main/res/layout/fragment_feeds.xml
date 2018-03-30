@@ -46,7 +46,7 @@
                     android:animateLayoutChanges="true"
                     android:orientation="vertical"
                     android:visibility="visible"
-                    android:layout_marginBottom="60dp"/>
+                    android:layout_marginBottom="50dp"/>
 
             </LinearLayout>
 
@@ -54,7 +54,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
+                android:layout_height="45dp"
                 android:layout_gravity="bottom"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
@@ -139,7 +139,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
+                android:layout_height="45dp"
                 app:layout_anchor="@id/collapsing_toolbar"
                 android:layout_gravity="bottom">
 
