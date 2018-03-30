@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     public static ArrayList<BookingInfo> arrayListbookingInfo = new ArrayList<>();
     private SimpleDateFormat input,dateFormat;
     private boolean alreadyAddedFound = false,isEdit = false,isRemoved = false;
-    //private MyFlexibleCalendar viewCalendar;
+    private MyFlexibleCalendar viewCalendar;
     private  View rootView;
 
     public BookingFragment4() {
@@ -159,7 +160,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         rycBookingInfo.setAdapter(bookingInfoAdapter);
         bookingInfoAdapter.setCustomListener(BookingFragment4.this);
 
-        MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
+
+        viewCalendar =  rootView.findViewById(R.id.calendar);
 
         // init calendar
         Calendar cal = Calendar.getInstance();
@@ -216,21 +218,47 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         bookingInfoAdapter.notifyDataSetChanged();
 
         // bind events of calendar
-        setCalenderClickListner(viewCalendar);
+        setCalenderClickListner();
 
         if (Mualab.currentLocationForBooking!=null){
             lat = String.valueOf(Mualab.currentLocationForBooking.lat);
             lng = String.valueOf(Mualab.currentLocationForBooking.lng);
         }
 
-        apiForGetSlots();
 
-        // use methods
+        if (arrayListbookingInfo.size()>1) {
+            ArrayList<BookingInfo> tempArrayList = new ArrayList<>();
+            tempArrayList.addAll(arrayListbookingInfo);
+
+            Collections.sort(tempArrayList, new Comparator<BookingInfo>() {
+                public int compare(BookingInfo o1, BookingInfo o2) {
+                    return o1.selectedDate.compareTo(o2.selectedDate);
+                }
+            });
+
+            if (!tempArrayList.get(1).date.equals("Select date")){
+                String smallestDate = tempArrayList.get(1).selectedDate;
+
+                if (smallestDate.contains("-")){
+                    int year,month,day;
+                    String[] separated = smallestDate.split("-");
+                    year = Integer.parseInt(separated[0]);
+                    month = Integer.parseInt(separated[1]);
+                    day = Integer.parseInt(separated[2]);
+
+                    viewCalendar.select(new Day(year, month, day));
+
+                    selectedDate = year+"-"+month+"-"+day;
+                }
+            }
+
+            // use methods
       /*  viewCalendar.addEventTag(2018, 8, 10);
         viewCalendar.addEventTag(2018, 8, 14);
         viewCalendar.addEventTag(2018, 8, 23);
 */
-        // viewCalendar.select(new Day(2018, 4, 22));
+        }else
+            apiForGetSlots();
 
         btnCOnfirmBooking.setOnClickListener(this);
         btnAddMoreService.setOnClickListener(this);
@@ -265,17 +293,29 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 break;
 
             case R.id.btnToday:
-                MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
+             /*   MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
                 viewCalendar.isFirstimeLoad = true;
                 Calendar cal = Calendar.getInstance();
                 CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
                 viewCalendar.setAdapter(adapter);
                 viewCalendar.expand(500);
-                setCalenderClickListner(viewCalendar);
+                setCalenderClickListner(viewCalendar);*/
 
                 selectedDate = getCurrentDate();
                 bookingInfo.selectedDate = selectedDate;
-                apiForGetSlots();
+                viewCalendar.isFirstimeLoad = true;
+                if (selectedDate.contains("-")){
+                    int year,month,day;
+                    String[] separated = selectedDate.split("-");
+                    year = Integer.parseInt(separated[0]);
+                    month = Integer.parseInt(separated[1]);
+                    day = Integer.parseInt(separated[2]);
+
+                    viewCalendar.select(new Day(year, month, day));
+
+                    selectedDate = year+"-"+month+"-"+day;
+                }
+                //     apiForGetSlots();
                 break;
 
             case R.id.btnAddMoreService:
@@ -302,7 +342,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         }
     }
 
-    private void setCalenderClickListner(final MyFlexibleCalendar viewCalendar){
+    private void setCalenderClickListner(){
         viewCalendar.setCalendarListener(new MyFlexibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {

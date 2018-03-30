@@ -127,7 +127,7 @@
                     android:id="@+id/tv_refine_dnt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/text_date_and_time"
+                    android:hint="@string/text_date_n_time"
                     android:layout_toRightOf="@+id/ivDateTime"
                     android:textColorHint="@color/text_color"
                     android:textColor="@color/text_color"

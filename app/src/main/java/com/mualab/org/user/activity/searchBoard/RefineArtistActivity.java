@@ -570,6 +570,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
 
                     }
                 }, mYear, mMonth, mDay);
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
