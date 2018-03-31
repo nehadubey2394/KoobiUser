@@ -341,20 +341,21 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
                             }
                             ll_loadingBox.setVisibility(View.GONE);
-                            listAdapter.notifyDataSetChanged();
+                            //listAdapter.notifyDataSetChanged();
                         }else {
                             if (page==0){
                                 tv_msg.setText(R.string.no_artist_found);
                                 MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
                             }
                         }
-
                     }else {
                         if (page==0){
                             tv_msg.setText(R.string.no_artist_found);
                             MyToast.getInstance(mContext).showDasuAlert("No Artist available!");
                         }
                     }
+
+                    listAdapter.notifyDataSetChanged();
                     //  showToast(message);
                 } catch (Exception e) {
                     tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));

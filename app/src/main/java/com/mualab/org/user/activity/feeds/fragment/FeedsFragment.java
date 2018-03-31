@@ -236,6 +236,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         endlesScrollListener = new EndlessRecyclerViewScrollListener(lm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                feedAdapter.showHideLoading(true);
                 apiForGetAllFeeds(page, 10, false);
             }
         };
@@ -444,13 +445,14 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onResponse(String response, String apiName) {
                 ll_progress.setVisibility(View.GONE);
+                feedAdapter.showHideLoading(false);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
-                        removeProgress();
+                        //removeProgress();
                         ParseAndUpdateUI(response);
                     }else MyToast.getInstance(mContext).showSmallMessage(message);
                 } catch (Exception e) {
