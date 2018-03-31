@@ -227,36 +227,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
 
         if (arrayListbookingInfo.size()>1) {
-            ArrayList<BookingInfo> tempArrayList = new ArrayList<>();
-            tempArrayList.addAll(arrayListbookingInfo);
-
-            Collections.sort(tempArrayList, new Comparator<BookingInfo>() {
-                public int compare(BookingInfo o1, BookingInfo o2) {
-                    return o1.selectedDate.compareTo(o2.selectedDate);
-                }
-            });
-
-            if (!tempArrayList.get(1).date.equals("Select date")){
-                String smallestDate = tempArrayList.get(1).selectedDate;
-
-                if (smallestDate.contains("-")){
-                    int year,month,day;
-                    String[] separated = smallestDate.split("-");
-                    year = Integer.parseInt(separated[0]);
-                    month = Integer.parseInt(separated[1]);
-                    day = Integer.parseInt(separated[2]);
-
-                    viewCalendar.select(new Day(year, month, day));
-
-                    selectedDate = year+"-"+month+"-"+day;
-                }
-            }
-
-            // use methods
-      /*  viewCalendar.addEventTag(2018, 8, 10);
-        viewCalendar.addEventTag(2018, 8, 14);
-        viewCalendar.addEventTag(2018, 8, 23);
-*/
+            showSlotAccordingToSmallestDate();
         }else
             apiForGetSlots();
 
@@ -265,6 +236,50 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         btnToday.setOnClickListener(this);
     }
 
+    private void showSlotAccordingToSmallestDate(){
+        ArrayList<BookingInfo> tempArrayList = new ArrayList<>();
+        tempArrayList.addAll(arrayListbookingInfo);
+
+        Collections.sort(tempArrayList, new Comparator<BookingInfo>() {
+            public int compare(BookingInfo o1, BookingInfo o2) {
+                return o1.selectedDate.compareTo(o2.selectedDate);
+            }
+        });
+
+        if (!tempArrayList.get(1).date.equals("Select date")){
+            String smallestDate = tempArrayList.get(1).selectedDate;
+
+            if (smallestDate.contains("-")){
+
+                SimpleDateFormat input,output;
+                output = new SimpleDateFormat("y-M-d");
+                input = new SimpleDateFormat("yyyy-MM-dd");
+
+                try {
+                    Date  formatedDate = input.parse(smallestDate);  // parse input
+                    smallestDate =  output.format(formatedDate);
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                int year,month,day;
+                String[] separated = smallestDate.split("-");
+                year = Integer.parseInt(separated[0]);
+                month = Integer.parseInt(separated[1]);
+                day = Integer.parseInt(separated[2]);
+
+                viewCalendar.select(new Day(year, month-1, day));
+                viewCalendar.expand(500);
+            }
+        }
+
+        // use methods
+      /*  viewCalendar.addEventTag(2018, 8, 10);
+        viewCalendar.addEventTag(2018, 8, 14);
+        viewCalendar.addEventTag(2018, 8, 23);
+*/
+    }
 
     @Override
     public void onClick(View view) {
@@ -280,7 +295,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                             BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
                     return;
                 }
-                if (bookingTimeSlots.size() != 0){
+                if (bookingTimeSlots.size() != 0 || bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
 
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                         apiForContinueBooking(false);
@@ -312,7 +327,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                     day = Integer.parseInt(separated[2]);
 
                     viewCalendar.select(new Day(year, month, day));
-
+                    viewCalendar.expand(500);
                     selectedDate = year+"-"+month+"-"+day;
                 }
                 //     apiForGetSlots();

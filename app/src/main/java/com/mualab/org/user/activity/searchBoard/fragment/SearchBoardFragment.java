@@ -314,11 +314,15 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                                 ArtistsSearchBoard item = gson.fromJson(String.valueOf(jsonObject), ArtistsSearchBoard.class);
                                 String services = "";
                                 if (item.service.size()!=0){
-                                    for (int j=0; j<2; j++){
-                                        if (services.equals("")){
-                                            services = item.service.get(j).title;
-                                        }else {
-                                            services = services + ", "+  item.service.get(j).title;
+                                    if (item.service.size()<2){
+                                        services = item.service.get(0).title;
+                                    }else {
+                                        for (int j = 0; j < 2; j++) {
+                                            if (services.equals("")) {
+                                                services = item.service.get(j).title;
+                                            } else {
+                                                services = services + ", " + item.service.get(j).title;
+                                            }
                                         }
                                     }
                                 }else {
