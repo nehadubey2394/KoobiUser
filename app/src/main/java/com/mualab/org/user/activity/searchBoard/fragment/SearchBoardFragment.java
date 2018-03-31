@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.searchBoard.fragment;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -29,6 +30,7 @@ import com.google.gson.Gson;
 import com.mualab.org.user.R;
 
 import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.SearchBoardAdapter;
@@ -80,6 +82,12 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         return fragment;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof MainActivity)
+            ((MainActivity)context).setBgColor(R.color.screen_bg_color);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

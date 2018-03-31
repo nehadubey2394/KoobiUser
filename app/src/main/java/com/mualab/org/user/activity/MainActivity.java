@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.support.annotation.IntegerRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -45,10 +46,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private int clickedId = 0;
     public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon;
     public TextView tvHeaderTitle;
-    public RelativeLayout rlHeader1;
+    public RelativeLayout rlHeader1, rootLayout;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
     public RefineSearchBoard item;
 
+
+    public void setBgColor(int color){
+        if(rlHeader1!=null)
+            rlHeader1.setBackgroundColor(getResources().getColor(color));
+        if(rootLayout!=null){
+            rootLayout.setBackgroundColor(getResources().getColor(color));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +121,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderUser = findViewById(R.id.ivHeaderUser);
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         rlHeader1 = findViewById(R.id.topLayout1);
+        rootLayout = findViewById(R.id.rootLayout);
 
         ibtnLeaderBoard.setOnClickListener(this);
         ibtnAddFeed.setOnClickListener(this);

@@ -162,6 +162,14 @@
                 app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@color/white">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tint="@color/colorPrimary"
+                    android:layout_gravity="center_vertical"
+                    android:padding="5dp"
+                    android:src="@drawable/places_ic_search"/>
+
                 <EditText
                     android:id="@+id/ed_search"
                     android:layout_width="match_parent"

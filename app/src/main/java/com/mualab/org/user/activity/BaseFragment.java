@@ -1,9 +1,9 @@
 package com.mualab.org.user.activity;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+
+import com.mualab.org.user.R;
 
 /**
  * Created by dharmraj on 19/3/18.
@@ -16,12 +16,12 @@ public class BaseFragment extends Fragment {
     FragmentNavigation mFragmentNavigation;
     protected Context mContext;
 
-    @Override
+    /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
-
+*/
 
     @Override
     public void onAttach(Context context) {
@@ -30,6 +30,9 @@ public class BaseFragment extends Fragment {
         if (context instanceof FragmentNavigation) {
             mFragmentNavigation = (FragmentNavigation) context;
         }
+
+        if(context instanceof MainActivity)
+            ((MainActivity)context).setBgColor(R.color.white);
     }
 
     public interface FragmentNavigation {

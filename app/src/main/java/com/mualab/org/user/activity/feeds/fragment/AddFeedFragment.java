@@ -2,16 +2,16 @@ package com.mualab.org.user.activity.feeds.fragment;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.application.Mualab;
 
 
-public class AddFeedFragment extends Fragment {
+public class AddFeedFragment extends BaseFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
