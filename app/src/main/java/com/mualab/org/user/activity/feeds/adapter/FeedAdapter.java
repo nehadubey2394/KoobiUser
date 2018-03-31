@@ -61,6 +61,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<Feeds> feedItems;
     private Listener listener;
+    private boolean loading;
+
+    public void showHideLoading(boolean b) {
+        loading = b;
+    }
+
 
     public interface Listener{
         void onCommentBtnClick(Feeds feed, int pos);
@@ -114,7 +120,25 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemViewType(int position) {
 
         Feeds feed = feedItems.get(position);
-        if(feed== null){
+       /* if(position==feedItems.size()-1) {
+            if (loading) {
+                return VIEW_TYPE_LOADING;
+            }
+        }
+*/
+
+        switch (feed.feedType) {
+            case "text":
+                return TEXT_TYPE;
+            case "image":
+                return IMAGE_TYPE;
+            case "video":
+                return VIDEO_TYPE;
+            default:
+                return VIEW_TYPE_LOADING;
+        }
+
+      /*  if(feed== null){
             return  VIEW_TYPE_LOADING;
         }else {
             switch (feed.feedType) {
@@ -127,7 +151,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 default:
                     return VIEW_TYPE_LOADING;
             }
-        }
+        }*/
     }
 
     @Override

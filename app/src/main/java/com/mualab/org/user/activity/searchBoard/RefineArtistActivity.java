@@ -558,7 +558,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         dayId = c.get(GregorianCalendar.DAY_OF_WEEK)-1;
         String weekday = new DateFormatSymbols().getShortWeekdays()[dayId];
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,AlertDialog.THEME_HOLO_LIGHT,
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year,int monthOfYear, int dayOfMonth) {
