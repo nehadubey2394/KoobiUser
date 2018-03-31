@@ -47,6 +47,7 @@ import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.activity.ImageViewDialogActivity;
+import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
@@ -149,6 +150,9 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         if(context instanceof BaseListner){
             baseListner = (BaseListner) mContext;
         }
+
+        /*if(context instanceof MainActivity)
+            ((MainActivity)context).setBgColor(R.color.white);*/
     }
 
     @Override
