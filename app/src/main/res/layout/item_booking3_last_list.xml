@@ -191,11 +191,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
                     android:fontFamily="@font/roboto_medium"
                     android:gravity="right|center_vertical"
                     android:maxLines="2"
-                    android:padding="2dp"
                     android:text="£"
                     android:textColor="@color/grey"
                     android:textSize="16sp" />
@@ -208,7 +206,6 @@
                     android:fontFamily="@font/roboto_medium"
                     android:gravity="right|center_vertical"
                     android:maxLines="2"
-                    android:padding="2dp"
                     android:text="250"
                     android:textColor="@color/grey"
                     android:textSize="16sp" />

@@ -165,6 +165,7 @@
     <string name="text_location">Location</string>
     <string name="text_service">Service</string>
     <string name="text_date_and_time">Date And Time</string>
+    <string name="text_date_n_time">Date and time</string>
     <string name="titel_refine">Refine</string>
     <string name="title_photo">Photo</string>
     <string name="title_explore">Explore</string>

@@ -32,7 +32,6 @@ public class MyFlexibleCalendar extends MyUICalendar {
     private String sCurrentDay = "";
     private int mInitHeight = 0;
     public boolean isFirstimeLoad = true;
-    public boolean isTodayLoad = true;
 
     private Handler mHandler = new Handler();
     private boolean mIsWaitingForUpdate = false;

@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:cardCornerRadius="0dp"
+    app:cardBackgroundColor="@color/white"
     app:cardElevation="5dp">
 
     <LinearLayout
@@ -13,9 +14,9 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
         android:gravity="center_vertical"
-        android:background="@color/white"
         android:orientation="horizontal"
-        android:weightSum="5">
+        android:weightSum="5"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"
