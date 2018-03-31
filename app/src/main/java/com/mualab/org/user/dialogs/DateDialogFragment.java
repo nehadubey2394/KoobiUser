@@ -59,7 +59,8 @@ public class DateDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
        // return new DatePickerDialog(sContext, dateSetListener, sDate.get(Calendar.YEAR), sDate.get(Calendar.MONTH), sDate.get(Calendar.DAY_OF_MONTH));
         DatePickerDialog dialog = new DatePickerDialog(mContext,
-                AlertDialog.THEME_HOLO_LIGHT,
+                //AlertDialog.THEME_HOLO_LIGHT,
+                AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,
                 dateSetListener,
                 sDate.get(Calendar.YEAR),
                 sDate.get(Calendar.MONTH),

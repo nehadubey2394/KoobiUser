@@ -16,7 +16,7 @@
     <LinearLayout
         android:id="@+id/llHeader"
         android:layout_width="wrap_content"
-        android:layout_height="4dp"
+        android:layout_height="3dp"
         android:weightSum="4"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="10dp"
@@ -71,7 +71,8 @@
         android:layout_width="match_parent"
         android:layout_below="@+id/llHeader"
         android:layout_marginTop="25dp"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/alreadyHaveAnAccount">
 
         <LinearLayout
             android:id="@+id/vPanel1"
@@ -97,5 +98,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:id="@+id/alreadyHaveAnAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        style="@style/TextView"
+        android:textSize="16sp"
+        android:text="@string/already_have_an_account"
+        android:layout_margin="10dp"
+        android:textColor="@drawable/tv_selector"
+        android:padding="5dp"/>
 
 </RelativeLayout>

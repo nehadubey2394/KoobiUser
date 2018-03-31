@@ -16,7 +16,7 @@
     <LinearLayout
         android:id="@+id/llHeader"
         android:layout_width="wrap_content"
-        android:layout_height="4dp"
+        android:layout_height="3dp"
         android:weightSum="4"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="10dp"

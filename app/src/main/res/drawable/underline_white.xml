@@ -14,7 +14,7 @@
             <solid android:color="@android:color/transparent" />
             <stroke
                 android:width="0.5dip"
-                android:color="@color/white" />  <!-- color of stroke -->
+                android:color="@color/colorPrimaryTransprent4" />  <!-- color of stroke -->
         </shape>
     </item>
 </layer-list>

@@ -37,6 +37,7 @@ import com.mualab.org.user.session.Session;
 import com.mualab.org.user.session.SharedPreferanceUtils;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.util.StatusBarUtil;
 
 import org.json.JSONObject;
 import java.io.IOException;
@@ -54,13 +55,13 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
     private View progressView3, progressView4;
     //Reg_View1
     private CircleImageView profile_image;
-    private TextInputLayout input_layout_firstName, input_layout_lastName, input_layout_userName;
+    //private TextInputLayout input_layout_firstName, input_layout_lastName, input_layout_userName;
     private EditText ed_firstName, ed_lastName, ed_userName;
     private TextView tv_dob;
     private RadioGroup radioGroup;
 
     //Reg_View2
-    private TextInputLayout input_layout_pwd, input_layout_cnfPwd;
+   // private TextInputLayout input_layout_pwd, input_layout_cnfPwd;
     private EditText edPwd, edConfirmPwd;
 
     private int CURRENT_VIEW_STATE = 3;
@@ -75,6 +76,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration2);
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
         initViews();
 
         Intent intent = getIntent();
@@ -136,7 +138,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                 String dateToShow = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
                 tv_dob.setText(dateToShow);
-                findViewById(R.id.tvHintDOB).setVisibility(View.VISIBLE);
+                //findViewById(R.id.tvHintDOB).setVisibility(View.VISIBLE);
             }
         });
 
@@ -154,9 +156,9 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         /* view 1 */
         profile_image = findViewById(R.id.profile_image);
         profile_image.setOnClickListener(this);
-        input_layout_firstName = findViewById(R.id.input_layout_firstName);
+        /*input_layout_firstName = findViewById(R.id.input_layout_firstName);
         input_layout_lastName = findViewById(R.id.input_layout_lastName);
-        input_layout_userName = findViewById(R.id.input_layout_userName);
+        input_layout_userName = findViewById(R.id.input_layout_userName);*/
         ed_firstName = findViewById(R.id.ed_firstName);
         ed_lastName = findViewById(R.id.ed_lastName);
         ed_userName = findViewById(R.id.ed_userName);
@@ -166,11 +168,12 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         tv_dob.setOnClickListener(this);
 
         /* view 1 */
-        input_layout_pwd = findViewById(R.id.input_layout_pwd);
-        input_layout_cnfPwd = findViewById(R.id.input_layout_cnfPwd);
+       /* input_layout_pwd = findViewById(R.id.input_layout_pwd);
+        input_layout_cnfPwd = findViewById(R.id.input_layout_cnfPwd);*/
         edPwd = findViewById(R.id.edPwd);
         edConfirmPwd = findViewById(R.id.edConfirmPwd);
         findViewById(R.id.btnContinue2).setOnClickListener(this);
+        findViewById(R.id.alreadyHaveAnAccount).setOnClickListener(this);
     }
 
     @Override
@@ -178,12 +181,16 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
         switch (v.getId()){
 
+            case R.id.alreadyHaveAnAccount:
+                finish();
+                break;
+
             case R.id.btnContinue1:
                /* if(profileImageBitmap==null){
                     showToast(getString(R.string.error_profile_image));
-                }else*/ if(checkNotempty(ed_firstName, input_layout_firstName)
-                    && checkNotempty(ed_lastName, input_layout_lastName)
-                    && validInputField(ed_userName, input_layout_userName,R.string.error_username_length)
+                }else*/ if(checkNotempty(ed_firstName/*, input_layout_firstName*/)
+                    && checkNotempty(ed_lastName/*, input_layout_lastName*/)
+                    && validInputField(ed_userName/*, input_layout_userName*/,R.string.error_username_length)
                     && checkDOB()){
 
                 int selectedId = radioGroup.getCheckedRadioButtonId();
@@ -229,8 +236,8 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
 
             case R.id.btnContinue2:
-                if(isValidPassword(edPwd, input_layout_pwd)
-                        && isValidPassword(edConfirmPwd, input_layout_cnfPwd)
+                if(isValidPassword(edPwd /*, input_layout_pwd*/)
+                        && isValidPassword(edConfirmPwd /*, input_layout_cnfPwd*/)
                         && matchPassword()){
                     user.password = edPwd.getText().toString().trim();
                     nextScreen();
@@ -397,7 +404,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private boolean isValidPassword(EditText edPwd, TextInputLayout inputLayout) {
+    private boolean isValidPassword(EditText edPwd /*TextInputLayout inputLayout*/) {
         // Pattern regex = Pattern.compile("[$&+,:;=\\\\?@#|/'<>.^*()%!-]");
         String password = edPwd.getText().toString().trim();
         // Pattern specailCharPatten = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
@@ -406,63 +413,71 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
 
         if (TextUtils.isEmpty(password)) {
-            inputLayout.setError(getString(R.string.error_password_required));
+            //inputLayout.setError(getString(R.string.error_password_required));
+            showToast(getString(R.string.error_password_required));
             edPwd.requestFocus();
             return false;
         } else if (password.length() < 8) {
-            inputLayout.setError(getString(R.string.error_password_vailidation));
+            //inputLayout.setError(getString(R.string.error_password_vailidation));
+            showToast(getString(R.string.error_password_vailidation));
             edPwd.requestFocus();
             return false;
         } else if (!UpperCasePatten.matcher(password).find()) {
-            inputLayout.setError(getString(R.string.error_password_vailidation));
+            //inputLayout.setError(getString(R.string.error_password_vailidation));
+            showToast(getString(R.string.error_password_vailidation));
             edPwd.requestFocus();
             return false;
         }else if (!digitCasePatten.matcher(password).find()) {
-            inputLayout.setError(getString(R.string.error_password_vailidation));
+            //inputLayout.setError(getString(R.string.error_password_vailidation));
+            showToast(getString(R.string.error_password_vailidation));
             edPwd.requestFocus();
             return false;
         }
 
-        else {
+       /* else {
             inputLayout.setErrorEnabled(false);
-        }
+        }*/
         return true;
     }
 
 
     private boolean matchPassword(){
         if(!edPwd.getText().toString().equals(edConfirmPwd.getText().toString())){
-            input_layout_cnfPwd.setError(getString(R.string.error_confirm_password_not_match));
+            //input_layout_cnfPwd.setError(getString(R.string.error_confirm_password_not_match));
+            showToast(getString(R.string.error_confirm_password_not_match));
             return false;
         }
         return true;
     }
 
-    private boolean validInputField(EditText editText, TextInputLayout inputLayout, int id) {
+    private boolean validInputField(EditText editText, /*TextInputLayout inputLayout,*/ int id) {
         String text = editText.getText().toString().trim();
         if (TextUtils.isEmpty(text)) {
-            inputLayout.setError(getString(R.string.error_required_field));
+            //inputLayout.setError(getString(R.string.error_required_field));
+            showToast(getString(R.string.error_required_field));
             editText.requestFocus();
             return false;
         } else if (text.length() < 4) {
-            inputLayout.setError(getString(id));
+            //inputLayout.setError(getString(id));
+            showToast(getString(id));
             editText.requestFocus();
             return false;
-        } else {
+        }/* else {
             inputLayout.setErrorEnabled(false);
-        }
+        }*/
         return true;
     }
 
-    private boolean checkNotempty(EditText editText, TextInputLayout inputLayout) {
+    private boolean checkNotempty(EditText editText/*, TextInputLayout inputLayout*/) {
         String text = editText.getText().toString().trim();
         if (TextUtils.isEmpty(text)) {
-            inputLayout.setError(getString(R.string.error_required_field));
+            //inputLayout.setError(getString(R.string.error_required_field));
+            showToast(getString(R.string.error_required_field));
             editText.requestFocus();
             return false;
-        }else {
+        }/*else {
             inputLayout.setErrorEnabled(false);
-        }
+        }*/
         return true;
     }
 
@@ -476,7 +491,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
     private void showToast(String msg){
         if (!TextUtils.isEmpty(msg)){
-            MyToast.getInstance(this).showSmallCustomToast(msg);
+            MyToast.getInstance(this).showDasuAlert(msg);
         }
     }
 
@@ -488,8 +503,8 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
             ((ImageView)findViewById(R.id.iv_bg)).setImageResource(R.drawable.bg_registration2);
             edPwd.setText("");
             edConfirmPwd.setText("");
-            input_layout_pwd.setError(null);
-            input_layout_cnfPwd.setError(null);
+           // input_layout_pwd.setError(null);
+           // input_layout_cnfPwd.setError(null);
             progressView4.setBackgroundColor(ContextCompat.getColor(this,R.color.white));
             progressView3.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
 

@@ -34,6 +34,7 @@ import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.KeyboardUtil;
+import com.mualab.org.user.util.StatusBarUtil;
 
 import org.json.JSONObject;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private TextView ed_username, ed_password;
-    private TextInputLayout input_layout_UserName, input_layout_password;
+   // private TextInputLayout input_layout_UserName, input_layout_password;
     private ImageView ivFacebook, ivInstragram;
     private SharedPreferanceUtils sp;
     private Session session;
@@ -56,17 +57,18 @@ public class LoginActivity extends AppCompatActivity {
     private void initView(){
         ed_username = findViewById(R.id.ed_username);
         ed_password = findViewById(R.id.ed_password);
-        input_layout_UserName = findViewById(R.id.input_layout_UserName);
-        input_layout_password = findViewById(R.id.input_layout_password);
+        /*input_layout_UserName = findViewById(R.id.input_layout_UserName);
+        input_layout_password = findViewById(R.id.input_layout_password);*/
         ivFacebook = findViewById(R.id.ivFacebook);
         ivInstragram = findViewById(R.id.ivInstragram);
-        ed_password.addTextChangedListener(new MyTextWatcher(ed_password));
+       // ed_password.addTextChangedListener(new MyTextWatcher(ed_password));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
         sp = new SharedPreferanceUtils(this);
         session = Mualab.getInstance().getSessionManager();
         initView();
@@ -255,12 +257,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean validateName() {
         if (ed_username.getText().toString().trim().isEmpty()) {
-            input_layout_UserName.setError(getString(R.string.error_email_or_username_required));
+            //input_layout_UserName.setError(getString(R.string.error_email_or_username_required));
             ed_username.requestFocus();
+            showToast(getString(R.string.error_email_or_username_required));
             return false;
-        } else {
+        } /*else {
             input_layout_UserName.setErrorEnabled(false);
-        }
+        }*/
 
         return true;
     }
@@ -268,16 +271,18 @@ public class LoginActivity extends AppCompatActivity {
     private boolean validatePassword() {
         String password = ed_password.getText().toString().trim();
         if (TextUtils.isEmpty(password)) {
-            input_layout_password.setError(getString(R.string.error_password_required));
+            //input_layout_password.setError(getString(R.string.error_password_required));
+            showToast(getString(R.string.error_password_required));
             ed_password.requestFocus();
             return false;
         } else if (password.length() < 8) {
-            input_layout_password.setError(getString(R.string.error_invalid_password_length));
+            //input_layout_password.setError(getString(R.string.error_invalid_password_length));
+            showToast(getString(R.string.error_invalid_password_length));
             ed_password.requestFocus();
             return false;
-        } else {
+        } /*else {
             input_layout_password.setErrorEnabled(false);
-        }
+        }*/
         return true;
     }
 
@@ -349,7 +354,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }*/
 
-    private class MyTextWatcher implements TextWatcher {
+   /* private class MyTextWatcher implements TextWatcher {
 
         private View view;
 
@@ -373,5 +378,5 @@ public class LoginActivity extends AppCompatActivity {
                     break;
             }
         }
-    }
+    }*/
 }
