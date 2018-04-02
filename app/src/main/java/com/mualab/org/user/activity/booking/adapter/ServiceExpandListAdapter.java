@@ -1,5 +1,6 @@
 package com.mualab.org.user.activity.booking.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.Services;
 import com.mualab.org.user.model.booking.SubServices;
-import com.mualab.org.user.session.Session;
 
 import java.util.ArrayList;
 
@@ -80,6 +78,7 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
@@ -88,6 +87,7 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            assert infalInflater != null;
             convertView = infalInflater.inflate(R.layout.item_main_service_list, null);
             holder = new ViewHolder();
             convertView.setTag(holder);
@@ -128,9 +128,6 @@ public class ServiceExpandListAdapter extends BaseExpandableListAdapter {
                 e.printStackTrace();
             }
         }
-
-
-        //  Toast.makeText(activity, ingredients.itemName, Toast.LENGTH_SHORT).show();
 
         return convertView;
 

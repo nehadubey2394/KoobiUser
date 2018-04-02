@@ -182,7 +182,6 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     bookingInfo.artistService = services3.title;
                     bookingInfo.msId = services3._id;
                     bookingInfo.time = services3.completionTime;
-                    //bookingInfo.bookedArtistServices.addAll(artistsList);
 
                     //data from subservices
                     bookingInfo.sServiceName = subServices.subServiceName;
@@ -230,11 +229,10 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         bookingInfo.serviceTime = "00:"+(ptMinuts+ctMinuts);
                         bookingInfo.endTime = ""+(ptMinuts+ctMinuts);
                         bookingInfo.editEndTime = ""+(ptMinuts+ctMinuts);
-                        //  if (fromConfirmBooking)
-                        //  bookingInfo.editEndTime = ""+(ptMinuts+ctMinuts);
+
                     }
 
-                    if (((BookingActivity)context).item.businessType.equals("independent")){
+                    if (item.businessType.equals("independent")){
                         if (fromConfirmBooking){
                             ((BookingActivity)context).addFragment(
                                     BookingFragment4.newInstance(subServices.subServiceName,true,bookingInfo), true, R.id.flBookingContainer);

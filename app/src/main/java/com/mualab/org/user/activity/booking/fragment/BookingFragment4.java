@@ -4,6 +4,7 @@ package com.mualab.org.user.activity.booking.fragment;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingInfoAdapter;
 import com.mualab.org.user.activity.booking.adapter.TimeSlotAdapter;
+import com.mualab.org.user.activity.booking.background_service.ExpiredBookingJobService;
 import com.mualab.org.user.activity.booking.listner.DeleteServiceListener;
 import com.mualab.org.user.activity.booking.listner.TimeSlotClickListener;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
@@ -102,8 +104,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         if(listener!=null)
             listener.onServiceAdded(true);
 
-        BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
-        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(0);
+            ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
+        }
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString("param1");
             isEdit = getArguments().getBoolean("param2")  ;
@@ -124,6 +129,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mContext = context;
+        //if(context instanceof BookingActivity)
     }
 
     private void initView(){
@@ -131,7 +137,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         artistId = bookingInfo.artistId;
         listAdapter = new TimeSlotAdapter(mContext, bookingTimeSlots);
         listAdapter.setCustomListener(BookingFragment4.this);
-        bookingInfoAdapter = new BookingInfoAdapter(mContext, arrayListbookingInfo,isEdit);
+        bookingInfoAdapter = new BookingInfoAdapter(mContext, arrayListbookingInfo);
     }
 
     @Override
@@ -141,7 +147,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     }
 
     private void setView(View rootView){
-        BookingActivity.title_booking.setText(getString(R.string.title_booking));
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setTitleVisibility(getString(R.string.title_booking));
+        }
 
         AppCompatButton btnCOnfirmBooking = rootView.findViewById(R.id.btnCOnfirmBooking);
         AppCompatButton btnAddMoreService = rootView.findViewById(R.id.btnAddMoreService);
@@ -289,7 +297,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                     MyToast.getInstance(mContext).showDasuAlert("No service added!");
                     return;
                 }
-                // bookingInfo = arrayListbookingInfo.get(0);
                 if (arrayListbookingInfo.size()!=0 && isRemoved){
                     ((BookingActivity) mContext).addFragment(
                             BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
@@ -344,7 +351,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                         if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
                             apiForContinueBooking(true);
                         } else {
-                            MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
+                            MyToast.getInstance(getActivity()).showDasuAlert("Please select service date and time");
                         }
                     } else
                         MyToast.getInstance(mContext).showDasuAlert("There is no time slot available, select another date for booking");
@@ -669,6 +676,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        mContext.startService(new Intent(mContext, ExpiredBookingJobService.class));
+
+                        ((BookingActivity)mContext).startTimer();
+
                         if (js.has("bookingId"))
                             bookingInfo.bookingId = js.getString("bookingId");
 
@@ -799,7 +810,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 .setAuthToken(user.authToken)
                 .setProgress(true)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
-        //.setBody(params, "application/x-www-form-urlencoded"));
 
         task.execute(this.getClass().getName());
     }
@@ -840,14 +850,19 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        BookingActivity.lyReviewPost.setVisibility(View.GONE);
-        BookingActivity.title_booking.setText(mParam1);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(8);
+                ((BookingActivity) mContext).setTitleVisibility(mParam1);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        BookingActivity.lyReviewPost.setVisibility(View.GONE);
-        BookingActivity.title_booking.setText(mParam1);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(8);
+            ((BookingActivity) mContext).setTitleVisibility(mParam1);
+        }
+
     }
 }

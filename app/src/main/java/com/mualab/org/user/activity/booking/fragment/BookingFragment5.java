@@ -8,7 +8,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookedServicesAdapter;
+import com.mualab.org.user.activity.booking.background_service.ExpiredBookingJobService;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
@@ -72,7 +72,6 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     private BookingInfo bookingInfo,firstBooking;
     private BookedServicesAdapter adapter;
     private ArrayList<BookingInfo> selectedServices;
-    int pos = BookingFragment4.arrayListbookingInfo.size()-1;
     private ArtistsSearchBoard item;
     private TextView tvArtistLoc;
     private double cLat,cLng;
@@ -94,9 +93,12 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BookingActivity.lyReviewPost.setVisibility(View.GONE);
-        BookingActivity.lyArtistDetail.setVisibility(View.GONE);
-        BookingActivity.tvBuisnessName.setVisibility(View.VISIBLE);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(8);
+            ((BookingActivity) mContext).setLyArtistDetailVisibility(8);
+            ((BookingActivity) mContext).setBuisnessNameVisibility(0);
+        }
+
         if (getArguments() != null) {
             bookingInfo = (BookingInfo) getArguments().getSerializable("bookingInfo");
             if (bookingInfo != null)
@@ -129,8 +131,10 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     }
 
     private void setViewId(View rootView){
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setTitleVisibility(getString(R.string.title_booking));
+        }
 
-        BookingActivity.title_booking.setText(getString(R.string.title_booking));
         AppCompatButton btnEditDate = rootView.findViewById(R.id.btnEditDate);
         AppCompatButton btnEditLocation = rootView.findViewById(R.id.btnEditLocation);
         AppCompatButton btnConfirmBooking = rootView.findViewById(R.id.btnConfirmBooking);
@@ -222,17 +226,22 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
-        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
-        BookingActivity.tvBuisnessName.setVisibility(View.GONE);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(0);
+            ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
+            ((BookingActivity) mContext).setBuisnessNameVisibility(8);
+        }
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
-        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
-        BookingActivity.tvBuisnessName.setVisibility(View.GONE);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(0);
+            ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
+            ((BookingActivity) mContext).setBuisnessNameVisibility(8);
+        }
     }
 
     @Override
@@ -304,10 +313,14 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        mContext.stopService(new Intent(mContext, ExpiredBookingJobService.class));
+                        ((BookingActivity)mContext).stopCountdown();
+
                         session.setUserChangedLocLat("");
                         session.setUserChangedLocLng("");
                         session.setUserChangedLocName("");
                         MyToast.getInstance(mContext).showDasuAlert(message);
+                        BookingFragment4.arrayListbookingInfo.clear();
                         ((BookingActivity)mContext).finish();
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert(message);
@@ -374,40 +387,6 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             }
         }
     }
-
-  /*  private void distance (double lat_b, double lng_b)
-    {
-        double earthRadius = 3958.75;
-        double latDiff = Math.toRadians(lat_b-item.latitude);
-        double lngDiff = Math.toRadians(lng_b-item.longitude);
-        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
-                Math.cos(Math.toRadians(item.longitude)) * Math.cos(Math.toRadians(lat_b)) *
-                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double distance = earthRadius * c;
-
-        double radius = Double.parseDouble(item.radius);
-        // int meterConversion = 1609;
-
-        // double diff = distance * meterConversion;
-
-        if (radius>=distance) {
-            if (isEditLoc){
-                session.setUserChangedLocLat(String.valueOf(cLat));
-                session.setUserChangedLocLng(String.valueOf(cLng));
-            }
-            if (isConfirmbookingClicked)
-                apiForConfirmBooking();
-
-        }
-        else {
-            if (isEditLoc)
-                isEditLoc = false;
-
-            MyToast.getInstance(mContext).showDasuAlert("Selected artist services is not available at this location");
-        }
-
-    }*/
 
     private void distance(double lat2, double lon2) {
         double theta = item.longitude - lon2;

@@ -6,19 +6,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatRadioButton;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,27 +32,22 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.RefineServiceExpandListAdapter;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.listner.DatePickerListener;
 import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
-import com.mualab.org.user.model.User;
 import com.mualab.org.user.model.SearchBoard.RefineServices;
 import com.mualab.org.user.model.SearchBoard.RefineSubServices;
+import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
-import com.mualab.org.user.util.DatePickerFragment;
-import com.mualab.org.user.util.Helper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -75,8 +67,8 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     private String mainServId = "",sortType ="",sortSearch ="",serviceType="",lat="",lng="",date_time="",format,time="",subServiceId = "",location="";
     private int mHour,mMinute,dayId = 100;
     private RefineSearchBoard refineSearchBoard ;
-    private CheckBox chbOutcall;
     private  AppCompatRadioButton rbAscending,rbDescending;
+    private CheckBox chbOutcall;
     private Session session;
 
     @Override
@@ -159,36 +151,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-        if (refineSearchBoard!=null){
-            lat = refineSearchBoard.latitude;
-            lng = refineSearchBoard.longitude;
-            subServiceId = refineSearchBoard.subservice;
-            mainServId = refineSearchBoard.service;
-            serviceType = refineSearchBoard.serviceType;
-            sortSearch = refineSearchBoard.sortSearch;
-            sortType = refineSearchBoard.sortType;
-            time = refineSearchBoard.time;
-            date_time = refineSearchBoard.date;
-            location = refineSearchBoard.location;
-            dayId = Integer.parseInt(refineSearchBoard.day);
-
-            if (!date_time.equals(""))
-                tv_refine_dnt.setText(date_time+" " + ":" + time);
-            tv_refine_loc.setText(location);
-
-            if (sortSearch.equals("price")) {
-                ivPrice.setImageResource(R.drawable.active_price_ico);
-                ivDistance.setImageResource(R.drawable.route_ico);
-            }
-            if (serviceType.equals("1")){
-                chbOutcall.setChecked(true);
-            }
-            if (sortType.equals("1")){
-                rbDescending.setChecked(true);
-            }
-        }else {
-            apiForGetAllServices();
-        }
+       setRefineData();
 
 
         lvExpandable.setAdapter(expandableListAdapter);
@@ -244,6 +207,39 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         rlRefineLocation.setOnClickListener(this);
         btnClear.setOnClickListener(this);
         btnApply.setOnClickListener(this);
+    }
+
+    private void setRefineData() {
+        if (refineSearchBoard!=null){
+            lat = refineSearchBoard.latitude;
+            lng = refineSearchBoard.longitude;
+            subServiceId = refineSearchBoard.subservice;
+            mainServId = refineSearchBoard.service;
+            serviceType = refineSearchBoard.serviceType;
+            sortSearch = refineSearchBoard.sortSearch;
+            sortType = refineSearchBoard.sortType;
+            time = refineSearchBoard.time;
+            date_time = refineSearchBoard.date;
+            location = refineSearchBoard.location;
+            dayId = Integer.parseInt(refineSearchBoard.day);
+
+            if (!date_time.equals(""))
+                tv_refine_dnt.setText(date_time+" " + ":" + time);
+            tv_refine_loc.setText(location);
+
+            if (sortSearch.equals("price")) {
+                ivPrice.setImageResource(R.drawable.active_price_ico);
+                ivDistance.setImageResource(R.drawable.route_ico);
+            }
+            if (serviceType.equals("1")){
+                chbOutcall.setChecked(true);
+            }
+            if (sortType.equals("1")){
+                rbDescending.setChecked(true);
+            }
+        }else {
+            apiForGetAllServices();
+        }
     }
 
     @Override
@@ -311,7 +307,6 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
 
     private void onGroupClickListener(ExpandableListView expandableListView, View view, int groupPosition, long l){
         RefineServices servicesItem = services.get(groupPosition);
-        ArrayList<RefineSubServices> arrayList = servicesItem.getArrayList();
 
         if (servicesItem.isChecked.equals("0")){
             servicesItem.isChecked = "1";
@@ -381,48 +376,6 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();
-    }
-
-    private void clearFilter(){
-        isClear = true;
-        services.clear();
-        sortSearch = "";
-        serviceType = "";
-        sortType = "";
-        mainServId = "";
-        subServiceId = "";
-        time = "";
-        date_time = "";
-        location = "";
-        lat = "";
-        lng = "";
-        dayId = 100;
-        tv_refine_loc.setText("");
-        tv_refine_dnt.setText("");
-        chbOutcall.setChecked(false);
-        ivDistance.setImageResource(R.drawable.active_route_ico);
-        rbDescending.setTextColor(getResources().getColor(R.color.text_color));
-        rbAscending.setTextColor(getResources().getColor(R.color.colorPrimary));
-        lvExpandable.setVisibility(View.GONE);
-        isServiceOpen = false;
-
-        for (RefineServices services :tempSerevice ){
-            if (services.isChecked.equals("1")){
-                services.isChecked = "0";
-                if (services.getArrayList().size()!=0){
-                    for (int j = 0; j < services.getArrayList().size(); j++) {
-                        RefineSubServices subItem = services.getArrayList().get(j);
-                        subItem.isChecked = "0";
-                        subItem.isSubItemChecked = false;
-                    }
-                }
-            }
-        }
-        services.addAll(tempSerevice);
-        expandableListAdapter.notifyDataSetChanged();
-
-        refineSearchBoard = null;
-
     }
 
     private void getAddress() {
@@ -541,7 +494,6 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 // TODO: Handle the error.
-                Log.i("", status.getStatusMessage());
 
             } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.

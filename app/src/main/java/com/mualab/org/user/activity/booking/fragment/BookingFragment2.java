@@ -16,7 +16,6 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.Services;
@@ -58,8 +57,11 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BookingActivity.lyReviewPost.setVisibility(View.VISIBLE);
-        BookingActivity.lyArtistDetail.setVisibility(View.VISIBLE);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(0);
+            ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
+        }
+
         if (getArguments() != null) {
             item = (ArtistsSearchBoard) getArguments().getSerializable("param1");
         }
@@ -91,7 +93,10 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     }
 
     private void setViewId(View rootView){
-        BookingActivity.title_booking.setText(getString(R.string.title_booking));
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setTitleVisibility(getString(R.string.title_booking));
+        }
+
         ivOutcall = rootView.findViewById(R.id.ivOutcall);
         lyOutcall = rootView.findViewById(R.id.lyOutcall);
         lyOutcall.setVisibility(View.VISIBLE);
@@ -118,8 +123,6 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
         lvExpandable.setAdapter(expandableListAdapter);
 
-
-        // expandableListAdapter.notifyDataSetChanged();
         lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int i) {
