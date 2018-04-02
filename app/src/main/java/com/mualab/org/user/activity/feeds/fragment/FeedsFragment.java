@@ -46,8 +46,6 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.CameraActivity;
-import com.mualab.org.user.activity.ImageViewDialogActivity;
-import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
@@ -562,7 +560,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         }
     }
 
-    private void removeProgress(){
+  /*  private void removeProgress(){
 
         if(feeds!=null && feeds.size()>0 && feeds.get(feeds.size()-1)==null){
             int lastIndex = feeds.size()-1;
@@ -570,7 +568,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             feedAdapter.notifyDataSetChanged();
         }
     }
-
+*/
 
     @Override
     public void onCommentBtnClick(Feeds feed, int pos) {

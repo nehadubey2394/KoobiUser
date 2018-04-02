@@ -20,7 +20,8 @@ import java.util.List;
 import com.mualab.org.user.util.ScreenUtils;
 
 /**
- */
+ * Dharmraj Acharya
+ **/
 
 public class ViewPagerAdapter extends PagerAdapter {
 

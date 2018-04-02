@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.google.firebase.crash.FirebaseCrash;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
@@ -282,7 +283,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(new AddFeedFragment(), false);
+                    replaceFragment(ExploreFragment.newInstance(), false);
                 }
                 break;
 

@@ -351,5 +351,6 @@
     <string name="unfollow">Unfollow</string>
     <string name="enter_your_email_id_and_phone_no">Enter your Email id and phone \nnumber</string>
     <string name="done">Done</string>
+    <string name="rec">REC</string>
 
 </resources>

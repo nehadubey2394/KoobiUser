@@ -476,7 +476,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             isCameraSession = false;
             currentState = STATE_TAKE_VIDEO;
             cameraView.setSessionType(SessionType.VIDEO);
-            btnTakePhoto.setText("REC");
+            btnTakePhoto.setText(R.string.rec);
             btnCameraMode.setImageResource(R.drawable.ic_photo_camera_white);
             updateState(STATE_TAKE_VIDEO);
             //btnTakePhoto.setOnTouchListener(touchListener);
