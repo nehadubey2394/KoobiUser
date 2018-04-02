@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatRadioButton;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -68,8 +67,8 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     private String mainServId = "",sortType ="",sortSearch ="",serviceType="",lat="",lng="",date_time="",format,time="",subServiceId = "",location="";
     private int mHour,mMinute,dayId = 100;
     private RefineSearchBoard refineSearchBoard ;
-    private CheckBox chbOutcall;
     private  AppCompatRadioButton rbAscending,rbDescending;
+    private CheckBox chbOutcall;
     private Session session;
 
     @Override
@@ -152,36 +151,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-        if (refineSearchBoard!=null){
-            lat = refineSearchBoard.latitude;
-            lng = refineSearchBoard.longitude;
-            subServiceId = refineSearchBoard.subservice;
-            mainServId = refineSearchBoard.service;
-            serviceType = refineSearchBoard.serviceType;
-            sortSearch = refineSearchBoard.sortSearch;
-            sortType = refineSearchBoard.sortType;
-            time = refineSearchBoard.time;
-            date_time = refineSearchBoard.date;
-            location = refineSearchBoard.location;
-            dayId = Integer.parseInt(refineSearchBoard.day);
-
-            if (!date_time.equals(""))
-                tv_refine_dnt.setText(date_time+" " + ":" + time);
-            tv_refine_loc.setText(location);
-
-            if (sortSearch.equals("price")) {
-                ivPrice.setImageResource(R.drawable.active_price_ico);
-                ivDistance.setImageResource(R.drawable.route_ico);
-            }
-            if (serviceType.equals("1")){
-                chbOutcall.setChecked(true);
-            }
-            if (sortType.equals("1")){
-                rbDescending.setChecked(true);
-            }
-        }else {
-            apiForGetAllServices();
-        }
+       setRefineData();
 
 
         lvExpandable.setAdapter(expandableListAdapter);
@@ -237,6 +207,39 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         rlRefineLocation.setOnClickListener(this);
         btnClear.setOnClickListener(this);
         btnApply.setOnClickListener(this);
+    }
+
+    private void setRefineData() {
+        if (refineSearchBoard!=null){
+            lat = refineSearchBoard.latitude;
+            lng = refineSearchBoard.longitude;
+            subServiceId = refineSearchBoard.subservice;
+            mainServId = refineSearchBoard.service;
+            serviceType = refineSearchBoard.serviceType;
+            sortSearch = refineSearchBoard.sortSearch;
+            sortType = refineSearchBoard.sortType;
+            time = refineSearchBoard.time;
+            date_time = refineSearchBoard.date;
+            location = refineSearchBoard.location;
+            dayId = Integer.parseInt(refineSearchBoard.day);
+
+            if (!date_time.equals(""))
+                tv_refine_dnt.setText(date_time+" " + ":" + time);
+            tv_refine_loc.setText(location);
+
+            if (sortSearch.equals("price")) {
+                ivPrice.setImageResource(R.drawable.active_price_ico);
+                ivDistance.setImageResource(R.drawable.route_ico);
+            }
+            if (serviceType.equals("1")){
+                chbOutcall.setChecked(true);
+            }
+            if (sortType.equals("1")){
+                rbDescending.setChecked(true);
+            }
+        }else {
+            apiForGetAllServices();
+        }
     }
 
     @Override
@@ -304,7 +307,6 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
 
     private void onGroupClickListener(ExpandableListView expandableListView, View view, int groupPosition, long l){
         RefineServices servicesItem = services.get(groupPosition);
-        ArrayList<RefineSubServices> arrayList = servicesItem.getArrayList();
 
         if (servicesItem.isChecked.equals("0")){
             servicesItem.isChecked = "1";
