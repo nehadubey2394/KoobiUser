@@ -52,12 +52,7 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
             AdapterTimeSlot adapterTimeSlot = new AdapterTimeSlot(mContext, day.slots);
             holder.listView.setAdapter(adapterTimeSlot);
             setListViewHeightBasedOnChildren(holder.listView);
-        }/*else {
-            if (day.dayId==6 )
-                holder.lyDotsLine.setVisibility(View.GONE);
-            else
-                holder.lyDotsLine.setVisibility(View.VISIBLE);
-        }*/
+        }
     }
 
     @Override
@@ -121,14 +116,11 @@ public class AdapterBusinessDays extends RecyclerView.Adapter<AdapterBusinessDay
             TextView tv_to =  v.findViewById(R.id.tv_to);
             View viewDivider = v.findViewById(R.id.viewDivider);
             LinearLayout lyDotsLineHours = v.findViewById(R.id.lyDotsLineHours);
-            //ImageView iv_delete = v.findViewById(R.id.iv_delete);
-            //  LinearLayout ll_delete = v.findViewById(R.id.ll_delete);
 
             // Populate the data into the template view using the data object
             tv_from.setText(String.format("From: %s", timeSlot.startTime));
             tv_to.setText(String.format("To: %s", timeSlot.endTime));
             viewDivider.setVisibility(timeSlots.size()==1?View.GONE:View.VISIBLE);
-            // lyDotsLineHours.setVisibility(position == timeSlots.size()-1?View.GONE:View.VISIBLE);
 
             return v;
         }

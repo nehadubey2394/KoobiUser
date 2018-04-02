@@ -26,18 +26,14 @@ import java.util.ArrayList;
 public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ArrayList<BookingStaff> artistsList;
-    private String serviceTitle;
     private BookingInfo bookingInfo;
-    private  ArtistsSearchBoard item;
     private boolean isEdit;
 
     // Constructor of the class
-    public BookingSelectStaffAdapter(Context context, ArtistsSearchBoard item, ArrayList<BookingStaff> artistsList, String serviceTitle, BookingInfo bookingInfo,boolean isEdit) {
+    public BookingSelectStaffAdapter(Context context, ArrayList<BookingStaff> artistsList, BookingInfo bookingInfo,boolean isEdit) {
         this.context = context;
         this.artistsList = artistsList;
-        this.serviceTitle = serviceTitle;
         this.bookingInfo = bookingInfo;
-        this.item = item;
         this.isEdit = isEdit;
     }
 
@@ -86,8 +82,6 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
 
         @Override
         public void onClick(View view) {
-            BookingStaff bookingStaff = artistsList.get(getAdapterPosition());
-
             ((BookingActivity)context).addFragment(
                     BookingFragment4.newInstance("Booking",isEdit,bookingInfo), true, R.id.flBookingContainer);
 

@@ -46,8 +46,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        /*View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.searchboard_item_layout, parent, false);
-        return new ViewHolder(view);*/
+
         View view;
         switch (viewType) {
             case VIEWTYPE_ITEM:
@@ -103,18 +102,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(holder.ivProfile);
         }
-      /*  String services = "";
-        if (item.service.size()!=0){
-            for (int i=0; i<item.service.size(); i++){
-                if (services.equals("")){
-                    services = item.service.get(i).title;
-                }else {
-                    services = services + ", "+  item.service.get(i).title;
-                }
-            }
-        }else {
-            services = "NA";
-        }*/
+
         holder.tvServices.setText(item.categoryName);
     }
 

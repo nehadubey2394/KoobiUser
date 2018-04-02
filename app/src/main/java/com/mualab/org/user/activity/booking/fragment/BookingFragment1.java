@@ -15,9 +15,7 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingSelectStaffAdapter;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
-import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.BookingStaff;
-import com.mualab.org.user.model.booking.SubServices;
 
 import java.util.ArrayList;
 
@@ -74,13 +72,15 @@ public class BookingFragment1 extends Fragment {
     }
 
     private void initView(){
-        // staffList = new ArrayList<>();
         ArrayList<BookingStaff> staffList = item.staffList;
-        staffAdapter = new BookingSelectStaffAdapter(mContext,item, staffList,mParam1,bookingInfo,isEdit);
+        staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
     }
 
     private void setViewId(View rootView){
-        BookingActivity.title_booking.setText(getString(R.string.title_booking));
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setTitleVisibility(getString(R.string.title_booking));
+        }
+
         RecyclerView rvBookingSelectStaff = rootView.findViewById(R.id.rvBookingSelectStaff);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvBookingSelectStaff.setLayoutManager(layoutManager);
@@ -91,12 +91,16 @@ public class BookingFragment1 extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        BookingActivity.title_booking.setText(mParam1);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setTitleVisibility(mParam1);
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        BookingActivity.title_booking.setText(mParam1);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setTitleVisibility(mParam1);
+        }
     }
 }

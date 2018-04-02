@@ -20,7 +20,6 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHo
     private String s = "";
     private ArrayList<BookingTimeSlot> itemList;
     private TimeSlotClickListener customButtonListener = null;
-    // private TimeSlotClickListener customButtonListener = null;
 
     public void setCustomListener(TimeSlotClickListener customButtonListener){
         this.customButtonListener = customButtonListener;
@@ -31,10 +30,7 @@ public class TimeSlotAdapter extends RecyclerView.Adapter<TimeSlotAdapter.ViewHo
         this.context = context;
         this.itemList = itemList;
     }
-    /* public void setCustomListener(TimeSlotClickListener customButtonListener){
-         this.customButtonListener = customButtonListener;
-     }
- */
+
     // get the size of the list
     @Override
     public int getItemCount() {
