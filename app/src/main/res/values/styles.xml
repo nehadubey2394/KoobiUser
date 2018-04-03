@@ -155,4 +155,23 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+    <style name="ExploreSearchView" parent="Base.Widget.AppCompat.SearchView">
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:editTextColor">@color/colorPrimary</item>
+        <item name="android:tint">@color/colorPrimary</item>
+        <item name="android:textAppearance">@style/MyCustomTextAppearance</item>
+    </style>
+
+
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/MyCustomTextAppearance</item>
+    </style>
+
+    <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+
 </resources>

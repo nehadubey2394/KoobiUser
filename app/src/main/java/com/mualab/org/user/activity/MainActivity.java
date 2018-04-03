@@ -10,7 +10,9 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -256,7 +258,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ibtnAddFeed :
-                startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                //startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                showToast(getString(R.string.under_development));
                /* if (clickedId!=3) {
                     setInactiveTab();
                     clickedId = 3;

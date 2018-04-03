@@ -15,4 +15,10 @@ public class KeyboardUtil {
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public static void showKeyboard(View view, Context context){
+        InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(view.getApplicationWindowToken(),
+                InputMethodManager.SHOW_FORCED, 0);
+    }
 }

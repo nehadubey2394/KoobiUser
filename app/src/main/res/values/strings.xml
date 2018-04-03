@@ -63,7 +63,7 @@
     <string name="verify">Verify</string>
     <string name="submit">Submit</string>
     <string name="need_four_digite_code">You need to enter your 4 digit verification \n code to create your account.</string>
-   <!-- <string name="_0"><b>0</b></string>
+    <!-- <string name="_0"><b>0</b></string>
     <string name="_1"><b>1</b></string>
     <string name="_2"><b>2</b>\n<font size="12">ABC</font></string>
     <string name="_3"><b>3</b>\n<font size="12">DEF</font></string>

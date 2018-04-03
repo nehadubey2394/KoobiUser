@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import com.mualab.org.user.R;
@@ -29,7 +30,7 @@ public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Listener listener;
 
     public interface Listener{
-        void onFeedClick(Feeds feed, int index, View v);
+        void onFeedClick(Feeds feed, int index);
     }
 
     public ExploreGridViewAdapter(Context mContext, List<Feeds> feedItems, Listener listener) {
@@ -86,17 +87,30 @@ public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         final Feeds feeds = feedItems.get(position);
         final Holder h = ((Holder) holder);
-        Picasso.with(mContext).load(feeds.profileImage).resize(200,200).into(h.imageView);
+
+        if(feeds.feedType.equals("image")){
+            Picasso.with(mContext).load(feeds.feedData.get(0).feedPost).resize(200,200).into(h.imageView);
+        }else if(feeds.feedType.equals("video")){
+            Picasso.with(mContext).load(feeds.feedData.get(0).videoThumb).resize(200,200).into(h.imageView);
+        }
+
     }
 
-    private static class Holder extends RecyclerView.ViewHolder{
+    private class Holder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private ImageView imageView;
 
         public Holder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
+            itemView.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View v) {
+            int pos = getAdapterPosition();
+            Feeds feed = feedItems.get(pos);
+            listener.onFeedClick(feed, pos);
         }
     }
 }

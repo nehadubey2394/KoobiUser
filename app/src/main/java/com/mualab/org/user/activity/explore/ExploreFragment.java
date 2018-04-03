@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,13 +22,13 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.explore.adapter.ExploreGridViewAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
@@ -53,7 +52,7 @@ import views.refreshview.RjRefreshLayout;
 
 
 /*Dharmraj Acarya*/
-public class ExploreFragment extends Fragment implements View.OnClickListener,
+public class ExploreFragment extends BaseFragment implements View.OnClickListener,
         ExploreGridViewAdapter.Listener, LiveUserAdapter.Listner {
 
     public static String TAG = ExploreFragment.class.getName();
@@ -66,8 +65,8 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
     private RjRefreshLayout mRefreshLayout;
 
     /*Adapters*/
-    private LiveUserAdapter liveUserAdapter;
-    private ArrayList<LiveUserInfo> liveUserList;
+   // private LiveUserAdapter liveUserAdapter;
+    //private ArrayList<LiveUserInfo> liveUserList;
 
     private ExploreGridViewAdapter feedAdapter;
     private RecyclerView rvFeed;
@@ -114,9 +113,10 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
         ll_progress = null;
         endlesScrollListener = null;
         feedAdapter = null;
-        liveUserList = null;
+        //liveUserList = null;
         feeds = null;
         rvFeed = null;
+        lastFeedTypeId = 0;
     }
 
     @Override
@@ -128,8 +128,8 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         feeds = new ArrayList<>();
-        liveUserList = new ArrayList<>();
-        liveUserList.clear();
+        //liveUserList = new ArrayList<>();
+       // liveUserList.clear();
         /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
         }*/
@@ -146,15 +146,16 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
     private void initView(View view){
         tvImages = view.findViewById(R.id.tvImages);
         tvVideos =  view.findViewById(R.id.tvVideos);
-        RecyclerView rvMyStory = view.findViewById(R.id.recyclerView);
+        //RecyclerView rvMyStory = view.findViewById(R.id.recyclerView);
         rvFeed = view.findViewById(R.id.rvFeed);
         tv_msg = view.findViewById(R.id.tv_msg);
         ll_progress = view.findViewById(R.id.ll_progress);
 
         view.findViewById(R.id.ly_images).setOnClickListener(this);
         view.findViewById(R.id.ly_videos).setOnClickListener(this);
-        liveUserAdapter = new LiveUserAdapter(mContext, liveUserList, this);
-        rvMyStory.setAdapter(liveUserAdapter);
+        view.findViewById(R.id.searchView).setOnClickListener(this);
+        //liveUserAdapter = new LiveUserAdapter(mContext, liveUserList, this);
+        //rvMyStory.setAdapter(liveUserAdapter);
     }
 
     @Override
@@ -180,9 +181,6 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
         rvFeed.setAdapter(feedAdapter);
         rvFeed.addOnScrollListener(endlesScrollListener);
 
-        if(feeds!=null && feeds.size()==0)
-            updateViewType(R.id.ly_images);
-        getStoryList();
 
         mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
         final CircleHeaderView header = new CircleHeaderView(getContext());
@@ -216,6 +214,11 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
             }});*/
+
+        if(feeds!=null && feeds.size()==0)
+            updateViewType(R.id.ly_images);
+        else feedAdapter.notifyDataSetChanged();
+        //getStoryList();
     }
 
 
@@ -225,6 +228,10 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
             case R.id.ly_images:
             case R.id.ly_videos:
                 updateViewType(view.getId());
+                break;
+
+            case R.id.searchView:
+                baseListner.addFragment(ExploreSearchFragment.newInstance(), true);
                 break;
         }
     }
@@ -261,7 +268,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
         lastFeedTypeId = id;
     }
 
-    private void getStoryList(){
+    /*private void getStoryList(){
         Map<String, String> params = new HashMap<>();
         // params.put("feedType", feedType);
 
@@ -307,7 +314,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
                 .setProgress(false)
                 .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
                 .execute(TAG);
-    }
+    }*/
 
     private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
 
@@ -330,7 +337,7 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
         params.put("search", "");
         params.put("page", String.valueOf(page));
         params.put("limit", String.valueOf(feedLimit));
-        params.put("type", "home");
+        params.put("type", "explore");
         params.put("userId", ""+Mualab.currentUser.id);
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
@@ -462,7 +469,8 @@ public class ExploreFragment extends Fragment implements View.OnClickListener,
     }
 
     @Override
-    public void onFeedClick(Feeds feed, int index, View v) {
-
+    public void onFeedClick(Feeds feed, int index) {
+       // baseListner.addFragment();
+        MyToast.getInstance(mContext).showDasuAlert(getString(R.string.under_development));
     }
 }

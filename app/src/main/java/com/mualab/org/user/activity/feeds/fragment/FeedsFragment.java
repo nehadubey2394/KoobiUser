@@ -435,7 +435,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         params.put("search", "");
         params.put("page", String.valueOf(page));
         params.put("limit", String.valueOf(feedLimit));
-        params.put("type", "home");
+        params.put("type", "newsFeed");
         params.put("userId", ""+Mualab.currentUser.id);
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
@@ -790,12 +790,12 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     break;
 
                 case Constant.GALLERY_INTENT_CALLED:
-                    mediaUri = new MediaUri();
-                    mediaUri.isFromGallery = true;
-                    mediaUri.mediaType = Constant.VIDEO_STATE;
-                    mediaUri.addUri(String.valueOf(data.getData()));
-
                     try {
+                        mediaUri = new MediaUri();
+                        mediaUri.isFromGallery = true;
+                        mediaUri.mediaType = Constant.VIDEO_STATE;
+                        mediaUri.addUri(String.valueOf(data.getData()));
+
                         String filePath = PathUtil.getPath(mContext, Uri.parse(mediaUri.uri));
                         assert filePath != null;
                         File file = new File(filePath);
@@ -815,8 +815,9 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                             Bitmap thumbBitmap = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
                             updatePostImageUI(thumbBitmap);
                         }
-                    } catch (URISyntaxException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
+                        mediaUri = null;
                     }
 
                     break;
