@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="40dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -30,7 +31,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:stateListAnimator="@animator/scale"
-                app:layout_constraintLeft_toLeftOf="parent" />
+                app:layout_constraintLeft_toLeftOf="parent"
+                tools:ignore="UnusedAttribute" />
 
             <TextView
                 android:id="@+id/tv_like_count"
@@ -38,7 +40,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="12"
                 android:layout_marginLeft="4dp"
                 android:textColor="@color/text_color"
                 android:fontFamily="@font/roboto_regular"

@@ -55,7 +55,7 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="stateHidden|adjustNothing" />
         <activity
             android:name=".activity.authentication.LoginActivity"
             android:screenOrientation="portrait" />

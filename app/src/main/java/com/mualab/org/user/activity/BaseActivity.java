@@ -103,4 +103,9 @@ public class BaseActivity extends AppCompatActivity implements BaseListner{
         }
     }
 
+    @Override
+    public void backPress() {
+        onBackPressed();
+    }
+
 }
