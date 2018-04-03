@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -79,6 +80,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     private boolean alreadyAddedFound = false,isEdit = false,isRemoved = false;
     private MyFlexibleCalendar viewCalendar;
     private  View rootView;
+    private LinearLayout ll_loadingBox;
 
     public BookingFragment4() {
         // Required empty public constructor
@@ -154,6 +156,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         AppCompatButton btnCOnfirmBooking = rootView.findViewById(R.id.btnCOnfirmBooking);
         AppCompatButton btnAddMoreService = rootView.findViewById(R.id.btnAddMoreService);
         AppCompatButton btnToday = rootView.findViewById(R.id.btnToday);
+        ll_loadingBox = rootView.findViewById(R.id.ll_loadingBox);
 
         rycTimeSlot = rootView.findViewById(R.id.rycTimeSlot);
         tvNoSlot = rootView.findViewById(R.id.tvNoSlot);
@@ -532,6 +535,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     }
 
     private void apiForGetSlots(){
+        ll_loadingBox.setVisibility(View.VISIBLE);
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -573,6 +577,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistTimeSlot", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
@@ -611,6 +616,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
@@ -624,7 +630,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
@@ -632,6 +638,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     }
 
     private void apiForContinueBooking(final boolean isAddMore){
+        ll_loadingBox.setVisibility(View.VISIBLE);
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -670,6 +677,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "bookArtist", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
@@ -708,6 +716,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
@@ -721,7 +730,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
@@ -729,6 +738,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     }
 
     private void apiForDeleteBookedService(final BookingInfo info){
+        ll_loadingBox.setVisibility(View.VISIBLE);
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -753,6 +763,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "deleteBookService", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
@@ -771,19 +782,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                         arrayListbookingInfo.remove(info);
                         bookingInfoAdapter.notifyDataSetChanged();
 
-                     /*   if (BookingFragment4.arrayListbookingInfo.size()==0){
-                            BookingFragment4.arrayListbookingInfo.clear();
-                            ((BookingActivity)context).finish();
-                        }else {
-                            FragmentManager fm = ((BookingActivity)context).getSupportFragmentManager();
-                            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-                            BookingInfo bookingInfo = BookingFragment4.arrayListbookingInfo.get(0);
-                            ((BookingActivity)context).addFragment(
-                                    BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
-                        }*/
-
-
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert(message);
                     }
@@ -795,6 +793,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
@@ -808,7 +807,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
 
         task.execute(this.getClass().getName());
@@ -849,20 +848,22 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        if(mContext instanceof BookingActivity) {
-            ((BookingActivity) mContext).setReviewPostVisibility(8);
-                ((BookingActivity) mContext).setTitleVisibility(mParam1);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        Mualab.getInstance().cancelAllPendingRequests();
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setReviewPostVisibility(8);
             ((BookingActivity) mContext).setTitleVisibility(mParam1);
         }
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        Mualab.getInstance().cancelAllPendingRequests();
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(8);
+            ((BookingActivity) mContext).setTitleVisibility(mParam1);
+        }
+        super.onDestroy();
 
     }
 }

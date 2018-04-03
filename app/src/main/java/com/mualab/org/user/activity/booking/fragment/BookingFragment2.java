@@ -348,8 +348,16 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if (BookingFragment4.arrayListbookingInfo!=null)
             BookingFragment4.arrayListbookingInfo.clear();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (BookingFragment4.arrayListbookingInfo!=null)
+            BookingFragment4.arrayListbookingInfo.clear();
+        Mualab.getInstance().cancelAllPendingRequests();
+        super.onDestroyView();
     }
 }

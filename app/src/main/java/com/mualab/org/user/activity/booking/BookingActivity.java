@@ -20,6 +20,7 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -72,6 +73,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView ivHeaderProfile;
     private String businessType;
     private  CountDownTimer countDownTimer;
+    private LinearLayout ll_loadingBox;
 
     public void setReviewPostVisibility(int visibility){
         if(lyReviewPost!=null)
@@ -83,9 +85,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             lyArtistDetail.setVisibility(visibility);
     }
 
- public void setTitleVisibility(String text){
+    public void setTitleVisibility(String text){
         if(title_booking!=null) {
-            title_booking.setVisibility(0);
+            title_booking.setVisibility(View.VISIBLE);
             title_booking.setText(text);
         }
 
@@ -134,6 +136,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         ImageView ivHeaderUser2 = findViewById(R.id.ivHeaderUser2);
         ImageView ivHeaderBack2 = findViewById(R.id.ivHeaderBack2);
         ivHeaderProfile = findViewById(R.id.ivHeaderProfile);
+        ll_loadingBox = findViewById(R.id.ll_loadingBox);
 
         tvOpeningTime.setOnClickListener(this);
 
@@ -297,6 +300,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void apiForGetArtistDetail(){
+        ll_loadingBox.setVisibility(View.VISIBLE);
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -327,6 +331,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    ll_loadingBox.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -515,6 +520,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
@@ -528,7 +534,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
@@ -592,6 +598,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void apiForCancleBooking(final FragmentManager fm,final int fCont){
+        ll_loadingBox.setVisibility(View.VISIBLE);
+
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -614,6 +622,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "deleteAllBookService", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
@@ -625,9 +634,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             fm.popBackStack();
                             finish();
                         }else {
-                           /* fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
-                            frag.hideFilter(false);*/
+
                             finish();
                         }
                     }else {
@@ -641,6 +648,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
@@ -654,7 +662,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 

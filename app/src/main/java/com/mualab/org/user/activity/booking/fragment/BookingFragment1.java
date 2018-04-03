@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.BookingSelectStaffAdapter;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingInfo;
 import com.mualab.org.user.model.booking.BookingStaff;
@@ -101,6 +102,7 @@ public class BookingFragment1 extends Fragment {
         super.onDestroyView();
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setTitleVisibility(mParam1);
+            Mualab.getInstance().cancelAllPendingRequests();
         }
     }
 }
