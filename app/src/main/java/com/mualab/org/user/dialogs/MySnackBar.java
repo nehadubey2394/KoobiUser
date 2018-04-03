@@ -9,22 +9,8 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 
-/**
- * Created by dharmraj on 21/12/17.
- */
 
 public class MySnackBar {
-
-
-    /*public static void show(String message){
-        if(Mualab.snackPosition!=null)
-            Snackbar.make(Mualab.snackPosition, message, Snackbar.LENGTH_SHORT).setAction("ok", null).show();
-    }
-
-    public static void showLong(String message){
-        if(Mualab.snackPosition!=null)
-            Snackbar.make(Mualab.snackPosition, message, Snackbar.LENGTH_LONG).setAction("ok", null).show();
-    }*/
 
     public static void show(View view, String message) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("ok", null).show();

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.Booking3ServiceAdapter;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.model.booking.BookingServices3;
 import com.mualab.org.user.model.booking.SubServices;
@@ -102,21 +103,23 @@ public class BookingFragment3 extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setReviewPostVisibility(0);
             ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
             ((BookingActivity) mContext).setTitleVisibility(getString(R.string.title_booking));
+            Mualab.getInstance().cancelAllPendingRequests();
         }
+        super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setReviewPostVisibility(0);
             ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
             ((BookingActivity) mContext).setTitleVisibility(getString(R.string.title_booking));
         }
+        Mualab.getInstance().cancelAllPendingRequests();
+        super.onDestroy();
     }
 }

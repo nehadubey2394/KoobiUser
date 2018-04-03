@@ -10,7 +10,8 @@
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/primary_blue"/>
 
     <TextView
         android:id="@+id/tv_msg"
