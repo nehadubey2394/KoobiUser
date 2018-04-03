@@ -103,10 +103,10 @@
         <item name="android:progressDrawable">@drawable/ratingbar_gray_selector</item>
         <!-- <item name="colorAccent">#f9a825</item>
          <item name="android:colorControlNormal">#f9a825</item>-->
-        <item name="android:minHeight">24dip</item>
-        <item name="android:minWidth">24dip</item>
-        <item name="android:maxWidth">28dip</item>
-        <item name="android:maxHeight">28dip</item>
+        <item name="android:minHeight">22dip</item>
+        <item name="android:minWidth">22dip</item>
+        <item name="android:maxWidth">26dip</item>
+        <item name="android:maxHeight">26dip</item>
     </style>
 
     <style name="MyRaidoButton" parent="Widget.AppCompat.CompoundButton.RadioButton">

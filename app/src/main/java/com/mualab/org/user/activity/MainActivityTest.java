@@ -39,7 +39,7 @@ import java.util.Map;
 import views.fragnev.FragNavController;
 
 public class MainActivityTest extends BaseActivity implements View.OnClickListener,
- BaseFragment.FragmentNavigation, FragNavController.TransactionListener, FragNavController.RootFragmentListener{
+        BaseFragment.FragmentNavigation, FragNavController.TransactionListener, FragNavController.RootFragmentListener{
 
     private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
     private int clickedId = 0;
@@ -93,7 +93,7 @@ public class MainActivityTest extends BaseActivity implements View.OnClickListen
         }
 
         initView();
-       // addFragment(SearchBoardFragment.newInstance(item,""), false);
+        // addFragment(SearchBoardFragment.newInstance(item,""), false);
 
 
 
@@ -500,7 +500,7 @@ public class MainActivityTest extends BaseActivity implements View.OnClickListen
     }
 
     private void initToolbar() {
-       // setSupportActionBar(toolbar);
+        // setSupportActionBar(toolbar);
     }
 
     private void updateTabSelection(int position){
@@ -551,7 +551,7 @@ public class MainActivityTest extends BaseActivity implements View.OnClickListen
             tvHeaderTitle.setVisibility(View.VISIBLE);
             ibtnChat.setVisibility(View.GONE);
             ivAppIcon.setVisibility(View.GONE);
-           // replaceFragment(new AddFeedFragment(), false);
+            // replaceFragment(new AddFeedFragment(), false);
         }
     }
 

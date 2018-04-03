@@ -178,6 +178,9 @@
         <activity android:name=".activity.ImageViewDialogActivity"
             android:theme="@style/Theme.Transparent" />
 
+        <service android:name=".activity.booking.background_service.ExpiredBookingJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
     </application>
 
 </manifest>

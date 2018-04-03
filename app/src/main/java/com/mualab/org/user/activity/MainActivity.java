@@ -108,9 +108,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         addFragment(SearchBoardFragment.newInstance(item,""), false);
     }
 
-
-
-
     private void initView() {
         ibtnLeaderBoard = findViewById(R.id.ibtnLeaderBoard);
         ibtnFeed = findViewById(R.id.ibtnFeed);

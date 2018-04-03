@@ -18,10 +18,7 @@ import java.util.ArrayList;
 
 
 public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
     private ArrayList<BookingInfo> artistsList;
-    private boolean isEdit = false;
-    private  String bookingId ="";
     private DeleteServiceListener deleteServiceListener = null;
 
     public void setCustomListener(DeleteServiceListener deleteServiceListener){
@@ -29,9 +26,7 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     // Constructor of the class
-    public BookingInfoAdapter(Context context, ArrayList<BookingInfo> artistsList,boolean isEdit) {
-        this.isEdit = isEdit;
-        this.context = context;
+    public BookingInfoAdapter(Context context, ArrayList<BookingInfo> artistsList) {
         this.artistsList = artistsList;
     }
 
@@ -69,9 +64,6 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }else {
                 holder.sample1.setSwipeEnabled(false);
             }
-        /*}else {
-            holder.sample1.setSwipeEnabled(false);
-        }*/
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -91,11 +83,10 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             lyRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                 //   if (isEdit) {
                         if (deleteServiceListener != null) {
                             deleteServiceListener.onRemoveClick(getAdapterPosition());
                         }
-                   // }
+
                 }
             });
         }

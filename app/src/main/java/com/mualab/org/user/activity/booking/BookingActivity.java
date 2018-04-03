@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +20,7 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -25,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.adapter.AdapterBusinessDays;
+import com.mualab.org.user.activity.booking.background_service.ExpiredBookingJobService;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment5;
@@ -55,22 +59,47 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class BookingActivity extends AppCompatActivity implements View.OnClickListener,
         HideFilterListener {
-    public ArtistsSearchBoard item;
-    private String mParam1,calScreenName = "com.mualab.org.user.activity.booking.fragment.BookingFragment5";
-    public static TextView title_booking,tvBuisnessName;
-    public static LinearLayout lyReviewPost;
-    public static LinearLayout lyArtistDetail;
-    private ArrayList<BusinessDay> businessDays,businessDayOld;
+    private ArtistsSearchBoard item;
+    private TextView tvBuisnessName,title_booking;
+    private LinearLayout lyReviewPost,lyArtistDetail;
+    private ArrayList<BusinessDay> businessDays;
     private AdapterBusinessDays adapter;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
     private String businessType;
+    private  CountDownTimer countDownTimer;
+    private LinearLayout ll_loadingBox;
+
+    public void setReviewPostVisibility(int visibility){
+        if(lyReviewPost!=null)
+            lyReviewPost.setVisibility(visibility);
+    }
+
+    public void setLyArtistDetailVisibility(int visibility){
+        if(lyArtistDetail!=null)
+            lyArtistDetail.setVisibility(visibility);
+    }
+
+    public void setTitleVisibility(String text){
+        if(title_booking!=null) {
+            title_booking.setVisibility(View.VISIBLE);
+            title_booking.setText(text);
+        }
+
+    }
+
+    public void setBuisnessNameVisibility(int visibility){
+        if(tvBuisnessName!=null) {
+            tvBuisnessName.setVisibility(visibility);
+            tvBuisnessName.setText("");
+        }
+    }
+
 
     @Override
     public void onServiceAdded(boolean isShow) {
@@ -85,7 +114,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         Intent i = getIntent();
         item = (ArtistsSearchBoard) i.getSerializableExtra("item");
-        mParam1 = i.getStringExtra("mParam");
         businessType = item.businessType;
         initView();
     }
@@ -93,7 +121,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private void initView(){
 
         businessDays = new ArrayList<>();
-        businessDayOld = new ArrayList<>();
         //   businessDayOld  =  getBusinessdays();
         adapter = new AdapterBusinessDays(BookingActivity.this, businessDays);
         title_booking = findViewById(R.id.tvHeaderTitle2);
@@ -109,6 +136,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         ImageView ivHeaderUser2 = findViewById(R.id.ivHeaderUser2);
         ImageView ivHeaderBack2 = findViewById(R.id.ivHeaderBack2);
         ivHeaderProfile = findViewById(R.id.ivHeaderProfile);
+        ll_loadingBox = findViewById(R.id.ll_loadingBox);
 
         tvOpeningTime.setOnClickListener(this);
 
@@ -124,13 +152,28 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         switch (view.getId()){
             case R.id.ivHeaderBack2 :
                 onBackPressed();
                 break;
 
             case R.id.tvOpeningTime :
+                long mLastClickTime = 1000;
+                view.setEnabled(false);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setEnabled(true);
+                    }
+                }, mLastClickTime);
+
+               /* if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();*/
+
                 if (businessDays.size()!=0)
                     showDialog();
                 break;
@@ -257,6 +300,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void apiForGetArtistDetail(){
+        ll_loadingBox.setVisibility(View.VISIBLE);
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -287,6 +331,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    ll_loadingBox.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -475,6 +520,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
@@ -488,7 +534,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
@@ -552,6 +598,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void apiForCancleBooking(final FragmentManager fm,final int fCont){
+        ll_loadingBox.setVisibility(View.VISIBLE);
+
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -574,6 +622,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "deleteAllBookService", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
@@ -585,9 +634,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             fm.popBackStack();
                             finish();
                         }else {
-                           /* fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.booking.fragment.BookingFragment2"));
-                            frag.hideFilter(false);*/
+
                             finish();
                         }
                     }else {
@@ -601,6 +648,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void ErrorListener(VolleyError error) {
+                ll_loadingBox.setVisibility(View.GONE);
                 try{
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
@@ -614,7 +662,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
@@ -656,10 +704,118 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         Session session = Mualab.getInstance().getSessionManager();
         session.setUserChangedLocLat("");
         session.setUserChangedLocLng("");
+        super.onDestroy();
         //session.setIsOutCallFilter(false);
     }
+
+    @Override
+    protected void onStop() {
+        //   if (BookingFragment4.arrayListbookingInfo.size()!=0)
+        // startTimer();
+        super.onStop();
+        //  if (BookingFragment4.arrayListbookingInfo.size()!=0)
+        // startTimer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+
+    //Stop Countdown method
+    public void stopCountdown() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+    }
+
+    //Start Countodwn method
+    public void startTimer() {
+        countDownTimer = new CountDownTimer(300000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                //  millisUntilFinished / 1000;
+            }
+            public void onFinish() {
+                countDownTimer = null;//set CountDownTimer to null
+                if (BookingFragment4.arrayListbookingInfo.size()!=0)
+                    apiForDeleteAllPendingBooking();
+            }
+        }.start();
+
+    }
+
+    private void apiForDeleteAllPendingBooking(){
+        Session session = Mualab.getInstance().getSessionManager();
+        User user = session.getUser();
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(getApplicationContext(), new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForDeleteAllPendingBooking();
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", String.valueOf(user.id));
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(getApplicationContext(), "deleteUserBookService", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+
+                        stopService(new Intent(BookingActivity.this, ExpiredBookingJobService.class));
+
+                        BookingFragment4.arrayListbookingInfo.clear();
+                        Session session = Mualab.getInstance().getSessionManager();
+                        session.setUserChangedLocLat("");
+                        session.setUserChangedLocLng("");
+                        session.setUserChangedLocName("");
+                        countDownTimer.cancel();
+                        stopCountdown();
+                        finish();
+                        MyToast.getInstance(BookingActivity.this).showDasuAlert("Booking session has been expired, please try again");
+
+                    }else {
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(false)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
+    }
+
 }
