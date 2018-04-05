@@ -30,6 +30,7 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
+import com.mualab.org.user.listner.SearchViewListner;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.mualab.org.user.task.HttpResponceListner;
