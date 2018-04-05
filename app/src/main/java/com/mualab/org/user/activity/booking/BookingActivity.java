@@ -91,10 +91,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    public void setBuisnessNameVisibility(int visibility){
+    public void setBuisnessNameVisibility(int visibility,String text){
         if(tvBuisnessName!=null) {
             tvBuisnessName.setVisibility(visibility);
-            tvBuisnessName.setText("");
+            tvBuisnessName.setText(text);
         }
     }
 
