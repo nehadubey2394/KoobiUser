@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.BaseListner;
+import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.listner.SearchViewListner;
 import com.mualab.org.user.util.KeyboardUtil;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class ExploreSearchFragment extends Fragment {
     private TabLayout tabLayout;
     private SearchView searchview;
     private Context mContext;
+    public static SearchViewListner searchViewListner;
 
     /**
      * The pager adapter, which provides the pages to the view pager widget.
@@ -71,15 +74,15 @@ public class ExploreSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        views.add(new MyViews("Top",ExploreTopFragment.newInstance()));
-        views.add(new MyViews("People",ExploreTopFragment.newInstance()));
-        views.add(new MyViews("HashTag",ExploreTopFragment.newInstance()));
-        views.add(new MyViews("ServiceTag",ExploreTopFragment.newInstance()));
-        views.add(new MyViews("Location",ExploreTopFragment.newInstance()));
+        views.add(new MyViews("Top",ExploreTopFragment.newInstance("top")));
+        views.add(new MyViews("People",ExploreTopFragment.newInstance("people")));
+        views.add(new MyViews("HashTag",ExploreTopFragment.newInstance("hasTag")));
+        views.add(new MyViews("ServiceTag",ExploreTopFragment.newInstance("servicetag")));
+        views.add(new MyViews("Location",ExploreTopFragment.newInstance("place")));
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_explore_search, container, false);
     }
@@ -94,10 +97,12 @@ public class ExploreSearchFragment extends Fragment {
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = view.findViewById(R.id.viewpager);
+        mPager.setOffscreenPageLimit(views.size());
         tabLayout  = view.findViewById(R.id.tablayout);
         mPagerAdapter = new ScreenSlidePagerAdapter(getFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mPager);
+
 
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -126,6 +131,19 @@ public class ExploreSearchFragment extends Fragment {
                 }
             }
         });
+
+        searchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(searchViewListner!=null)searchViewListner.onTextChange(newText);
+                return false;
+            }
+        });
     }
 
 
@@ -133,6 +151,7 @@ public class ExploreSearchFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         searchview.clearFocus();
+        Mualab.getInstance().cancelAllPendingRequests();
         KeyboardUtil.hideKeyboard(searchview, getContext());
     }
 
@@ -149,6 +168,7 @@ public class ExploreSearchFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         baseListner = null;
+        searchViewListner = null;
     }
 
 
