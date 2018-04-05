@@ -1,15 +1,14 @@
-package com.mualab.org.user.activity.explore;
+package com.mualab.org.user.activity.explore.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,17 +22,13 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.BaseFragment;
-import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.explore.adapter.ExploreGridViewAdapter;
-import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
+import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
-import com.mualab.org.user.listner.SearchViewListner;
 import com.mualab.org.user.model.feeds.Feeds;
-import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
@@ -54,117 +49,71 @@ import views.refreshview.OnRefreshListener;
 import views.refreshview.RjRefreshLayout;
 
 
-/*Dharmraj Acarya*/
-public class ExploreFragment extends BaseFragment implements View.OnClickListener,
-        ExploreGridViewAdapter.Listener, LiveUserAdapter.Listner {
-
-    public static String TAG = ExploreFragment.class.getName();
+public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapter.Listener {
+    public static String TAG = SearchFeedFragment.class.getName();
 
     private Context mContext;
-    private BaseListner baseListner;
-
-    private TextView tvImages, tvVideos, tv_msg;
+    private TextView tv_msg;
     private LinearLayout ll_progress;
-    private RjRefreshLayout mRefreshLayout;
-
-    /*Adapters*/
-   // private LiveUserAdapter liveUserAdapter;
-    //private ArrayList<LiveUserInfo> liveUserList;
-
-    private ExploreGridViewAdapter feedAdapter;
     private RecyclerView rvFeed;
-    private List<Feeds> feeds;
+    private RjRefreshLayout mRefreshLayout;
     private EndlessRecyclerViewScrollListener endlesScrollListener;
+    private List<Feeds> feeds;
+    private ExploreGridViewAdapter feedAdapter;
 
+    private int fragCount;
+    private ExSearchTag exSearchTag;
     private String feedType = "image";
-    private int lastFeedTypeId;
     private boolean isPulltoRefrash;
 
 
-
-    public ExploreFragment() {
+    public SearchFeedFragment() {
         // Required empty public constructor
     }
 
 
-    public static ExploreFragment newInstance() {
-        ExploreFragment fragment = new ExploreFragment();
+    public static SearchFeedFragment newInstance(int fragCount, ExSearchTag searchKey) {
+        SearchFeedFragment fragment = new SearchFeedFragment();
         Bundle args = new Bundle();
-       // args.putString(ARG_PARAM1, param1);
+        args.putInt("fragCount", fragCount);
+        args.putSerializable("searchKey", searchKey);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-        if(context instanceof BaseListner){
-            baseListner = (BaseListner) mContext;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Mualab.getInstance().cancelPendingRequests(TAG);
-        baseListner = null;
-        mContext = null;
-        tvImages = null;
-        tvVideos = null;
-        tv_msg = null;
-        ll_progress = null;
-        endlesScrollListener = null;
-        feedAdapter = null;
-        //liveUserList = null;
-        feeds = null;
-        rvFeed = null;
-        lastFeedTypeId = 0;
-    }
-
-    @Override
-    public void onClickedUserStory(LiveUserInfo storyUser, int position) {
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         feeds = new ArrayList<>();
-        //liveUserList = new ArrayList<>();
-       // liveUserList.clear();
-        /*if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-        }*/
+        if (getArguments() != null) {
+            fragCount = getArguments().getInt("fragCount");
+            exSearchTag = (ExSearchTag) getArguments().getSerializable("searchKey");
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_explore, container, false);
-        initView(view);
-        return view;
+        return inflater.inflate(R.layout.fragment_search_feed, container, false);
     }
 
     private void initView(View view){
-        tvImages = view.findViewById(R.id.tvImages);
-        tvVideos =  view.findViewById(R.id.tvVideos);
-        //RecyclerView rvMyStory = view.findViewById(R.id.recyclerView);
         rvFeed = view.findViewById(R.id.rvFeed);
         tv_msg = view.findViewById(R.id.tv_msg);
         ll_progress = view.findViewById(R.id.ll_progress);
-
-        view.findViewById(R.id.ly_images).setOnClickListener(this);
-        view.findViewById(R.id.ly_videos).setOnClickListener(this);
-        view.findViewById(R.id.searchView).setOnClickListener(this);
-        //liveUserAdapter = new LiveUserAdapter(mContext, liveUserList, this);
-        //rvMyStory.setAdapter(liveUserAdapter);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        initView(view);
         int mNoOfColumns = ScreenUtils.calculateNoOfColumns(mContext.getApplicationContext());
         WrapContentGridLayoutManager wgm = new WrapContentGridLayoutManager(mContext,
                 mNoOfColumns<3?3:mNoOfColumns, LinearLayoutManager.VERTICAL, false);
@@ -177,7 +126,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 feedAdapter.showHideLoading(true);
-                apiForGetAllFeeds(page, 10, false);
+                searchFeed(page, false);
             }
         };
 
@@ -193,7 +142,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
             public void onRefresh() {
                 endlesScrollListener.resetState();
                 isPulltoRefrash = true;
-                apiForGetAllFeeds(0, 10, false);
+                searchFeed(0, false);
             }
 
             @Override
@@ -202,125 +151,18 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
             }
         });
 
-        /*rvFeed.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                if(e.getAction() == MotionEvent.ACTION_UP)
-                    hideQuickView();
-                return false;
-            }
 
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent event) {
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-            }});*/
-
-        if(feeds!=null && feeds.size()==0)
-            updateViewType(R.id.ly_images);
-        else feedAdapter.notifyDataSetChanged();
-        //getStoryList();
     }
-
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.ly_images:
-            case R.id.ly_videos:
-                updateViewType(view.getId());
-                break;
+    public void onFeedClick(Feeds feed, int index) {
 
-            case R.id.searchView:
-                startActivity(new Intent(mContext, ExplorSearchActivity.class));
-                //baseListner.addFragment(ExploreSearchFragment.newInstance(), true);
-                break;
-        }
     }
 
-    private void updateViewType(int id) {
-        tvVideos.setTextColor(getResources().getColor(R.color.text_color));
-        tvImages.setTextColor(getResources().getColor(R.color.text_color));
-        endlesScrollListener.resetState();
-        int prevSize = feeds.size();
-        switch (id) {
-            case R.id.ly_images:
-                tvImages.setTextColor(getResources().getColor(R.color.colorPrimary));
-                // addRemoveHeader(false);
-                if (lastFeedTypeId != R.id.ly_images){
-                    feeds.clear();
-                    feedType = "image";
-                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
-                    apiForGetAllFeeds( 0, 10, true);
-                }
-                break;
 
-            case R.id.ly_videos:
-                tvVideos.setTextColor(getResources().getColor(R.color.colorPrimary));
-                // addRemoveHeader(false);
-                if (lastFeedTypeId != R.id.ly_videos){
-                    feeds.clear();
-                    feedType = "video";
-                    feedAdapter.notifyItemRangeRemoved(0, prevSize);
-                    apiForGetAllFeeds( 0, 10, true);
-                }
-                break;
-        }
 
-        lastFeedTypeId = id;
-    }
-
-    /*private void getStoryList(){
-        Map<String, String> params = new HashMap<>();
-        // params.put("feedType", feedType);
-
-        new HttpTask(new HttpTask.Builder(mContext, "getMyStoryUser", new HttpResponceListner.Listener() {
-            @Override
-            public void onResponse(String response, String apiName) {
-                try {
-                    JSONObject js = new JSONObject(response);
-                    String status = js.getString("status");
-                    //String message = js.getString("message");
-                    if (status.equalsIgnoreCase("success")) {
-                        JSONArray array = js.getJSONArray("myStoryList");
-
-                        for (int i = 0; i < array.length(); i++) {
-                            Gson gson = new Gson();
-                            JSONObject jsonObject = array.getJSONObject(i);
-                            LiveUserInfo live = gson.fromJson(String.valueOf(jsonObject), LiveUserInfo.class);
-
-                            if(live.id == Mualab.currentUser.id){
-                                LiveUserInfo me = liveUserList.get(0);
-                                me.firstName = live.firstName;
-                                me.lastName = live.lastName;
-                                me.fullName = live.firstName+" "+live.lastName;
-                                me.storyCount = live.storyCount;
-                                me.userName = "You";
-
-                            }else liveUserList.add(live);
-                        }
-
-                        liveUserAdapter.notifyDataSetChanged();
-                    }
-                    //  showToast(message);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Progress.hide(mContext);
-                }
-            }
-
-            @Override
-            public void ErrorListener(VolleyError error) {
-            }})
-                .setParam(params)
-                .setProgress(false)
-                .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
-                .execute(TAG);
-    }*/
-
-    private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
+    /*Api call and parse methods */
+    private void searchFeed(final int page, final boolean isEnableProgress){
 
         if (!ConnectionDetector.isConnected()) {
             new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
@@ -328,7 +170,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
                         dialog.dismiss();
-                        apiForGetAllFeeds(page, feedLimit, isEnableProgress);
+                        searchFeed(page, isEnableProgress);
                     }
 
                 }
@@ -337,15 +179,17 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
 
 
         Map<String, String> params = new HashMap<>();
+        //params.put("userId", ""+ Mualab.currentUser.id);
+        params.put("userId", ""+exSearchTag.id);
+        params.put("findData", ""+exSearchTag.id);
         params.put("feedType", feedType);
         params.put("search", "");
         params.put("page", String.valueOf(page));
-        params.put("limit", String.valueOf(feedLimit));
-        params.put("type", "explore");
-        params.put("userId", ""+Mualab.currentUser.id);
+        params.put("limit", "20");
+        params.put("type", "hasTag");
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
-        new HttpTask(new HttpTask.Builder(mContext, "getAllFeeds", new HttpResponceListner.Listener() {
+        new HttpTask(new HttpTask.Builder(mContext, "userFeed", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 ll_progress.setVisibility(View.GONE);
@@ -462,14 +306,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
         } catch (JSONException e) {
             e.printStackTrace();
             feedAdapter.notifyDataSetChanged();
-            //MyToast.getInstance(mContext).showSmallCustomToast(getString(R.string.alert_something_wenjt_wrong));
         }
     }
 
-
-    @Override
-    public void onFeedClick(Feeds feed, int index) {
-       // baseListner.addFragment();
-        MyToast.getInstance(mContext).showDasuAlert(getString(R.string.under_development));
-    }
 }

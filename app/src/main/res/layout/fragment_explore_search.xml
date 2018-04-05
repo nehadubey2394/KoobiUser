@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:clickable="true"
-    tools:context="com.mualab.org.user.activity.explore.ExploreSearchFragment">
+    tools:context="com.mualab.org.user.activity.explore.fragment.ExploreSearchFragment">
 
 
     <LinearLayout

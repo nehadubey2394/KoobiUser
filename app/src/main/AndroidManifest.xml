@@ -50,15 +50,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.MainActivity"
+
+        <activity android:name=".activity.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustNothing" />
+
         <activity
             android:name=".activity.authentication.LoginActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.authentication.OtpVerificationActivity"
             android:screenOrientation="portrait" />
@@ -104,17 +106,31 @@
         <activity
             android:name=".activity.feeds.FeedPostActivity"
             android:screenOrientation="portrait" />
+
         <activity android:name=".activity.story.draj_camera.CaptureActivity" />
         <activity android:name=".activity.story.draj_camera.CaptureActivity2" />
         <activity android:name=".activity.story.NewStoryActivity" />
         <activity android:name=".activity.feeds.PreviewImageActivity" />
-        <activity
-            android:name=".activity.story.core.CaptureStoreActivity"
+        <activity android:name=".activity.story.core.CaptureStoreActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.feeds.CommentsActivity"
+
+        <activity android:name=".activity.feeds.CommentsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+
+        <activity android:name=".activity.gellery.GalleryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".activity.ImageViewDialogActivity"
+            android:theme="@style/Theme.Transparent" />
+
+        <activity android:name=".activity.explore.ExplorSearchActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|stateUnchanged"/>
+
 
         <!-- Meta data -->
         <meta-data
@@ -169,17 +185,10 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity
-            android:name=".activity.gellery.GalleryActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-
-        <activity android:name=".activity.ImageViewDialogActivity"
-            android:theme="@style/Theme.Transparent" />
-
-        <service android:name=".activity.booking.background_service.ExpiredBookingJobService"
+        <service
+            android:name=".activity.booking.background_service.ExpiredBookingJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
 
     </application>
 

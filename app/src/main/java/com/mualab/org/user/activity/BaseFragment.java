@@ -13,7 +13,7 @@ public class BaseFragment extends Fragment {
 
     public static final String ARGS_INSTANCE = "com.mualab.org.user";
 
-    FragmentNavigation mFragmentNavigation;
+    protected FragmentNavigation mFragmentNavigation;
     protected Context mContext;
 
     /*@Override

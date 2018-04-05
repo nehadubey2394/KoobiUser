@@ -89,8 +89,10 @@ public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         final Holder h = ((Holder) holder);
 
         if(feeds.feedType.equals("image")){
+            h.videoIcon.setVisibility(View.GONE);
             Picasso.with(mContext).load(feeds.feedData.get(0).feedPost).resize(200,200).into(h.imageView);
         }else if(feeds.feedType.equals("video")){
+            h.videoIcon.setVisibility(View.VISIBLE);
             Picasso.with(mContext).load(feeds.feedData.get(0).videoThumb).resize(200,200).into(h.imageView);
         }
 
@@ -98,11 +100,12 @@ public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private class Holder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        private ImageView imageView;
+        private ImageView imageView, videoIcon;
 
         public Holder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
+            videoIcon = itemView.findViewById(R.id.videoIcon);
             itemView.setOnClickListener(this);
         }
 

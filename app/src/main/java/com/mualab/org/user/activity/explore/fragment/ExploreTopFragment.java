@@ -1,19 +1,24 @@
-package com.mualab.org.user.activity.explore;
+package com.mualab.org.user.activity.explore.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.activity.explore.adapter.SearchAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
@@ -24,23 +29,33 @@ import com.mualab.org.user.task.HttpTask;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * Dharmraj Acharya
  **/
-public class ExploreTopFragment extends Fragment implements SearchAdapter.Listener,
+public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Listener,
         SearchViewListner{
+    //public static String TAG = ExploreTopFragment.class.getName();
 
-    public static String TAG = ExploreTopFragment.class.getName();
     private Context mContext;
+    private LinearLayout ll_loadingBox;
+    private ProgressBar progress_bar;
+    private TextView tv_no_comments;
+
     private SearchAdapter adapter;
     private EndlessRecyclerViewScrollListener endlesScrollListener;
     private List<ExSearchTag> list;
     private String exSearchType = "top";
+    private String searchKeyWord = "";
+
+    private int fragCount;
+
 
     public ExploreTopFragment() {
         // Required empty public constructor
@@ -74,6 +89,10 @@ public class ExploreTopFragment extends Fragment implements SearchAdapter.Listen
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ll_loadingBox = view.findViewById(R.id.ll_loadingBox);
+        progress_bar = view.findViewById(R.id.progress_bar);
+        tv_no_comments = view.findViewById(R.id.tv_no_comments);
+
         LinearLayoutManager lm = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false);
         RecyclerView rvTopSearch = view.findViewById(R.id.rvTopSearch);
         rvTopSearch.setLayoutManager(lm);
@@ -84,11 +103,21 @@ public class ExploreTopFragment extends Fragment implements SearchAdapter.Listen
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 adapter.showHideLoading(true);
-                callSearchAPI("", page);
+                callSearchAPI(searchKeyWord, page);
             }
         };
         endlesScrollListener.resetState();
+        rvTopSearch.addOnScrollListener(endlesScrollListener);
+
+        showLoading();
+        searchKeyWord = "";
         callSearchAPI("", 0);
+    }
+
+    private void showLoading(){
+        ll_loadingBox.setVisibility(View.VISIBLE);
+        progress_bar.setVisibility(View.VISIBLE);
+        tv_no_comments.setText(getString(R.string.loading));
     }
 
     @Override
@@ -98,8 +127,10 @@ public class ExploreTopFragment extends Fragment implements SearchAdapter.Listen
     }
 
     @Override
-    public void onFeedClick(ExSearchTag searchTag, int index) {
-
+    public void onItemClick(ExSearchTag searchTag, int index) {
+       /* if (mFragmentNavigation != null) {
+            mFragmentNavigation.pushFragment(SearchFeedFragment.newInstance(fragCount + 1, searchTag));
+        }*/
     }
 
     @Override
@@ -110,7 +141,10 @@ public class ExploreTopFragment extends Fragment implements SearchAdapter.Listen
             ExploreSearchFragment.searchViewListner = new SearchViewListner() {
                 @Override
                 public void onTextChange(String text) {
+                    list.clear();
+                    searchKeyWord = TextUtils.isEmpty(text)?"":text;
                     endlesScrollListener.resetState();
+                    showLoading();
                     callSearchAPI(text, 0);
                 }
             };
@@ -125,12 +159,13 @@ public class ExploreTopFragment extends Fragment implements SearchAdapter.Listen
          params.put("page", ""+pageNo);
          params.put("limit", "20");
          params.put("search", searchKeyWord);
-
-         Mualab.getInstance().cancelPendingRequests(TAG + exSearchType);
+         //String tag = TAG + exSearchType;
+         Mualab.getInstance().cancelPendingRequests(exSearchType);
         new HttpTask(new HttpTask.Builder(mContext, "exploreSearch", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    progress_bar.setVisibility(View.GONE);
                     adapter.showHideLoading(false);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
@@ -158,31 +193,32 @@ public class ExploreTopFragment extends Fragment implements SearchAdapter.Listen
                                     case "top":
                                         searchTag.type = 0;
                                         searchTag.title = searchTag.uniTxt;
-                                        searchTag.desc = "105 Post";
+                                        searchTag.desc = searchTag.postCount+" Post";
                                         break;
 
                                     case "people":
                                         searchTag.type = 1;
                                         searchTag.title = searchTag.uniTxt;
-                                        searchTag.desc = "105 Post";
+                                        searchTag.desc = searchTag.postCount+" Post";
                                         break;
 
                                     case "hasTag":
                                         searchTag.type = 2;
                                         searchTag.title = searchTag.tag;
-                                        searchTag.desc = "5124015 Public post";
+                                        searchTag.desc = searchTag.postCount+" Public post";
                                         break;
 
                                     case "serviceTag":
                                         searchTag.type = 3;
                                         searchTag.title = searchTag.uniTxt;
-                                        searchTag.desc = "5124015 Public post";
+                                        //NumberFormat.getNumberInstance(Locale.US).format(searchTag.postCount);
+                                        searchTag.desc = searchTag.postCount+" Public post";
                                         break;
 
                                     case "place":
                                         searchTag.type = 4;
                                         searchTag.title = searchTag.uniTxt;
-                                        searchTag.desc = "5124015 Public post";
+                                        searchTag.desc = "0 Public post";
                                         break;
                                 }
 
@@ -191,20 +227,28 @@ public class ExploreTopFragment extends Fragment implements SearchAdapter.Listen
                         }
                         adapter.notifyDataSetChanged();
                     }
+
+                    if(list.size()==0){
+                        tv_no_comments.setText(getString(R.string.no_data_found));
+                    }else {
+                        ll_loadingBox.setVisibility(View.GONE);
+                    }
                     //  showToast(message);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    progress_bar.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
+                progress_bar.setVisibility(View.GONE);
                 adapter.showHideLoading(false);
             }})
                 .setParam(params)
                 .setProgress(false)
                 .setBodyContentType(HttpTask.ContentType.X_WWW_FORM_URLENCODED))
-                .execute(TAG);
+                .execute(exSearchType);
     }
 
     @Override
