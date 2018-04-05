@@ -93,17 +93,16 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(mContext instanceof BookingActivity) {
-            ((BookingActivity) mContext).setReviewPostVisibility(8);
-            ((BookingActivity) mContext).setLyArtistDetailVisibility(8);
-            ((BookingActivity) mContext).setBuisnessNameVisibility(0);
-        }
-
         if (getArguments() != null) {
             bookingInfo = (BookingInfo) getArguments().getSerializable("bookingInfo");
             if (bookingInfo != null)
                 item = bookingInfo.item;
 
+        }
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(8);
+            ((BookingActivity) mContext).setLyArtistDetailVisibility(8);
+            ((BookingActivity) mContext).setBuisnessNameVisibility(0,item.businessName);
         }
     }
 
@@ -229,7 +228,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setReviewPostVisibility(0);
             ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
-            ((BookingActivity) mContext).setBuisnessNameVisibility(8);
+            ((BookingActivity) mContext).setBuisnessNameVisibility(8,"");
         }
 
     }
@@ -240,7 +239,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setReviewPostVisibility(0);
             ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
-            ((BookingActivity) mContext).setBuisnessNameVisibility(8);
+            ((BookingActivity) mContext).setBuisnessNameVisibility(8,"");
         }
     }
 
