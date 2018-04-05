@@ -234,8 +234,10 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         endlesScrollListener = new EndlessRecyclerViewScrollListener(lm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                feedAdapter.showHideLoading(true);
-                apiForGetAllFeeds(page, 10, false);
+                if(feedAdapter!=null){
+                    feedAdapter.showHideLoading(true);
+                    apiForGetAllFeeds(page, 10, false);
+                }
             }
         };
 

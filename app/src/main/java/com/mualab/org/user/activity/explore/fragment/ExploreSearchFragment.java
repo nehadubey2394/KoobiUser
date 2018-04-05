@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.explore;
+package com.mualab.org.user.activity.explore.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,10 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.BaseListner;
+import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.explore.ExplorSearchActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.SearchViewListner;
-import com.mualab.org.user.util.KeyboardUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Dharmraj Acharya
  */
-public class ExploreSearchFragment extends Fragment {
+public class ExploreSearchFragment extends BaseFragment {
 
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -36,16 +36,14 @@ public class ExploreSearchFragment extends Fragment {
     private ViewPager mPager;
     private TabLayout tabLayout;
     private SearchView searchview;
-    private Context mContext;
     public static SearchViewListner searchViewListner;
 
     /**
      * The pager adapter, which provides the pages to the view pager widget.
      */
     private PagerAdapter mPagerAdapter;
-    private BaseListner baseListner;
-
     private List<MyViews> views = new ArrayList<>();
+    int fragCount;
 
     class MyViews{
         Fragment fragment;
@@ -74,11 +72,12 @@ public class ExploreSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        views.add(new MyViews("Top",ExploreTopFragment.newInstance("top")));
+        views.add(new MyViews("Top", ExploreTopFragment.newInstance("top")));
         views.add(new MyViews("People",ExploreTopFragment.newInstance("people")));
-        views.add(new MyViews("HashTag",ExploreTopFragment.newInstance("hasTag")));
-        views.add(new MyViews("ServiceTag",ExploreTopFragment.newInstance("servicetag")));
+        views.add(new MyViews("Hash Tag",ExploreTopFragment.newInstance("hasTag")));
+        views.add(new MyViews("Service Tag",ExploreTopFragment.newInstance("servicetag")));
         views.add(new MyViews("Location",ExploreTopFragment.newInstance("place")));
+        ((ExplorSearchActivity)getActivity()).updateToolbarTitle("Explore");
     }
 
     @Override
@@ -92,7 +91,7 @@ public class ExploreSearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         searchview = view.findViewById(R.id.searchview);
-        KeyboardUtil.showKeyboard(searchview, getContext());
+        //KeyboardUtil.showKeyboard(searchview, getContext());
         searchview.requestFocus();
 
         // Instantiate a ViewPager and a PagerAdapter.
@@ -125,10 +124,7 @@ public class ExploreSearchFragment extends Fragment {
         view.findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(baseListner!=null){
-                    KeyboardUtil.hideKeyboard(searchview, getContext());
-                    baseListner.backPress();
-                }
+               getActivity().onBackPressed();
             }
         });
 
@@ -152,22 +148,18 @@ public class ExploreSearchFragment extends Fragment {
         super.onDestroyView();
         searchview.clearFocus();
         Mualab.getInstance().cancelAllPendingRequests();
-        KeyboardUtil.hideKeyboard(searchview, getContext());
+        //KeyboardUtil.hideKeyboard(searchview, getContext());
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if(context instanceof BaseListner){
-            baseListner = (BaseListner) context;
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        baseListner = null;
         searchViewListner = null;
     }
 

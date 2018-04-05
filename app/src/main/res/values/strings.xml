@@ -288,7 +288,7 @@
 
     <string name="simple_refresh_header_text_below_threshold">below fold</string>
     <string name="simple_refresh_header_text_above_threshold">above folder</string>
-    <string name="simple_refresh_header_text_refreshing">refreshing...</string>
+    <string name="simple_refresh_header_text_refreshing">refreshing…</string>
 
     <!-- JSON values -->
     <string name="bitmap">bitmap</string>
@@ -327,12 +327,13 @@
     <string name="mcam_image_preview_error_message">Could not decode bitmap</string>
     <string name="no_data_available">No data available!</string>
     <string name="there_are_no_available_slots_please_select_another_day">There are no available slots. Please select another day.</string>
-    <string name="write_a_comment_here">write a comment here…</string>
+    <string name="write_a_comment_here">Write a comment here…</string>
     <string name="unfollow_user">Unfollow <b>@%s?</b></string>
     <string name="no_comment_yet">No Comment yet</string>
     <string name="following">Following</string>
     <string name="follow">Follow</string>
     <string name="no_like_yet">No like yet</string>
+    <string name="no_data_found">No data found.</string>
     <string name="next">Next</string>
 
 
@@ -352,5 +353,6 @@
     <string name="enter_your_email_id_and_phone_no">Enter your Email id and phone \nnumber</string>
     <string name="done">Done</string>
     <string name="rec">REC</string>
+    <string name="explore">Explore</string>
 
 </resources>

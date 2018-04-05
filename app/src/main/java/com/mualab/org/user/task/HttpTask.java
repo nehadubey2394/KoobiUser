@@ -230,8 +230,9 @@ public class HttpTask {
 
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                if (params != null)
+                if (params != null){
                     return params;
+                }
                 return super.getParams();
             }
 

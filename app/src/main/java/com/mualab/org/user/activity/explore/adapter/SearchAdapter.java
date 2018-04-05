@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.explore.ExSearchTag;
+import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.squareup.picasso.Picasso;
 import java.util.List;
@@ -30,7 +30,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Listener listener;
 
     public interface Listener{
-        void onFeedClick(ExSearchTag searchTag, int index);
+        void onItemClick(ExSearchTag searchTag, int index);
     }
 
     public SearchAdapter(Context mContext, List<ExSearchTag> feedItems, Listener listener) {
@@ -113,7 +113,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public void onClick(View v) {
             int pos = getAdapterPosition();
             ExSearchTag searchTag = feedItems.get(pos);
-            listener.onFeedClick(searchTag, pos);
+            listener.onItemClick(searchTag, pos);
         }
     }
 }
