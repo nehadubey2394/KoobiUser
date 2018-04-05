@@ -24,47 +24,6 @@
             android:layout_height="match_parent"
             />
 
-       <!-- <LinearLayout
-            android:id="@+id/lyEdit"
-            android:layout_width="64dp"
-            android:layout_height="match_parent"
-            android:background="@color/primary_blue"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:clickable="true"
-            >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/edit_ico"
-                android:padding="4dp"
-                android:backgroundTint="@color/white"
-                />
-
-            <TextView
-                android:id="@+id/tvEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_edit"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:paddingRight="2dp"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/roboto_medium"
-
-                />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="7dp"
-            android:layout_height="match_parent"
-            />-->
-
         <LinearLayout
             android:id="@+id/lyRemove"
             android:layout_width="60dp"
