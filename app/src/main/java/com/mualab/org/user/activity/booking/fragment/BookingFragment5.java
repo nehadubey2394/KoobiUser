@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -99,11 +101,6 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 item = bookingInfo.item;
 
         }
-        if(mContext instanceof BookingActivity) {
-            ((BookingActivity) mContext).setReviewPostVisibility(8);
-            ((BookingActivity) mContext).setLyArtistDetailVisibility(8);
-            ((BookingActivity) mContext).setBuisnessNameVisibility(0,item.businessName);
-        }
     }
 
     @Override
@@ -111,9 +108,19 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_booking5, container, false);
         initView();
-        setViewId(rootView);
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(mContext instanceof BookingActivity) {
+            ((BookingActivity) mContext).setReviewPostVisibility(8);
+            ((BookingActivity) mContext).setLyArtistDetailVisibility(8);
+            ((BookingActivity) mContext).setBuisnessNameVisibility(0,item.businessName);
+        }
+        setViewId(view);
     }
 
     @Override
