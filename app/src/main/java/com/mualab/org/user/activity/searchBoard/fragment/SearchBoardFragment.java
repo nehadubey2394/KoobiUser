@@ -314,10 +314,9 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
                         listAdapter.showLoading(false);
                         JSONArray artistArray = js.getJSONArray("artistList");
-
+                        Gson gson = new Gson();
                         if (artistArray!=null && artistArray.length()>0) {
                             for (int i=0; i<artistArray.length(); i++){
-                                Gson gson = new Gson();
                                 JSONObject jsonObject = artistArray.getJSONObject(i);
                                 ArtistsSearchBoard item = gson.fromJson(String.valueOf(jsonObject), ArtistsSearchBoard.class);
                                 String services = "";

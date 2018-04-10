@@ -89,10 +89,23 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final Holder h = ((Holder) holder);
         h.tvHeader.setText(searchTag.title);
         h.tvDesc.setText(searchTag.desc);
-        if(!TextUtils.isEmpty(searchTag.imageUrl)){
-            Picasso.with(mContext).load(searchTag.imageUrl).fit().into(h.ivProfile);
-        }else Picasso.with(mContext).load(R.drawable.defoult_user_img).into(h.ivProfile);
 
+        switch (searchTag.type){
+            case 0:
+            case 1:
+                if(!TextUtils.isEmpty(searchTag.imageUrl)){
+                    Picasso.with(mContext).load(searchTag.imageUrl).fit().into(h.ivProfile);
+                }else Picasso.with(mContext).load(R.drawable.defoult_user_img).into(h.ivProfile);
+                break;
+
+            case 2:
+                Picasso.with(mContext).load(R.drawable.hag_tag_ico).fit().into(h.ivProfile);
+                break;
+
+            case 4:
+                Picasso.with(mContext).load(R.drawable.ic_location_tag).fit().into(h.ivProfile);
+                break;
+        }
     }
 
     private class Holder extends RecyclerView.ViewHolder implements View.OnClickListener{

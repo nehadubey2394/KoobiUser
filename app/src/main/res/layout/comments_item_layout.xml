@@ -86,13 +86,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <views.ImageView16_9
+                <views.cv.AspectRatioImageView
                     android:id="@+id/ivImg"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    app:ari_aspect="height"
+                    app:ari_ratio="0.75"/>
 
                 <TextView
                     android:id="@+id/tv_comments"

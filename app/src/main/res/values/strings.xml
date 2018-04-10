@@ -333,7 +333,8 @@
     <string name="following">Following</string>
     <string name="follow">Follow</string>
     <string name="no_like_yet">No like yet</string>
-    <string name="no_data_found">No data found.</string>
+    <!--<string name="no_data_found">No data found.</string>-->
+    <string name="no_data_found">No results found…</string>
     <string name="next">Next</string>
 
 

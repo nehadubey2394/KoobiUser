@@ -123,7 +123,7 @@ public class LikeFragment extends Fragment {
         }
 
         recyclerView = view.findViewById(R.id.recyclerView);
-        tvMsg = view.findViewById(R.id.tvMsg);
+        tvMsg = view.findViewById(R.id.tv_msg);
         ed_search = view.findViewById(R.id.ed_search);
         ll_loadingBox = view.findViewById(R.id.ll_loadingBox);
         progress_bar = view.findViewById(R.id.progress_bar);
@@ -183,10 +183,12 @@ public class LikeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Mualab.getInstance().getRequestQueue().cancelAll(TAG);
-        tvHeaderTitle.setVisibility(View.GONE);
-        ivHeaderBack.setVisibility(View.GONE);
-        ivAppIcon.setVisibility(View.VISIBLE);
-        ibtnChat.setVisibility(View.VISIBLE);
+        if(activity!=null){
+            tvHeaderTitle.setVisibility(View.GONE);
+            ivHeaderBack.setVisibility(View.GONE);
+            ivAppIcon.setVisibility(View.VISIBLE);
+            ibtnChat.setVisibility(View.VISIBLE);
+        }
         ibtnChat = null;
         ivHeaderBack = null;
         ll_loadingBox = null;
@@ -218,8 +220,8 @@ public class LikeFragment extends Fragment {
 
                     if (status.equalsIgnoreCase("success")) {
                         JSONArray array = js.getJSONArray("likeList");
+                        Gson gson = new Gson();
                         for (int i = 0; i < array.length(); i++) {
-                            Gson gson = new Gson();
                             JSONObject jsonObject = array.getJSONObject(i);
                             FeedLike likedListInfo = gson.fromJson(String.valueOf(jsonObject), FeedLike.class);
                             likedList.add(likedListInfo);

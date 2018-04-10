@@ -377,7 +377,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                         JSONArray artistservices = jObj.getJSONArray
                                                 ("artistservices");
                                         for (int m=0; m<artistservices.length(); m++){
-                                            Gson gson = new Gson();
                                             JSONObject jsonObject3 = artistservices.getJSONObject(m);
                                             BookingServices3 services3 = new BookingServices3();
 
@@ -408,9 +407,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         if (businessType.equals("business")){
                             JSONArray staffInfo = jsonObject.getJSONArray("staffInfo");
                             if (staffInfo!=null) {
+                                Gson gson = new Gson();
                                 for (int a=0; a<staffInfo.length(); a++){
                                     JSONObject staffInfoJSONObject = staffInfo.getJSONObject(a);
-                                    Gson gson = new Gson();
                                     BookingStaff bookingStaff = gson.fromJson(String.valueOf(staffInfoJSONObject), BookingStaff.class);
                                     item.staffList.add(bookingStaff);
 

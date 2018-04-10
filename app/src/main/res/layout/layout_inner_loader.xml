@@ -20,6 +20,6 @@
         style="@style/TextView"
         android:text="@string/loading"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:visibility="visible" />
 </LinearLayout>

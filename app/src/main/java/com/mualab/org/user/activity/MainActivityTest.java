@@ -99,7 +99,7 @@ public class MainActivityTest extends BaseActivity implements View.OnClickListen
 
         fragmentHistory = new FragmentHistory();
         mNavController = FragNavController.newBuilder(savedInstanceState,
-                getSupportFragmentManager(), R.id.fragment_place)
+                getSupportFragmentManager(), R.id.container)
                 .transactionListener(this)
                 .rootFragmentListener(this, TABS.length)
                 .build();

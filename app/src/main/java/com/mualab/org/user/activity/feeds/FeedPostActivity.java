@@ -80,6 +80,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -92,7 +93,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     public static String TAG = FeedPostActivity.class.getName();
 
-    private ArrayList<String> tagList = new ArrayList<>();
+    private LinkedHashSet<String> tagList = new LinkedHashSet<>();
     private TextView tvLoaction;
     private ImageView ivShareFbOn, ivShareTwitterOn, iv_postimage;
 
@@ -102,7 +103,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private UserSuggessionAdapter mentionAdapter;
     private SocialAutoCompleteTextView edCaption;
     private TextView tvMediaSize;
-    private List<String> hashTags = new ArrayList<>();
+    private ArrayList<String> hashTags = new ArrayList<>();
 
     private int feedType;
     private String caption;
