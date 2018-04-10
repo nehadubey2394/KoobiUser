@@ -20,6 +20,7 @@ import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.explore.ExplorSearchActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.SearchViewListner;
+import com.mualab.org.user.util.KeyboardUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class ExploreSearchFragment extends BaseFragment {
     private TabLayout tabLayout;
     private SearchView searchview;
     public static SearchViewListner searchViewListner;
+    public static String searchKeyword;
 
     /**
      * The pager adapter, which provides the pages to the view pager widget.
@@ -63,21 +65,22 @@ public class ExploreSearchFragment extends BaseFragment {
 
 
     public static ExploreSearchFragment newInstance() {
-        ExploreSearchFragment fragment = new ExploreSearchFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        //ExploreSearchFragment fragment = new ExploreSearchFragment();
+       // Bundle args = new Bundle();
+        //fragment.setArguments(args);
+        return new ExploreSearchFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        searchKeyword = "";
         views.add(new MyViews("Top", ExploreTopFragment.newInstance("top")));
         views.add(new MyViews("People",ExploreTopFragment.newInstance("people")));
         views.add(new MyViews("Hash Tag",ExploreTopFragment.newInstance("hasTag")));
         views.add(new MyViews("Service Tag",ExploreTopFragment.newInstance("servicetag")));
         views.add(new MyViews("Location",ExploreTopFragment.newInstance("place")));
-        ((ExplorSearchActivity)getActivity()).updateToolbarTitle("Explore");
+        //((ExplorSearchActivity)getActivity()).updateToolbarTitle("Explore");
     }
 
     @Override
@@ -92,7 +95,7 @@ public class ExploreSearchFragment extends BaseFragment {
 
         searchview = view.findViewById(R.id.searchview);
         //KeyboardUtil.showKeyboard(searchview, getContext());
-        searchview.requestFocus();
+        //searchview.requestFocus();
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = view.findViewById(R.id.viewpager);
@@ -124,6 +127,7 @@ public class ExploreSearchFragment extends BaseFragment {
         view.findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                KeyboardUtil.hideKeyboard(searchview, mContext);
                getActivity().onBackPressed();
             }
         });
@@ -136,7 +140,9 @@ public class ExploreSearchFragment extends BaseFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(searchViewListner!=null)searchViewListner.onTextChange(newText);
+                searchKeyword = newText;
+                if(searchViewListner!=null)
+                    searchViewListner.onTextChange(newText);
                 return false;
             }
         });
@@ -146,9 +152,9 @@ public class ExploreSearchFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        searchview.clearFocus();
-        Mualab.getInstance().cancelAllPendingRequests();
-        //KeyboardUtil.hideKeyboard(searchview, getContext());
+        searchKeyword = null;
+        //searchview.clearFocus();
+        //Mualab.getInstance().cancelAllPendingRequests();
     }
 
     @Override

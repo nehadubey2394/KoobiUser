@@ -77,7 +77,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListner{
             transaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_in,0,0);
             transaction.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right,
                     R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-            transaction.add(R.id.fragment_place, fragment, backStackName);
+            transaction.add(R.id.container, fragment, backStackName);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
             transaction.commit();
@@ -96,7 +96,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListner{
         boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStackName, 0);
         if (!fragmentPopped) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_place, fragment, backStackName).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            transaction.replace(R.id.container, fragment, backStackName).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
             transaction.commit();

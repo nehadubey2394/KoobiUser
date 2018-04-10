@@ -90,7 +90,7 @@ public class CommentsActivity extends AppCompatActivity {
         }
 
         ed_comments =  findViewById(R.id.ed_comments);
-        tv_no_comments =  findViewById(R.id.tv_no_comments);
+        tv_no_comments =  findViewById(R.id.tv_msg);
         recyclerView =  findViewById(R.id.recyclerView);
         btn_post_comments =  findViewById(R.id.btn_post_comments);
         ll_loadingBox =  findViewById(R.id.ll_loadingBox);

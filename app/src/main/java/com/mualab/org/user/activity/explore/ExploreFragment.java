@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -65,6 +66,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
 
     private TextView tvImages, tvVideos, tv_msg;
     private LinearLayout ll_progress;
+    private ProgressBar progress_bar;
     private RjRefreshLayout mRefreshLayout;
 
     /*Adapters*/
@@ -152,7 +154,8 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
         //RecyclerView rvMyStory = view.findViewById(R.id.recyclerView);
         rvFeed = view.findViewById(R.id.rvFeed);
         tv_msg = view.findViewById(R.id.tv_msg);
-        ll_progress = view.findViewById(R.id.ll_progress);
+        ll_progress = view.findViewById(R.id.ll_loadingBox);
+        progress_bar = view.findViewById(R.id.progress_bar);
 
         view.findViewById(R.id.ly_images).setOnClickListener(this);
         view.findViewById(R.id.ly_videos).setOnClickListener(this);
@@ -218,9 +221,9 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
             }});*/
 
-        if(feeds!=null && feeds.size()==0)
+        if(feeds!=null && feeds.size()==0){
             updateViewType(R.id.ly_images);
-        else feedAdapter.notifyDataSetChanged();
+        } else feedAdapter.notifyDataSetChanged();
         //getStoryList();
     }
 
@@ -253,6 +256,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
                     feeds.clear();
                     feedType = "image";
                     feedAdapter.notifyItemRangeRemoved(0, prevSize);
+                    showLoading();
                     apiForGetAllFeeds( 0, 10, true);
                 }
                 break;
@@ -264,12 +268,19 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
                     feeds.clear();
                     feedType = "video";
                     feedAdapter.notifyItemRangeRemoved(0, prevSize);
+                    showLoading();
                     apiForGetAllFeeds( 0, 10, true);
                 }
                 break;
         }
 
         lastFeedTypeId = id;
+    }
+
+    private void showLoading(){
+        ll_progress.setVisibility(View.VISIBLE);
+        progress_bar.setVisibility(View.VISIBLE);
+        tv_msg.setText(getString(R.string.loading));
     }
 
     /*private void getStoryList(){
@@ -445,10 +456,17 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
 
                 } // loop end.
 
+                if(feeds.size()==0){
+                    rvFeed.setVisibility(View.GONE);
+                    tv_msg.setVisibility(View.VISIBLE);
+                    tv_msg.setText(getString(R.string.no_data_found));
+                }
+
                 feedAdapter.notifyDataSetChanged();
 
             } else if (status.equals("fail") && feeds.size()==0) {
                 rvFeed.setVisibility(View.GONE);
+                tv_msg.setText(getString(R.string.no_data_found));
                 tv_msg.setVisibility(View.VISIBLE);
 
                 if(isPulltoRefrash){
@@ -470,6 +488,9 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onFeedClick(Feeds feed, int index) {
        // baseListner.addFragment();
-        MyToast.getInstance(mContext).showDasuAlert(getString(R.string.under_development));
+        Intent intent = new Intent(mContext, FeedDetailActivity.class);
+        intent.putExtra("feed",feed);
+        startActivity(intent);
+        //MyToast.getInstance(mContext).showDasuAlert(getString(R.string.under_development));
     }
 }

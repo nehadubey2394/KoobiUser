@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.explore.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,8 @@ import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.explore.ExplorSearchActivity;
+import com.mualab.org.user.activity.explore.SearchFeedActivity;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.activity.explore.adapter.SearchAdapter;
 import com.mualab.org.user.application.Mualab;
@@ -29,11 +32,9 @@ import com.mualab.org.user.task.HttpTask;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -91,7 +92,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
         super.onViewCreated(view, savedInstanceState);
         ll_loadingBox = view.findViewById(R.id.ll_loadingBox);
         progress_bar = view.findViewById(R.id.progress_bar);
-        tv_no_comments = view.findViewById(R.id.tv_no_comments);
+        tv_no_comments = view.findViewById(R.id.tv_msg);
 
         LinearLayoutManager lm = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false);
         RecyclerView rvTopSearch = view.findViewById(R.id.rvTopSearch);
@@ -108,6 +109,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
         };
         endlesScrollListener.resetState();
         rvTopSearch.addOnScrollListener(endlesScrollListener);
+
 
         showLoading();
         searchKeyWord = "";
@@ -128,7 +130,12 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
 
     @Override
     public void onItemClick(ExSearchTag searchTag, int index) {
-       /* if (mFragmentNavigation != null) {
+        Intent intent = new Intent(mContext, SearchFeedActivity.class);
+        intent.putExtra("searchKey",searchTag);
+        intent.putExtra("fragCount",0);
+        intent.putExtra("feedType",exSearchType);
+        startActivity(intent);
+        /*if (mFragmentNavigation != null) {
             mFragmentNavigation.pushFragment(SearchFeedFragment.newInstance(fragCount + 1, searchTag));
         }*/
     }
@@ -148,6 +155,15 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
                     callSearchAPI(text, 0);
                 }
             };
+
+            if(!ExplorSearchActivity.searchKeyword.equals(searchKeyWord) && list!=null){
+                list.clear();
+                adapter.notifyDataSetChanged();
+                endlesScrollListener.resetState();
+                searchKeyWord = ExplorSearchActivity.searchKeyword;
+                showLoading();
+                callSearchAPI(searchKeyWord, 0);
+            }
         }
     }
 
@@ -204,7 +220,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
 
                                     case "hasTag":
                                         searchTag.type = 2;
-                                        searchTag.title = searchTag.tag;
+                                        searchTag.title = "#"+searchTag.tag;
                                         searchTag.desc = searchTag.postCount+" Public post";
                                         break;
 

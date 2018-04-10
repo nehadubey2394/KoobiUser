@@ -22,7 +22,11 @@
     </views.refreshview.RjRefreshLayout>
 
 
-    <LinearLayout
+    <include layout="@layout/layout_inner_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"/>
+   <!-- <LinearLayout
         android:id="@+id/ll_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,6 +49,6 @@
             android:layout_gravity="center"
             android:text="@string/loading"
             android:textColor="@color/text_color" />
-    </LinearLayout>
+    </LinearLayout>-->
 
 </FrameLayout>

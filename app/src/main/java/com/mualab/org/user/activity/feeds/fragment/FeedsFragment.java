@@ -618,9 +618,9 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
                     //String message = js.getString("message");
                     if (status.equalsIgnoreCase("success")) {
                         JSONArray array = js.getJSONArray("myStoryList");
+                        Gson gson = new Gson();
 
                         for (int i = 0; i < array.length(); i++) {
-                            Gson gson = new Gson();
                             JSONObject jsonObject = array.getJSONObject(i);
                             LiveUserInfo live = gson.fromJson(String.valueOf(jsonObject), LiveUserInfo.class);
 

@@ -161,6 +161,7 @@
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:editTextColor">@color/colorPrimary</item>
         <item name="android:tint">@color/colorPrimary</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textAppearance">@style/MyCustomTextAppearance</item>
     </style>
 

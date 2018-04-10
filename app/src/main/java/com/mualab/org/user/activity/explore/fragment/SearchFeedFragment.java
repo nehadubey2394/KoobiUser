@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.explore.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -22,6 +24,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.explore.FeedDetailActivity;
 import com.mualab.org.user.activity.explore.adapter.ExploreGridViewAdapter;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
@@ -54,6 +57,7 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
     private Context mContext;
     private TextView tv_msg;
+    private ProgressBar progress_bar;
     private LinearLayout ll_progress;
     private RecyclerView rvFeed;
     private RjRefreshLayout mRefreshLayout;
@@ -63,7 +67,7 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
     private int fragCount;
     private ExSearchTag exSearchTag;
-    private String feedType = "image";
+    private String feedType = "hasTag";
     private boolean isPulltoRefrash;
 
 
@@ -72,11 +76,12 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     }
 
 
-    public static SearchFeedFragment newInstance(int fragCount, ExSearchTag searchKey) {
+    public static SearchFeedFragment newInstance(int fragCount, ExSearchTag searchKey, String exSearchType) {
         SearchFeedFragment fragment = new SearchFeedFragment();
         Bundle args = new Bundle();
         args.putInt("fragCount", fragCount);
         args.putSerializable("searchKey", searchKey);
+        args.putSerializable("feedType", exSearchType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +92,8 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
         feeds = new ArrayList<>();
         if (getArguments() != null) {
             fragCount = getArguments().getInt("fragCount");
+            feedType = getArguments().getString("feedType");
+           // userId = getArguments().getString("userId");
             exSearchTag = (ExSearchTag) getArguments().getSerializable("searchKey");
         }
     }
@@ -106,7 +113,8 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     private void initView(View view){
         rvFeed = view.findViewById(R.id.rvFeed);
         tv_msg = view.findViewById(R.id.tv_msg);
-        ll_progress = view.findViewById(R.id.ll_progress);
+        progress_bar = view.findViewById(R.id.progress_bar);
+        ll_progress = view.findViewById(R.id.ll_loadingBox);
     }
 
 
@@ -151,12 +159,20 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
             }
         });
 
-
+        showLoading();
+        searchFeed(0, true);
     }
+
+    private void showLoading(){
+        ll_progress.setVisibility(View.VISIBLE);
+        progress_bar.setVisibility(View.VISIBLE);
+        tv_msg.setText(getString(R.string.loading));
+    }
+
 
     @Override
     public void onFeedClick(Feeds feed, int index) {
-
+        startActivity(new Intent(mContext, FeedDetailActivity.class).putExtra("feed",feed));
     }
 
 
@@ -180,13 +196,20 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
         Map<String, String> params = new HashMap<>();
         //params.put("userId", ""+ Mualab.currentUser.id);
-        params.put("userId", ""+exSearchTag.id);
+        if(feedType.equals("top") || feedType.equals("people")){
+            params.put("userId", ""+exSearchTag.id);
+            params.put("type", "user");
+        }else{
+            params.put("userId", ""+Mualab.currentUser.id);
+            params.put("type", feedType);
+        }
+
         params.put("findData", ""+exSearchTag.id);
-        params.put("feedType", feedType);
+        params.put("feedType", "");
         params.put("search", "");
         params.put("page", String.valueOf(page));
         params.put("limit", "20");
-        params.put("type", "hasTag");
+
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(mContext, "userFeed", new HttpResponceListner.Listener() {
@@ -231,7 +254,7 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     }
 
     private void ParseAndUpdateUI(final String response) {
-
+        progress_bar.setVisibility(View.GONE);
         try {
             JSONObject js = new JSONObject(response);
             String status = js.getString("status");
@@ -239,7 +262,7 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
             if (status.equalsIgnoreCase("success")) {
                 rvFeed.setVisibility(View.VISIBLE);
-                JSONArray array = js.getJSONArray("AllFeeds");
+                JSONArray array = js.getJSONArray("AllUserFeeds");
                 if(isPulltoRefrash){
                     isPulltoRefrash = false;
                     mRefreshLayout.stopRefresh(true, 500);
@@ -291,6 +314,15 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
                 feedAdapter.notifyDataSetChanged();
 
+                if(feeds.size()==0){
+                    rvFeed.setVisibility(View.GONE);
+                    ll_progress.setVisibility(View.VISIBLE);
+                    tv_msg.setVisibility(View.VISIBLE);
+                    tv_msg.setText(getString(R.string.no_data_found));
+                }
+
+
+
             } else if (status.equals("fail") && feeds.size()==0) {
                 rvFeed.setVisibility(View.GONE);
                 tv_msg.setVisibility(View.VISIBLE);
@@ -305,6 +337,8 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
         } catch (JSONException e) {
             e.printStackTrace();
+            progress_bar.setVisibility(View.GONE);
+            tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
             feedAdapter.notifyDataSetChanged();
         }
     }
