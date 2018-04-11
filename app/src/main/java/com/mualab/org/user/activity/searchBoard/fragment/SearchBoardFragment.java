@@ -173,6 +173,16 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
     }
 
+    private void filter(String text) {
+        ArrayList<ArtistsSearchBoard> filterdNames = new ArrayList<>();
+        for (ArtistsSearchBoard s : artistsList) {
+            if (s.userName.toLowerCase().contains(text.toLowerCase())) {
+                filterdNames.add(s);
+            }
+        }
+        listAdapter.filterList(filterdNames);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
