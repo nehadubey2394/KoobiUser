@@ -78,7 +78,7 @@ public class ExploreSearchFragment extends BaseFragment {
         views.add(new MyViews("Top", ExploreTopFragment.newInstance("top")));
         views.add(new MyViews("People",ExploreTopFragment.newInstance("people")));
         views.add(new MyViews("Hash Tag",ExploreTopFragment.newInstance("hasTag")));
-        views.add(new MyViews("Service Tag",ExploreTopFragment.newInstance("servicetag")));
+        views.add(new MyViews("Service Tag",ExploreTopFragment.newInstance("serviceTag")));
         views.add(new MyViews("Location",ExploreTopFragment.newInstance("place")));
         //((ExplorSearchActivity)getActivity()).updateToolbarTitle("Explore");
     }

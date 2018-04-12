@@ -59,7 +59,8 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
 
         TextView tvTitle = findViewById(R.id.tvTitle);
         if(exSearchTag.title!=null)
-            tvTitle.setText(exSearchTag.title);
+            tvTitle.setText(exSearchTag.type==ExSearchTag.SearchType.HASH_TAG?
+                    "#"+exSearchTag.title.replace("#",""):exSearchTag.title);
     }
 
     private void switchTab(int position) {

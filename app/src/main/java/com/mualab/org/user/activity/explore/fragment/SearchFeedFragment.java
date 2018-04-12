@@ -3,12 +3,10 @@ package com.mualab.org.user.activity.explore.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -39,8 +37,6 @@ import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.ScreenUtils;
 import com.mualab.org.user.util.WrapContentGridLayoutManager;
-import com.mualab.org.user.util.decorator.GridDividerItemDecoration;
-import com.mualab.org.user.util.decorator.ItemDecorationGridColumns;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,10 +65,9 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     private List<Feeds> feeds;
     private ExploreGridViewAdapter feedAdapter;
 
-    private int fragCount;
+   // private int fragCount;
     private ExSearchTag exSearchTag;
     private boolean isPulltoRefrash;
-    private String searchType = "hasTag";
 
 
     public SearchFeedFragment() {
@@ -93,10 +88,8 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
         super.onCreate(savedInstanceState);
         feeds = new ArrayList<>();
         if (getArguments() != null) {
-            fragCount = getArguments().getInt("fragCount");
-           // userId = getArguments().getString("userId");
+            //fragCount = getArguments().getInt("fragCount");
             exSearchTag = (ExSearchTag) getArguments().getSerializable("searchKey");
-            searchType = getArguments().getString("feedType");
         }
     }
 
@@ -202,12 +195,12 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
         Map<String, String> params = new HashMap<>();
         if(exSearchTag.type == ExSearchTag.SearchType.TOP || exSearchTag.type == ExSearchTag.SearchType.PEOPLE){
             params.put("userId", ""+exSearchTag.id);
-            params.put("type", "user");
+            params.put("findData", ""+exSearchTag.id);
         }else {
             params.put("userId", ""+Mualab.currentUser.id);
-            params.put("type", searchType);
+            params.put("findData", ""+exSearchTag.title.replace("#",""));
         }
-        params.put("findData", ""+exSearchTag.id);
+        params.put("type", exSearchTag.getType());
         params.put("feedType", "");
         params.put("search", "");
         params.put("page", String.valueOf(page));

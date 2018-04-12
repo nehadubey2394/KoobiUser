@@ -35,4 +35,16 @@ public class ExSearchTag implements Serializable{
         public static final int SERVICE_TAG = 3;
         public static final int LOCATION = 4;
     }
+
+
+    public String getType(){
+        switch (type){
+            case 0: return "user";
+            case 1: return "user";
+            case 2: return "hasTag";
+            case 3: return "servicetag";
+            case 4: return "place";
+            default: return "";
+        }
+    }
 }
