@@ -12,7 +12,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
-import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.util.Util;
 import com.squareup.picasso.Picasso;
@@ -67,6 +66,11 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return showLoader?VIEWTYPE_LOADER:VIEWTYPE_ITEM;
         }
         return VIEWTYPE_ITEM;
+    }
+
+    public void filterList(ArrayList<ArtistsSearchBoard> filterdAllArtists) {
+        this.artistsList = filterdAllArtists;
+        notifyDataSetChanged();
     }
 
     @Override

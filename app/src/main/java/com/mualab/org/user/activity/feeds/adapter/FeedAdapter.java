@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.searchBoard.adapter.LoadingViewHolder;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.UnfollowDialog;
 import com.mualab.org.user.listner.OnDoubleTapListener;

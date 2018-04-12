@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
-import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
+import com.mualab.org.user.activity.searchBoard.adapter.LoadingViewHolder;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
