@@ -125,8 +125,7 @@
             android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".activity.explore.ExplorSearchActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
+            android:screenOrientation="portrait" />
 
         <!-- Meta data -->
         <meta-data

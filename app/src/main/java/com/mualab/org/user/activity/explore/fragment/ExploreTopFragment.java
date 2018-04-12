@@ -24,10 +24,11 @@ import com.mualab.org.user.activity.explore.SearchFeedActivity;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.activity.explore.adapter.SearchAdapter;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
+import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.listner.SearchViewListner;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.util.KeyboardUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,17 +48,15 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
     private Context mContext;
     private LinearLayout ll_loadingBox;
     private ProgressBar progress_bar;
-    private TextView tv_no_comments;
+    private TextView tv_msg;
 
     private SearchAdapter adapter;
-    private EndlessRecyclerViewScrollListener endlesScrollListener;
+    private RecyclerViewScrollListener endlesScrollListener;
     private List<ExSearchTag> list;
     private String exSearchType = "top";
     private String searchKeyWord = "";
     private boolean isViewCreated;
     private boolean isFirstTimeVisiable;
-
-    private int fragCount;
 
 
     public ExploreTopFragment() {
@@ -94,7 +93,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
         super.onViewCreated(view, savedInstanceState);
         ll_loadingBox = view.findViewById(R.id.ll_loadingBox);
         progress_bar = view.findViewById(R.id.progress_bar);
-        tv_no_comments = view.findViewById(R.id.tv_msg);
+        tv_msg = view.findViewById(R.id.tv_msg);
 
         LinearLayoutManager lm = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false);
         RecyclerView rvTopSearch = view.findViewById(R.id.rvTopSearch);
@@ -102,11 +101,19 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
         adapter = new SearchAdapter(mContext, list, this);
         rvTopSearch.setAdapter(adapter);
 
-        endlesScrollListener = new EndlessRecyclerViewScrollListener(lm) {
+        endlesScrollListener = new RecyclerViewScrollListener(lm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 adapter.showHideLoading(true);
                 callSearchAPI(searchKeyWord, page);
+            }
+
+            @Override
+            public void onScroll(RecyclerView view, int dx, int dy) {
+                if (dy > 0 ) {
+                    KeyboardUtil.hideKeyboard(view, mContext);
+                }
+
             }
         };
         endlesScrollListener.resetState();
@@ -124,7 +131,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
     private void showLoading(){
         ll_loadingBox.setVisibility(View.VISIBLE);
         progress_bar.setVisibility(View.VISIBLE);
-        tv_no_comments.setText(getString(R.string.loading));
+        tv_msg.setText(getString(R.string.loading));
     }
 
     @Override
@@ -165,8 +172,9 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
                 searchKeyWord = ExplorSearchActivity.searchKeyword;
                 showLoading();
                 callSearchAPI(searchKeyWord, 0);
-            }else if(isViewCreated && !isFirstTimeVisiable){
+            }else if(isViewCreated && !isFirstTimeVisiable && list!=null){
                 isFirstTimeVisiable = true;
+                list.clear();
                 showLoading();
                 callSearchAPI(searchKeyWord, 0);
             }
@@ -215,26 +223,26 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
                                     case "top":
                                         searchTag.type = 0;
                                         searchTag.title = searchTag.uniTxt;
-                                        searchTag.desc = searchTag.postCount+" Post";
+                                        searchTag.desc = searchTag.postCount+" post";
                                         break;
 
                                     case "people":
                                         searchTag.type = 1;
                                         searchTag.title = searchTag.uniTxt;
-                                        searchTag.desc = searchTag.postCount+" Post";
+                                        searchTag.desc = searchTag.postCount+" post";
                                         break;
 
                                     case "hasTag":
                                         searchTag.type = 2;
                                         searchTag.title = "#"+searchTag.tag;
-                                        searchTag.desc = searchTag.postCount+" Public post";
+                                        searchTag.desc = searchTag.postCount+" public post";
                                         break;
 
                                     case "serviceTag":
                                         searchTag.type = 3;
                                         searchTag.title = searchTag.uniTxt;
                                         //NumberFormat.getNumberInstance(Locale.US).format(searchTag.postCount);
-                                        searchTag.desc = searchTag.postCount+" Public post";
+                                        searchTag.desc = searchTag.postCount+" public post";
                                         break;
 
                                     case "place":
@@ -251,7 +259,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
                     }
 
                     if(list.size()==0){
-                        tv_no_comments.setText(getString(R.string.no_data_found));
+                        tv_msg.setText(getString(R.string.no_data_found));
                     }else {
                         ll_loadingBox.setVisibility(View.GONE);
                     }

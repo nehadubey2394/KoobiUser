@@ -28,6 +28,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.SearchFeedActivity;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.UnfollowDialog;
 import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.mualab.org.user.model.feeds.Feeds;
@@ -375,6 +376,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
+        holder.tv_text.setOnMentionClickListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence charSequence) {
+                MyToast.getInstance(mContext).showDasuAlert(mContext.getString(R.string.under_development));
+                return null;
+            }
+        });
+
         holder.ly_comments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -459,6 +468,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public Unit invoke(SocialView socialView, CharSequence charSequence) {
                 goHashTag(charSequence);
+                return null;
+            }
+        });
+
+
+        videoHolder.tv_text.setOnMentionClickListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence charSequence) {
+                MyToast.getInstance(mContext).showDasuAlert(mContext.getString(R.string.under_development));
                 return null;
             }
         });
@@ -550,6 +568,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public Unit invoke(SocialView socialView, CharSequence charSequence) {
                 goHashTag(charSequence);
+                return null;
+            }
+        });
+
+
+        cellFeedViewHolder.tv_text.setOnMentionClickListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence charSequence) {
+                MyToast.getInstance(mContext).showDasuAlert(mContext.getString(R.string.under_development));
                 return null;
             }
         });

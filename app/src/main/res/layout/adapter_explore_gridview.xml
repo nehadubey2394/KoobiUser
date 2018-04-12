@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="1dp">
+    android:layout_margin="1.2dp"
+    app:contentPadding=".8dip"
+    app:cardCornerRadius="4dip"
+    app:cardBackgroundColor="@color/colorPrimary">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/primary_broder"
-        android:padding=".5dp">
+        android:background="@color/white">
 
         <views.cv.AspectRatioImageView
             android:id="@+id/imageView"
@@ -24,9 +26,9 @@
             android:layout_height="40dp"
             android:padding="2dp"
             android:src="@drawable/play_bg_icon"
+            android:layout_gravity="center"
             android:layout_centerInParent="true"/>
 
-
-    </RelativeLayout>
+    </FrameLayout>
 
 </android.support.v7.widget.CardView>
