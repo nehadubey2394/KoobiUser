@@ -83,7 +83,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             lyArtistDetail.setVisibility(visibility);
     }
 
-    public void setTitleVisibility(String text){
+ public void setTitleVisibility(String text){
         if(title_booking!=null) {
             title_booking.setVisibility(View.VISIBLE);
             title_booking.setText(text);
