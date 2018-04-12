@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -83,45 +82,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         if(intent.getExtras()!=null){
             user = (User) intent.getSerializableExtra(Constant.USER);
         }
-
         session = new Session(this);
-      /*  api = new WebServiceAPI(this, TAG, new HttpResponceListner.LoginRegistrationListener() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-                    JSONObject js = new JSONObject(response);
-                    String status = js.getString("status");
-                    String message = js.getString("message");
-                    if (status.equalsIgnoreCase("success")) {
-                        Progress.show(Registration2Activity.this);
-                        Gson gson = new Gson();
-                        JSONObject userObj = js.getJSONObject("users");
-                        User user = gson.fromJson(String.valueOf(userObj), User.class);
-                        session.createSession(user);
-                        session.setPassword(user.password);
-
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("user", user);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        finish();
-                    }
-                    findViewById(R.id.btnContinue2).setEnabled(true);
-                    showToast(message);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    findViewById(R.id.btnContinue2).setEnabled(true);
-                }
-            }
-
-            @Override
-            public void ErrorListener(VolleyError error) {
-                findViewById(R.id.btnContinue2).setEnabled(true);
-                Log.d("ERROR:", "");
-            }
-        });*/
     }
 
     private void setDateField() {
@@ -135,7 +96,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 int year = calendar.get(Calendar.YEAR);
                 int monthOfYear = calendar.get(Calendar.MONTH);
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-                String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                //String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                 String dateToShow = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
                 tv_dob.setText(dateToShow);
                 //findViewById(R.id.tvHintDOB).setVisibility(View.VISIBLE);
@@ -213,7 +174,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                         try {
                             JSONObject js = new JSONObject(response);
                             String status = js.getString("status");
-                            String message = js.getString("message");
+                            //String message = js.getString("message");
                             if (status.equalsIgnoreCase("success")) {
                                 nextScreen();
                             }else {
@@ -409,7 +370,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         String password = edPwd.getText().toString().trim();
         // Pattern specailCharPatten = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
         Pattern UpperCasePatten = Pattern.compile("[A-Z ]");
-        Pattern lowerCasePatten = Pattern.compile("[a-z ]");
+       // Pattern lowerCasePatten = Pattern.compile("[a-z ]");
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
 
         if (TextUtils.isEmpty(password)) {

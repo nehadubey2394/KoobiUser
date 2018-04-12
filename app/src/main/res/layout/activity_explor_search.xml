@@ -7,6 +7,7 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:id="@+id/activityRoot"
     tools:context="com.mualab.org.user.activity.explore.ExplorSearchActivity">
 
     <RelativeLayout
@@ -40,16 +41,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="5dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:orientation="horizontal"
         android:background="@color/screen_bg_color"
-        android:paddingTop="10dp">
+        android:paddingTop="18dp">
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:padding="10dp"
             android:layout_gravity="center"
             android:background="?selectableItemBackgroundBorderless"
@@ -58,7 +59,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:background="@drawable/gray_boder_white_bg"
             android:layout_marginEnd="16dp"
             android:orientation="horizontal">

@@ -42,6 +42,8 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+import views.calender.CalendarHelper;
+
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -67,10 +69,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setStatusbarColor();
-
-        FirebaseCrash.log("Activity created");
-        FirebaseCrash.logcat(Log.ERROR, "MainActivity", "NPE caught");
-        FirebaseCrash.report(new FileNotFoundException());
 
         Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
         Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);

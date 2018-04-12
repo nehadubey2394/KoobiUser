@@ -308,11 +308,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         tvMediaSize = findViewById(R.id.tvMediaSize);
         // progressBar = findViewById(R.id.progress_bar);
 
-        findViewById(R.id.iv_feedPost).setOnClickListener(this);
+        //findViewById(R.id.iv_feedPost).setOnClickListener(this);
         findViewById(R.id.ly_location).setOnClickListener(this);
         findViewById(R.id.iv_back).setOnClickListener(this);
         findViewById(R.id.ll_tagPepole).setOnClickListener(this);
         findViewById(R.id.ll_tagService).setOnClickListener(this);
+        findViewById(R.id.tv_post).setOnClickListener(this);
 
         //hashtagAdapter = new HashtagAdapter(this);
         edCaption.setThreshold(1);
@@ -438,7 +439,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 MyToast.getInstance(this).showSmallMessage(getString(R.string.under_development));
                 break;
 
-            case R.id.iv_feedPost:
+            /*case R.id.iv_feedPost:
+                feedPostPrerareData();
+                break;*/
+
+            case R.id.tv_post:
                 feedPostPrerareData();
                 break;
 
@@ -468,11 +473,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     /*prepare data before post to server*/
     private void feedPostPrerareData() {
 
-        findViewById(R.id.iv_feedPost).setEnabled(false);
+        findViewById(R.id.tv_post).setEnabled(false);
         KeyboardUtil.hideKeyboard(this.getCurrentFocus(), this);
 
         if (address == null || TextUtils.isEmpty(address.latitude)) {
-            findViewById(R.id.iv_feedPost).setEnabled(true);
+            findViewById(R.id.tv_post).setEnabled(true);
             checkLocationPermisssion();
             return;
         }
@@ -487,7 +492,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 } else {
                     Animation shake = AnimationUtils.loadAnimation(FeedPostActivity.this, R.anim.shake);
                     edCaption.startAnimation(shake);
-                    findViewById(R.id.iv_feedPost).setEnabled(true);
+                    findViewById(R.id.tv_post).setEnabled(true);
                 }
 
             } else if (feedType == Constant.VIDEO_STATE) {
@@ -507,7 +512,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             }
 
         } else {
-            findViewById(R.id.iv_feedPost).setEnabled(true);
+            findViewById(R.id.tv_post).setEnabled(true);
             MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
                     getString(R.string.error_msg_network));
         }
@@ -644,14 +649,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
-                findViewById(R.id.iv_feedPost).setEnabled(true);
+                findViewById(R.id.tv_post).setEnabled(true);
                 hideProgressBar();
                 parseResponce(response);
             }
 
             @Override
             public void ErrorListener(VolleyError error) {
-                findViewById(R.id.iv_feedPost).setEnabled(true);
+                findViewById(R.id.tv_post).setEnabled(true);
                 hideProgressBar();
             }
         })
@@ -706,14 +711,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 new UploadImage.Listner() {
                     @Override
                     public void onResponce(String responce) {
-                        findViewById(R.id.iv_feedPost).setEnabled(true);
+                        findViewById(R.id.tv_post).setEnabled(true);
                         hideProgressBar();
                         parseResponce(responce);
                     }
 
                     @Override
                     public void onError(String error) {
-                        findViewById(R.id.iv_feedPost).setEnabled(true);
+                        findViewById(R.id.tv_post).setEnabled(true);
                         hideProgressBar();
                         MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
                     }
@@ -890,7 +895,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onResponse(String response, String apiName) {
                 Log.d(apiName, response);
-                findViewById(R.id.iv_feedPost).setEnabled(true);
+                findViewById(R.id.tv_post).setEnabled(true);
                 hideProgressBar();
                 try {
                     JSONObject js = new JSONObject(response);
@@ -911,7 +916,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void ErrorListener(VolleyError error) {
                 Log.d("fdashgf", "dfaew");
-                findViewById(R.id.iv_feedPost).setEnabled(true);
+                findViewById(R.id.tv_post).setEnabled(true);
                 hideProgressBar();
             }})
                 .setAuthToken(Mualab.currentUser.authToken)

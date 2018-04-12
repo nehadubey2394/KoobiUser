@@ -74,6 +74,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return feedItems.size();
     }
 
+
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loaderViewHolder = (LoadingViewHolder) holder;
@@ -87,6 +88,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         final ExSearchTag searchTag = feedItems.get(position);
         final Holder h = ((Holder) holder);
+        h.tvDesc.setVisibility(View.VISIBLE);
         h.tvHeader.setText(searchTag.title);
         h.tvDesc.setText(searchTag.desc);
 
@@ -103,6 +105,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 break;
 
             case 4:
+                h.tvDesc.setVisibility(View.GONE);
                 Picasso.with(mContext).load(R.drawable.ic_location_tag).fit().into(h.ivProfile);
                 break;
         }

@@ -152,7 +152,7 @@ public class CalendarHelper {
 
 
     public static String getStringYMDformatter(String inputDate){
-        DateFormat inputFormat  = new SimpleDateFormat("dd MMM yyyy");
+        DateFormat inputFormat  = new SimpleDateFormat("dd-MM-yyyy");
         DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date date = inputFormat.parse(inputDate);
@@ -162,5 +162,11 @@ public class CalendarHelper {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String getStringDate(Date date) {
+        // the string representation of date (month/day/year)
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return df.format(date);
     }
 }

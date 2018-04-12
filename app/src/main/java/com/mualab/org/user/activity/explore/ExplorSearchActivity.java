@@ -10,12 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.fragment.ExploreTopFragment;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.SearchViewListner;
 import com.mualab.org.user.util.KeyboardUtil;
+import com.mualab.org.user.util.ScreenUtils;
 import com.mualab.org.user.util.StatusBarUtil;
 
 import java.util.ArrayList;
@@ -64,12 +68,12 @@ public class ExplorSearchActivity extends AppCompatActivity  {
 
         views.add(new MyViews("Top", ExploreTopFragment.newInstance("top")));
         views.add(new MyViews("People",ExploreTopFragment.newInstance("people")));
-        views.add(new MyViews("Hash Tag",ExploreTopFragment.newInstance("hasTag")));
-        views.add(new MyViews("Service Tag",ExploreTopFragment.newInstance("servicetag")));
+        views.add(new MyViews("Hashtag",ExploreTopFragment.newInstance("hasTag")));
+        views.add(new MyViews("Service Tag",ExploreTopFragment.newInstance("serviceTag")));
         views.add(new MyViews("Location",ExploreTopFragment.newInstance("place")));
 
 
-        //KeyboardUtil.showKeyboard(searchview, getContext());
+        KeyboardUtil.hideKeyboard(searchview, this);
         //searchview.requestFocus();
 
         mPager.setOffscreenPageLimit(views.size());
@@ -124,6 +128,17 @@ public class ExplorSearchActivity extends AppCompatActivity  {
             public void onClick(View v) {
                 KeyboardUtil.hideKeyboard(searchview, ExplorSearchActivity.this);
                 onBackPressed();
+            }
+        });
+
+        final View activityRootView = findViewById(R.id.activityRoot);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff > ScreenUtils.convertDpToPixel(200, ExplorSearchActivity.this)) { // if more than 200 dp, it's probably a keyboard...
+                    // ... do something here
+                }
             }
         });
 
