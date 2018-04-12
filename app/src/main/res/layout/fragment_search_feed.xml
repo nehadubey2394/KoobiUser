@@ -5,6 +5,16 @@
     android:background="@color/white"
     tools:context="com.mualab.org.user.activity.explore.fragment.SearchFeedFragment">
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextView.Header1"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="16dp"
+        android:text="Public Posts"/>
 
     <views.refreshview.RjRefreshLayout
         android:id="@+id/mSwipeRefreshLayout"
@@ -26,29 +36,5 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_gravity="center"/>
-   <!-- <LinearLayout
-        android:id="@+id/ll_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:progressTintMode="multiply"
-            android:progressTint="@color/colorPrimary"
-            tools:ignore="UnusedAttribute" />
-
-        <TextView
-            android:id="@+id/tv_msg"
-            style="@style/TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/loading"
-            android:textColor="@color/text_color" />
-    </LinearLayout>-->
 
 </FrameLayout>

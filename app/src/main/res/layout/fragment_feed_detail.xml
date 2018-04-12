@@ -1,4 +1,4 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +7,7 @@
     android:scrollbars="none"
     tools:context="com.mualab.org.user.activity.explore.fragment.FeedDetailFragment">
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
@@ -63,7 +63,21 @@
             android:layout_height="0.5dp"
             android:background="@color/gray2" />
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
-</ScrollView>
+    <views.refreshview.RjRefreshLayout
+        android:id="@+id/mSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvFeed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+
+    </views.refreshview.RjRefreshLayout>
+
+</LinearLayout>

@@ -3,10 +3,12 @@ package com.mualab.org.user.activity.explore.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -37,6 +39,8 @@ import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.ScreenUtils;
 import com.mualab.org.user.util.WrapContentGridLayoutManager;
+import com.mualab.org.user.util.decorator.GridDividerItemDecoration;
+import com.mualab.org.user.util.decorator.ItemDecorationGridColumns;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,8 +71,8 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
     private int fragCount;
     private ExSearchTag exSearchTag;
-    private String feedType = "hasTag";
     private boolean isPulltoRefrash;
+    private String searchType = "hasTag";
 
 
     public SearchFeedFragment() {
@@ -76,12 +80,10 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     }
 
 
-    public static SearchFeedFragment newInstance(int fragCount, ExSearchTag searchKey, String exSearchType) {
+    public static SearchFeedFragment newInstance(ExSearchTag searchKey) {
         SearchFeedFragment fragment = new SearchFeedFragment();
         Bundle args = new Bundle();
-        args.putInt("fragCount", fragCount);
         args.putSerializable("searchKey", searchKey);
-        args.putSerializable("feedType", exSearchType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,9 +94,9 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
         feeds = new ArrayList<>();
         if (getArguments() != null) {
             fragCount = getArguments().getInt("fragCount");
-            feedType = getArguments().getString("feedType");
            // userId = getArguments().getString("userId");
             exSearchTag = (ExSearchTag) getArguments().getSerializable("searchKey");
+            searchType = getArguments().getString("feedType");
         }
     }
 
@@ -128,6 +130,9 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
         rvFeed.setItemAnimator(null);
         rvFeed.setLayoutManager(wgm);
         rvFeed.setHasFixedSize(true);
+
+       /* Drawable divider = ContextCompat.getDrawable(mContext, R.drawable.divider_transprant);
+        rvFeed.addItemDecoration(new GridDividerItemDecoration(divider, divider, mNoOfColumns));*/
 
         feedAdapter = new ExploreGridViewAdapter(mContext, feeds, this);
         endlesScrollListener = new EndlessRecyclerViewScrollListener(wgm) {
@@ -195,21 +200,18 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
 
         Map<String, String> params = new HashMap<>();
-        //params.put("userId", ""+ Mualab.currentUser.id);
-        if(feedType.equals("top") || feedType.equals("people")){
+        if(exSearchTag.type == ExSearchTag.SearchType.TOP || exSearchTag.type == ExSearchTag.SearchType.PEOPLE){
             params.put("userId", ""+exSearchTag.id);
             params.put("type", "user");
-        }else{
+        }else {
             params.put("userId", ""+Mualab.currentUser.id);
-            params.put("type", feedType);
+            params.put("type", searchType);
         }
-
         params.put("findData", ""+exSearchTag.id);
         params.put("feedType", "");
         params.put("search", "");
         params.put("page", String.valueOf(page));
         params.put("limit", "20");
-
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(mContext, "userFeed", new HttpResponceListner.Listener() {

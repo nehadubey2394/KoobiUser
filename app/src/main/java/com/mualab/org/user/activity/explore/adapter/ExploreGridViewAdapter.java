@@ -102,7 +102,7 @@ public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         private ImageView imageView, videoIcon;
 
-        public Holder(View itemView) {
+        private Holder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
             videoIcon = itemView.findViewById(R.id.videoIcon);

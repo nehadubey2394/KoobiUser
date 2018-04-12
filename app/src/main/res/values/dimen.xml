@@ -12,6 +12,9 @@
     <dimen name="item_width">300dp</dimen>
     <dimen name="padding_item_width">300dp</dimen>
 
+    <!--Item decoration height-->
+    <dimen name="grid_list_spacing">5dp</dimen>
+
     <!-- title bar -->
     <dimen name="title_bar_button_width">36dp</dimen>
     <dimen name="title_bar_button_height">36dp</dimen>

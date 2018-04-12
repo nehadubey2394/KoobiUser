@@ -1,45 +1,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context="com.mualab.org.user.activity.explore.fragment.ExploreSearchFragment">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal"
         android:background="@color/screen_bg_color"
-        android:paddingTop="10dp">
+        android:orientation="horizontal"
+        android:paddingTop="15dp">
 
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:padding="10dp"
             android:layout_gravity="center"
             android:background="?selectableItemBackgroundBorderless"
+            android:padding="12dp"
             android:src="@drawable/back_icon"
             android:tint="@color/colorPrimary" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gray_boder_white_bg"
             android:layout_marginEnd="16dp"
+            android:background="@drawable/gray_boder_white_bg"
             android:orientation="horizontal">
 
             <android.support.v7.widget.SearchView
                 android:id="@+id/searchview"
-                android:theme="@style/ExploreSearchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:iconifiedByDefault="false"
                 android:lineSpacingExtra="0dp"
                 android:lineSpacingMultiplier="0"
+                android:theme="@style/ExploreSearchView"
+                app:iconifiedByDefault="false"
                 app:queryHint="Search">
 
             </android.support.v7.widget.SearchView>
@@ -52,9 +52,9 @@
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tablayout"
+        style="@style/MyCustomTabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/MyCustomTabLayout"
         app:tabBackground="@color/screen_bg_color"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/colorPrimary"

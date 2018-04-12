@@ -54,6 +54,8 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
     private List<ExSearchTag> list;
     private String exSearchType = "top";
     private String searchKeyWord = "";
+    private boolean isViewCreated;
+    private boolean isFirstTimeVisiable;
 
     private int fragCount;
 
@@ -113,7 +115,10 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
 
         showLoading();
         searchKeyWord = "";
-        callSearchAPI("", 0);
+        isViewCreated = true;
+        if(getUserVisibleHint()){
+            callSearchAPI("", 0);
+        }
     }
 
     private void showLoading(){
@@ -132,12 +137,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
     public void onItemClick(ExSearchTag searchTag, int index) {
         Intent intent = new Intent(mContext, SearchFeedActivity.class);
         intent.putExtra("searchKey",searchTag);
-        intent.putExtra("fragCount",0);
-        intent.putExtra("feedType",exSearchType);
         startActivity(intent);
-        /*if (mFragmentNavigation != null) {
-            mFragmentNavigation.pushFragment(SearchFeedFragment.newInstance(fragCount + 1, searchTag));
-        }*/
     }
 
     @Override
@@ -145,7 +145,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
         super.setUserVisibleHint(isVisibleToUser);
 
         if(isVisibleToUser){
-            ExploreSearchFragment.searchViewListner = new SearchViewListner() {
+            ExplorSearchActivity.searchViewListner = new SearchViewListner() {
                 @Override
                 public void onTextChange(String text) {
                     list.clear();
@@ -156,11 +156,17 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
                 }
             };
 
+
+
             if(!ExplorSearchActivity.searchKeyword.equals(searchKeyWord) && list!=null){
                 list.clear();
                 adapter.notifyDataSetChanged();
                 endlesScrollListener.resetState();
                 searchKeyWord = ExplorSearchActivity.searchKeyword;
+                showLoading();
+                callSearchAPI(searchKeyWord, 0);
+            }else if(isViewCreated && !isFirstTimeVisiable){
+                isFirstTimeVisiable = true;
                 showLoading();
                 callSearchAPI(searchKeyWord, 0);
             }

@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="1dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/primary_broder"
         android:padding=".5dp">
 
-        <views.cv.SquareImageView
+        <views.cv.AspectRatioImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:ari_aspect="height"
+            app:ari_ratio="1" />
 
         <views.cv.SquareImageView
             android:id="@+id/videoIcon"
@@ -25,7 +28,5 @@
 
 
     </RelativeLayout>
-
-
 
 </android.support.v7.widget.CardView>
