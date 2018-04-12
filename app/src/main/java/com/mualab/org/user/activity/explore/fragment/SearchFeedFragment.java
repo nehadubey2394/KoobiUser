@@ -65,9 +65,8 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     private List<Feeds> feeds;
     private ExploreGridViewAdapter feedAdapter;
 
-    private int fragCount;
+   // private int fragCount;
     private ExSearchTag exSearchTag;
-    private String feedType = "hasTag";
     private boolean isPulltoRefrash;
 
 
@@ -76,12 +75,10 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     }
 
 
-    public static SearchFeedFragment newInstance(int fragCount, ExSearchTag searchKey, String exSearchType) {
+    public static SearchFeedFragment newInstance(ExSearchTag searchKey) {
         SearchFeedFragment fragment = new SearchFeedFragment();
         Bundle args = new Bundle();
-        args.putInt("fragCount", fragCount);
         args.putSerializable("searchKey", searchKey);
-        args.putSerializable("feedType", exSearchType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -91,9 +88,7 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
         super.onCreate(savedInstanceState);
         feeds = new ArrayList<>();
         if (getArguments() != null) {
-            fragCount = getArguments().getInt("fragCount");
-            feedType = getArguments().getString("feedType");
-           // userId = getArguments().getString("userId");
+            //fragCount = getArguments().getInt("fragCount");
             exSearchTag = (ExSearchTag) getArguments().getSerializable("searchKey");
         }
     }
@@ -128,6 +123,9 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
         rvFeed.setItemAnimator(null);
         rvFeed.setLayoutManager(wgm);
         rvFeed.setHasFixedSize(true);
+
+       /* Drawable divider = ContextCompat.getDrawable(mContext, R.drawable.divider_transprant);
+        rvFeed.addItemDecoration(new GridDividerItemDecoration(divider, divider, mNoOfColumns));*/
 
         feedAdapter = new ExploreGridViewAdapter(mContext, feeds, this);
         endlesScrollListener = new EndlessRecyclerViewScrollListener(wgm) {
@@ -195,21 +193,18 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
 
         Map<String, String> params = new HashMap<>();
-        //params.put("userId", ""+ Mualab.currentUser.id);
-        if(feedType.equals("top") || feedType.equals("people")){
+        if(exSearchTag.type == ExSearchTag.SearchType.TOP || exSearchTag.type == ExSearchTag.SearchType.PEOPLE){
             params.put("userId", ""+exSearchTag.id);
-            params.put("type", "user");
-        }else{
+            params.put("findData", ""+exSearchTag.id);
+        }else {
             params.put("userId", ""+Mualab.currentUser.id);
-            params.put("type", feedType);
+            params.put("findData", ""+exSearchTag.title.replace("#",""));
         }
-
-        params.put("findData", ""+exSearchTag.id);
+        params.put("type", exSearchTag.getType());
         params.put("feedType", "");
         params.put("search", "");
         params.put("page", String.valueOf(page));
         params.put("limit", "20");
-
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(mContext, "userFeed", new HttpResponceListner.Listener() {

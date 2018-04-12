@@ -3,9 +3,11 @@ package com.mualab.org.user.activity.explore;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -40,6 +42,8 @@ import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.ScreenUtils;
 import com.mualab.org.user.util.WrapContentGridLayoutManager;
+import com.mualab.org.user.util.decorator.GridDividerItemDecoration;
+import com.mualab.org.user.util.decorator.ItemDecorationGridColumns;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -174,6 +178,12 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
         rvFeed.setItemAnimator(null);
         rvFeed.setLayoutManager(wgm);
         rvFeed.setHasFixedSize(true);
+
+        Drawable divider = ContextCompat.getDrawable(mContext, R.drawable.divider_transprant);
+        //rvFeed.addItemDecoration(new GridDividerItemDecoration(divider, divider, 2));
+       /* rvFeed.addItemDecoration(new ItemDecorationGridColumns(
+                getResources().getDimensionPixelSize(R.dimen.grid_list_spacing),
+                mNoOfColumns));*/
 
         feedAdapter = new ExploreGridViewAdapter(mContext, feeds, this);
         endlesScrollListener = new EndlessRecyclerViewScrollListener(wgm) {

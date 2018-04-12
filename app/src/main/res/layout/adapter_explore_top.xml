@@ -60,7 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/light_gray_shadow"
-        android:layout_marginLeft="55dp"
+        android:layout_marginLeft="52dp"
         android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

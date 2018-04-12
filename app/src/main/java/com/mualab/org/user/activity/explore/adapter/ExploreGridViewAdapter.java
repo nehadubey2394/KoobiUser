@@ -5,10 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.searchBoard.adapter.LoadingViewHolder;
+import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.squareup.picasso.Picasso;
 
@@ -101,7 +102,7 @@ public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         private ImageView imageView, videoIcon;
 
-        public Holder(View itemView) {
+        private Holder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
             videoIcon = itemView.findViewById(R.id.videoIcon);

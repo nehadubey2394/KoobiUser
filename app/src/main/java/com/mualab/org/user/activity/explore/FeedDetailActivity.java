@@ -156,21 +156,7 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
 
     @Override
     public void getUpdatedFeed(int feedId) {
-        Map<String, String> map = new HashMap<>();
-        map.put("feedId", ""+feedId);
-        map.put("userId", ""+Mualab.currentUser.id);
-        Mualab.getInstance().getRequestQueue().cancelAll("feed"+feedId);
-        new HttpTask(new HttpTask.Builder(this, "feedDetails", new HttpResponceListner.Listener() {
-            @Override
-            public void onResponse(String response, String apiName) {
-                Log.d("LIKE:",response);
-            }
 
-            @Override
-            public void ErrorListener(VolleyError error) {
-
-            }
-        }).setParam(map)).execute("feed"+feedId);
     }
 
     @Override

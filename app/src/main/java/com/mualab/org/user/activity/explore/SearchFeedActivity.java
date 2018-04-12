@@ -23,7 +23,6 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
     private FragNavController mNavController;
     private FragmentHistory fragmentHistory;
     private int fragCount;
-    private String feedType;
     private ExSearchTag exSearchTag;
 
     @Override
@@ -34,8 +33,6 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
 
         Intent intent = getIntent();
         if (intent != null) {
-            fragCount = intent.getExtras().getInt("fragCount", 0);
-            feedType = intent.getExtras().getString("feedType");
             exSearchTag = (ExSearchTag) intent.getExtras().getSerializable("searchKey");
         }
 
@@ -53,7 +50,7 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
                 .rootFragmentListener(this, 1)
                 .build();
 
-        switchTab(0);
+       // switchTab(0);
     }
 
     @Override
@@ -61,8 +58,9 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
         super.onStart();
 
         TextView tvTitle = findViewById(R.id.tvTitle);
-        if(exSearchTag!=null)
-            tvTitle.setText(exSearchTag.title);
+        if(exSearchTag.title!=null)
+            tvTitle.setText(exSearchTag.type==ExSearchTag.SearchType.HASH_TAG?
+                    "#"+exSearchTag.title.replace("#",""):exSearchTag.title);
     }
 
     private void switchTab(int position) {
@@ -142,9 +140,7 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
         //do fragmentty stuff. Maybe change title, I'm not going to tell you how to live your life
         // If we have a backstack, show the back button
         if (getSupportActionBar() != null && mNavController != null) {
-
             updateToolbar();
-
         }
     }
 
@@ -152,7 +148,7 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
     public Fragment getRootFragment(int index) {
         switch (index) {
             case FragNavController.TAB1:
-                return SearchFeedFragment.newInstance(fragCount, exSearchTag, feedType);
+                return SearchFeedFragment.newInstance(exSearchTag);
         }
         throw new IllegalStateException("Need to send an index that we know");
     }

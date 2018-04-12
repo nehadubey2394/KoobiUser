@@ -25,7 +25,8 @@ import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.searchBoard.adapter.LoadingViewHolder;
+import com.mualab.org.user.activity.explore.SearchFeedActivity;
+import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.UnfollowDialog;
 import com.mualab.org.user.listner.OnDoubleTapListener;
@@ -119,7 +120,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-
         Feeds feed = feedItems.get(position);
        /* if(position==feedItems.size()-1) {
             if (loading) {
@@ -127,7 +127,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         }
 */
-
         switch (feed.feedType) {
             case "text":
                 return TEXT_TYPE;
@@ -138,29 +137,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             default:
                 return VIEW_TYPE_LOADING;
         }
-
-      /*  if(feed== null){
-            return  VIEW_TYPE_LOADING;
-        }else {
-            switch (feed.feedType) {
-                case "text":
-                    return TEXT_TYPE;
-                case "image":
-                    return IMAGE_TYPE;
-                case "video":
-                    return VIDEO_TYPE;
-                default:
-                    return VIEW_TYPE_LOADING;
-            }
-        }*/
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-//        if (holder instanceof LoadingViewHolder) {
-//            LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
-//            loadingViewHolder.progressBar.setIndeterminate(true);
-//        }
         if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loaderViewHolder = (LoadingViewHolder) holder;
             if (showLoader) {
@@ -170,10 +150,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             return;
         }
-        //  else {
         final Feeds feeds = feedItems.get(position);
-        //String fullName = feeds.fullName.substring(0, 1).toUpperCase() + feeds.fullName.substring(1);
-
         switch (feeds.feedType) {
             case "text":
                 final FeedTextHolder textHolder = ((FeedTextHolder) holder);
@@ -292,37 +269,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }
                 }));
 
-
-          /*          imageHolder.viewPagerAdapter. = new ViewPagerAdapter(mContext, feeds.feed, new ViewPagerAdapter.Listner() {
-                        @Override
-                        public void onSingleTap() {
-                            int pos = imageHolder.viewPager.get().getCurrentItem();
-                            if (feeds.feedType.equalsIgnoreCase("image")) {
-                                Intent intent = new Intent(mContext, ImageViewActivity.class);
-                                intent.putExtra("imageArray", (Serializable) feeds.feed);
-                                intent.putExtra("startIndex", pos);
-                                mContext.startActivity(intent);
-                            } else if (feeds.feedType.equalsIgnoreCase("video")) {
-                                mContext.startActivity(new Intent(Intent.ACTION_VIEW)
-                                        .setDataAndType(Uri.parse(feeds.feed.get(pos)), "video/mp4")
-                                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
-                            }
-                        }
-
-                        @Override
-                        public void onDoubleTap() {
-                            if (feeds.likeStatus.equals("0")) {
-                                feeds.likeCount++;
-                                feeds.likeStatus = "1";
-                            } else {
-                                feeds.likeCount--;
-                                feeds.likeStatus = "0";
-                            }
-                            notifyItemChanged(position, ACTION_LIKE_IMAGE_CLICKED);
-                            apiForLikes(feeds, position);
-                        }
-                    });*/
-
                 imageHolder.weakRefViewPager.get().setAdapter(imageHolder.weakRefAdapter.get());
 
                 if (feeds.feed.size() > 1) {
@@ -421,6 +367,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
+        holder.tv_text.setOnHashtagClickListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence charSequence) {
+                goHashTag(charSequence);
+                return null;
+            }
+        });
+
         holder.ly_comments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -429,14 +383,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if(listener!=null){
                     listener.onCommentBtnClick(feed, pos);
                 }
-
-                /*int adapterPosition = holder.getAdapterPosition();
-                Feeds feed = feedItems.get(adapterPosition);
-                Intent intent = new Intent(mContext, CommentsActivity.class);
-                intent.putExtra("feed_id", feed.fId);
-                intent.putExtra("feed", feed);
-                intent.putExtra("feedPosition", adapterPosition);
-                mContext.startActivity(intent);*/
             }
         });
 
@@ -505,6 +451,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     url = "http://" + url;
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 mContext.startActivity(browserIntent);
+                return null;
+            }
+        });
+
+        videoHolder.tv_text.setOnHashtagClickListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence charSequence) {
+                goHashTag(charSequence);
                 return null;
             }
         });
@@ -592,6 +546,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         });
 
+        cellFeedViewHolder.tv_text.setOnHashtagClickListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence charSequence) {
+                goHashTag(charSequence);
+                return null;
+            }
+        });
+
         cellFeedViewHolder.ly_comments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -661,6 +623,17 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             }
         });
+    }
+
+    private void goHashTag(CharSequence charSequence) {
+        Intent intent = new Intent(mContext, SearchFeedActivity.class);
+        String tag = charSequence.toString().replace("#","");
+        ExSearchTag e = new ExSearchTag();
+        e.title = tag;
+        e.id = 0;
+        e.type = ExSearchTag.SearchType.HASH_TAG;
+        intent.putExtra("searchKey",e);
+        mContext.startActivity(intent);
     }
 
     private void addBottomDots(LinearLayout ll_dots, int totalSize, int currentPage) {

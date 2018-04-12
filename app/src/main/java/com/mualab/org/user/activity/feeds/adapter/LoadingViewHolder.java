@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.searchBoard.adapter;
+package com.mualab.org.user.activity.feeds.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
