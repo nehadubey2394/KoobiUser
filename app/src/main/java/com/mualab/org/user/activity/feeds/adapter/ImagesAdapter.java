@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.searchBoard.adapter.LoadingViewHolder;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.squareup.picasso.Picasso;

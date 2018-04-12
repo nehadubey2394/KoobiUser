@@ -25,8 +25,6 @@ import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.explore.SearchFeedActivity;
-import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.UnfollowDialog;
 import com.mualab.org.user.listner.OnDoubleTapListener;
@@ -120,6 +118,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
+
         Feeds feed = feedItems.get(position);
        /* if(position==feedItems.size()-1) {
             if (loading) {
@@ -127,6 +126,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         }
 */
+
         switch (feed.feedType) {
             case "text":
                 return TEXT_TYPE;
@@ -137,6 +137,21 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             default:
                 return VIEW_TYPE_LOADING;
         }
+
+      /*  if(feed== null){
+            return  VIEW_TYPE_LOADING;
+        }else {
+            switch (feed.feedType) {
+                case "text":
+                    return TEXT_TYPE;
+                case "image":
+                    return IMAGE_TYPE;
+                case "video":
+                    return VIDEO_TYPE;
+                default:
+                    return VIEW_TYPE_LOADING;
+            }
+        }*/
     }
 
     @Override
@@ -572,21 +587,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     url = "http://" + url;
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 mContext.startActivity(browserIntent);
-                return null;
-            }
-        });
-
-        cellFeedViewHolder.tv_text.setOnHashtagClickListener(new Function2<SocialView, CharSequence, Unit>() {
-            @Override
-            public Unit invoke(SocialView socialView, CharSequence charSequence) {
-                Intent intent = new Intent(mContext, SearchFeedActivity.class);
-                String tag = charSequence.toString().replace("#","");
-                ExSearchTag e = new ExSearchTag();
-                e.title = tag;
-                e.id = 0;
-                e.type = ExSearchTag.SearchType.HASH_TAG;
-                intent.putExtra("searchKey",e);
-                mContext.startActivity(intent);
                 return null;
             }
         });
