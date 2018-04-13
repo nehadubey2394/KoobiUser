@@ -3,15 +3,12 @@ package com.mualab.org.user.activity.explore;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,14 +24,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.BaseFragment;
-import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.explore.adapter.ExploreGridViewAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
-import com.mualab.org.user.listner.SearchViewListner;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.mualab.org.user.task.HttpResponceListner;
@@ -42,8 +37,6 @@ import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.ScreenUtils;
 import com.mualab.org.user.util.WrapContentGridLayoutManager;
-import com.mualab.org.user.util.decorator.GridDividerItemDecoration;
-import com.mualab.org.user.util.decorator.ItemDecorationGridColumns;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +59,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
     public static String TAG = ExploreFragment.class.getName();
 
     private Context mContext;
-    private BaseListner baseListner;
+   // private BaseListner baseListner;
 
     private TextView tvImages, tvVideos, tv_msg;
     private LinearLayout ll_progress;
@@ -105,16 +98,16 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if(context instanceof BaseListner){
+        /*if(context instanceof BaseListner){
             baseListner = (BaseListner) mContext;
-        }
+        }*/
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         Mualab.getInstance().cancelPendingRequests(TAG);
-        baseListner = null;
+        //baseListner = null;
         mContext = null;
         tvImages = null;
         tvVideos = null;
@@ -178,12 +171,6 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
         rvFeed.setItemAnimator(null);
         rvFeed.setLayoutManager(wgm);
         rvFeed.setHasFixedSize(true);
-
-        Drawable divider = ContextCompat.getDrawable(mContext, R.drawable.divider_transprant);
-        //rvFeed.addItemDecoration(new GridDividerItemDecoration(divider, divider, 2));
-       /* rvFeed.addItemDecoration(new ItemDecorationGridColumns(
-                getResources().getDimensionPixelSize(R.dimen.grid_list_spacing),
-                mNoOfColumns));*/
 
         feedAdapter = new ExploreGridViewAdapter(mContext, feeds, this);
         endlesScrollListener = new EndlessRecyclerViewScrollListener(wgm) {

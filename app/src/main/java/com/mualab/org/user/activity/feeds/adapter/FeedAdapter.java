@@ -152,8 +152,45 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return;
         }
         final Feeds feeds = feedItems.get(position);
+
+        if(holder instanceof Holder){
+            Holder h = (Holder) holder;
+            if (!TextUtils.isEmpty(feeds.profileImage)) {
+                Picasso.with(mContext).load(feeds.profileImage).fit().into(h.ivProfile);
+            }else  Picasso.with(mContext).load(R.drawable.defoult_user_img).into(h.ivProfile);
+
+            h.tvUserName.setText(feeds.userName);
+            h.tvPostTime.setText(feeds.crd);
+            h.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
+            h.tv_like_count.setText(String.valueOf(feeds.likeCount));
+            h.tv_comments_count.setText(String.valueOf(feeds.commentCount));
+            h.likeIcon.setChecked(feeds.isLike==1);
+            h.tv_text.setText(feeds.caption);
+
+            if(!TextUtils.isEmpty(feeds.caption)){
+                h.tv_text.setVisibility(View.VISIBLE);
+                h.tv_text.setText(feeds.caption);
+            }else h.tv_text.setVisibility(View.GONE);
+
+            if(feeds.userId==Mualab.currentUser.id){
+                h.btnFollow.setVisibility(View.GONE);
+            }else {
+                h.btnFollow.setVisibility(View.VISIBLE);
+                if (feeds.followingStatus == 1) {
+                    h.btnFollow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
+                    h.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                    h.btnFollow.setText(R.string.following);
+                } else {
+                    h.btnFollow.setBackgroundResource(R.drawable.button_effect_invert);
+                    h.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                    h.btnFollow.setText(R.string.follow);
+                }
+            }
+        }
+
+
         switch (feeds.feedType) {
-            case "text":
+          /*  case "text":
                 final FeedTextHolder textHolder = ((FeedTextHolder) holder);
 
                 if (!TextUtils.isEmpty(feeds.profileImage)) {
@@ -183,13 +220,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                // textHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
                 textHolder.tv_text.setText(feeds.caption);
                 //ResizableTextView.doResizeTextView(textHolder.tv_text, 50 , "View More", true);
-                break;
+                break;*/
 
             case "image":{
 
                 final CellFeedViewHolder imageHolder = ((CellFeedViewHolder) holder);
 
-                if (!TextUtils.isEmpty(feeds.profileImage)) {
+               /* if (!TextUtils.isEmpty(feeds.profileImage)) {
                     Picasso.with(imageHolder.ivProfile.getContext())
                             .load(feeds.profileImage)
                             .fit()
@@ -216,33 +253,21 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 imageHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 imageHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                imageHolder.likeIcon.setChecked(feeds.isLike==1);
+                imageHolder.likeIcon.setChecked(feeds.isLike==1);*/
                 //imageHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
+/*
 
                 if(!TextUtils.isEmpty(feeds.caption)){
                     imageHolder.tv_text.setVisibility(View.VISIBLE);
                     imageHolder.tv_text.setText(feeds.caption);
                 }else imageHolder.tv_text.setVisibility(View.GONE);
+*/
 
                 imageHolder.weakRefAdapter = new WeakReference<>(new ViewPagerAdapter(mContext, feeds.feed, new ViewPagerAdapter.Listner() {
                     @Override
                     public void onSingleTap() {
                             int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
                             if (feeds.feedType.equalsIgnoreCase("image")) {
-                               /* Intent intent = new Intent(mContext, ImageViewActivity.class);
-                                intent.putExtra("imageArray", (Serializable) feeds.feed);
-                                intent.putExtra("startIndex", pos);
-                                mContext.startActivity(intent);*/
-
-                               /* List<String> list = new ArrayList<>();
-                                for(Feeds.Feed tmp: feeds.feedData){
-                                    list.add(tmp.feedPost);
-                                }
-                                Intent intent = new Intent(mContext, PreviewImageActivity.class);
-                                intent.putExtra("imageArray", (Serializable) list);
-                                intent.putExtra("startIndex", pos);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                mContext.startActivity(intent);*/
                                 listener.onFeedClick(feeds, pos, imageHolder.rl_imageView);
 
                             } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
@@ -302,7 +327,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case "video":
 
                 final FeedVideoHolder videoHolder = ((FeedVideoHolder) holder);
-                if (!TextUtils.isEmpty(feeds.profileImage)) {
+                /*if (!TextUtils.isEmpty(feeds.profileImage)) {
                     Picasso.with(videoHolder.ivProfile.getContext())
                             .load(feeds.profileImage)
                             .fit()
@@ -325,7 +350,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 videoHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
                 videoHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
                 videoHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                videoHolder.likeIcon.setChecked(feeds.isLike==1);
+                videoHolder.likeIcon.setChecked(feeds.isLike==1);*/
                 //videoHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
                 if(!TextUtils.isEmpty(feeds.videoThumbnail)){
@@ -337,11 +362,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         .load(R.drawable.gallery_placeholder)
                         .into(videoHolder.ivFeedCenter);
 
-                if(!TextUtils.isEmpty(feeds.caption)){
+               /* if(!TextUtils.isEmpty(feeds.caption)){
                     videoHolder.tv_text.setVisibility(View.VISIBLE);
                     videoHolder.tv_text.setText(feeds.caption);
                 }else videoHolder.tv_text.setVisibility(View.GONE);
-
+*/
                 break;
         }
         // }

@@ -54,7 +54,7 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
 
         if(feeds!=null){
             if(feeds.feedType.equals("image"))
-                title = "Photo";
+                title = "Image";
             else title = "Video";
             setHeaderTitle(title);
             addFragment(FeedDetailFragment.newInstance("",feeds), false);

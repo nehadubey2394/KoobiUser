@@ -117,7 +117,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         private TextView tvHeader;
         private TextView tvDesc;
 
-        public Holder(View itemView) {
+        private Holder(View itemView) {
             super(itemView);
             ivProfile = itemView.findViewById(R.id.ivProfile);
             tvHeader = itemView.findViewById(R.id.tvHeader);
@@ -128,8 +128,10 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         @Override
         public void onClick(View v) {
             int pos = getAdapterPosition();
-            ExSearchTag searchTag = feedItems.get(pos);
-            listener.onItemClick(searchTag, pos);
+            if(feedItems.size()>pos){
+                ExSearchTag searchTag = feedItems.get(pos);
+                listener.onItemClick(searchTag, pos);
+            }
         }
     }
 }
