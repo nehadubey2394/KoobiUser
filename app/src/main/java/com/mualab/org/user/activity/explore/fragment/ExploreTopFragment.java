@@ -156,10 +156,10 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
                 @Override
                 public void onTextChange(String text) {
                     list.clear();
-                    searchKeyWord = TextUtils.isEmpty(text)?"":text;
+                    searchKeyWord = TextUtils.isEmpty(text)?"":text.trim();
                     endlesScrollListener.resetState();
                     showLoading();
-                    callSearchAPI(text, 0);
+                    callSearchAPI(searchKeyWord, 0);
                 }
             };
 
