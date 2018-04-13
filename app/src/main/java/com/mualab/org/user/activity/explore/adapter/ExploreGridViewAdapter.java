@@ -90,10 +90,18 @@ public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         if(feeds.feedType.equals("image")){
             h.videoIcon.setVisibility(View.GONE);
-            Picasso.with(mContext).load(feeds.feedData.get(0).feedPost).resize(200,200).into(h.imageView);
+            Picasso.with(mContext).load(feeds.feedData.get(0).feedPost)
+                    .resize(200,200)
+                    .centerCrop()
+                    .placeholder(R.drawable.gallery_placeholder)
+                    .into(h.imageView);
         }else if(feeds.feedType.equals("video")){
             h.videoIcon.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(feeds.feedData.get(0).videoThumb).resize(200,200).into(h.imageView);
+            Picasso.with(mContext).load(feeds.feedData.get(0).videoThumb)
+                    .resize(200,200)
+                    .centerCrop()
+                    .placeholder(R.drawable.gallery_placeholder)
+                    .into(h.imageView);
         }
 
     }

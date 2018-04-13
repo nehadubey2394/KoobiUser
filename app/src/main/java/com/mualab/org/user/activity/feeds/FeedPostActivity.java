@@ -513,8 +513,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
         } else {
             findViewById(R.id.tv_post).setEnabled(true);
-            MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
-                    getString(R.string.error_msg_network));
+            showToast( getString(R.string.error_msg_network));
+          /*  MySnackBar.showSnackbar(FeedPostActivity.this, findViewById(R.id.activity_add_post),
+                    getString(R.string.error_msg_network));*/
         }
     }
 

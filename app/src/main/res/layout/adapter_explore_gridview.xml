@@ -17,6 +17,7 @@
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
             app:ari_aspect="height"
             app:ari_ratio="1" />
 

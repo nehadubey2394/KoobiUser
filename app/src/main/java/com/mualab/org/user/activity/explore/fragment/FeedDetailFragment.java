@@ -154,6 +154,8 @@ public class FeedDetailFragment extends Fragment {
         });
 
         rvFeed.setAdapter(adapter);
+
+        getUpdatedFeed();
     }
 
 

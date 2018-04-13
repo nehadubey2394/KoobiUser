@@ -8,18 +8,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -28,10 +33,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,15 +44,17 @@ import com.android.volley.VolleyError;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+import com.hendraanggrian.socialview.SocialView;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.BaseFragment;
 import com.mualab.org.user.activity.BaseListner;
 import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
+import com.mualab.org.user.activity.feeds.adapter.HashtagAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
+import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.activity.story.StoreActivityTest;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
@@ -58,6 +63,7 @@ import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.SelectableDialog;
 import com.mualab.org.user.enums.PermissionType;
+import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.model.MediaUri;
 import com.mualab.org.user.model.feeds.Feeds;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
@@ -65,10 +71,10 @@ import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.util.KeyboardUtil;
 import com.mualab.org.user.util.WrapContentLinearLayoutManager;
 import com.mualab.org.user.util.media.ImageVideoUtil;
 import com.mualab.org.user.util.media.PathUtil;
-import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -78,12 +84,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import views.refreshview.CircleHeaderView;
 import views.refreshview.OnRefreshListener;
 import views.refreshview.RjRefreshLayout;
@@ -92,18 +99,21 @@ import static android.app.Activity.RESULT_OK;
 /*
  * Dharmraj acharya
  * */
-public class FeedsFragment extends BaseFragment implements View.OnClickListener,
+public class FeedsFragment extends FeedBaseFragment implements View.OnClickListener,
         FeedAdapter.Listener, LiveUserAdapter.Listner {
 
     public static String TAG = FeedsFragment.class.getName();
 
     // ui components delecration
     private Context mContext;
+    private AppBarLayout appbar;
+    private CoordinatorLayout coordinatorLayout;
+    private CollapsingToolbarLayout collapsing_toolbar;
     private TextView  tvImages, tvVideos, tvFeeds,tv_msg;
     private LinearLayout ll_header;
     private RjRefreshLayout mRefreshLayout;
 
-    private EditText edCaption;
+    //private EditText edCaption;
     private ImageView iv_selectedImage;
     private LinearLayout ll_progress;
 
@@ -111,10 +121,11 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
     private LiveUserAdapter liveUserAdapter;
     private ArrayList<LiveUserInfo> liveUserList;
 
+    private RecyclerView rvMyStory;
     private FeedAdapter feedAdapter;
     private RecyclerView rvFeed;
     private List<Feeds> feeds;
-    private EndlessRecyclerViewScrollListener endlesScrollListener;
+    private RecyclerViewScrollListener endlesScrollListener;
 
     /*required variables*/
     private String caption;
@@ -127,6 +138,7 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
    // private int fragCount;
     private int CURRENT_FEED_STATE = 0;
     private boolean isPulltoRefrash = false;
+    private boolean isEditTextFocaused;
 
 
     public FeedsFragment() {
@@ -171,6 +183,8 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         liveUserList = null;
         feeds = null;
         rvFeed = null;
+        collapsing_toolbar = null;
+        rvMyStory = null;
     }
 
 
@@ -208,10 +222,14 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         tvImages = view.findViewById(R.id.tvImages);
         tvVideos =  view.findViewById(R.id.tvVideos);
         tvFeeds = view.findViewById(R.id.tvFeeds);
-        RecyclerView rvMyStory = view.findViewById(R.id.recyclerView);
+        rvMyStory = view.findViewById(R.id.recyclerView);
         rvFeed = view.findViewById(R.id.rvFeed);
         tv_msg = view.findViewById(R.id.tv_msg);
         ll_progress = view.findViewById(R.id.ll_progress);
+
+        collapsing_toolbar = view.findViewById(R.id.collapsing_toolbar);
+        coordinatorLayout = view.findViewById(R.id.parentView);
+        appbar = view.findViewById(R.id.appbar);
 
         view.findViewById(R.id.ly_images).setOnClickListener(this);
         view.findViewById(R.id.ly_videos).setOnClickListener(this);
@@ -231,12 +249,21 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         rvFeed.setHasFixedSize(true);
 
         feedAdapter = new FeedAdapter(mContext, feeds, this);
-        endlesScrollListener = new EndlessRecyclerViewScrollListener(lm) {
+        endlesScrollListener = new RecyclerViewScrollListener(lm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 if(feedAdapter!=null){
                     feedAdapter.showHideLoading(true);
                     apiForGetAllFeeds(page, 10, false);
+                }
+            }
+
+            @Override
+            public void onScroll(RecyclerView view, int dx, int dy) {
+                if(dy>0 && isEditTextFocaused){
+                    edCaption.clearFocus();
+                    //collapsing_toolbar.scrollTo(0, 0);
+                    KeyboardUtil.hideKeyboard(view, mContext);
                 }
             }
         };
@@ -280,6 +307,30 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             @Override
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
             }});
+
+        edCaption.setHashtagTextChangedListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence s) {
+                Log.d("editing", s.toString());
+                lastTxt = s.toString();
+                getDropDown(lastTxt, "");
+               /* if (lastTxt.length() > 1)
+                    getDropDown(lastTxt, "");*/
+                return null;
+            }
+        });
+
+        edCaption.setMentionTextChangedListener(new Function2<SocialView, CharSequence, Unit>() {
+            @Override
+            public Unit invoke(SocialView socialView, CharSequence s) {
+                Log.d("editing", s.toString());
+                lastTxt = s.toString();
+                getDropDown(lastTxt, "user");
+                /*if (lastTxt.length() > 1)
+                    getDropDown(lastTxt, "user");*/
+                return null;
+            }
+        });
     }
 
 
@@ -360,6 +411,47 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
             ll_header.findViewById(R.id.tv_post).setOnClickListener(this);
             edCaption = ll_header.findViewById(R.id.edCaption);
             edCaption.setText("");
+
+            edCaption.setThreshold(1);
+            edCaption.setHashtagEnabled(true);
+            edCaption.setMentionEnabled(true);
+            edCaption.setHashtagColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+            edCaption.setMentionColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+
+            mentionAdapter = new UserSuggessionAdapter(mContext);
+            mentionAdapter.clear();
+            edCaption.setMentionAdapter(mentionAdapter);
+
+            Resources.Theme theme = getResources().newTheme();
+            theme.applyStyle(R.style.Theme_AppCompat_Light, true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mentionAdapter.setDropDownViewTheme(theme);
+            }
+            tagAdapter = new HashtagAdapter(mContext);
+            edCaption.setHashtagAdapter(tagAdapter);
+
+            edCaption.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    isEditTextFocaused = hasFocus;
+                    if (hasFocus) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                int y = rvMyStory.getHeight();
+                                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appbar.getLayoutParams();
+                                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+                                if(behavior!=null) {
+                                    behavior.setTopAndBottomOffset(0);
+                                    behavior.onNestedPreScroll(coordinatorLayout, appbar,
+                                            edCaption, 0, y, new int[2], ViewCompat.TYPE_TOUCH);
+                                }
+                            }
+                        },150);
+
+                    }
+                }
+            });
 
         }else if(ll_header!=null && ll_header.getChildCount()>0){
             ll_header.removeAllViews();
@@ -911,48 +1003,4 @@ public class FeedsFragment extends BaseFragment implements View.OnClickListener,
         }
     }
 
-
-    /*Rj*/
-    private Dialog builder;
-    public void publicationQuickView(Feeds feeds, int index){
-        @SuppressLint("InflateParams")
-        View view = getLayoutInflater().inflate( R.layout.dialog_image_detail_view, null);
-
-        ImageView postImage = view.findViewById(R.id.ivFeedCenter);
-        ImageView profileImage =  view.findViewById(R.id.ivUserProfile);
-        TextView tvUsername =  view.findViewById(R.id.txtUsername);
-        tvUsername.setText(feeds.userName);
-
-        view.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideQuickView();
-            }
-        });
-
-        view.findViewById(R.id.tvUnfollow).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MyToast.getInstance(mContext).showSmallCustomToast(getString(R.string.under_development));
-            }
-        });
-
-        Picasso.with(mContext).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
-
-        if(TextUtils.isEmpty(feeds.profileImage))
-            Picasso.with(mContext).load(R.drawable.defoult_user_img).noPlaceholder().into(profileImage);
-        else Picasso.with(mContext).load(feeds.profileImage).noPlaceholder().into(profileImage);
-
-        builder = new Dialog(mContext);
-        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //noinspection ConstantConditions
-        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        builder.setContentView(view);
-        builder.setCancelable(true);
-        builder.show();
-    }
-
-    public void hideQuickView(){
-        if(builder != null) builder.dismiss();
-    }
 }

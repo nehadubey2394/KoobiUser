@@ -55,7 +55,7 @@
                     android:visibility="gone"
                     />-->
 
-                <EditText
+                <com.hendraanggrian.widget.SocialAutoCompleteTextView
                     android:id="@+id/edCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

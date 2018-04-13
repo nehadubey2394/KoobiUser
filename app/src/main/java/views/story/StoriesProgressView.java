@@ -125,7 +125,7 @@ public class StoriesProgressView extends LinearLayout {
      */
     public void reverse() {
        // if (isComplete) return;
-        isReverse = true;
+         isReverse = true;
         PausableProgressBar p = progressBars.get(current);
         p.setMin();
     }
