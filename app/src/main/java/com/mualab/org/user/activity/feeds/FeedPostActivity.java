@@ -39,6 +39,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.androidnetworking.interfaces.UploadProgressListener;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -57,10 +62,10 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
-import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.MediaUri;
 import com.mualab.org.user.model.booking.Address;
+import com.mualab.org.user.task.API;
 import com.mualab.org.user.task.GioAddressTask;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
@@ -924,6 +929,48 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 .setParam(map)
                 .setProgress(false))
                 .postFile("feed", tempFile, videoThumb);
+
+
+        /*AndroidNetworking.upload(API.BASE_URL+"addFeed")
+                .addMultipartFile("feed",tempFile)
+                .addMultipartFile("videoThumb", null)
+                .addMultipartParameter(map)
+                .setTag("uploadTest")
+                .setPriority(Priority.HIGH)
+                .build()
+                .setUploadProgressListener(new UploadProgressListener() {
+                    @Override
+                    public void onProgress(long bytesUploaded, long totalBytes) {
+                        // do anything with progress
+                        Log.d(TAG, "onProgress: "+bytesUploaded);
+                    }
+                })
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject js) {
+                        // do anything with response
+                        findViewById(R.id.tv_post).setEnabled(true);
+                        hideProgressBar();
+                        try {
+                            String status = js.getString("status");
+                            String message = js.getString("message");
+                            if (status.equalsIgnoreCase("success")) {
+                                resetView();
+                                setResult(Activity.RESULT_OK);
+                                finish();
+                            }else {
+                                MyToast.getInstance(FeedPostActivity.this).showSmallMessage(message);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onError(ANError error) {
+                        // handle error
+                    }
+                });*/
+
     }
 
     private void deleteOutputFile(@Nullable String uri) {

@@ -1,6 +1,6 @@
 package com.mualab.org.user.listner;
 
-import com.mualab.org.user.activity.BaseListner;
+import com.mualab.org.user.activity.base.BaseListner;
 import com.mualab.org.user.model.feeds.Feeds;
 
 /**

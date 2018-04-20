@@ -29,7 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
 
-import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;

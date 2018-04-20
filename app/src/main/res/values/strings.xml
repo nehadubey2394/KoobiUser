@@ -355,5 +355,6 @@
     <string name="done">Done</string>
     <string name="rec">REC</string>
     <string name="explore">Explore</string>
+    <string name="add_more_story">Add More Story</string>
 
 </resources>

@@ -31,8 +31,7 @@ public class PlaybackVideoFragment extends Fragment
   private BaseCaptureInterface mInterface;
 
   private Handler mCountdownHandler;
-  private final Runnable mCountdownRunnable =
-      new Runnable() {
+  private final Runnable mCountdownRunnable = new Runnable() {
         @Override
         public void run() {
           if (mPlayer != null) {

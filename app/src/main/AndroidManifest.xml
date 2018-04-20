@@ -121,9 +121,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activity.ImageViewDialogActivity"
-            android:theme="@style/Theme.Transparent" />
-        <activity
             android:name=".activity.explore.ExplorSearchActivity"
             android:screenOrientation="portrait" />
 

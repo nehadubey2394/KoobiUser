@@ -23,7 +23,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.explore.adapter.ExploreGridViewAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.application.Mualab;

@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -325,9 +326,21 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                         session.setUserChangedLocLat("");
                         session.setUserChangedLocLng("");
                         session.setUserChangedLocName("");
-                        MyToast.getInstance(mContext).showDasuAlert(message);
-                        BookingFragment4.arrayListbookingInfo.clear();
-                        ((BookingActivity)mContext).finish();
+
+                        new SweetAlertDialog(mContext, SweetAlertDialog.SUCCESS_TYPE)
+                                .setTitleText("Congratulation!")
+                                .setContentText("Your booking request has been successfully sent to artist.")
+                                .setConfirmText("OK")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        sweetAlertDialog.dismiss();
+                                        BookingFragment4.arrayListbookingInfo.clear();
+                                        ((BookingActivity)mContext).finish();
+                                    }
+                                })
+                                .show();
+
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert(message);
                     }

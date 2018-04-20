@@ -1,9 +1,18 @@
 package com.mualab.org.user.activity.story;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,6 +20,7 @@ import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.android.volley.VolleyError;
@@ -18,6 +28,7 @@ import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.CameraActivity;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.mualab.org.user.model.feeds.Story;
@@ -30,46 +41,52 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import views.story.StoriesProgressView;
+
+import views.statusstories.StoryStatusView;
 import views.swipback.SwipeBackActivity;
 import views.swipback.SwipeBackLayout;
 
 
-public class StoreActivityTest extends SwipeBackActivity implements StoriesProgressView.StoriesListener{
-
+public class StoreActivityTest extends SwipeBackActivity implements StoryStatusView.UserInteractionListener{
 
     private int currentIndex;
-    private int totalIndex;
     private boolean isImmersive = true;
 
     private List<LiveUserInfo> liveUserList;
-
     private LiveUserInfo userInfo;
     // private StoryStatusView storyStatusView;
-    private StoriesProgressView storyStatusView;
+    private StoryStatusView storyStatusView;
 
     private ImageView ivPhoto, ivUserImg;
     private ProgressBar progress_bar;
     private RelativeLayout addMoreStory;
 
-
     private TextView tvUserName;
     private VideoView videoView;
+    private RelativeLayout lyVideoView;
     private MediaController vidControl;
+    private File fileStorage;
+    private File outputFile;
 
     private List<Story> storyList = new ArrayList<>();
     private long statusDuration = 3000L;
     private long DURATION = 500L;
     private int counter = 0;
     private boolean isRunningStory;
+    private boolean isFirstTime = true;
 
-    long pressTime = 0L;
-    long limit = 500L;
+    private long pressTime = 0L;
+    private long limit = 500L;
 
     private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
         @Override
@@ -102,20 +119,18 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
             currentIndex = args.getInt("position");
         } else finish();
 
-
-        totalIndex = liveUserList.size();
         ivPhoto = findViewById(R.id.ivPhoto);
         progress_bar = findViewById(R.id.imageProgressBar);
-        storyStatusView = findViewById(R.id.stories);
-        videoView = findViewById(R.id.videoView);
         ivUserImg = findViewById(R.id.iv_user_image);
         tvUserName =  findViewById(R.id.tv_user_name);
         addMoreStory =  findViewById(R.id.addMoreStory);
+        storyStatusView = findViewById(R.id.storiesStatus);
 
+        lyVideoView = findViewById(R.id.lyVideoView);
+        videoView = findViewById(R.id.videoView);
         vidControl = new MediaController(this);
         vidControl.setAnchorView(videoView);
         videoView.setMediaController(vidControl);
-        storyStatusView = findViewById(R.id.storiesStatus);
 
         addMoreStory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,39 +181,74 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
             }
         });
 
-        updateView();
-        getStories();
-    }
 
-
-    private void showToast(String txt){
-        MyToast.getInstance(this).showSmallMessage(txt);
     }
 
 
     @Override
+    public void onPrev() {
+        if (counter - 1 < 0 && currentIndex==0){
+            return;
+        }else if (counter - 1 < 0 && currentIndex>0){
+            currentIndex--;
+            storyStatusView.destroy();
+            updateUI();
+            getStories();
+
+        }else {
+            --counter;
+            storyStatusView.pause();
+            loadMediaFile();
+        }
+    }
+
+    @Override
     public void onNext() {
-        storyStatusView.pause();
         ++counter;
+        storyStatusView.pause();
         if(counter<storyList.size()){
+            loadMediaFile();
+        }
+    }
 
-            //storyStatusView.pause();
-            //get image url
-            String imageUrl = storyList.get(counter).myStory;
+    @Override
+    public void onComplete() {
+        currentIndex++;
+        isRunningStory = false;
+        if(currentIndex<liveUserList.size()){
+            storyStatusView.destroy();
+            updateUI();
+            getStories();
+        } else {
+            finish();
+        }
+    }
 
-            //ImageViewTarget is the implementation of Target interface.
-            //code for this ImageViewTarget is in the end
-            //target = new ImageViewTarget(ivPhoto, progress_bar);
-            progress_bar.setVisibility(View.VISIBLE);
+
+    private void loadMediaFile() {
+
+        final Story story = storyList.get(counter);
+        progress_bar.setVisibility(View.VISIBLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            progress_bar.setProgress(65, true);
+        }
+        //  if(!isFirstTime) storyStatusView.pause();
+
+        if(story.storyType.equals("image")){
+            videoView.setVisibility(View.GONE);
+            lyVideoView.setVisibility(View.GONE);
             Picasso.with(ivPhoto.getContext())
-                    .load(imageUrl)
+                    .load(story.myStory)
                     .error(R.drawable.bg_splash)
                     .into(ivPhoto, new Callback() {
                         @Override
                         public void onSuccess() {
-                            storyStatusView.resume();
                             ivPhoto.setVisibility(View.VISIBLE);
                             progress_bar.setVisibility(View.GONE);
+                            if(isFirstTime){
+                                isFirstTime = false;
+                                storyStatusView.startStories();
+                            } else storyStatusView.resume();
                         }
 
                         @Override
@@ -207,108 +257,93 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
                             progress_bar.setVisibility(View.GONE);
                         }
                     });
-        }
-    }
+        }else if(story.storyType.equals("video")){
+            Log.d("video", "inProgress");
+            Picasso.with(ivPhoto.getContext())
+                    .load(story.videoThumb)
+                    .error(R.drawable.bg_splash)
+                    .into(ivPhoto, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            ivPhoto.setVisibility(View.VISIBLE);
+                            progress_bar.setVisibility(View.GONE);
+                            if(isFirstTime){
+                                isFirstTime = false;
+                                storyStatusView.startStories();
+                            } else storyStatusView.resume();
+                        }
 
-    @Override
-    public void onPrev() {
-        if (counter - 1 < 0) return;
-        storyStatusView.pause();
-        --counter;
+                        @Override
+                        public void onError() {
+                            storyStatusView.pause();
+                            progress_bar.setVisibility(View.GONE);
+                        }
+                    });
 
-        //get image url
-        String imageUrl = storyList.get(counter).myStory;
-        //ImageViewTarget is the implementation of Target interface.
-        //code for this ImageViewTarget is in the end
-        //target = new ImageViewTarget(ivPhoto, progress_bar);
-        progress_bar.setVisibility(View.VISIBLE);
-        Picasso.with(ivPhoto.getContext())
-                .load(imageUrl)
-                .error(R.drawable.bg_splash)
-                .into(ivPhoto, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        storyStatusView.resume();
-                        ivPhoto.setVisibility(View.VISIBLE);
-                        progress_bar.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onError() {
-                        storyStatusView.pause();
-                        progress_bar.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    @Override
-    public void onComplete() {
-
-        ++currentIndex;
-        isRunningStory = false;
-        if(currentIndex>liveUserList.size())
-            finish();
-        else {
-            storyStatusView.destroy();
-            updateView();
-            getStories();
-
-        }
-    }
-
-
-    private void startStories(){
-        isRunningStory = true;
-        storyStatusView.setStoriesCount(storyList.size());
-        storyStatusView.setStoryDuration(statusDuration);
-        // or
-        // statusView.setStoriesCountWithDurations(statusResourcesDuration);
-        storyStatusView.setStoriesListener(this);
-        // storyStatusView.playStories();
-        //target = new ImageViewTarget(ivPhoto, progress_bar);
-
-        // storyStatusView.startStories();
-        //storyStatusView.pause();
-        progress_bar.setVisibility(View.VISIBLE);
-        String imageUrl = storyList.get(counter).myStory;
-        Picasso.with(ivPhoto.getContext())
-                .load(imageUrl)
-                .error(R.drawable.bg_splash)
-                .into(ivPhoto, new Callback() {
-                    @Override
-                    public void onSuccess() {
+           /* videoView.setVisibility(View.VISIBLE);
+            lyVideoView.setVisibility(View.VISIBLE);
+            ivPhoto.setVisibility(View.GONE);
+            videoView.setVideoURI(checkVideoCache(story.myStory));
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(final MediaPlayer mediaPlayer) {
+                    progress_bar.setVisibility(View.GONE);
+                    storyStatusView.setStoryDuration(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    if(isFirstTime){
+                        isFirstTime = false;
                         storyStatusView.startStories();
-                        //storyStatusView.resume();
-                        ivPhoto.setVisibility(View.VISIBLE);
-                        progress_bar.setVisibility(View.GONE);
-                    }
+                    } else storyStatusView.resume();
+                }
+            });
 
-                    @Override
-                    public void onError() {
-                        storyStatusView.pause();
-                        progress_bar.setVisibility(View.GONE);
-                    }
-                });
+            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+
+                }
+            });*/
+        }
     }
 
+    private void showToast(String txt){
+        MyToast.getInstance(this).showSmallMessage(txt);
+    }
 
-
-    private void updateView(){
+    private void updateUI(){
         counter = 0;
         userInfo = liveUserList.get(currentIndex);
-        addMoreStory.setVisibility(userInfo.id == Mualab.getInstance().getSessionManager().getUser().id?View.VISIBLE:View.GONE);
-        tvUserName.setText(String.format("%s %s", userInfo.firstName, userInfo.lastName));
+        addMoreStory.setVisibility(userInfo.id == Mualab.currentUser.id?View.VISIBLE:View.GONE);
+        tvUserName.setText(String.format("%s", userInfo.userName));
         if(TextUtils.isEmpty(userInfo.profileImage)){
             Picasso.with(this).load(R.drawable.defoult_user_img).fit().into(ivUserImg);
         }else Picasso.with(this).load(userInfo.profileImage).fit().into(ivUserImg);
     }
 
 
-    @Override
-    public void onDestroy() {
-        storyStatusView.destroy();
-        super.onDestroy();
+    private void resetViews(){
+        //updateUI();
+        isRunningStory = false;
+        isFirstTime = true;
+        storyStatusView.setStoriesCount(storyList.size());
+        storyStatusView.setStoryDuration(statusDuration);
+        storyStatusView.setStoriesListener(this);
     }
+
+
+
+  /*  private void  updateView(){
+        counter = 0;
+        userInfo = liveUserList.get(currentIndex);
+        addMoreStory.setVisibility(userInfo.id == Mualab.currentUser.id?View.VISIBLE:View.GONE);
+        tvUserName.setText(String.format("%s %s", userInfo.firstName, userInfo.lastName));
+        if(TextUtils.isEmpty(userInfo.profileImage)){
+            Picasso.with(this).load(R.drawable.defoult_user_img).resize(200,200).into(ivUserImg);
+        }else Picasso.with(this).load(userInfo.profileImage).fit().into(ivUserImg);
+    }*/
+
+
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -324,11 +359,11 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
         }
     }
 
+
+
     private void getStories() {
         Map<String, String> map = new HashMap<>();
-        // map.put("userId", Mualab.getInstance().getSessionManager().getUser().id);
         map.put("userId", ""+userInfo.id);
-
         new HttpTask(new HttpTask.Builder(this, "myStory", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -349,7 +384,8 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
                         }
 
                         if(!isRunningStory){
-                            startStories();
+                            resetViews();
+                            loadMediaFile();
                         }
 
                     }
@@ -365,6 +401,188 @@ public class StoreActivityTest extends SwipeBackActivity implements StoriesProgr
                 .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
                 .setBody(map , HttpTask.ContentType.APPLICATION_JSON))
                 .execute("StoryAPI");
+    }
+
+
+
+    // Lifecycle events
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //mExoPlayerHelper.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateUI();
+        getPermissionAndPicImage();
+        //getStories();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        storyStatusView.destroy();
+    }
+
+
+    private Uri checkVideoCache(String url){
+        String downloadFileName = url.substring(url.lastIndexOf('/'), url.length());//Create file name by picking download file name from URL
+
+        //Get File if SD card is present
+        if (isExternalStoragePresent()) {
+            fileStorage = new File(Environment.getExternalStorageDirectory() + "/" + "Mualab");
+        } else
+            Toast.makeText(StoreActivityTest.this, "Oops!! There is no External storage in device.", Toast.LENGTH_SHORT).show();
+
+        //If File is not present create directory
+        if (!fileStorage.exists()) {
+            fileStorage.mkdir();
+        }
+
+        outputFile = new File(fileStorage, downloadFileName);//Create Output file in Main File
+
+        //Create New File if not present
+        if (!outputFile.exists()) {
+            try {
+                new DownloadingTask().execute(url);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else {
+            return Uri.fromFile(outputFile);
+        }
+
+        return Uri.parse(url);
+    }
+
+
+    public boolean isExternalStoragePresent() {
+        if (Environment.getExternalStorageState().equals(
+
+                Environment.MEDIA_MOUNTED)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public void getPermissionAndPicImage() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE}, Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            } else {
+                if (liveUserList.size()!=0){
+                    getStories();
+                }
+            }
+        } else {
+            if (liveUserList.size()!=0){
+                getStories();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+
+            case Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (liveUserList.size()!=0){
+                        getStories();
+                    }
+                } else {
+                    Toast.makeText(StoreActivityTest.this, "YOU DENIED PERMISSION CANNOT SELECT IMAGE", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            break;
+
+        }
+    }
+
+    // String filePath = "mualab"+randomNo+"mp4";
+
+    private class DownloadingTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // progress_bar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            try {
+                if (outputFile != null) {
+                    //    progress_bar.setVisibility(View.GONE);
+                    Toast.makeText(StoreActivityTest.this, "Downloaded Successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    //   progress_bar.setVisibility(View.GONE);
+                    Toast.makeText(StoreActivityTest.this, "Failed Download", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected Void doInBackground(String... arg0) {
+            try {
+                URL url = new URL(arg0[0]);//Create Download URl
+                HttpURLConnection c = (HttpURLConnection) url.openConnection();//Open Url Connection
+                c.setRequestMethod("GET");//Set Request Method to "GET" since we are grtting data
+                c.connect();//connect the URL Connection
+                //If Connection response is not OK then show Logs
+                if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                    Log.e("MyStoreViewActivity", "Server returned HTTP " + c.getResponseCode() + " " + c.getResponseMessage());
+
+                }
+                outputFile.createNewFile();
+                FileOutputStream fos = new FileOutputStream(outputFile);//Get OutputStream for NewFile Location
+                InputStream is = c.getInputStream();//Get InputStream for connection
+
+                byte[] buffer = new byte[1024];//Set buffer type
+                int len1 = 0;//init length
+                while ((len1 = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len1);//Write new file
+                }
+                //Close all connection after doing task
+                fos.close();
+                is.close();
+
+            } catch (Exception e) {
+                //Read exception if something went wrong
+                e.printStackTrace();
+                outputFile = null;
+            }
+            return null;
+        }
     }
 }
 

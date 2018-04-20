@@ -10,48 +10,50 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-
 import com.mualab.org.user.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StoriesProgressView extends LinearLayout {
+public class RjStoryView extends LinearLayout {
 
-    private final LayoutParams PROGRESS_BAR_LAYOUT_PARAM = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
-    private final LayoutParams SPACE_LAYOUT_PARAM = new LayoutParams(5, LayoutParams.WRAP_CONTENT);
+    private final LinearLayout.LayoutParams PROGRESS_BAR_LAYOUT_PARAM = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+    private final LinearLayout.LayoutParams SPACE_LAYOUT_PARAM = new LinearLayout.LayoutParams(5, LinearLayout.LayoutParams.WRAP_CONTENT);
     private final List<PausableProgressBar> progressBars = new ArrayList<>();
     private int storiesCount = -1;
+
     /**
      * pointer of running animation
      */
     private int current = 0;
     private StoriesListener storiesListener;
     boolean isReverse;
+    boolean mPaused;
+
     //boolean isComplete;
 
     public interface StoriesListener {
-        public void onNext();
-        public void onPrev();
-        public void onComplete();
+         void onNext();
+         void onPrev();
+         void onComplete();
     }
 
-    public StoriesProgressView(Context context) {
+    public RjStoryView(Context context) {
         this(context, null);
     }
 
-    public StoriesProgressView(Context context, @Nullable AttributeSet attrs) {
+    public RjStoryView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public StoriesProgressView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public RjStoryView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public StoriesProgressView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public RjStoryView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
@@ -112,7 +114,7 @@ public class StoriesProgressView extends LinearLayout {
      * Skip current story
      */
     public void skip() {
-      //  if (isComplete) return;
+        //  if (isComplete) return;
         PausableProgressBar p = progressBars.get(current);
         p.setMax();
     }
@@ -121,8 +123,8 @@ public class StoriesProgressView extends LinearLayout {
      * Reverse current story
      */
     public void reverse() {
-       // if (isComplete) return;
-         isReverse = true;
+        // if (isComplete) return;
+        isReverse = true;
         PausableProgressBar p = progressBars.get(current);
         p.setMin();
     }
@@ -180,7 +182,7 @@ public class StoriesProgressView extends LinearLayout {
                     progressBars.get(next).startProgress();
                     if (storiesListener != null) storiesListener.onNext();
                 } else {
-                   // isComplete = true;
+                    // isComplete = true;
                     if (storiesListener != null) storiesListener.onComplete();
                 }
             }
@@ -193,6 +195,7 @@ public class StoriesProgressView extends LinearLayout {
      */
     public void startStories() {
         try{
+            mPaused = false;
             progressBars.get(0).startProgress();
         }catch (Exception ex){
             ex.printStackTrace();
@@ -213,6 +216,7 @@ public class StoriesProgressView extends LinearLayout {
      */
     public void pause() {
         try{
+            mPaused = true;
             progressBars.get(current).pauseProgress();
         }catch (Exception ex){
             ex.printStackTrace();
@@ -226,6 +230,7 @@ public class StoriesProgressView extends LinearLayout {
     public void resume() {
 
         try{
+            mPaused = false;
             progressBars.get(current).resumeProgress();
         }catch (Exception ex){
             ex.printStackTrace();

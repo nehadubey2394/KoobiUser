@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.authentication;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
@@ -53,6 +54,10 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isRemind = true;
     private boolean doubleBackToExitPressedOnce;
     private Runnable runnable;
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, LoginActivity.class);
+    }
 
     private void initView(){
         ed_username = findViewById(R.id.ed_username);

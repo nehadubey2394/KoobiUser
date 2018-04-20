@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.mualab.org.user.BuildConfig;
@@ -54,6 +56,11 @@ public class Mualab extends Application {
         FirebaseApp.initializeApp(this);
         session.setIsOutCallFilter(false);
        // ref = FirebaseDatabase.getInstance().getReference();
+
+        AndroidNetworking.initialize(getApplicationContext());
+        if (BuildConfig.DEBUG) {
+            AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BODY);
+        }
     }
 
     public Session getSessionManager() {

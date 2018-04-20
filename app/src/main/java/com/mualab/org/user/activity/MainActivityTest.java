@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.base.BaseActivity;
+import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
@@ -39,7 +41,7 @@ import java.util.Map;
 import views.fragnev.FragNavController;
 
 public class MainActivityTest extends BaseActivity implements View.OnClickListener,
-        BaseFragment.FragmentNavigation, FragNavController.TransactionListener, FragNavController.RootFragmentListener{
+        BaseFragment.Callback, FragNavController.TransactionListener, FragNavController.RootFragmentListener{
 
     private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
     private int clickedId = 0;
