@@ -15,7 +15,7 @@ import com.mualab.org.user.R;
 
 public class BaseGalleryFragment extends Fragment{
 
-    protected CoordinatorLayout.Behavior behavior;
+   // protected CoordinatorLayout.Behavior behavior;
     protected Context context;
     protected GalleryActivity activity;
     private OnFragmentInteractionListener mListener;
@@ -31,38 +31,38 @@ public class BaseGalleryFragment extends Fragment{
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         }
-
+/*
         if(behavior != null)
             return;
         FrameLayout layout = activity.findViewById(R.id.vRootView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
         behavior = params.getBehavior();
-        params.setBehavior(null);
+        params.setBehavior(null);*/
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(behavior != null)
+        /*if(behavior != null)
             return;
         FrameLayout layout = activity.findViewById(R.id.vRootView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
         behavior = params.getBehavior();
-        params.setBehavior(null);
+        params.setBehavior(null);*/
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        if(behavior == null)
+     /*   if(behavior == null)
             return;
 
         FrameLayout layout = activity.findViewById(R.id.vRootView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
         params.setBehavior(behavior);
         layout.setLayoutParams(params);
-        behavior = null;
+        behavior = null;*/
     }
 
     public void onButtonPressed(Uri uri) {

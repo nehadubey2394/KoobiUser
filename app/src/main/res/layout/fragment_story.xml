@@ -136,6 +136,7 @@
             android:layout_height="25dp"
             android:src="@drawable/ic_add_to_story"
             android:layout_centerHorizontal="true"
+            android:tint="@color/white"
             android:id="@+id/ic_add_to_story"
             tools:ignore="ContentDescription" />
 

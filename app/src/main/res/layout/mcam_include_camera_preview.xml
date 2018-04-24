@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mualab.org.user.activity.story.draj_camera.internal.AutoFitTextureView
+<com.mualab.org.user.activity.story.camera.internal.AutoFitTextureView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/texture"
     android:layout_width="match_parent"

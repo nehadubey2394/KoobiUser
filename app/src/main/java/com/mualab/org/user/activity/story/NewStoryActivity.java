@@ -10,7 +10,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.draj_camera.MaterialCamera;
+import com.mualab.org.user.activity.story.camera.MaterialCamera;
 import com.mualab.org.user.util.media.FilePaths;
 
 import java.io.File;

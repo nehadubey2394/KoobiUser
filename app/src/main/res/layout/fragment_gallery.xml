@@ -7,7 +7,7 @@
     tools:context=".activity.gellery.GalleryFragment"
     android:id="@+id/rootLayout">
 
-    <!--<android.support.design.widget.AppBarLayout
+    <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
                 android:id="@+id/ivClose"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:src="@drawable/ic_close_black"
                 android:background="?selectableItemBackground"
                 android:tint="@color/colorPrimary"/>
@@ -40,7 +40,7 @@
                 android:id="@+id/tvNext"
                 android:layout_width="48dp"
                 android:layout_height="match_parent"
-                style="@style/TextView"
+                style="@style/TextView.Bold"
                 android:gravity="center"
                 android:textSize="16sp"
                 android:background="?selectableItemBackground"
@@ -128,12 +128,13 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
-    </android.support.design.widget.AppBarLayout>-->
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

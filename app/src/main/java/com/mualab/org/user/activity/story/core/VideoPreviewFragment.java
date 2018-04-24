@@ -14,10 +14,9 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.draj_camera.internal.BaseCaptureInterface;
-import com.mualab.org.user.activity.story.draj_camera.internal.CameraIntentKey;
-import com.mualab.org.user.activity.story.draj_camera.internal.CameraUriInterface;
-import com.mualab.org.user.activity.story.draj_camera.util.CameraUtil;
+import com.mualab.org.user.activity.story.camera.internal.CameraIntentKey;
+import com.mualab.org.user.activity.story.camera.internal.CameraUriInterface;
+import com.mualab.org.user.activity.story.camera.util.CameraUtil;
 
 import views.easyvideoplayer.EasyVideoCallback;
 import views.easyvideoplayer.EasyVideoPlayer;

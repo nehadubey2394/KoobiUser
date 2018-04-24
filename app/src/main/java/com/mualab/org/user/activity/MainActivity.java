@@ -19,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
+import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
@@ -249,8 +250,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ibtnAddFeed :
-                //startActivity(new Intent(MainActivity.this, GalleryActivity.class));
-                showToast(getString(R.string.under_development));
+                startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                //showToast(getString(R.string.under_development));
                /* if (clickedId!=3) {
                     setInactiveTab();
                     clickedId = 3;

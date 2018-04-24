@@ -21,10 +21,10 @@ import android.view.View;
 import android.view.Window;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.draj_camera.TimeLimitReachedException;
-import com.mualab.org.user.activity.story.draj_camera.internal.CameraIntentKey;
-import com.mualab.org.user.activity.story.draj_camera.internal.CameraUriInterface;
-import com.mualab.org.user.activity.story.draj_camera.util.CameraUtil;
+import com.mualab.org.user.activity.story.camera.TimeLimitReachedException;
+import com.mualab.org.user.activity.story.camera.internal.CameraIntentKey;
+import com.mualab.org.user.activity.story.camera.internal.CameraUriInterface;
+import com.mualab.org.user.activity.story.camera.util.CameraUtil;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

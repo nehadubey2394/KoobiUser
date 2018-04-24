@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.draj_camera.internal.CameraIntentKey;
+import com.mualab.org.user.activity.story.camera.internal.CameraIntentKey;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

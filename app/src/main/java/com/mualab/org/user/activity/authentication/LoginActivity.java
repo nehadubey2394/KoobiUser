@@ -18,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.facebook.login.Login;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.application.Mualab;
@@ -37,6 +39,7 @@ import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.KeyboardUtil;
 import com.mualab.org.user.util.StatusBarUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,15 +125,16 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new ForgotPassword(LoginActivity.this, new ForgotPassword.Listner() {
                     @Override
-                    public void onSubmitClick(final Dialog dialog, final String string) {
-                        Handler handler = new Handler();
+                    public void onSubmitClick(final Dialog dialog, final String emailId) {
+                        forgotPassword(dialog, emailId);
+                        /*Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 dialog.dismiss();
                                 Toast.makeText(LoginActivity.this, string, Toast.LENGTH_SHORT).show();
                             }
-                        }, 4000);
+                        }, 4000);*/
                     }
 
                     @Override
@@ -246,6 +250,40 @@ public class LoginActivity extends AppCompatActivity {
                     .setProgress(true))
                     .execute(this.getClass().getName());
         }
+    }
+
+
+    private void forgotPassword(final Dialog dialog, String emailId){
+
+        Map<String, String> map = new HashMap<>();
+        map.put("email", emailId);
+        new HttpTask(new HttpTask.Builder(this, "forgotPassword", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    dialog.findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String message = jsonObject.getString("message");
+
+                    if(status.equalsIgnoreCase("success")){
+                        MyToast.getInstance(LoginActivity.this).showDasuAlert(status, message);
+                        dialog.dismiss();
+                    }else {
+                        showToast(message);
+                    }
+                } catch (JSONException e) {
+                    showToast(getString(R.string.msg_some_thing_went_wrong));
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                dialog.findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                showToast(getString(R.string.msg_some_thing_went_wrong));
+            }
+        }).setParam(map).setBodyContentType(HttpTask.ContentType.X_WWW_FORM_URLENCODED)).execute("forgotPassword");
     }
 
     private void checkUserRember(User user){
