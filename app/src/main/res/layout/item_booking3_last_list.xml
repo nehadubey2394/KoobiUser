@@ -109,7 +109,7 @@
                     android:fontFamily="@font/roboto_medium"
                     android:maxLines="2"
                     android:padding="2dp"
-                    android:text="zero Trim"
+                    android:text=""
                     android:textColor="@color/text_color"
                     android:textSize="14sp" />
 
