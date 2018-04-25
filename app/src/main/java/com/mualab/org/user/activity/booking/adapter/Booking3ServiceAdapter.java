@@ -3,7 +3,6 @@ package com.mualab.org.user.activity.booking.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.daimajia.swipe.SwipeLayout;
-import com.facebook.internal.Utility;
 import com.loopeer.shadow.ShadowView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;

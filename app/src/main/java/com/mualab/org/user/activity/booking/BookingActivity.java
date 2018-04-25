@@ -374,8 +374,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                         subServices.subServiceId = jObj.getString("subServiceId");
                                         subServices.subServiceName = jObj.getString("subServiceName");
 
-                                        JSONArray artistservices = jObj.getJSONArray
-                                                ("artistservices");
+                                        JSONArray artistservices = jObj.getJSONArray("artistservices");
                                         for (int m=0; m<artistservices.length(); m++){
                                             JSONObject jsonObject3 = artistservices.getJSONObject(m);
                                             BookingServices3 services3 = new BookingServices3();
@@ -715,7 +714,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public void onPause() {
         super.onPause();
     }
-
 
     //Stop Countdown method
     public void stopCountdown() {

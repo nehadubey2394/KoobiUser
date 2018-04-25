@@ -26,6 +26,8 @@
             android:background="@color/darkred"
             android:gravity="center"
             android:orientation="vertical"
+            android:padding="5dp"
+            android:layout_gravity="center"
             android:clickable="true"
             android:focusable="true">
 
