@@ -1,4 +1,4 @@
-package com.mualab.org.user.task;
+package com.mualab.org.user.webservice;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.mualab.org.user.task;
+package com.mualab.org.user.webservice;
 
 /**
  * Created by Administrator on 6/18/2016.
@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.mualab.org.user.task.API.BASE_URL;
+import static com.mualab.org.user.webservice.API.BASE_URL;
 
 
 public class HttpMultipartTask extends AsyncTask<Void, Void, String> {

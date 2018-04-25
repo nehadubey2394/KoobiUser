@@ -1,7 +1,11 @@
 package com.mualab.org.user.model;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,4 +31,12 @@ public class MediaUri implements Serializable{
             this.uri = uriList.get(uriList.size()-1);
         }
     }
+
+    public void addAll(HashMap<String, Uri> map){
+        if(uriList!=null){
+            this.uriList.addAll(map.keySet());
+            this.uri = uriList.get(map.size()-1);
+        }
+    }
+
 }

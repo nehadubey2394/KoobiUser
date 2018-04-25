@@ -11,7 +11,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,17 +30,15 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 import android.widget.ViewSwitcher;
 
-import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
-import com.mualab.org.user.util.media.ImageVideoUtil;
 import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraException;
 import com.otaliastudios.cameraview.CameraListener;
@@ -58,10 +55,7 @@ import com.otaliastudios.cameraview.SizeSelectors;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

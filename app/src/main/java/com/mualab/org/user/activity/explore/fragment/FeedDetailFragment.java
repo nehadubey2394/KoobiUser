@@ -27,8 +27,8 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.listner.FeedsListner;
 import com.mualab.org.user.model.feeds.Feeds;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.mualab.org.user.util.WrapContentLinearLayoutManager;
 
 import org.json.JSONArray;

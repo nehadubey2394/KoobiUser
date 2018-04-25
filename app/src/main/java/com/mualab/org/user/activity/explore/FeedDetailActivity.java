@@ -17,15 +17,13 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.listner.FeedsListner;
 import com.mualab.org.user.model.feeds.Feeds;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.mualab.org.user.util.StatusBarUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import views.refreshview.CircleHeaderView;
-import views.refreshview.OnRefreshListener;
 import views.refreshview.RjRefreshLayout;
 
 public class FeedDetailActivity extends AppCompatActivity implements FeedsListner{

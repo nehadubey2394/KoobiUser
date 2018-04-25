@@ -1,4 +1,4 @@
-package com.mualab.org.user.task;
+package com.mualab.org.user.webservice;
 
 /**
  * Created by dharmraj on 14/7/17.

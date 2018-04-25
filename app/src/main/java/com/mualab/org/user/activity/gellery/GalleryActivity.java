@@ -1,6 +1,9 @@
 package com.mualab.org.user.activity.gellery;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import com.github.florent37.camerafragment.CameraFragment;
+import com.github.florent37.camerafragment.configuration.Configuration;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.story.camera.internal.Camera2Fragment;
 
@@ -66,9 +71,13 @@ public class GalleryActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new GalleryFragment(), "Image");
-        adapter.addFragment(new GalleryFragment(), "Video");
-        adapter.addFragment(new GalleryFragment(), "Camera");
+        adapter.addFragment(GalleryFragment.newInstance(), "Image");
+        adapter.addFragment(VideoGalleryFragment.newInstance(), "Video");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
+        adapter.addFragment(cameraFragment, "Camera");
         // adapter.addFragment(CameraRecFragment.newInstance("",""), "VIDEO");
         viewPager.setAdapter(adapter);
     }

@@ -37,6 +37,7 @@ import com.mualab.org.user.activity.gellery.model.PhotoLoader;
 import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.listner.GalleryOnClickListener;
+import com.mualab.org.user.model.MediaUri;
 import com.mualab.org.user.util.media.ImageVideoUtil;
 import com.zhihu.matisse.internal.loader.AlbumLoader;
 
@@ -194,6 +195,19 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         // rotateImage.setOnClickListener(this);
         ivMultiSelection.setOnClickListener(this);
         albumList = getAlbums();
+
+        if(albumList!=null && albumList.size()>0){
+            Media media = albumList.get(0);
+            lastSelectedUri = media.uri;
+            mSelected.put(media.uri.toString(), media.uri);
+            refreshUi(lastSelectedUri);
+            //showImage.setUri(media.uri);
+            try {
+                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -273,12 +287,15 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
 
                     Intent intent = null;
                     if (mSelected != null && mSelected.size() > 0) {
+                        MediaUri mediaUri = new MediaUri();
+                        mediaUri.mediaType = Constant.IMAGE_STATE;
+                        mediaUri.isFromGallery = true;
+                        mediaUri.addAll(mSelected);
                         intent = new Intent(context, FeedPostActivity.class);
                         intent.putExtra("caption", "");
                         intent.putExtra("feedType", Constant.IMAGE_STATE);
-                        intent.putExtra("fromGallery", true);
-                        // intent.putParcelableArrayListExtra("imageUri", new ArrayList<Parcelable>(mSelected));
-                        intent.putParcelableArrayListExtra("imageUri", new ArrayList<Parcelable>(mSelected.values()));
+                        intent.putExtra("mediaUri", mediaUri);
+                        intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     } /*else if(videoUri!=null){
                     intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", "");
@@ -333,16 +350,19 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
                         mSelected = new LinkedHashMap<>();
                         mSelected.put(uri.toString(), uri);
                         BitmapUtils.writeBitmapToFile(bitmap, file, 75);
-                        //MediaStore.Images.Media.insertImage(mContext.getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+                        //MediaStore.Images.Media.insertImage(context.getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
 
                         Intent intent = null;
                         if (mSelected != null && mSelected.size() > 0) {
+                            MediaUri mediaUri = new MediaUri();
+                            mediaUri.mediaType = Constant.IMAGE_STATE;
+                            mediaUri.isFromGallery = true;
+                            mediaUri.addAll(mSelected);
                             intent = new Intent(context, FeedPostActivity.class);
                             intent.putExtra("caption", "");
                             intent.putExtra("feedType", Constant.IMAGE_STATE);
-                            intent.putExtra("fromGallery", true);
-                            // intent.putParcelableArrayListExtra("imageUri", new ArrayList<Parcelable>(mSelected));
-                            intent.putParcelableArrayListExtra("imageUri", new ArrayList<Parcelable>(mSelected.values()));
+                            intent.putExtra("mediaUri", mediaUri);
+                            intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                         }
 
                         if (intent != null) {
