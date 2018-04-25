@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.explore.fragment.SearchFeedFragment;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
@@ -17,7 +17,7 @@ import com.mualab.org.user.util.StatusBarUtil;
 
 import views.fragnev.FragNavController;
 
-public class SearchFeedActivity extends AppCompatActivity implements BaseFragment.FragmentNavigation,
+public class SearchFeedActivity extends AppCompatActivity implements BaseFragment.Callback,
         FragNavController.TransactionListener, FragNavController.RootFragmentListener{
 
     private FragNavController mNavController;
@@ -110,6 +110,16 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
         if (mNavController != null) {
             mNavController.onSaveInstanceState(outState);
         }
+    }
+
+    @Override
+    public void onFragmentAttached() {
+
+    }
+
+    @Override
+    public void onFragmentDetached(String tag) {
+
     }
 
     @Override

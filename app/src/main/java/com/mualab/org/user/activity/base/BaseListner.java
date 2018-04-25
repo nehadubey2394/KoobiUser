@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity;
+package com.mualab.org.user.activity.base;
 
 import android.support.v4.app.Fragment;
 

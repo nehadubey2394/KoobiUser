@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.task.HttpResponceListner;
 import com.mualab.org.user.task.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.util.media.ImageVideoUtil;
 import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraException;
 import com.otaliastudios.cameraview.CameraListener;
@@ -97,6 +99,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private File photoPath;
     private Uri captureMediaUri;
+    private boolean isVideoUri;
     //private List<Uri> mSelected;
 
     // video record support variables.
@@ -199,6 +202,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     public void onBitmapReady(Bitmap bitmap) {
                         cameraView.stop();
                         showTakenPicture(bitmap);
+                        isVideoUri = false;
                         Progress.hide(CameraActivity.this);
                         /*File f = new File(CameraActivity.this.getCacheDir(), "tmp.jpg");
                         try {
@@ -239,6 +243,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 controller.setMediaPlayer(videoView);
                 videoView.setMediaController(controller);
                 videoView.setVideoURI(captureMediaUri);
+                isVideoUri = true;
             }
 
             @Override
@@ -704,35 +709,70 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private void addMyStory(){
 
         if(ConnectionDetector.isConnected()){
-            Bitmap bitmap = ivTakenPhoto.getBitmap();
+
             Map<String,String> map = new HashMap<>();
-            map.put("type", "image");
-            map.put("userId", ""+Mualab.getInstance().getSessionManager().getUser().id);
+            map.put("userId", ""+Mualab.currentUser.id);
+            map.put("type", isVideoUri?"video":"image");
+            if(isVideoUri){
 
-            HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
-                @Override
-                public void onResponse(String response, String apiName) {
-                    try {
-                        JSONObject js = new JSONObject(response);
-                        String status = js.getString("status");
-                        String message = js.getString("message");
-                        if (status.equalsIgnoreCase("success")) {
-                            finish();
+                showToast(getString(R.string.under_development));
+               /*Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(photoPath.,
+                       MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+                HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
+                    @Override
+                    public void onResponse(String response, String apiName) {
+                        try {
+                            JSONObject js = new JSONObject(response);
+                            String status = js.getString("status");
+                            String message = js.getString("message");
+                            if (status.equalsIgnoreCase("success")) {
+                                finish();
+                            }
+                            else showToast(message);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        else showToast(message);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                }
 
-                @Override
-                public void ErrorListener(VolleyError error) {
-                     Log.d("res:", ""+error.getLocalizedMessage());
-                }})
-                    .setParam(map)
-                    .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
-                    .setProgress(true));
-            task.postImage("myStory", bitmap);
+                    @Override
+                    public void ErrorListener(VolleyError error) {
+                        Log.d("res:", ""+error.getLocalizedMessage());
+                    }})
+                        .setParam(map)
+                        .setAuthToken(Mualab.currentUser.authToken)
+                        .setProgress(true));
+                task.postFile("myStory", photoPath, bitmap);*/
+
+            }else {
+                Bitmap bitmap = ivTakenPhoto.getBitmap();
+                HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
+                    @Override
+                    public void onResponse(String response, String apiName) {
+                        try {
+                            JSONObject js = new JSONObject(response);
+                            String status = js.getString("status");
+                            String message = js.getString("message");
+                            if (status.equalsIgnoreCase("success")) {
+                                finish();
+                            }
+                            else showToast(message);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void ErrorListener(VolleyError error) {
+                        Log.d("res:", ""+error.getLocalizedMessage());
+                    }})
+                        .setParam(map)
+                        .setAuthToken(Mualab.currentUser.authToken)
+                        .setProgress(true));
+                task.postImage("myStory", bitmap);
+            }
+
+
+
         }else showToast(getString(R.string.error_msg_network));
     }
 }

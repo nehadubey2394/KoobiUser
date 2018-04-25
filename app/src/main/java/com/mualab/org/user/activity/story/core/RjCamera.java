@@ -18,7 +18,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.afollestad.materialdialogs.util.DialogUtils;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.draj_camera.internal.CameraIntentKey;
+import com.mualab.org.user.activity.story.camera.internal.CameraIntentKey;
 
 import java.io.File;
 import java.lang.annotation.Retention;

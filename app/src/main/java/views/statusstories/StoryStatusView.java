@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Dharmraj Acharya on 23/04/18.
+ * Created by Dharmraj Acharya on 18/04/18.
  **/
+
 public class StoryStatusView extends LinearLayout {
 
     private static final int MAX_PROGRESS = 100;
@@ -75,6 +76,7 @@ public class StoryStatusView extends LinearLayout {
 
     private ProgressBar createProgressBar() {
         ProgressBar p = new ProgressBar(getContext(), null, android.R.attr.progressBarStyleHorizontal);
+        p.getIndeterminateDrawable().setColorFilter(0xFFFFFF,android.graphics.PorterDuff.Mode.MULTIPLY);
         p.setLayoutParams(new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
         p.setProgressDrawable(ContextCompat.getDrawable(getContext(), R.drawable.progress_bg));
         return p;
@@ -93,47 +95,55 @@ public class StoryStatusView extends LinearLayout {
     }
 
 
-    public void setUserInteractionListener(UserInteractionListener userInteractionListener) {
+    public void setStoriesListener(UserInteractionListener userInteractionListener) {
         this.userInteractionListener = userInteractionListener;
     }
 
 
     public void skip() {
         if (isComplete) return;
-        ProgressBar p = progressBars.get(current);
-        p.setProgress(p.getMax());
-        animators.get(current).cancel();
+        if(current<progressBars.size()){
+            ProgressBar p = progressBars.get(current);
+            p.setProgress(p.getMax());
+            animators.get(current).cancel();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void pause() {
         if (isComplete) return;
-        ProgressBar p = progressBars.get(current);
-        p.setProgress(p.getProgress());
-        animators.get(current).pause();
+        if(current<progressBars.size()){
+            ProgressBar p = progressBars.get(current);
+            p.setProgress(p.getProgress());
+            animators.get(current).pause();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void resume() {
         if (isComplete) return;
-        ProgressBar p = progressBars.get(current);
-        p.setProgress(p.getProgress());
-        animators.get(current).resume();
+        if(current<progressBars.size()){
+            ProgressBar p = progressBars.get(current);
+            p.setProgress(p.getProgress());
+            animators.get(current).resume();
+        }
     }
 
 
     public void reverse() {
         if (isComplete) return;
-        ProgressBar p = progressBars.get(current);
-        p.setProgress(0);
-        isReverse = true;
-        animators.get(current).cancel();
-        if (0 <= (current - 1)) {
-            p = progressBars.get(current - 1);
+        if(current<progressBars.size()){
+            ProgressBar p = progressBars.get(current);
             p.setProgress(0);
-            animators.get(--current).start();
-        } else {
-            animators.get(current).start();
+            isReverse = true;
+            animators.get(current).cancel();
+            if (0 <= (current - 1)) {
+                p = progressBars.get(current - 1);
+                p.setProgress(0);
+                animators.get(--current).start();
+            } else {
+                animators.get(current).start();
+            }
         }
     }
 
@@ -156,7 +166,7 @@ public class StoryStatusView extends LinearLayout {
     }
 
 
-    public void playStories() {
+    public void startStories() {
         animators.get(0).start();
     }
 
@@ -164,6 +174,9 @@ public class StoryStatusView extends LinearLayout {
      * Need to call when Activity or Fragment destroy
      */
     public void destroy() {
+        progressBars.clear();
+        userInteractionListener = null;
+        isComplete = false;
         for (ObjectAnimator a : animators) {
             a.removeAllListeners();
             a.cancel();
@@ -189,8 +202,8 @@ public class StoryStatusView extends LinearLayout {
                 }
                 int next = current + 1;
                 if (next <= (animators.size() - 1)) {
-                    if (userInteractionListener != null) userInteractionListener.onNext();
                     animators.get(next).start();
+                    if (userInteractionListener != null) userInteractionListener.onNext();
                 } else {
                     isComplete = true;
                     if (userInteractionListener != null) userInteractionListener.onComplete();

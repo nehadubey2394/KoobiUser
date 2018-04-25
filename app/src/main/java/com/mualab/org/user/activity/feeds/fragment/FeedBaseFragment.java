@@ -14,7 +14,7 @@ import com.android.volley.VolleyError;
 import com.hendraanggrian.socialview.Mention;
 import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.feeds.adapter.HashtagAdapter;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.application.Mualab;

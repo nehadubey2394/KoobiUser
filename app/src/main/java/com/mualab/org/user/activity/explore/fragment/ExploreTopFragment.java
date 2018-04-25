@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.BaseFragment;
+import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.explore.ExplorSearchActivity;
 import com.mualab.org.user.activity.explore.SearchFeedActivity;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;

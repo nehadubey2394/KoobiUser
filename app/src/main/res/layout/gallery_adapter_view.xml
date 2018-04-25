@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.github.siyamed.shapeimageview.RoundedImageView
+        android:id="@+id/iv_gallery_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="1dp"
+        android:layout_marginLeft="1dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/gallery_placeholder"
+        app:siBorderColor="@color/colorPrimary"
+        app:siSquare="true"
+        app:siBorderWidth="0.5dp" />
+
+    <ImageView
+        android:id="@+id/ivSelected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:src="@drawable/right_icon"
+        android:layout_gravity="right|bottom"
+        android:layout_margin="10dp"
+        android:visibility="gone"/>
+
+
+</FrameLayout>

@@ -2,22 +2,28 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.firebase-crash'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.mualab.org.user"
-        minSdkVersion 17
-        targetSdkVersion 26
+        minSdkVersion 19
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"http://koobi.co.uk:3000/api/\"")
+            buildConfigField("String", "API_KEY", "\"ABCXYZ123TEST\"")
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BASE_URL", "\"http://koobi.co.uk:3000/api/\"")
+            buildConfigField("String", "API_KEY", "\"ABCXYZ123TEST\"")
         }
     }
 }
@@ -25,52 +31,56 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
 
-    compile 'com.google.android.gms:play-services-location:11.8.0'
-    compile 'com.google.android.gms:play-services-places:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.android.gms:play-services-places:11.8.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.google.firebase:firebase-database:11.8.0'
     implementation 'com.google.firebase:firebase-storage:11.8.0'
     implementation 'com.google.firebase:firebase-auth:11.8.0'
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
     implementation 'com.google.firebase:firebase-crash:11.8.0'
-    compile 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 
-    compile 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.nineoldandroids:library:2.4.0'
 
     // Facebook Login only
-    compile 'com.facebook.android:facebook-login:4.+'
+    implementation 'com.facebook.android:facebook-login:4.+'
     // Facebook Share only
-    compile 'com.facebook.android:facebook-share:4.+'
+    implementation 'com.facebook.android:facebook-share:4.+'
     implementation 'com.google.code.gson:gson:2.8.0'
-    compile 'com.android.volley:volley:1.1.0'
-    compile 'de.hdodenhof:circleimageview:2.2.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // network
+    implementation 'com.android.volley:volley:1.1.0'
+    implementation 'com.amitshekhar.android:rx2-android-networking:1.0.1'
+
+    // image
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
     // core only
-    compile 'com.hendraanggrian:socialview-core:0.16.3'
+    implementation 'com.hendraanggrian:socialview-core:0.16.3'
     // core and commons
-    compile 'com.hendraanggrian:socialview-commons:0.16.3'
-    compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
-    compile 'com.github.bumptech.glide:glide:3.8.0'
+    implementation 'com.hendraanggrian:socialview-commons:0.16.3'
+    implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+    implementation 'com.github.bumptech.glide:glide:3.8.0'
 
-    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
-    compile 'com.otaliastudios:cameraview:1.4.1'
+    implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
+    implementation 'com.otaliastudios:cameraview:1.4.1'
 
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation files('libs/aspectjrt-1.7.3 (1).jar')
 
-    compile 'com.zhihu.android:matisse:0.4.3'
-    compile 'com.loopeer.lib:shadow:0.0.4-beta2'
+    implementation 'com.zhihu.android:matisse:0.4.3'
+    implementation 'com.loopeer.lib:shadow:0.0.4-beta2'
     implementation group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.1'
-    //compile "io.reactivex.rxjava2:rxjava:2.1.0"
-
+    implementation 'cn.pedant.sweetalert:library:1.3'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -54,4 +54,9 @@
     <dimen name="evp_negative_inset_small">-2dp</dimen>
     <dimen name="grid_expected_size">120dp</dimen>
 
+    <!--Sweet alert-->
+    <dimen name="alert_width">290dp</dimen>
+    <dimen name="common_circle_width">3dp</dimen>
+    <dimen name="progress_circle_radius">34dp</dimen>
+
 </resources>

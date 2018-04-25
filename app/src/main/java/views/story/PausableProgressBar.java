@@ -14,9 +14,11 @@ import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 
 import com.mualab.org.user.R;
-/***
+
+/**
  * Dharmraj Acharya
  **/
+
 final class PausableProgressBar extends FrameLayout {
     private static final int DEFAULT_PROGRESS_DURATION = 2000;
 
@@ -65,7 +67,6 @@ final class PausableProgressBar extends FrameLayout {
 
     void setMinWithoutCallback() {
         maxProgressView.setBackgroundResource(R.color.progress_secondary);
-
         maxProgressView.setVisibility(VISIBLE);
         if (animation != null) {
             animation.setAnimationListener(null);
@@ -87,7 +88,6 @@ final class PausableProgressBar extends FrameLayout {
 
     public void startProgress() {
         maxProgressView.setVisibility(GONE);
-
         animation = new PausableScaleAnimation(0, 1, 1, 1, Animation.ABSOLUTE, 0, Animation.RELATIVE_TO_SELF, 0);
         animation.setDuration(duration);
         animation.setInterpolator(new LinearInterpolator());

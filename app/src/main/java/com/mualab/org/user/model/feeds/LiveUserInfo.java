@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * Created by mindiii on 9/8/17.
- */
+ **/
 
 public class LiveUserInfo implements Serializable {
 

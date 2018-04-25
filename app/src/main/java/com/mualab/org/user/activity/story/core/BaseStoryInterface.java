@@ -4,12 +4,6 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
-import com.mualab.org.user.activity.story.draj_camera.internal.BaseCaptureActivity;
-import com.otaliastudios.cameraview.Facing;
-import com.otaliastudios.cameraview.Flash;
-
-import java.util.List;
-
 /**
  * Created by dharmraj on 8/3/18.
  */

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.story.camera.internal.Camera2Fragment;
 
 import java.util.ArrayList;
 import java.util.List;

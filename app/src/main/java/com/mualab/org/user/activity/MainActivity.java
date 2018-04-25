@@ -4,23 +4,20 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.support.annotation.IntegerRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.google.firebase.crash.FirebaseCrash;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.application.Mualab;
@@ -38,11 +35,8 @@ import com.mualab.org.user.util.network.NetworkChangeReceiver;
 
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
-
-import views.calender.CalendarHelper;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -69,6 +63,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setStatusbarColor();
+
+       // FirebaseCrash.logcat(Log.ERROR, "Build Date:", "16/04/2018");
+       // FirebaseCrash.report(new Throwable("Build Date: 16/04/2018"));
 
         Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
         Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);
@@ -253,8 +250,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ibtnAddFeed :
-                //startActivity(new Intent(MainActivity.this, GalleryActivity.class));
-                showToast(getString(R.string.under_development));
+                startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                //showToast(getString(R.string.under_development));
                /* if (clickedId!=3) {
                     setInactiveTab();
                     clickedId = 3;

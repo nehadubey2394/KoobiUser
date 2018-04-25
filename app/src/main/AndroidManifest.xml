@@ -104,8 +104,8 @@
         <activity
             android:name=".activity.feeds.FeedPostActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.story.draj_camera.CaptureActivity" />
-        <activity android:name=".activity.story.draj_camera.CaptureActivity2" />
+        <activity android:name=".activity.story.camera.CaptureActivity" />
+        <activity android:name=".activity.story.camera.CaptureActivity2" />
         <activity android:name=".activity.story.NewStoryActivity" />
         <activity android:name=".activity.feeds.PreviewImageActivity" />
         <activity
@@ -120,9 +120,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".activity.ImageViewDialogActivity"
-            android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".activity.explore.ExplorSearchActivity"
             android:screenOrientation="portrait" />

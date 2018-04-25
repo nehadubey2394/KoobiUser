@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sweet="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
+    android:interpolator="@android:anim/linear_interpolator"
+    android:shareInterpolator="true">
+
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1"
+        android:duration="400"/>
+
+   <!-- <app:com.lod.lod.utils.dialog.Rotate3dAnimation
+        app:rollType="x"
+        app:fromDeg="100"
+        app:toDeg="0"
+        app:pivotX="50%"
+        app:pivotY="50%"
+        android:duration="400"/>-->
+</set>

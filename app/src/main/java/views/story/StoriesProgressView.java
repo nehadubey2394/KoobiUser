@@ -20,9 +20,7 @@ public class StoriesProgressView extends LinearLayout {
 
     private final LayoutParams PROGRESS_BAR_LAYOUT_PARAM = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1);
     private final LayoutParams SPACE_LAYOUT_PARAM = new LayoutParams(5, LayoutParams.WRAP_CONTENT);
-
     private final List<PausableProgressBar> progressBars = new ArrayList<>();
-
     private int storiesCount = -1;
     /**
      * pointer of running animation
@@ -69,7 +67,6 @@ public class StoriesProgressView extends LinearLayout {
     private void bindViews() {
         progressBars.clear();
         removeAllViews();
-
         for (int i = 0; i < storiesCount; i++) {
             final PausableProgressBar p = createProgressBar();
             progressBars.add(p);
@@ -179,9 +176,9 @@ public class StoriesProgressView extends LinearLayout {
                 }
                 int next = current + 1;
                 if (next <= (progressBars.size() - 1)) {
+                    current++;
                     progressBars.get(next).startProgress();
                     if (storiesListener != null) storiesListener.onNext();
-                    progressBars.get(next).startProgress();
                 } else {
                    // isComplete = true;
                     if (storiesListener != null) storiesListener.onComplete();
