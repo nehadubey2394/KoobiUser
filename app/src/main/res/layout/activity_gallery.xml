@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#ececec"
+    android:fitsSystemWindows="true"
     tools:context=".activity.gellery.GalleryActivity"
     android:id="@+id/vRootView">
 

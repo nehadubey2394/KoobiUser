@@ -28,8 +28,8 @@ import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.network.NetworkChangeReceiver;
 

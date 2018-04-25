@@ -39,11 +39,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.androidnetworking.interfaces.UploadProgressListener;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -65,11 +60,10 @@ import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.MediaUri;
 import com.mualab.org.user.model.booking.Address;
-import com.mualab.org.user.task.API;
-import com.mualab.org.user.task.GioAddressTask;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
-import com.mualab.org.user.task.UploadImage;
+import com.mualab.org.user.webservice.GioAddressTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
+import com.mualab.org.user.webservice.UploadImage;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.KeyboardUtil;
 import com.mualab.org.user.util.LocationDetector;
@@ -354,15 +348,18 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
                 try {
                     feedType = Constant.IMAGE_STATE;
-                   /* Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
-                            Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));*/
+                    Bitmap ThumbImage;
+                    if(mediaUri.isFromGallery){
+                        ThumbImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                                Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));
+                    }else {
+                         ThumbImage = ThumbnailUtils.extractThumbnail(
+                                BitmapFactory.decodeFile(
+                                        ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size() - 1)),
+                                                this)), 200, 200);
+                    }
 
-                    Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
-                            BitmapFactory.decodeFile(
-                                    ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size() - 1)),
-                                            this)), 200, 200);
                     iv_postimage.setImageBitmap(ThumbImage);
-
                     if (mediaUri.uriList.size() > 1) {
                         tvMediaSize.setVisibility(View.VISIBLE);
                         tvMediaSize.setText(String.format("%d", mediaUri.uriList.size()));
@@ -639,7 +636,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private void resetView() {
         if (tempFile != null) {
             try {
-                tempFile.delete();
+                boolean bool = tempFile.delete();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -852,7 +849,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             }
         };
 
-        public TagAdapter(Context context) {
+        private TagAdapter(Context context) {
             super(context, R.layout.item_tag, R.id.textViewName);
         }
 

@@ -40,8 +40,8 @@ import com.mualab.org.user.model.SearchBoard.RefineServices;
 import com.mualab.org.user.model.SearchBoard.RefineSubServices;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 
 import org.json.JSONArray;

@@ -1,6 +1,5 @@
 package com.mualab.org.user.activity.booking.background_service;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Intent;
@@ -10,15 +9,13 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
-import com.mualab.org.user.activity.MainActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.model.User;
 import com.mualab.org.user.session.Session;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.mualab.org.user.util.ConnectionDetector;
 import com.mualab.org.user.util.Helper;
 
@@ -26,8 +23,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by Mindiii on 3/31/2018.

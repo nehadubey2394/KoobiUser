@@ -32,8 +32,8 @@ import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.UnfollowDialog;
 import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.mualab.org.user.model.feeds.Feeds;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;

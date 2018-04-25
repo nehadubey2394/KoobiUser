@@ -27,8 +27,8 @@ import com.mualab.org.user.activity.feeds.adapter.LikeListAdapter;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;

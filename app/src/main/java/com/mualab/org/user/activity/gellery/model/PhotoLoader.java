@@ -14,6 +14,7 @@ public class PhotoLoader extends CursorLoader {
 
     private static final String ORDER_BY = MediaStore.Images.Media.DATE_TAKEN + " DESC";
     private static final String SELECTION = MediaStore.Images.Media.BUCKET_ID + " = ?";
+
     public PhotoLoader(Context context, String[] selectionArgs) {
         super(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, PROJECTION, SELECTION,
                 selectionArgs, ORDER_BY);

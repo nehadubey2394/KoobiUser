@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -32,8 +31,8 @@ import com.mualab.org.user.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.model.feeds.LiveUserInfo;
 import com.mualab.org.user.model.feeds.Story;
-import com.mualab.org.user.task.HttpResponceListner;
-import com.mualab.org.user.task.HttpTask;
+import com.mualab.org.user.webservice.HttpResponceListner;
+import com.mualab.org.user.webservice.HttpTask;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
