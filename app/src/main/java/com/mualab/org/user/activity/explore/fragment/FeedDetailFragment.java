@@ -35,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,8 +56,7 @@ public class FeedDetailFragment extends Fragment {
     private Uri uri;
     private FeedsListner feedsListner;
     private List<Feeds> list = new ArrayList<>();
-
-
+    private int index;
     private boolean isPulltoRefrash;
 
 
@@ -65,11 +65,11 @@ public class FeedDetailFragment extends Fragment {
     }
 
 
-    public static FeedDetailFragment newInstance(String feedId, Feeds feed) {
+    public static FeedDetailFragment newInstance(int index, List<Feeds> feed) {
         FeedDetailFragment fragment = new FeedDetailFragment();
         Bundle args = new Bundle();
-        args.putString("uri", feedId);
-        args.putSerializable("feed", feed);
+        args.putInt("index", index);
+        args.putSerializable("feed", (Serializable) feed);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,7 +90,9 @@ public class FeedDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         list.clear();
         if (getArguments() != null) {
-            feed = (Feeds) getArguments().getSerializable("feed");
+            index = getArguments().getInt("index");
+            list = (List<Feeds>) getArguments().getSerializable("feed");
+            //list.add(feed);
         }
     }
 
@@ -125,7 +127,7 @@ public class FeedDetailFragment extends Fragment {
             }
         });
 
-        list.add(feed);
+
         adapter = new FeedAdapter(mContext, list, new FeedAdapter.Listener() {
             @Override
             public void onCommentBtnClick(Feeds feed, int pos) {
@@ -154,8 +156,9 @@ public class FeedDetailFragment extends Fragment {
         });
 
         rvFeed.setAdapter(adapter);
+        rvFeed.scrollToPosition(index);
 
-        getUpdatedFeed();
+       // getUpdatedFeed();
     }
 
 

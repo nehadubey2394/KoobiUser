@@ -42,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -170,7 +171,12 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
     @Override
     public void onFeedClick(Feeds feed, int index) {
-        startActivity(new Intent(mContext, FeedDetailActivity.class).putExtra("feed",feed));
+        Intent intent = new Intent(mContext, FeedDetailActivity.class);
+        intent.putExtra("feed",  feed);
+        intent.putExtra("feeds", (Serializable) feeds);
+        intent.putExtra("index", index);
+        startActivity(intent);
+        //startActivity(new Intent(mContext, FeedDetailActivity.class).putExtra("feed",feed));
     }
 
 

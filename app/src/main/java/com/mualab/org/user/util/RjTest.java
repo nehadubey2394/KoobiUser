@@ -3,7 +3,21 @@ package com.mualab.org.user.util;
 public class RjTest {
 
     public static void main(String args[]){
-        System.out.println(getVerticallyIncertedNumbers(0, 1000));
+
+        long startTime = System.currentTimeMillis();
+        Runtime runtime = Runtime.getRuntime();
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used Memory before" + usedMemoryBefore);
+
+        System.out.println(getVerticallyIncertedNumbers(0, 500000));
+
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Memory increased:" + (usedMemoryAfter-usedMemoryBefore));
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println(elapsedTime);
+
     }
 
     private static String getVerticallyIncertedNumbers(int from, int to){

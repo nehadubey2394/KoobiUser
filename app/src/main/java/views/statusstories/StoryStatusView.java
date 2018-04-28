@@ -25,7 +25,7 @@ import java.util.List;
 
 public class StoryStatusView extends LinearLayout {
 
-    private static final int MAX_PROGRESS = 100;
+    private static final int MAX_PROGRESS = 500;
     private static final int SPACE_BETWEEN_PROGRESS_BARS = 5;
 
     private final List<ProgressBar> progressBars = new ArrayList<>();
@@ -156,6 +156,12 @@ public class StoryStatusView extends LinearLayout {
     }
 
 
+    public void setDynamicStoryDuration(long duration) {
+        if(animators!=null && animators.size()>0){
+            animators.get(current).setDuration(duration);
+        }
+    }
+
     public void setStoriesCountWithDurations(@NonNull long[] durations) {
         storiesCount = durations.length;
         bindViews();
@@ -185,6 +191,7 @@ public class StoryStatusView extends LinearLayout {
 
     private ObjectAnimator createAnimator(final int index, long duration) {
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBars.get(index), "progress", MAX_PROGRESS);
+        animation.setFloatValues(0f, 500f);
         animation.setInterpolator(new LinearInterpolator());
         animation.setDuration(duration);
         animation.addListener(new Animator.AnimatorListener() {

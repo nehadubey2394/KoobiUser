@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -73,7 +74,8 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     private TextView tvUserName;
     private VideoView videoView;
     private RelativeLayout lyVideoView;
-    private MediaController vidControl;
+   // private MediaController vidControl;
+    private MediaPlayer mediaPlayer;
     private File fileStorage;
     private File outputFile;
 
@@ -83,6 +85,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     private int counter = 0;
     private boolean isRunningStory;
     private boolean isFirstTime = true;
+    private boolean isStoryTypeVideo;
 
     private long pressTime = 0L;
     private long limit = 500L;
@@ -94,10 +97,26 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                 case MotionEvent.ACTION_DOWN:
                     pressTime = System.currentTimeMillis();
                     storyStatusView.pause();
+
+                    if(isStoryTypeVideo && mediaPlayer!=null){
+                        try{
+                            videoView.pause();
+                        }catch (Exception e){
+
+                        }
+                    }
+
                     return false;
                 case MotionEvent.ACTION_UP:
                     long now = System.currentTimeMillis();
                     storyStatusView.resume();
+                    if(isStoryTypeVideo && mediaPlayer!=null){
+                        try{
+                            videoView.start();
+                        }catch (Exception e){
+
+                        }
+                    }
                     return limit < now - pressTime;
             }
             return false;
@@ -127,9 +146,9 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
         lyVideoView = findViewById(R.id.lyVideoView);
         videoView = findViewById(R.id.videoView);
-        vidControl = new MediaController(this);
-        vidControl.setAnchorView(videoView);
-        videoView.setMediaController(vidControl);
+        //vidControl = new MediaController(this);
+        //vidControl.setAnchorView(videoView);
+        //videoView.setMediaController(vidControl);
 
         addMoreStory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,12 +247,13 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
         final Story story = storyList.get(counter);
         progress_bar.setVisibility(View.VISIBLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             progress_bar.setProgress(65, true);
-        }
+        }*/
         //  if(!isFirstTime) storyStatusView.pause();
 
         if(story.storyType.equals("image")){
+            isStoryTypeVideo = false;
             videoView.setVisibility(View.GONE);
             lyVideoView.setVisibility(View.GONE);
             Picasso.with(ivPhoto.getContext())
@@ -242,6 +262,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                     .into(ivPhoto, new Callback() {
                         @Override
                         public void onSuccess() {
+                            storyStatusView.setStoryDuration(statusDuration);
                             ivPhoto.setVisibility(View.VISIBLE);
                             progress_bar.setVisibility(View.GONE);
                             if(isFirstTime){
@@ -258,6 +279,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                     });
         }else if(story.storyType.equals("video")){
             Log.d("video", "inProgress");
+            isStoryTypeVideo = true;
             Picasso.with(ivPhoto.getContext())
                     .load(story.videoThumb)
                     .error(R.drawable.bg_splash)
@@ -279,15 +301,16 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                         }
                     });
 
-           /* videoView.setVisibility(View.VISIBLE);
+            videoView.setVisibility(View.VISIBLE);
             lyVideoView.setVisibility(View.VISIBLE);
             ivPhoto.setVisibility(View.GONE);
             videoView.setVideoURI(checkVideoCache(story.myStory));
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(final MediaPlayer mediaPlayer) {
+                    StoreActivityTest.this.mediaPlayer = mediaPlayer;
                     progress_bar.setVisibility(View.GONE);
-                    storyStatusView.setStoryDuration(mediaPlayer.getDuration());
+                    storyStatusView.setDynamicStoryDuration(mediaPlayer.getDuration());
                     mediaPlayer.start();
                     if(isFirstTime){
                         isFirstTime = false;
@@ -296,12 +319,41 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                 }
             });
 
+
+            final MediaPlayer.OnInfoListener onInfoToPlayStateListener = new MediaPlayer.OnInfoListener() {
+                @Override
+                public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                    switch (what) {
+                        case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: {
+                            progress_bar.setVisibility(View.GONE);
+                            storyStatusView.resume();
+                            return true;
+                        }
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_START: {
+                            progress_bar.setVisibility(View.VISIBLE);
+                            storyStatusView.pause();
+                            //mp.pause();
+                            return true;
+                        }
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_END: {
+                            progress_bar.setVisibility(View.VISIBLE);
+                            //mp.pause();
+                            storyStatusView.pause();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            };
+
+            videoView.setOnInfoListener(onInfoToPlayStateListener);
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
 
                 }
-            });*/
+            });
+
         }
     }
 
@@ -438,6 +490,11 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if(mediaPlayer!=null){
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
         storyStatusView.destroy();
     }
 
@@ -524,6 +581,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
     // String filePath = "mualab"+randomNo+"mp4";
 
+    @SuppressLint("StaticFieldLeak")
     private class DownloadingTask extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -537,7 +595,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             try {
                 if (outputFile != null) {
                     //    progress_bar.setVisibility(View.GONE);
-                    Toast.makeText(StoreActivityTest.this, "Downloaded Successfully", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(StoreActivityTest.this, "Downloaded Successfully", Toast.LENGTH_SHORT).show();
                 } else {
                     //   progress_bar.setVisibility(View.GONE);
                     Toast.makeText(StoreActivityTest.this, "Failed Download", Toast.LENGTH_SHORT).show();

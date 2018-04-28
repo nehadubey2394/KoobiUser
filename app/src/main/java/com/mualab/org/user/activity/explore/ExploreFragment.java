@@ -42,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -486,8 +487,9 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
     public void onFeedClick(Feeds feed, int index) {
        // baseListner.addFragment();
         Intent intent = new Intent(mContext, FeedDetailActivity.class);
-        intent.putExtra("feed",feed);
+        intent.putExtra("feed",  feed);
+        intent.putExtra("feeds", (Serializable) feeds);
+        intent.putExtra("index", index);
         startActivity(intent);
-        //MyToast.getInstance(mContext).showDasuAlert(getString(R.string.under_development));
     }
 }
