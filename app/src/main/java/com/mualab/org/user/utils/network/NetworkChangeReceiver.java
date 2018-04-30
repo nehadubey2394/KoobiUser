@@ -14,7 +14,7 @@ import com.mualab.org.user.R;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
-    private static Listner listner;
+    private Listner listner;
 
     public void setListner(Listner listner){
         this.listner = listner;

@@ -13,7 +13,7 @@ public class NetworkUtil {
     private static int TYPE_WIFI = 1;
     private static int TYPE_MOBILE = 2;
     private static int TYPE_NOT_CONNECTED = 0;
-    private static final int NETWORK_STATUS_NOT_CONNECTED=0, NETWORK_STAUS_WIFI=1, NETWORK_STATUS_MOBILE=2;
+    public static final int NETWORK_STATUS_NOT_CONNECTED=0, NETWORK_STAUS_WIFI=1, NETWORK_STATUS_MOBILE=2;
 
     private static int getConnectivityStatus(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

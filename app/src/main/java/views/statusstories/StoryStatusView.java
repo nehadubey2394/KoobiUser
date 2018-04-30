@@ -157,7 +157,7 @@ public class StoryStatusView extends LinearLayout {
 
 
     public void setDynamicStoryDuration(long duration) {
-        if(animators.size()>0){
+        if(animators.size()>0 && current<animators.size()){
             animators.get(current).setDuration(duration);
         }
     }

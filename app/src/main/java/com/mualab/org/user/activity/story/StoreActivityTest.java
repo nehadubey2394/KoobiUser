@@ -292,17 +292,17 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                         @Override
                         public void onSuccess() {
                             ivPhoto.setVisibility(View.VISIBLE);
-                            progress_bar.setVisibility(View.GONE);
-                            if(isFirstTime){
+                            //progress_bar.setVisibility(View.GONE);
+                            /*if(isFirstTime){
                                 isFirstTime = false;
                                 storyStatusView.startStories();
-                            } else storyStatusView.resume();
+                            } else storyStatusView.resume();*/
                         }
 
                         @Override
                         public void onError() {
-                            storyStatusView.pause();
-                            progress_bar.setVisibility(View.GONE);
+                            //storyStatusView.pause();
+                            //progress_bar.setVisibility(View.GONE);
                         }
                     });
 

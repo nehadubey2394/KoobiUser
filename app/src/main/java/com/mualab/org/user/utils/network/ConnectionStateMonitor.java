@@ -15,7 +15,7 @@ import android.support.annotation.RequiresApi;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback {
 
-    final NetworkRequest networkRequest;
+    final private NetworkRequest networkRequest;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public ConnectionStateMonitor() {
@@ -25,7 +25,9 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void enable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        connectivityManager.registerNetworkCallback(networkRequest , this);
+        if (connectivityManager != null) {
+            connectivityManager.registerNetworkCallback(networkRequest , this);
+        }
     }
 
     // Likewise, you can have a disable method that simply calls ConnectivityManager#unregisterCallback(networkRequest) too.

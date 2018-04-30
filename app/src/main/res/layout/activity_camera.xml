@@ -43,8 +43,7 @@
         <ViewSwitcher
             android:id="@+id/vUpperPanel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,7 +90,8 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_flash_off_white" />
+                    android:src="@drawable/ic_flash_off_white"
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
 
             <LinearLayout
@@ -155,7 +155,7 @@
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:background="@drawable/btn_capture_options"
-                        android:src="@drawable/ic_camera_rear_white" />/>
+                        android:src="@drawable/ic_camera_rear_white" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -200,8 +200,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_toRightOf="@+id/save_story">
+                    android:layout_marginLeft="15dp">
 
                     <ImageView
                         android:layout_width="25dp"
