@@ -292,17 +292,10 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                         @Override
                         public void onSuccess() {
                             ivPhoto.setVisibility(View.VISIBLE);
-                            progress_bar.setVisibility(View.GONE);
-                            if(isFirstTime){
-                                isFirstTime = false;
-                                storyStatusView.startStories();
-                            } else storyStatusView.resume();
                         }
 
                         @Override
                         public void onError() {
-                            storyStatusView.pause();
-                            progress_bar.setVisibility(View.GONE);
                         }
                     });
 
@@ -321,6 +314,13 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                         isFirstTime = false;
                         storyStatusView.startStories();
                     } else storyStatusView.resume();
+
+                    mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                        @Override
+                        public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
+                            mediaPlayer.start();
+                        }
+                    });
                 }
             });
 
@@ -352,13 +352,6 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             };
 
             videoView.setOnInfoListener(onInfoToPlayStateListener);
-            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-
-                }
-            });
-
         }
     }
 
@@ -419,6 +412,10 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                             JSONObject jsonObject = array.getJSONObject(i);
                             Story story = gson.fromJson(String.valueOf(jsonObject), Story.class);
                             storyList.add(story);
+                        }
+
+                        if(storyList.size()==0){
+                            finish();
                         }
 
                         if(!isRunningStory){

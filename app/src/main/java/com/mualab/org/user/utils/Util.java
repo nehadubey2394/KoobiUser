@@ -41,18 +41,8 @@ public class Util {
     }
 
 
-
-    /*Dharmrja acharya*/
-    public static final void showToast(Context context, String message) {
-
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-
-
-    public static final String getDeviceID(Context context) {
-        return Settings.Secure.getString(context.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+    public static String getDeviceID(Context context) {
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
 
