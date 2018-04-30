@@ -38,9 +38,9 @@ import com.mualab.org.user.activity.story.camera.ICallback;
 import com.mualab.org.user.activity.story.camera.MaterialCamera;
 import com.mualab.org.user.activity.story.camera.TimeLimitReachedException;
 import com.mualab.org.user.activity.story.camera.util.CameraUtil;
-import com.mualab.org.user.util.media.FilePaths;
-import com.mualab.org.user.util.media.ImageManager;
-import com.mualab.org.user.util.media.RotateBitmap;
+import com.mualab.org.user.utils.media.FilePaths;
+import com.mualab.org.user.utils.media.ImageManager;
+import com.mualab.org.user.utils.media.RotateBitmap;
 import com.mualab.org.user.videocompressor.file.FileUtils;
 import com.mualab.org.user.videocompressor.video.MediaController;
 

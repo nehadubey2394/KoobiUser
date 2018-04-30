@@ -15,9 +15,9 @@ import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.model.Comment;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.model.feeds.Feeds;
-import com.mualab.org.user.webservice.HttpResponceListner;
-import com.mualab.org.user.webservice.HttpTask;
+import com.mualab.org.user.data.model.feeds.Feeds;
+import com.mualab.org.user.data.remote.HttpResponceListner;
+import com.mualab.org.user.data.remote.HttpTask;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;

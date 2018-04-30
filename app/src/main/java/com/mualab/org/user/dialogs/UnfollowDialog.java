@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
-import com.mualab.org.user.model.feeds.Feeds;
+import com.mualab.org.user.data.model.feeds.Feeds;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;

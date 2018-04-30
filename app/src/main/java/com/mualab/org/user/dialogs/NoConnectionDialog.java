@@ -11,7 +11,7 @@ import android.view.Window;
 import android.widget.LinearLayout;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.utils.ConnectionDetector;
 
 /**
  * Created by dharmraj on 28/12/17.

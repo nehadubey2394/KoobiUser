@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/rootLayout"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.main.MainActivity">
 
     <include
         android:id="@+id/topLayout1"

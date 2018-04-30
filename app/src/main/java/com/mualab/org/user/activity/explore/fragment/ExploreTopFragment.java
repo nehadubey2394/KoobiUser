@@ -26,9 +26,9 @@ import com.mualab.org.user.activity.explore.adapter.SearchAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.listner.SearchViewListner;
-import com.mualab.org.user.webservice.HttpResponceListner;
-import com.mualab.org.user.webservice.HttpTask;
-import com.mualab.org.user.util.KeyboardUtil;
+import com.mualab.org.user.data.remote.HttpResponceListner;
+import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.utils.KeyboardUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

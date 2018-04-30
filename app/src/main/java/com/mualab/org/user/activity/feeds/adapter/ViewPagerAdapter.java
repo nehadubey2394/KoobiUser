@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import com.mualab.org.user.util.ScreenUtils;
+import com.mualab.org.user.utils.ScreenUtils;
 
 /**
  * Dharmraj Acharya

@@ -14,8 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.model.booking.BusinessDay;
-import com.mualab.org.user.model.booking.TimeSlot;
+import com.mualab.org.user.data.model.booking.BusinessDay;
+import com.mualab.org.user.data.model.booking.TimeSlot;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -22,13 +22,13 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.MainActivity;
+import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.activity.feeds.adapter.LikeListAdapter;
 import com.mualab.org.user.activity.feeds.model.FeedLike;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
-import com.mualab.org.user.webservice.HttpResponceListner;
-import com.mualab.org.user.webservice.HttpTask;
+import com.mualab.org.user.data.remote.HttpResponceListner;
+import com.mualab.org.user.data.remote.HttpTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;

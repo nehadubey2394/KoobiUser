@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.listner.DeleteServiceListener;
-import com.mualab.org.user.model.booking.BookingInfo;
+import com.mualab.org.user.data.model.booking.BookingInfo;
 
 import java.util.ArrayList;
 

@@ -17,7 +17,7 @@ import com.firebase.jobdispatcher.Job;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.MainActivity;
+import com.mualab.org.user.activity.main.MainActivity;
 
 /**
  * Created by dharmraj on 26/3/18.

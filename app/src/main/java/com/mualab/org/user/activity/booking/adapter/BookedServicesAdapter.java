@@ -17,9 +17,9 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment3;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.dialogs.MyToast;
-import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
-import com.mualab.org.user.model.booking.BookingInfo;
-import com.mualab.org.user.model.booking.BookingServices3;
+import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.data.model.booking.BookingInfo;
+import com.mualab.org.user.data.model.booking.BookingServices3;
 
 import java.util.ArrayList;
 

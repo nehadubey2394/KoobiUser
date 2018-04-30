@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.MainActivity;
+import com.mualab.org.user.activity.main.MainActivity;
 
 /**
  * Created by dharmraj on 19/3/18.

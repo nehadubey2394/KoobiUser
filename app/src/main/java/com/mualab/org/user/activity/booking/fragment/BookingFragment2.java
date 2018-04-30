@@ -16,11 +16,11 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
-import com.mualab.org.user.model.booking.BookingServices3;
-import com.mualab.org.user.model.booking.Services;
-import com.mualab.org.user.model.booking.SubServices;
-import com.mualab.org.user.session.Session;
+import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.data.model.booking.BookingServices3;
+import com.mualab.org.user.data.model.booking.Services;
+import com.mualab.org.user.data.model.booking.SubServices;
+import com.mualab.org.user.data.local.prefs.Session;
 
 import java.util.ArrayList;
 

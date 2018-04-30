@@ -41,7 +41,7 @@
         android:theme="@style/AppTheme.FullScreen"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".activity.splash.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
             <intent-filter>
@@ -51,7 +51,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.main.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -87,7 +87,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.FullScreen" />
         <activity
-            android:name=".activity.CameraActivity"
+            android:name=".activity.camera.CameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Camera" />
         <activity
@@ -148,7 +148,7 @@
             android:resource="@color/colorAccent" />
 
         <receiver
-            android:name=".util.network.NetworkChangeReceiver"
+            android:name=".utils.network.NetworkChangeReceiver"
             android:label="NetworkChangeReceiver">
             <intent-filter>
                 <action

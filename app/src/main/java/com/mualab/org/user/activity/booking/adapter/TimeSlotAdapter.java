@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.listner.TimeSlotClickListener;
-import com.mualab.org.user.model.booking.BookingTimeSlot;
+import com.mualab.org.user.data.model.booking.BookingTimeSlot;
 
 import java.util.ArrayList;
 

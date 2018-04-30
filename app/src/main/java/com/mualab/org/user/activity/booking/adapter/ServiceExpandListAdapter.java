@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.model.booking.Services;
-import com.mualab.org.user.model.booking.SubServices;
+import com.mualab.org.user.data.model.booking.Services;
+import com.mualab.org.user.data.model.booking.SubServices;
 
 import java.util.ArrayList;
 

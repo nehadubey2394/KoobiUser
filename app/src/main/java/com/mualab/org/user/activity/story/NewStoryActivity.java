@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.story.camera.MaterialCamera;
-import com.mualab.org.user.util.media.FilePaths;
+import com.mualab.org.user.utils.media.FilePaths;
 
 import java.io.File;
 

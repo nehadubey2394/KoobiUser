@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.model.feeds.LiveUserInfo;
+import com.mualab.org.user.data.model.feeds.LiveUserInfo;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 

@@ -12,8 +12,8 @@ import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.explore.fragment.SearchFeedFragment;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.util.FragmentHistory;
-import com.mualab.org.user.util.StatusBarUtil;
+import com.mualab.org.user.utils.FragmentHistory;
+import com.mualab.org.user.utils.StatusBarUtil;
 
 import views.fragnev.FragNavController;
 

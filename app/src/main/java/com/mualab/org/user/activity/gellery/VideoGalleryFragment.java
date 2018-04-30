@@ -32,13 +32,12 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.activity.gellery.adapter.GalleryAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
-import com.mualab.org.user.activity.gellery.model.PhotoLoader;
 import com.mualab.org.user.activity.gellery.model.VideoLoader;
-import com.mualab.org.user.constants.Constant;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.listner.GalleryOnClickListener;
-import com.mualab.org.user.model.MediaUri;
-import com.mualab.org.user.util.media.ImageVideoUtil;
+import com.mualab.org.user.data.model.MediaUri;
+import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.zhihu.matisse.internal.loader.AlbumLoader;
 
 import java.io.File;

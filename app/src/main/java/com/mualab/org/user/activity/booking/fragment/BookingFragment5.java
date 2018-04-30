@@ -35,14 +35,14 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
-import com.mualab.org.user.model.User;
-import com.mualab.org.user.model.booking.BookingInfo;
-import com.mualab.org.user.session.Session;
-import com.mualab.org.user.webservice.HttpResponceListner;
-import com.mualab.org.user.webservice.HttpTask;
-import com.mualab.org.user.util.ConnectionDetector;
-import com.mualab.org.user.util.Helper;
+import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.data.model.booking.BookingInfo;
+import com.mualab.org.user.data.local.prefs.Session;
+import com.mualab.org.user.data.remote.HttpResponceListner;
+import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.Helper;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -64,7 +64,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.mualab.org.user.constants.Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE;
+import static com.mualab.org.user.utils.constants.Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE;
 
 
 public class BookingFragment5 extends Fragment implements View.OnClickListener{

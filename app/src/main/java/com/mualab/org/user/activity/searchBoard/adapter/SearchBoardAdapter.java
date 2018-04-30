@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
-import com.mualab.org.user.model.SearchBoard.ArtistsSearchBoard;
-import com.mualab.org.user.util.Util;
+import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.utils.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
