@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -31,7 +32,7 @@ import android.widget.VideoView;
 import android.widget.ViewSwitcher;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.constants.Constant;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraException;
@@ -46,7 +47,7 @@ import com.otaliastudios.cameraview.GestureAction;
 import com.otaliastudios.cameraview.SessionType;
 import com.otaliastudios.cameraview.SizeSelector;
 import com.otaliastudios.cameraview.SizeSelectors;
-import com.mualab.org.user.util.ScreenUtils;
+import com.mualab.org.user.utils.ScreenUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -154,6 +155,7 @@ public class AddStoryActivity extends AppCompatActivity implements View.OnClickL
                 super.onPictureTaken(jpeg);
 
                 CameraUtils.decodeBitmap(jpeg, 1000, 1000, new CameraUtils.BitmapCallback() {
+                    @SuppressLint("WrongThread")
                     @Override
                     public void onBitmapReady(Bitmap bitmap) {
                         showTakenPicture(bitmap);

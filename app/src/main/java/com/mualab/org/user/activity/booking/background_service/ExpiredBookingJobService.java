@@ -12,12 +12,12 @@ import com.android.volley.VolleyError;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.model.User;
-import com.mualab.org.user.session.Session;
-import com.mualab.org.user.webservice.HttpResponceListner;
-import com.mualab.org.user.webservice.HttpTask;
-import com.mualab.org.user.util.ConnectionDetector;
-import com.mualab.org.user.util.Helper;
+import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.data.local.prefs.Session;
+import com.mualab.org.user.data.remote.HttpResponceListner;
+import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.Helper;
 
 import org.json.JSONObject;
 

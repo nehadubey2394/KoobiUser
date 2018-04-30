@@ -11,11 +11,10 @@ import com.android.volley.toolbox.Volley;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DatabaseReference;
 import com.mualab.org.user.BuildConfig;
-import com.mualab.org.user.model.Location;
-import com.mualab.org.user.model.User;
-import com.mualab.org.user.session.Session;
+import com.mualab.org.user.data.model.Location;
+import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.data.local.prefs.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class Mualab extends Application {
     public static User currentUser;
     public static Location currentLocation;
     public static Location currentLocationForBooking;
-    public static DatabaseReference ref;
+   // public static DatabaseReference ref;
 
     private Session session;
     private RequestQueue mRequestQueue;

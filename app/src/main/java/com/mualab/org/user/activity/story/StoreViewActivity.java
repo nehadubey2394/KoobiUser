@@ -11,8 +11,8 @@ import android.view.View;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.story.fragment.StoryFragment;
-import com.mualab.org.user.model.feeds.LiveUserInfo;
-import com.mualab.org.user.util.transformers.CubeTransformer;
+import com.mualab.org.user.data.model.feeds.LiveUserInfo;
+import com.mualab.org.user.utils.transformers.CubeTransformer;
 import java.util.ArrayList;
 import java.util.List;
 

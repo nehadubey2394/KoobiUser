@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
-import com.mualab.org.user.model.feeds.Feeds;
+import com.mualab.org.user.data.model.feeds.Feeds;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

@@ -19,9 +19,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.model.Country;
-import com.mualab.org.user.util.JsonUtils;
-import com.mualab.org.user.util.decorator.SimpleDividerItemDecoration;
+import com.mualab.org.user.data.model.Country;
+import com.mualab.org.user.utils.JsonUtils;
+import com.mualab.org.user.utils.decorator.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;

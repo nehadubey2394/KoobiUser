@@ -12,8 +12,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.model.SearchBoard.RefineServices;
-import com.mualab.org.user.model.SearchBoard.RefineSubServices;
+import com.mualab.org.user.data.model.SearchBoard.RefineServices;
+import com.mualab.org.user.data.model.SearchBoard.RefineSubServices;
 
 import java.util.ArrayList;
 

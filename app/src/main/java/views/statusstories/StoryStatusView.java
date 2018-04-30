@@ -157,7 +157,7 @@ public class StoryStatusView extends LinearLayout {
 
 
     public void setDynamicStoryDuration(long duration) {
-        if(animators!=null && animators.size()>0){
+        if(animators.size()>0){
             animators.get(current).setDuration(duration);
         }
     }
@@ -191,7 +191,6 @@ public class StoryStatusView extends LinearLayout {
 
     private ObjectAnimator createAnimator(final int index, long duration) {
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBars.get(index), "progress", MAX_PROGRESS);
-        //animation.setFloatValues(0f, 500f);
         animation.setInterpolator(new LinearInterpolator());
         animation.setDuration(duration);
         animation.addListener(new Animator.AnimatorListener() {

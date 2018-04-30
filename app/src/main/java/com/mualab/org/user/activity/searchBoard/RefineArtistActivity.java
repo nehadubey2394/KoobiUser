@@ -29,20 +29,20 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.MainActivity;
+import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.RefineServiceExpandListAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.listner.DatePickerListener;
-import com.mualab.org.user.model.SearchBoard.RefineSearchBoard;
-import com.mualab.org.user.model.SearchBoard.RefineServices;
-import com.mualab.org.user.model.SearchBoard.RefineSubServices;
-import com.mualab.org.user.model.User;
-import com.mualab.org.user.session.Session;
-import com.mualab.org.user.webservice.HttpResponceListner;
-import com.mualab.org.user.webservice.HttpTask;
-import com.mualab.org.user.util.ConnectionDetector;
+import com.mualab.org.user.data.model.SearchBoard.RefineSearchBoard;
+import com.mualab.org.user.data.model.SearchBoard.RefineServices;
+import com.mualab.org.user.data.model.SearchBoard.RefineSubServices;
+import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.data.local.prefs.Session;
+import com.mualab.org.user.data.remote.HttpResponceListner;
+import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.utils.ConnectionDetector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,7 +55,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mualab.org.user.constants.Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE;
+import static com.mualab.org.user.utils.constants.Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE;
 
 public class RefineArtistActivity extends AppCompatActivity implements View.OnClickListener,DatePickerListener {
     private ExpandableListView lvExpandable;

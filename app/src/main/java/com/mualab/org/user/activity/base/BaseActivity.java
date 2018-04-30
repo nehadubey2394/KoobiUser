@@ -21,8 +21,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.authentication.LoginActivity;
-import com.mualab.org.user.util.CommonUtils;
-import com.mualab.org.user.util.NetworkUtils;
+import com.mualab.org.user.utils.CommonUtils;
+import com.mualab.org.user.utils.NetworkUtils;
 
 /**
  * Created by dharmraj on 10/3/18.

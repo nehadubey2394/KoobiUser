@@ -16,13 +16,11 @@ import com.mualab.org.user.activity.explore.fragment.FeedDetailFragment;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.listner.FeedsListner;
-import com.mualab.org.user.model.feeds.Feeds;
-import com.mualab.org.user.webservice.HttpResponceListner;
-import com.mualab.org.user.webservice.HttpTask;
-import com.mualab.org.user.util.StatusBarUtil;
+import com.mualab.org.user.data.model.feeds.Feeds;
+import com.mualab.org.user.data.remote.HttpResponceListner;
+import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.utils.StatusBarUtil;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

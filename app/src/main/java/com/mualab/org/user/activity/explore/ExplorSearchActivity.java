@@ -11,16 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.fragment.ExploreTopFragment;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.listner.SearchViewListner;
-import com.mualab.org.user.util.KeyboardUtil;
-import com.mualab.org.user.util.ScreenUtils;
-import com.mualab.org.user.util.StatusBarUtil;
+import com.mualab.org.user.utils.KeyboardUtil;
+import com.mualab.org.user.utils.ScreenUtils;
+import com.mualab.org.user.utils.StatusBarUtil;
 
 import java.util.ArrayList;
 import java.util.List;

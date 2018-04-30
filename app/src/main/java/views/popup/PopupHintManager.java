@@ -9,7 +9,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
-import com.mualab.org.user.util.ScreenUtils;
+import com.mualab.org.user.utils.ScreenUtils;
 
 /**
  * Created by dharmraj on 28/11/17.
