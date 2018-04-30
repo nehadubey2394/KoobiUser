@@ -81,7 +81,6 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
     private List<Story> storyList = new ArrayList<>();
     private long statusDuration = 3000L;
-    private long DURATION = 500L;
     private int counter = 0;
     private boolean isRunningStory;
     private boolean isFirstTime = true;
@@ -223,8 +222,8 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     @Override
     public void onNext() {
         ++counter;
-        storyStatusView.pause();
         if(counter<storyList.size()){
+            storyStatusView.pause();
             loadMediaFile();
         }
     }
@@ -256,13 +255,14 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             isStoryTypeVideo = false;
             videoView.setVisibility(View.GONE);
             lyVideoView.setVisibility(View.GONE);
+            storyStatusView.setDynamicStoryDuration(statusDuration);
             Picasso.with(ivPhoto.getContext())
                     .load(story.myStory)
                     .error(R.drawable.bg_splash)
                     .into(ivPhoto, new Callback() {
                         @Override
                         public void onSuccess() {
-                            storyStatusView.setStoryDuration(statusDuration);
+                            //storyStatusView.setStoryDuration(statusDuration);
                             ivPhoto.setVisibility(View.VISIBLE);
                             progress_bar.setVisibility(View.GONE);
                             if(isFirstTime){

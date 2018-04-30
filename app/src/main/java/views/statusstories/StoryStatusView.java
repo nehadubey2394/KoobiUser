@@ -109,7 +109,7 @@ public class StoryStatusView extends LinearLayout {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    //@RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void pause() {
         if (isComplete) return;
         if(current<progressBars.size()){
@@ -119,7 +119,7 @@ public class StoryStatusView extends LinearLayout {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    //@RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void resume() {
         if (isComplete) return;
         if(current<progressBars.size()){
@@ -191,7 +191,7 @@ public class StoryStatusView extends LinearLayout {
 
     private ObjectAnimator createAnimator(final int index, long duration) {
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBars.get(index), "progress", MAX_PROGRESS);
-        animation.setFloatValues(0f, 500f);
+        //animation.setFloatValues(0f, 500f);
         animation.setInterpolator(new LinearInterpolator());
         animation.setDuration(duration);
         animation.addListener(new Animator.AnimatorListener() {
