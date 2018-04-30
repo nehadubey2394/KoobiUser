@@ -60,9 +60,6 @@
             android:name=".activity.authentication.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.authentication.OtpVerificationActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.authentication.RegistrationActivity"
             android:screenOrientation="portrait" />
         <activity

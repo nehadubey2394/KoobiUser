@@ -21,7 +21,10 @@ import com.mualab.org.user.webservice.HttpResponceListner;
 import com.mualab.org.user.webservice.HttpTask;
 import com.mualab.org.user.util.StatusBarUtil;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import views.refreshview.RjRefreshLayout;
@@ -29,9 +32,11 @@ import views.refreshview.RjRefreshLayout;
 public class FeedDetailActivity extends AppCompatActivity implements FeedsListner{
 
     private FragmentManager fm;
+    private List<Feeds> list;
     private Feeds feeds;
     private TextView tvTitle;
     private String title;
+    private int index;
 
     private RjRefreshLayout mRefreshLayout;
     private boolean isPulltoRefrash;
@@ -44,10 +49,12 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
         Intent intent = getIntent();
         if (intent != null) {
             feeds = (Feeds) intent.getSerializableExtra("feed");
+            index =  intent.getIntExtra("index", 0);
+            list = (List<Feeds>) intent.getSerializableExtra("feeds");
             //feeds = (Feeds) intent.getExtras().getSerializable(" feed");
         }
 
-        tvTitle = findViewById(R.id.tvTitle);
+        tvTitle = findViewById(R.id.tvTitle);list = (List<Feeds>) intent.getSerializableExtra("feeds");
 
 
         if(feeds!=null){
@@ -55,7 +62,7 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
                 title = "Image";
             else title = "Video";
             setHeaderTitle(title);
-            addFragment(FeedDetailFragment.newInstance("",feeds), false);
+            addFragment(FeedDetailFragment.newInstance(index,list), false);
         }
 
     }
@@ -86,6 +93,13 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
             public void onLoadMore() {
             }
         });*/
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //setResult();
     }
 
     @Override

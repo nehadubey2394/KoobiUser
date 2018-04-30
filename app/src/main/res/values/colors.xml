@@ -112,13 +112,13 @@
     <color name="ss_colorPrimaryDark">#616161</color>
     <color name="ss_colorAccent">#95ff00</color>
 
-    <color name="ss_progress_startColor">#ffffd300</color>
-    <color name="ss_progress_endColor">#ffffcb00</color>
-    <color name="ss_progress_centerColor">#ffffb600</color>
+    <color name="ss_progress_startColor">#fff83272</color>
+    <color name="ss_progress_endColor">#fff83272</color>
+    <color name="ss_progress_centerColor">#fff83272</color>
 
-    <color name="ss_secondaryProgress_startColor">#80ffd300</color>
-    <color name="ss_secondaryProgress_endColor">#a0ffcb00</color>
-    <color name="ss_secondaryProgress_centerColor">#80ffb600</color>
+    <color name="ss_secondaryProgress_startColor">#80f83272</color>
+    <color name="ss_secondaryProgress_endColor">#a0f83272</color>
+    <color name="ss_secondaryProgress_centerColor">#80f83272</color>
 
     <color name="ss_background_startColor">#ff9d9e9d</color>
     <color name="ss_background_endColor">#ff747674</color>
