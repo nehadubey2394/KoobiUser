@@ -33,6 +33,7 @@ public class Mualab extends Application {
     public static Location currentLocation;
     public static Location currentLocationForBooking;
    // public static DatabaseReference ref;
+   public static boolean isStoryUploaded;
 
     private Session session;
     private RequestQueue mRequestQueue;

@@ -991,7 +991,18 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     @Override
     public void onClickedUserStory(LiveUserInfo storyUser, int position) {
         if(storyUser.id==Mualab.currentUser.id && storyUser.storyCount==0){
-            startActivityForResult(new Intent(mContext, CameraActivity.class), Constant.ADD_STORY);
+
+            if(Mualab.isStoryUploaded){
+                Intent intent = new Intent(mContext, StoreActivityTest.class);
+                Bundle args = new Bundle();
+                args.putSerializable("ARRAYLIST", liveUserList);
+                args.putInt("position", position);
+                intent.putExtra("BUNDLE", args);
+                startActivity(intent);
+            }else {
+                startActivityForResult(new Intent(mContext, CameraActivity.class), Constant.ADD_STORY);
+            }
+
         }else {
             Intent intent = new Intent(mContext, StoreActivityTest.class);
             Bundle args = new Bundle();

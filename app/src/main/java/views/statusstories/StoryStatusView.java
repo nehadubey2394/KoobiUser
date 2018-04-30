@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -162,14 +161,14 @@ public class StoryStatusView extends LinearLayout {
         }
     }
 
-    public void setStoriesCountWithDurations(@NonNull long[] durations) {
+    /*public void setStoriesCountWithDurations(@NonNull long[] durations) {
         storiesCount = durations.length;
         bindViews();
         animators.clear();
         for (int i = 0; i < progressBars.size(); i++) {
             animators.add(createAnimator(i, durations[i]));
         }
-    }
+    }*/
 
 
     public void startStories() {
