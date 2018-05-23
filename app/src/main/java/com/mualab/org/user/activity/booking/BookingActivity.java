@@ -33,13 +33,14 @@ import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment5;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.data.model.booking.StaffInfo;
+import com.mualab.org.user.data.model.booking.StaffServices;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.model.booking.BookingServices3;
-import com.mualab.org.user.data.model.booking.BookingStaff;
 import com.mualab.org.user.data.model.booking.BusinessDay;
 import com.mualab.org.user.data.model.booking.Services;
 import com.mualab.org.user.data.model.booking.SubServices;
@@ -83,7 +84,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             lyArtistDetail.setVisibility(visibility);
     }
 
- public void setTitleVisibility(String text){
+    public void setTitleVisibility(String text){
         if(title_booking!=null) {
             title_booking.setVisibility(View.VISIBLE);
             title_booking.setText(text);
@@ -139,12 +140,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         apiForGetArtistDetail();
 
-        // addFragment(new BookingFragment2(), false, R.id.flBookingContainer);
-
-       /* if (mParam1.equals("1")){
-        }else {
-            addFragment(new BookingFragment1(), false, R.id.flBookingContainer);
-        }*/
         ivHeaderBack2.setOnClickListener(this);
     }
 
@@ -295,7 +290,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         return businessDays;
     }
 
-
     private void apiForGetArtistDetail(){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
@@ -323,7 +317,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         params.put("userId", String.valueOf(user.id));
         // params.put("appType", "user");
 
-        HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "artistDetail", new HttpResponceListner.Listener() {
+        HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "artistDetailNew", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
@@ -374,7 +368,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                         subServices.subServiceId = jObj.getString("subServiceId");
                                         subServices.subServiceName = jObj.getString("subServiceName");
 
-                                        JSONArray artistservices = jObj.getJSONArray("artistservices");
+                                        JSONArray artistservices = jObj.getJSONArray("artistService");
                                         for (int m=0; m<artistservices.length(); m++){
                                             JSONObject jsonObject3 = artistservices.getJSONObject(m);
                                             BookingServices3 services3 = new BookingServices3();
@@ -393,7 +387,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                                 services.isOutCall = true;
                                             }
                                             subServices.artistservices.add(services3);
-
                                         }
 
                                         services.arrayList.add(subServices);
@@ -403,7 +396,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             }
                         }
 
-                        if (businessType.equals("business")){
+                     /*   if (businessType.equals("business")){
                             JSONArray staffInfo = jsonObject.getJSONArray("staffInfo");
                             if (staffInfo!=null) {
                                 Gson gson = new Gson();
@@ -415,7 +408,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                 }
                             }
 
-                        }
+                        }*/
 
                         ArrayList<TimeSlot> timeSlots = new ArrayList<>();
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
@@ -502,6 +495,39 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                             adapter.notifyDataSetChanged();
                             updateView();
+                        }
+
+                        JSONArray staffInfoArray = jsonObject.getJSONArray("staffInfo");
+                        if (staffInfoArray!=null) {
+                            for (int a=0; a<staffInfoArray.length(); a++) {
+                                Gson gson = new Gson();
+                                JSONObject staffInfoJSONObject = staffInfoArray.getJSONObject(a);
+                                StaffInfo staffInfo = gson.fromJson(String.valueOf(staffInfoJSONObject), StaffInfo.class);
+
+                                JSONArray staffHoursArray = staffInfoJSONObject.getJSONArray("staffHours");
+                                if (staffHoursArray!=null) {
+                                    for (int b = 0; b < staffHoursArray.length(); b++) {
+                                        JSONObject staffTimeObj = staffHoursArray.getJSONObject(b);
+                                        int day = Integer.parseInt(staffTimeObj.getString("day"));
+                                        TimeSlot timeSlotNew = new TimeSlot(day);
+                                        timeSlotNew.dayId = day;
+                                        timeSlotNew.startTime = staffTimeObj.getString("startTime");
+                                        timeSlotNew.endTime = staffTimeObj.getString("endTime");
+                                        staffInfo.staffHours.add(timeSlotNew);
+                                    }
+                                }
+
+                                JSONArray staffServiceArray = staffInfoJSONObject.getJSONArray("staffService");
+                                if (staffServiceArray!=null) {
+                                    for (int c = 0; c < staffServiceArray.length(); c++) {
+                                        JSONObject staffServObj = staffServiceArray.getJSONObject(c);
+                                        Gson gson2 = new Gson();
+                                        StaffServices services = gson2.fromJson(String.valueOf(staffServObj), StaffServices.class);
+                                        staffInfo.staffServices.add(services);
+                                    }
+                                }
+                                item.staffInfo.add(staffInfo);
+                            }
                         }
                     }
                     //  showToast(message);

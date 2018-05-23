@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,7 +61,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
     private RadioGroup radioGroup;
 
     //Reg_View2
-   // private TextInputLayout input_layout_pwd, input_layout_cnfPwd;
+    // private TextInputLayout input_layout_pwd, input_layout_cnfPwd;
     private EditText edPwd, edConfirmPwd;
 
     private int CURRENT_VIEW_STATE = 3;
@@ -106,8 +107,6 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         ddf.show(getSupportFragmentManager(), "date picker dialog fragment");
     }
 
-
-
     private void initViews(){
         viewSwitcher = findViewById(R.id.viewSwitcher);
         progressView3 = findViewById(R.id.progressView3);
@@ -151,7 +150,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                     showToast(getString(R.string.error_profile_image));
                 }else*/ if(checkNotempty(ed_firstName/*, input_layout_firstName*/)
                     && checkNotempty(ed_lastName/*, input_layout_lastName*/)
-                    && validInputField(ed_userName/*, input_layout_userName*/,R.string.error_username_length)
+                    && validUserName(ed_userName/*, input_layout_userName*/)
                     && checkDOB()){
 
                 int selectedId = radioGroup.getCheckedRadioButtonId();
@@ -370,7 +369,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         String password = edPwd.getText().toString().trim();
         // Pattern specailCharPatten = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
         Pattern UpperCasePatten = Pattern.compile("[A-Z ]");
-       // Pattern lowerCasePatten = Pattern.compile("[a-z ]");
+        // Pattern lowerCasePatten = Pattern.compile("[a-z ]");
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
 
         if (TextUtils.isEmpty(password)) {
@@ -429,6 +428,27 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         return true;
     }
 
+    private boolean validUserName(EditText editText) {
+        String text = editText.getText().toString().trim();
+        if (TextUtils.isEmpty(text)) {
+            showToast(getString(R.string.error_required_field));
+            //inputLayout.setError(getString(R.string.error_required_field));
+            editText.requestFocus();
+            return false;
+        } else if (text.contains(" ")) {
+            showToast(getString(R.string.error_username_contain_space));
+            //inputLayout.setError(getString(R.string.error_username_contain_space));
+            editText.requestFocus();
+            return false;
+        } else if (text.length() < 4) {
+            showToast(getString(R.string.error_username_length));
+            //inputLayout.setError(getString(R.string.error_username_length));
+            editText.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
     private boolean checkNotempty(EditText editText/*, TextInputLayout inputLayout*/) {
         String text = editText.getText().toString().trim();
         if (TextUtils.isEmpty(text)) {
@@ -464,8 +484,8 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
             ((ImageView)findViewById(R.id.iv_bg)).setImageResource(R.drawable.bg_registration2);
             edPwd.setText("");
             edConfirmPwd.setText("");
-           // input_layout_pwd.setError(null);
-           // input_layout_cnfPwd.setError(null);
+            // input_layout_pwd.setError(null);
+            // input_layout_cnfPwd.setError(null);
             progressView4.setBackgroundColor(ContextCompat.getColor(this,R.color.white));
             progressView3.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
 

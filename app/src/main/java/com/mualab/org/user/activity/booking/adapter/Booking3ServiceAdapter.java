@@ -3,6 +3,7 @@ package com.mualab.org.user.activity.booking.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,6 +52,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private ArtistsSearchBoard item;
     private SubServices subServices;
     private Util utility;
+    private   long mLastClickTime = 0;
 
     // Constructor of the class
     public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices,boolean fromConfirmBooking) {
@@ -145,6 +147,11 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         @Override
         public void onClick(View view) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
             switch (view.getId()){
                 case R.id.lyRemove:
                     if (fromConfirmBooking){

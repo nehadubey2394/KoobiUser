@@ -6,6 +6,7 @@
     android:background="@color/screen_bg_color"
     android:focusable="true"
     android:clickable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment">
 
     <LinearLayout
@@ -30,19 +31,34 @@
             android:layout_weight="2"
 
             >
-            <TextView
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchview"
+                android:theme="@style/SearchboardSearchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="5dp"
-                android:text="Hair, Nails, Makeup...."
+                app:iconifiedByDefault="false"
+                app:searchIcon="@null"
+                android:lineSpacingExtra="0dp"
+                android:lineSpacingMultiplier="0"
                 android:textColor="@color/text_color"
                 android:fontFamily="@font/roboto_light"
                 android:textSize="12sp"
                 android:layout_gravity="center"
-                android:maxLines="1"
-                android:ellipsize="end"
-                />
+                app:queryHint="Hair, Nails, Makeup...."/>
+
+            <!-- <TextView
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:gravity="center_vertical"
+                 android:padding="5dp"
+                 android:text="Hair, Nails, Makeup...."
+                 android:textColor="@color/text_color"
+                 android:fontFamily="@font/roboto_light"
+                 android:textSize="12sp"
+                 android:layout_gravity="center"
+                 android:maxLines="1"
+                 android:ellipsize="end"
+                 />-->
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView

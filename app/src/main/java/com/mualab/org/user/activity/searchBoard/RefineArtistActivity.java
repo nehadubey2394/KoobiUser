@@ -43,6 +43,7 @@ import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.StatusBarUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -75,6 +76,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_refine_artist);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimary));
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             refineSearchBoard = (RefineSearchBoard) bundle.getSerializable("params");
@@ -151,7 +153,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-       setRefineData();
+        setRefineData();
 
 
         lvExpandable.setAdapter(expandableListAdapter);

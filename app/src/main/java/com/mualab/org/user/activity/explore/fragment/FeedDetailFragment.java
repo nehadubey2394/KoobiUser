@@ -50,7 +50,7 @@ import static android.app.Activity.RESULT_OK;
 public class FeedDetailFragment extends Fragment {
 
     private Context mContext;
-    private RjRefreshLayout mRefreshLayout;
+  //  private RjRefreshLayout mRefreshLayout;
     private FeedAdapter adapter;
     private Feeds feed;
     private Uri uri;
@@ -112,8 +112,9 @@ public class FeedDetailFragment extends Fragment {
         rvFeed.setLayoutManager(lm);
         rvFeed.setHasFixedSize(true);
 
-        mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
-        final CircleHeaderView header = new CircleHeaderView(getContext());
+      //  mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
+       // final CircleHeaderView header = new CircleHeaderView(getContext());
+/*
         mRefreshLayout.addHeader(header);
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -126,6 +127,7 @@ public class FeedDetailFragment extends Fragment {
             public void onLoadMore() {
             }
         });
+*/
 
 
         adapter = new FeedAdapter(mContext, list, new FeedAdapter.Listener() {
@@ -187,10 +189,10 @@ public class FeedDetailFragment extends Fragment {
 
                     if (status.equalsIgnoreCase("success")) {
                         list.clear();
-                        if(isPulltoRefrash){
+                       /* if(isPulltoRefrash){
                             isPulltoRefrash = false;
                             mRefreshLayout.stopRefresh(true, 500);
-                        }
+                        }*/
                         JSONArray array = js.getJSONArray("feedDetail");
                         Gson gson = new Gson();
                         for (int i = 0; i < array.length(); i++) {
@@ -236,11 +238,11 @@ public class FeedDetailFragment extends Fragment {
                         adapter.notifyDataSetChanged();
 
                     } else if (status.equals("fail")) {
-                        if(isPulltoRefrash){
+                        /*if(isPulltoRefrash){
                             isPulltoRefrash = false;
                             mRefreshLayout.stopRefresh(false, 500);
 
-                        }
+                        }*/
                         adapter.notifyDataSetChanged();
                     }
 
@@ -252,11 +254,11 @@ public class FeedDetailFragment extends Fragment {
 
             @Override
             public void ErrorListener(VolleyError error) {
-                if(isPulltoRefrash){
+               /* if(isPulltoRefrash){
                     isPulltoRefrash = false;
                     mRefreshLayout.stopRefresh(false, 500);
 
-                }
+                }*/
             }
         }).setParam(map)).execute("feed"+feed._id);
     }

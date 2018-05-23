@@ -17,6 +17,7 @@ import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
 import com.mualab.org.user.data.model.booking.BookingStaff;
+import com.mualab.org.user.data.model.booking.StaffInfo;
 
 import java.util.ArrayList;
 
@@ -73,7 +74,8 @@ public class BookingFragment1 extends Fragment {
     }
 
     private void initView(){
-        ArrayList<BookingStaff> staffList = item.staffList;
+        ArrayList<StaffInfo> staffList = item.staffInfo;
+
         staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
     }
 

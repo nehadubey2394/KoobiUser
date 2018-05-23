@@ -29,6 +29,7 @@ import com.mualab.org.user.activity.booking.listner.DeleteServiceListener;
 import com.mualab.org.user.activity.booking.listner.TimeSlotClickListener;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.booking.StaffInfo;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
@@ -90,6 +91,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         args.putString("param1", param1);
         args.putBoolean("param2", isEdit);
         args.putSerializable("param3", bookingInfo);
+      //  args.putSerializable("param4", item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -113,6 +115,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             mParam1 = getArguments().getString("param1");
             isEdit = getArguments().getBoolean("param2")  ;
             bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
+           // StaffInfo staffInfo = (StaffInfo) getArguments().getSerializable("param4");
         }
     }
 

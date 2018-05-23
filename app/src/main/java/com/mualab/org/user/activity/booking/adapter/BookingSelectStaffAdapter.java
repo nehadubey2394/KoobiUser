@@ -17,6 +17,7 @@ import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
 import com.mualab.org.user.data.model.booking.BookingServices3;
 import com.mualab.org.user.data.model.booking.BookingStaff;
+import com.mualab.org.user.data.model.booking.StaffInfo;
 import com.mualab.org.user.data.model.booking.SubServices;
 import com.squareup.picasso.Picasso;
 
@@ -25,12 +26,12 @@ import java.util.ArrayList;
 
 public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private ArrayList<BookingStaff> artistsList;
+    private ArrayList<StaffInfo> artistsList;
     private BookingInfo bookingInfo;
     private boolean isEdit;
 
     // Constructor of the class
-    public BookingSelectStaffAdapter(Context context, ArrayList<BookingStaff> artistsList, BookingInfo bookingInfo,boolean isEdit) {
+    public BookingSelectStaffAdapter(Context context, ArrayList<StaffInfo> artistsList, BookingInfo bookingInfo,boolean isEdit) {
         this.context = context;
         this.artistsList = artistsList;
         this.bookingInfo = bookingInfo;
@@ -55,13 +56,15 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
 
         final ViewHolder holder = ((ViewHolder) viewHolder);
-        final BookingStaff item = artistsList.get(position);
+        final StaffInfo item = artistsList.get(position);
 
-        holder.tvStaffArtistName.setText(item.userName);
-        holder.tvSpaciality.setText(item.serviceName);
-        if (!item.profileImage.equals("")){
-            Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
+        holder.tvStaffArtistName.setText(item.staffName);
+        holder.tvSpaciality.setText(item.job);
+        if (!item.staffImage.equals("")){
+            Picasso.with(context).load(item.staffImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(holder.ivSelectStaffProfile);
+        }else {
+            holder.ivSelectStaffProfile.setImageDrawable(context.getResources().getDrawable(R.drawable.defoult_user_img));
         }
     }
 
@@ -82,6 +85,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
 
         @Override
         public void onClick(View view) {
+            final StaffInfo item = artistsList.get(getAdapterPosition());
             ((BookingActivity)context).addFragment(
                     BookingFragment4.newInstance("Booking",isEdit,bookingInfo), true, R.id.flBookingContainer);
 

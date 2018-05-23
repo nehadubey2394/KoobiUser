@@ -26,8 +26,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/white_back_ico"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:visibility="gone"
             android:layout_alignParentLeft="true" />
 

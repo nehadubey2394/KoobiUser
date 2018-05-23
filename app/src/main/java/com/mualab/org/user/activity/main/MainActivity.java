@@ -49,7 +49,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final int REQUEST_ADD_NEW_STORY = 8719;
     public RefineSearchBoard item;
 
-
     public void setBgColor(int color){
         if(rlHeader1!=null)
             rlHeader1.setBackgroundColor(getResources().getColor(color));
