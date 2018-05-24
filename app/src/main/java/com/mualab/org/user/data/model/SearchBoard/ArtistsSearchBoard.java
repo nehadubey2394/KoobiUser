@@ -7,6 +7,7 @@ import com.mualab.org.user.data.model.ArtistServices;
 import com.mualab.org.user.data.model.booking.BookingStaff;
 import com.mualab.org.user.data.model.booking.Services;
 import com.mualab.org.user.data.model.booking.StaffInfo;
+import com.mualab.org.user.data.model.booking.StaffServices;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,6 +25,17 @@ public class ArtistsSearchBoard implements Serializable {
     public ArrayList<BookingStaff>staffList = new ArrayList<>();
 
     public ArrayList<StaffInfo>staffInfo = new ArrayList<>();
+
+    public List<StaffInfo> findArtistByServiceId(int serviceId){
+        List<StaffInfo> list = new ArrayList<>();
+
+        for(StaffInfo tmpArtist : staffInfo){
+            StaffServices service = tmpArtist.findServces(serviceId);
+            if(service!=null)
+                list.add(new StaffInfo(tmpArtist).setSerVice(service));
+        }
+        return list;
+    }
 
     public double latitude,longitude;
 

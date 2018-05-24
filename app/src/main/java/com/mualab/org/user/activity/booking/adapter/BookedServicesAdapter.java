@@ -1,8 +1,6 @@
 package com.mualab.org.user.activity.booking.adapter;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -15,11 +13,8 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment3;
-import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
-import com.mualab.org.user.data.model.booking.BookingServices3;
 
 import java.util.ArrayList;
 

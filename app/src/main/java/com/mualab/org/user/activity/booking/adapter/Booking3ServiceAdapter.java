@@ -172,11 +172,6 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     break;
 
                 case R.id.lyServiceDetail:
-                    if(isClicked){
-                        return;
-                    }
-                    isClicked = true;
-
                     Session session = Mualab.getInstance().getSessionManager();
                     User user = session.getUser();
                     BookingServices3 services3 = artistsList.get(getAdapterPosition());
@@ -248,6 +243,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
                     }else {
+
                         ((BookingActivity)context).addFragment(
                                 BookingFragment1.newInstance(serviceTitle,item, bookingInfo,fromConfirmBooking), true, R.id.flBookingContainer);
 

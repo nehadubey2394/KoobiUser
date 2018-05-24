@@ -91,7 +91,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         args.putString("param1", param1);
         args.putBoolean("param2", isEdit);
         args.putSerializable("param3", bookingInfo);
-      //  args.putSerializable("param4", item);
+        //  args.putSerializable("param4", item);
         fragment.setArguments(args);
         return fragment;
     }
@@ -115,7 +115,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             mParam1 = getArguments().getString("param1");
             isEdit = getArguments().getBoolean("param2")  ;
             bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
-           // StaffInfo staffInfo = (StaffInfo) getArguments().getSerializable("param4");
+            // StaffInfo staffInfo = (StaffInfo) getArguments().getSerializable("param4");
         }
     }
 
@@ -556,6 +556,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         params.put("date", selectedDate);
         params.put("currentTime", currentTime);
         params.put("serviceTime", bookingInfo.serviceTime);
+        params.put("staffId", bookingInfo.staffId);
 
         if (isEdit) {
             params.put("type", "edit");
@@ -573,7 +574,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
         params.put("userId", String.valueOf(user.id));
 
-        HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistTimeSlot", new HttpResponceListner.Listener() {
+        HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistTimeSlotNew", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
@@ -677,6 +678,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
+
+                    if (js.has("bookingId"))
+                        bookingInfo.bookingId = js.getString("bookingId");
 
                     if (status.equalsIgnoreCase("success")) {
                         mContext.startService(new Intent(mContext, ExpiredBookingJobService.class));

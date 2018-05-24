@@ -166,7 +166,7 @@
     </style>
 
     <style name="SearchboardSearchView" parent="Base.Widget.AppCompat.SearchView">
-        <item name="android:textColorHint">@color/text_color</item>
+        <item name="android:textColorHint">@color/gray</item>
         <item name="android:textColor">@color/text_color</item>
         <item name="android:editTextColor">@color/text_color</item>
         <item name="android:tint">@color/text_color</item>

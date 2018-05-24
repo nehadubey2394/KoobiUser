@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.booking.adapter;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,26 +13,23 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
-import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
-import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
-import com.mualab.org.user.data.model.booking.BookingServices3;
-import com.mualab.org.user.data.model.booking.BookingStaff;
 import com.mualab.org.user.data.model.booking.StaffInfo;
-import com.mualab.org.user.data.model.booking.SubServices;
+import com.mualab.org.user.data.model.booking.StaffServices;
+import com.mualab.org.user.utils.Util;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private ArrayList<StaffInfo> artistsList;
+    private List<StaffInfo> artistsList;
     private BookingInfo bookingInfo;
     private boolean isEdit;
 
     // Constructor of the class
-    public BookingSelectStaffAdapter(Context context, ArrayList<StaffInfo> artistsList, BookingInfo bookingInfo,boolean isEdit) {
+    public BookingSelectStaffAdapter(Context context, List<StaffInfo> artistsList, BookingInfo bookingInfo, boolean isEdit) {
         this.context = context;
         this.artistsList = artistsList;
         this.bookingInfo = bookingInfo;
@@ -44,8 +42,9 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_booking_select_staff_item_layout, parent, false);
         return new ViewHolder(view);
 
@@ -53,7 +52,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
 
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, int position) {
 
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final StaffInfo item = artistsList.get(position);
@@ -86,6 +85,38 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         public void onClick(View view) {
             final StaffInfo item = artistsList.get(getAdapterPosition());
+            Util utility  = new Util(context);
+            StaffServices staffServices = item.staffServices.get(0);
+            bookingInfo.staffId = staffServices.artistId;
+            if (bookingInfo.isOutCallSelect) {
+                bookingInfo.price = Double.parseDouble(staffServices.outCallPrice);
+            }else {
+                bookingInfo.price = Double.parseDouble(staffServices.inCallPrice);
+            }
+
+            int ctMinuts = 0,ptMinuts;
+
+            if (staffServices.completionTime.contains(":")){
+                String hours,min;
+                String[] separated = staffServices.completionTime.split(":");
+                hours = separated[0];
+                min = separated[1];
+                ctMinuts = utility.getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
+            }
+
+            if (bookingInfo.preperationTime.contains(":")){
+                String hours,min;
+                String[] separated = bookingInfo.preperationTime.split(":");
+                hours = separated[0];
+                min = separated[1];
+                ptMinuts = utility.getTimeInMin(Integer.parseInt(hours),Integer.parseInt(min));
+
+                bookingInfo.serviceTime = "00:"+(ptMinuts+ctMinuts);
+                bookingInfo.endTime = ""+(ptMinuts+ctMinuts);
+                bookingInfo.editEndTime = ""+(ptMinuts+ctMinuts);
+
+            }
+
             ((BookingActivity)context).addFragment(
                     BookingFragment4.newInstance("Booking",isEdit,bookingInfo), true, R.id.flBookingContainer);
 
