@@ -56,12 +56,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class SearchBoardFragment extends BaseFragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static String TAG = SearchBoardFragment.class.getName();
+    private static String TAG = SearchBoardFragment.class.getName();
 
     private RecyclerView rvSearchBoard;
     private ImageView ivStar;
@@ -71,9 +72,8 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     private SearchView searchview;
     private SearchBoardAdapter listAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
-    private ArrayList<ArtistsSearchBoard>artistsList;
+    private List<ArtistsSearchBoard> artistsList;
     private boolean isFavClick = false;
-    private boolean isSearchingTask;
     private RefineSearchBoard item;
     private String subServiceId = "",mainServId = "",searchKeyword="",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="",date;
 
@@ -95,7 +95,6 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isSearchingTask = false;
         if (getArguments() != null) {
             item = (RefineSearchBoard) getArguments().getSerializable("param1");
             initView();
@@ -161,8 +160,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                     listAdapter.showLoading(true);
-                    apiForGetArtist(page, true);
-                    //apiForLoadMoreArtist(page);
+                    if (isFavClick)
+                        apiForGetFavArtist(page, true);
+                    else
+                        apiForGetArtist(page, true);
                 }
             };
 
@@ -184,7 +185,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                 tv_msg.setVisibility(View.GONE);
                 progress_bar.setVisibility(View.VISIBLE);
                 scrollListener.resetState();
-                apiForGetArtist(0, false);
+                if (isFavClick)
+                    apiForGetFavArtist(0, false);
+                else
+                    apiForGetArtist(0, false);
                 return false;
             }
         });
@@ -199,13 +203,6 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -218,64 +215,20 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                 break;
 
             case R.id.cvFavourite:
+                artistsList.clear();
                 if (!isFavClick){
                     isFavClick = true;
                     ivStar.setImageResource(R.drawable.fill_star_ico);
+                    apiForGetFavArtist(0, false);
                 } else {
                     isFavClick = false;
                     ivStar.setImageResource(R.drawable.star_ico);
+                    apiForGetArtist(0, false);
+
                 }
-                MyToast.getInstance(mContext).showSmallCustomToast("Under developement");
                 break;
 
         }
-    }
-
-    private void getDeviceLocation() {
-
-        if (Build.VERSION.SDK_INT >= 23) {
-
-            if (mContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        Constant.MY_PERMISSIONS_REQUEST_LOCATION);
-            } else {
-                LocationDetector locationDetector = new LocationDetector();
-                FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
-                if (locationDetector.isLocationEnabled(getActivity()) &&
-                        locationDetector.checkLocationPermission(getActivity())) {
-
-                    mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                double latitude = location.getLatitude();
-                                double longitude = location.getLongitude();
-                                Mualab.currentLocation.lat = latitude;
-                                Mualab.currentLocation.lng = longitude;
-
-                                Mualab.currentLocationForBooking.lat = latitude;
-                                Mualab.currentLocationForBooking.lng = longitude;
-
-                                if (lng.equals("") && lat.equals("")){
-                                    lat = String.valueOf(latitude);
-                                    lng = String.valueOf(longitude);
-                                }
-                                apiForGetArtist(0, false);
-                            }
-                        }
-                    });
-
-                }else {
-                    progress_bar.setVisibility(View.GONE);
-                    tv_msg.setText(R.string.gps_permission_alert);
-                    locationDetector.showLocationSettingDailod(getActivity());
-                }
-            }
-        }else {
-            apiForGetArtist(0,false);
-        }
-
     }
 
     @Override
@@ -290,8 +243,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     }
 
                 } else {
-                    //Toast.makeText(mContext, "Permission Denied", Toast.LENGTH_LONG).show();
-                    apiForGetArtist(0,false);
+                    if (isFavClick)
+                        apiForGetFavArtist(0, false);
+                    else
+                        apiForGetArtist(0, false);
                 }
             }
 
@@ -372,6 +327,116 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                                     services = "NA";
                                 }
                                 item.categoryName = services;
+                                item.isFav = false;
+                                artistsList.add(item);
+                            }
+                        }
+                    }
+
+                    listAdapter.notifyDataSetChanged();
+                    if(artistsList.size()==0){
+                        tv_msg.setText(R.string.no_artist_found);
+                        ll_loadingBox.setVisibility(View.VISIBLE);
+                    }
+
+                    //  showToast(message);
+                } catch (Exception e) {
+                    tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
+                    e.printStackTrace();
+                    listAdapter.notifyDataSetChanged();
+                    if(artistsList.size()==0){
+                        tv_msg.setText(R.string.no_artist_found);
+                        ll_loadingBox.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                progress_bar.setVisibility(View.GONE);
+                tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
+            }})
+                .setAuthToken(Mualab.currentUser.authToken)
+                .setProgress(false)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        task.execute(TAG);
+    }
+
+    private synchronized void apiForGetFavArtist(final int page, final boolean isLoadMore){
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForGetFavArtist(page, isLoadMore);
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("latitude", lat);
+        params.put("longitude", lng);
+        // params.put("distance", "10");
+        params.put("page", ""+page);
+        params.put("limit", "10");
+        params.put("service", mainServId);
+        params.put("serviceType", serviceType);
+        params.put("day", day);
+        params.put("time", time);
+        params.put("subservice", subServiceId);
+        params.put("sortSearch", sortSearch);
+        params.put("sortType", sortType);
+        params.put("text", searchKeyword);
+        params.put("userId", String.valueOf(Mualab.currentUser.id));
+        // params.put("appType", "user");
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "favoriteList", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    progress_bar.setVisibility(View.GONE);
+                    tv_msg.setVisibility(View.VISIBLE);
+                    tv_msg.setTextColor(mContext.getResources().getColor(R.color.text_color));
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+                    System.out.println("searchKeyword===="+searchKeyword+"&page "+page);
+
+                    if (page == 0) artistsList.clear();
+
+                    if (status.equalsIgnoreCase("success")) {
+
+                        listAdapter.showLoading(false);
+                        JSONArray artistArray = js.getJSONArray("artistList");
+                        Gson gson = new Gson();
+                        if (artistArray != null && artistArray.length() > 0) {
+                            //rvSearchBoard.setVisibility(View.VISIBLE);
+                            ll_loadingBox.setVisibility(View.GONE);
+
+                            for (int i = 0; i < artistArray.length(); i++) {
+                                JSONObject jsonObject = artistArray.getJSONObject(i);
+                                ArtistsSearchBoard item = gson.fromJson(String.valueOf(jsonObject), ArtistsSearchBoard.class);
+                                String services = "";
+                                if (item.service.size() != 0) {
+                                    if (item.service.size() < 2) {
+                                        services = item.service.get(0).title;
+                                    } else {
+                                        for (int j = 0; j < 2; j++) {
+                                            if (services.equals("")) {
+                                                services = item.service.get(j).title;
+                                            } else {
+                                                services = services + ", " + item.service.get(j).title;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    services = "NA";
+                                }
+                                item.categoryName = services;
+                                item.isFav = true;
                                 artistsList.add(item);
                             }
                         }
@@ -468,5 +533,66 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
         task.execute(this.getClass().getName());
     }
+
+    private void getDeviceLocation() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if (mContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        Constant.MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                LocationDetector locationDetector = new LocationDetector();
+                FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
+                if (locationDetector.isLocationEnabled(getActivity()) &&
+                        locationDetector.checkLocationPermission(getActivity())) {
+
+                    mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                double latitude = location.getLatitude();
+                                double longitude = location.getLongitude();
+                                Mualab.currentLocation.lat = latitude;
+                                Mualab.currentLocation.lng = longitude;
+
+                                Mualab.currentLocationForBooking.lat = latitude;
+                                Mualab.currentLocationForBooking.lng = longitude;
+
+                                if (lng.equals("") && lat.equals("")){
+                                    lat = String.valueOf(latitude);
+                                    lng = String.valueOf(longitude);
+                                }
+
+                                if (isFavClick)
+                                    apiForGetFavArtist(0, false);
+                                else
+                                    apiForGetArtist(0, false);
+                            }
+                        }
+                    });
+
+                }else {
+                    progress_bar.setVisibility(View.GONE);
+                    tv_msg.setText(R.string.gps_permission_alert);
+                    locationDetector.showLocationSettingDailod(getActivity());
+                }
+            }
+        }else {
+            if (isFavClick)
+                apiForGetFavArtist(0, false);
+            else
+                apiForGetArtist(0, false);
+        }
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
+    }
+
 
 }

@@ -62,5 +62,6 @@ public class BookingInfo implements Serializable {
     public boolean isOutCallSelect;
     @SerializedName("dateTime")
     public Date dateTime;
+    public String bookStaffId;
 
 }

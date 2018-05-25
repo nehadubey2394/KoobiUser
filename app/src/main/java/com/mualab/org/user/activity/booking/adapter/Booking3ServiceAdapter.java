@@ -22,6 +22,7 @@ import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment5;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.booking.StaffInfo;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
@@ -41,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -55,7 +57,9 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private   long mLastClickTime = 0;
 
     // Constructor of the class
-    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices,boolean fromConfirmBooking) {
+    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList,
+                                  ArtistsSearchBoard item,boolean isOutCallSelect,SubServices
+                                          subServices,boolean fromConfirmBooking,String bookingId) {
         this.context = context;
         this.artistsList = artistsList;
         this.item = item;
@@ -64,6 +68,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.fromConfirmBooking = fromConfirmBooking;
         utility = new Util(context);
         this.serviceTitle = subServices.subServiceName;
+        this.bookingId = bookingId;
     }
 
     @Override
@@ -189,6 +194,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     bookingInfo.sId = subServices.serviceId;
                     bookingInfo.subServices = subServices;
                     bookingInfo.isOutCallSelect = isOutCallSelect;
+                    bookingInfo.bookingId = bookingId;
                     //       subServices.bookedArtistServices.addAll(artistsList);
 
                     //add data from services
@@ -243,10 +249,14 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
                     }else {
-
-                        ((BookingActivity)context).addFragment(
-                                BookingFragment1.newInstance(serviceTitle,item, bookingInfo,fromConfirmBooking), true, R.id.flBookingContainer);
-
+                        List<StaffInfo> staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
+                        if (staffList.size()!=0) {
+                            ((BookingActivity) context).addFragment(
+                                    BookingFragment1.newInstance(serviceTitle, item, bookingInfo, fromConfirmBooking), true, R.id.flBookingContainer);
+                        }else {
+                            ((BookingActivity)context).addFragment(
+                                    BookingFragment4.newInstance(subServices.subServiceName,false,bookingInfo), true, R.id.flBookingContainer);
+                        }
                     }
                     break;
 

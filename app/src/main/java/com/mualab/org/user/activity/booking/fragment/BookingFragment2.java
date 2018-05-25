@@ -195,7 +195,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
         Services servicesItem = services.get(groupPosition);
         SubServices subServices = servicesItem.arrayList.get(childPosition);
         ((BookingActivity)mContext).addFragment(
-                BookingFragment3.newInstance(false,subServices,item,isOutCallSelect), true, R.id.flBookingContainer);
+                BookingFragment3.newInstance(false,subServices,item,isOutCallSelect,""), true, R.id.flBookingContainer);
     }
 
     public void OutCallFilter() {

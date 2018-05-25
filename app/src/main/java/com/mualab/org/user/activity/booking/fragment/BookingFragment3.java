@@ -26,7 +26,7 @@ public class BookingFragment3 extends Fragment {
     private Booking3ServiceAdapter adapter;
     private Context mContext;
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String mParam1,bookingId="";
     private SubServices subServices;
     private ArtistsSearchBoard item;
     private  boolean isOutCallSelect,fromConfirmBooking = false;
@@ -35,13 +35,15 @@ public class BookingFragment3 extends Fragment {
         // Required empty public constructor
     }
 
-    public static BookingFragment3 newInstance(boolean fromConfirmBooking,SubServices subServices, ArtistsSearchBoard item, boolean isOutCallSelect) {
+    public static BookingFragment3 newInstance(boolean fromConfirmBooking,SubServices subServices,
+                                               ArtistsSearchBoard item, boolean isOutCallSelect,String bookingId) {
         BookingFragment3 fragment = new BookingFragment3();
         Bundle args = new Bundle();
         args.putBoolean("param1", fromConfirmBooking);
         args.putSerializable("param2", subServices);
         args.putSerializable("param3", item);
         args.putBoolean("param4", isOutCallSelect);
+        args.putString("param5", bookingId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,6 +61,7 @@ public class BookingFragment3 extends Fragment {
             isOutCallSelect = getArguments().getBoolean("param4");
             subServices = (SubServices) getArguments().getSerializable("param2");
             item = (ArtistsSearchBoard) getArguments().getSerializable("param3");
+            bookingId =  getArguments().getString("param5");
         }
     }
 
@@ -85,7 +88,8 @@ public class BookingFragment3 extends Fragment {
         arrayList = subServices.artistservices;
 
 
-        adapter = new Booking3ServiceAdapter(mContext, arrayList,item,isOutCallSelect, subServices,fromConfirmBooking);
+        adapter = new Booking3ServiceAdapter(mContext, arrayList,item,isOutCallSelect,
+                subServices,fromConfirmBooking,bookingId);
 
     }
 

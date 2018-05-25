@@ -66,6 +66,7 @@ import views.calender.widget.MyFlexibleCalendar;
 public class BookingFragment4 extends Fragment implements View.OnClickListener,TimeSlotClickListener,DeleteServiceListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private Context mContext;
+    public  String TAG = BookingFragment4.class.getName();
     // TODO: Rename and change types of parameters
     private String mParam1,artistId,selectedDate,sMonth= "",sDay,currentTime,lat="",lng="";
     private ArrayList<BookingTimeSlot> bookingTimeSlots;
@@ -300,14 +301,15 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                     MyToast.getInstance(mContext).showDasuAlert("No service added!");
                     return;
                 }
-                if (arrayListbookingInfo.size()!=0 && isRemoved){
+                else   if (isRemoved){
                     ((BookingActivity) mContext).addFragment(
                             BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
                     return;
                 }
-                if (bookingTimeSlots.size() != 0 || bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
+                if (bookingTimeSlots.size() != 0 || !bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time")){
 
                     if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
+                        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
                         apiForContinueBooking(false);
                     } else {
                         MyToast.getInstance(mContext).showDasuAlert("Please select service date and time");
@@ -318,13 +320,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 break;
 
             case R.id.btnToday:
-             /*   MyFlexibleCalendar viewCalendar =  rootView.findViewById(R.id.calendar);
-                viewCalendar.isFirstimeLoad = true;
-                Calendar cal = Calendar.getInstance();
-                CalendarAdapter adapter = new CalendarAdapter(mContext, cal);
-                viewCalendar.setAdapter(adapter);
-                viewCalendar.expand(500);
-                setCalenderClickListner(viewCalendar);*/
 
                 selectedDate = getCurrentDate();
                 bookingInfo.selectedDate = selectedDate;
@@ -352,6 +347,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 if (arrayListbookingInfo.size()!=0){
                     if (bookingTimeSlots.size() != 0 || (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time"))){
                         if (!bookingInfo.date.equals("Select date") && !bookingInfo.time.equals("and time") && !bookingInfo.time.equals("12:00 AM")) {
+                            Mualab.getInstance().getRequestQueue().cancelAll(TAG);
                             apiForContinueBooking(true);
                         } else {
                             MyToast.getInstance(getActivity()).showDasuAlert("Please select service date and time");
@@ -425,6 +421,8 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                             }else
                                 currentTime = "12:00 AM";
 
+                            Mualab.getInstance().cancelPendingRequests(TAG);
+                            Mualab.getInstance().getRequestQueue().cancelAll(TAG);
                             apiForGetSlots();
                         }
                     }
@@ -557,8 +555,16 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         params.put("currentTime", currentTime);
         params.put("serviceTime", bookingInfo.serviceTime);
         params.put("staffId", bookingInfo.staffId);
+        params.put("bookStaffId", bookingInfo.bookStaffId);
+        params.put("latitude", lat);
+        params.put("longitude", lng);
+        params.put("userId", String.valueOf(user.id));
+        params.put("businessType", bookingInfo.item.businessType);
 
-        if (isEdit) {
+        if (isEdit && !alreadyAddedFound) {
+            params.put("type", "");
+            params.put("bookingId","bookingInfo.bookingId");
+        }else if (isEdit){
             params.put("type", "edit");
             params.put("bookingId",bookingInfo.bookingId);
         }
@@ -566,18 +572,16 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             params.put("type", "");
             params.put("bookingId","");
         }
+
         params.put("bookingTime", "");
         params.put("bookingDate", "");
         params.put("bookingCount", "");
-        params.put("latitude", lat);
-        params.put("longitude", lng);
-
-        params.put("userId", String.valueOf(user.id));
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "artistTimeSlotNew", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    Progress.hide(mContext);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -632,7 +636,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
-        task.execute(this.getClass().getName());
+        task.execute(TAG);
     }
 
     private void apiForContinueBooking(final boolean isAddMore){
@@ -653,7 +657,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
         Map<String, String> params = new HashMap<>();
         params.put("artistId", artistId);
-        params.put("staff", artistId);
+        params.put("staff", bookingInfo.staffId);
         params.put("serviceId", bookingInfo.sId);
         params.put("subServiceId", bookingInfo.ssId);
         params.put("artistServiceId", bookingInfo.msId);
@@ -662,12 +666,23 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
         params.put("price", String.valueOf(bookingInfo.price));
+        params.put("staffId", bookingInfo.staffId);
 
-        if (isEdit) {
+     /*   if (isEdit) {
             params.put("type", "edit");
             params.put("bookingId",bookingInfo.bookingId);
         }else
-            params.put("bookingId", "");
+            params.put("bookingId", "");*/
+        if (isEdit && !alreadyAddedFound) {
+            params.put("type", "");
+            params.put("bookingId","bookingInfo.bookingId");
+        }else if (isEdit){
+            params.put("type", "edit");
+            params.put("bookingId",bookingInfo.bookingId);
+        }
+        else {
+            params.put("bookingId","");
+        }
 
         params.put("userId", String.valueOf(user.id));
 
@@ -675,6 +690,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    Progress.hide(mContext);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -777,19 +793,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                         }
                         arrayListbookingInfo.remove(info);
                         bookingInfoAdapter.notifyDataSetChanged();
-
-                     /*   if (BookingFragment4.arrayListbookingInfo.size()==0){
-                            BookingFragment4.arrayListbookingInfo.clear();
-                            ((BookingActivity)context).finish();
-                        }else {
-                            FragmentManager fm = ((BookingActivity)context).getSupportFragmentManager();
-                            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-                            BookingInfo bookingInfo = BookingFragment4.arrayListbookingInfo.get(0);
-                            ((BookingActivity)context).addFragment(
-                                    BookingFragment5.newInstance(bookingInfo), true, R.id.flBookingContainer);
-                        }*/
-
 
                     }else {
                         MyToast.getInstance(mContext).showDasuAlert(message);

@@ -1,8 +1,5 @@
 package com.mualab.org.user.data.model.SearchBoard;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.mualab.org.user.data.model.ArtistServices;
 import com.mualab.org.user.data.model.booking.BookingStaff;
 import com.mualab.org.user.data.model.booking.Services;
@@ -20,6 +17,7 @@ public class ArtistsSearchBoard implements Serializable {
     public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,
             lastName,distance,ratingCount,businessType,serviceType,inCallpreprationTime,outCallpreprationTime,address,categoryName,radius;
     public  boolean isOutCallSelected = false;
+    public  boolean isFav;
     public  ArrayList<ArtistServices>service;
     public  ArrayList<Services>allService = new ArrayList<>();
     public ArrayList<BookingStaff>staffList = new ArrayList<>();

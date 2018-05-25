@@ -76,7 +76,7 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
                     ((BookingActivity)context).addFragment(
-                            BookingFragment3.newInstance(true,info.subServices,item,info.isOutCallSelect), true, R.id.flBookingContainer);
+                            BookingFragment3.newInstance(true,info.subServices,item,info.isOutCallSelect,info.bookingId), true, R.id.flBookingContainer);
                 }
             });
         }

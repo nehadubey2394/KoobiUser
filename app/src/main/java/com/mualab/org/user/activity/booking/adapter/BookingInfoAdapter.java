@@ -58,12 +58,12 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.tvPrice.setText("£"+item.price);
         holder.tvServiceName.setText(item.artistService);
 
-       // if (isEdit){
-            if (item.date.equals("Select date") && item.time.equals("and time")) {
-                holder.sample1.setSwipeEnabled(true);
-            }else {
-                holder.sample1.setSwipeEnabled(false);
-            }
+        // if (isEdit){
+        if (item.date.equals("Select date") && item.time.equals("and time")) {
+            holder.sample1.setSwipeEnabled(true);
+        }else {
+            holder.sample1.setSwipeEnabled(false);
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -83,9 +83,9 @@ public class BookingInfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             lyRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                        if (deleteServiceListener != null) {
-                            deleteServiceListener.onRemoveClick(getAdapterPosition());
-                        }
+                    if (deleteServiceListener != null) {
+                        deleteServiceListener.onRemoveClick(getAdapterPosition());
+                    }
 
                 }
             });
