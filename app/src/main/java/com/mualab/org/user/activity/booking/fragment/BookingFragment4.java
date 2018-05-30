@@ -198,7 +198,9 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             for (BookingInfo info : arrayListbookingInfo) {
                 if (info.msId.equals(bookingInfo.msId)) {
                     isMatch=true;
+                    String tmpStaffId = bookingInfo.staffId;
                     bookingInfo = info;
+                    bookingInfo.staffId = tmpStaffId;
                     alreadyAddedFound = true;
                     break;
                 }
@@ -236,7 +238,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             lat = String.valueOf(Mualab.currentLocationForBooking.lat);
             lng = String.valueOf(Mualab.currentLocationForBooking.lng);
         }
-
 
         if (arrayListbookingInfo.size()>1) {
             showSlotAccordingToSmallestDate();
@@ -553,24 +554,26 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         params.put("day", String.valueOf(dayId));
         params.put("date", selectedDate);
         params.put("currentTime", currentTime);
-        params.put("serviceTime", bookingInfo.serviceTime);
-        params.put("staffId", bookingInfo.staffId);
-        params.put("bookStaffId", bookingInfo.bookStaffId);
         params.put("latitude", lat);
         params.put("longitude", lng);
         params.put("userId", String.valueOf(user.id));
+        params.put("serviceTime", bookingInfo.serviceTime);
+        params.put("staffId", bookingInfo.staffId);//artistId
         params.put("businessType", bookingInfo.item.businessType);
 
         if (isEdit && !alreadyAddedFound) {
             params.put("type", "");
-            params.put("bookingId","bookingInfo.bookingId");
+            params.put("bookingId","");
+            params.put("bookStaffId", "");
         }else if (isEdit){
             params.put("type", "edit");
             params.put("bookingId",bookingInfo.bookingId);
+            params.put("bookStaffId", bookingInfo.bookStaffId);//oldStaffId
         }
         else {
             params.put("type", "");
             params.put("bookingId","");
+            params.put("bookStaffId", "");
         }
 
         params.put("bookingTime", "");
@@ -636,7 +639,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
-        task.execute(TAG);
+        task.execute(this.getClass().getName());
     }
 
     private void apiForContinueBooking(final boolean isAddMore){
@@ -666,7 +669,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         params.put("startTime", bookingInfo.time);
         params.put("endTime", bookingInfo.endTime);
         params.put("price", String.valueOf(bookingInfo.price));
-        params.put("staffId", bookingInfo.staffId);
+        //  params.put("staffId", bookingInfo.staffId);
 
      /*   if (isEdit) {
             params.put("type", "edit");
@@ -675,7 +678,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             params.put("bookingId", "");*/
         if (isEdit && !alreadyAddedFound) {
             params.put("type", "");
-            params.put("bookingId","bookingInfo.bookingId");
+            params.put("bookingId","");
         }else if (isEdit){
             params.put("type", "edit");
             params.put("bookingId",bookingInfo.bookingId);

@@ -17,10 +17,7 @@ import com.mualab.org.user.activity.booking.adapter.BookingSelectStaffAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
-import com.mualab.org.user.data.model.booking.BookingStaff;
 import com.mualab.org.user.data.model.booking.StaffInfo;
-import com.mualab.org.user.data.model.booking.StaffServices;
-import com.mualab.org.user.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,10 +77,23 @@ public class BookingFragment1 extends Fragment {
 
     private void initView(){
 
+        staffList = new ArrayList<>();
         staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
 
         //  staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
+        int pos = staffList.size()-1;
+
+        StaffInfo staffInfo = new StaffInfo();
+        staffInfo.staffImage = item.profileImage;
+        staffInfo.staffName = item.businessName;
+        staffInfo.job = "";
+        staffInfo.mediaAccess = "";
+        staffInfo.holiday = "";
+        staffInfo.staffId = bookingInfo.artistId;
+        staffList.add(staffInfo);
+
         staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
+
     }
 
     private void setViewId(View rootView){

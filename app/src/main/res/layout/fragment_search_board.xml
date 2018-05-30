@@ -98,7 +98,8 @@
                 android:id="@+id/ivStar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/star_ico"
+                android:padding="5dp"
+                android:src="@drawable/star_ico"
                 android:layout_gravity="center"/>
 
         </android.support.v7.widget.CardView>

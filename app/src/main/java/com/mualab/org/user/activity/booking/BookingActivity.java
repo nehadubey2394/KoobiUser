@@ -328,7 +328,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (status.equalsIgnoreCase("success")) {
                         JSONObject jsonObject = js.getJSONObject("artistDetail");
-                        //    item = new ArtistsSearchBoard();
                         item._id = jsonObject.getString("_id");
                         item.userName = jsonObject.getString("userName");
                         item.firstName = jsonObject.getString("firstName");
@@ -343,12 +342,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.radius = jsonObject.getString("radius");
 
                         item.businessName = jsonObject.getString("businessName");
-                        if (jsonObject.has("address"))
-                            item.address = jsonObject.getString("address");
                         item.inCallpreprationTime = jsonObject.getString("inCallpreprationTime");
                         item.outCallpreprationTime = jsonObject.getString("outCallpreprationTime");
-                        item.businessType = businessType;
                         item.serviceType = jsonObject.getString("serviceType");
+
+                        //  Gson mainGson = new Gson();
+                        // item = mainGson.fromJson(String.valueOf(jsonObject), ArtistsSearchBoard.class);
+                        if (jsonObject.has("address"))
+                            item.address = jsonObject.getString("address");
+                        item.businessType = businessType;
 
                         JSONArray allServiceArray = jsonObject.getJSONArray("allService");
                         if (allServiceArray!=null) {
@@ -362,27 +364,31 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                 if (subServiesArray!=null) {
                                     for (int k=0; k<subServiesArray.length(); k++){
                                         JSONObject jObj = subServiesArray.getJSONObject(k);
-                                        //          SubServices subServices = gson.fromJson(String.valueOf(jObj), SubServices.class);
+                                        // Gson gson = new Gson();
+                                        // SubServices subServices = gson.fromJson(String.valueOf(jObj), SubServices.class);
                                         SubServices subServices = new SubServices();
                                         subServices._id = jObj.getString("_id");
                                         subServices.serviceId = jObj.getString("serviceId");
                                         subServices.subServiceId = jObj.getString("subServiceId");
                                         subServices.subServiceName = jObj.getString("subServiceName");
 
-                                        JSONArray artistservices = jObj.getJSONArray("artistService");
+                                        JSONArray artistservices = jObj.getJSONArray("artistservices");
                                         for (int m=0; m<artistservices.length(); m++){
                                             JSONObject jsonObject3 = artistservices.getJSONObject(m);
+                                            // Gson gson3 = new Gson();
+                                            // BookingServices3 services3 = gson3.fromJson(String.valueOf(jsonObject3), BookingServices3.class);
+                                            // services3.setSelected(false);
+                                            // services3.setBooked(false);
                                             BookingServices3 services3 = new BookingServices3();
-
                                             services3._id = jsonObject3.getString("_id");
-                                            services3.setSelected(false);
-                                            services3.setBooked(false);
                                             services3.title = jsonObject3.getString("title");
                                             services3.completionTime = jsonObject3.getString("completionTime");
                                             services3.outCallPrice = jsonObject3.getString("outCallPrice");
                                             services3.inCallPrice = jsonObject3.getString("inCallPrice");
+                                            services3.setSelected(false);
+                                            services3.setBooked(false);
 
-                                            if (!services3.outCallPrice.equals("0") || !services3.outCallPrice.equals("null")){
+                                            if ( !services3.outCallPrice.equals("null") || !services3.outCallPrice.equals("0")){
                                                 services3.isOutCall3 = true;
                                                 subServices.isOutCall2 = true;
                                                 services.isOutCall = true;
@@ -396,20 +402,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                 }
                             }
                         }
-
-                     /*   if (businessType.equals("business")){
-                            JSONArray staffInfo = jsonObject.getJSONArray("staffInfo");
-                            if (staffInfo!=null) {
-                                Gson gson = new Gson();
-                                for (int a=0; a<staffInfo.length(); a++){
-                                    JSONObject staffInfoJSONObject = staffInfo.getJSONObject(a);
-                                    BookingStaff bookingStaff = gson.fromJson(String.valueOf(staffInfoJSONObject), BookingStaff.class);
-                                    item.staffList.add(bookingStaff);
-
-                                }
-                            }
-
-                        }*/
 
                         ArrayList<TimeSlot> timeSlots = new ArrayList<>();
                         JSONArray artistArray = jsonObject.getJSONArray("openingTime");
@@ -560,7 +552,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         task.execute(this.getClass().getName());
     }
 
-
     public void addFragment(Fragment fragment, boolean addToBackStack, int containerId) {
         String backStackName = fragment.getClass().getName();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -686,7 +677,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         task.execute(this.getClass().getName());
     }
 
-
     @Override
     public void onBackPressed() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.flBookingContainer);
@@ -797,16 +787,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (status.equalsIgnoreCase("success")) {
 
-                        stopService(new Intent(BookingActivity.this, ExpiredBookingJobService.class));
                         MyToast.getInstance(BookingActivity.this).showDasuAlert("Booking session has been expired, please try again");
+                        stopService(new Intent(BookingActivity.this, ExpiredBookingJobService.class));
 
                         BookingFragment4.arrayListbookingInfo.clear();
+                        stopCountdown();
                         Session session = Mualab.getInstance().getSessionManager();
                         session.setUserChangedLocLat("");
                         session.setUserChangedLocLng("");
                         session.setUserChangedLocName("");
-                        countDownTimer.cancel();
-                        stopCountdown();
                         finish();
 
                     }else {

@@ -71,12 +71,16 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 @Override
                 public void onClick(View view) {
                     BookingInfo info = artistsList.get(getAdapterPosition());
-
                     FragmentManager fm = context.getSupportFragmentManager();
                     fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+                    info.bookStaffId = info.staffId;
+                  /*  ((BookingActivity)context).addFragment(
+                            BookingFragment3.newInstance(true,info.subServices,item,
+                                    info.isOutCallSelect,info.bookingId,info.staffId), true, R.id.flBookingContainer);
+                }
+            });*/
                     ((BookingActivity)context).addFragment(
-                            BookingFragment3.newInstance(true,info.subServices,item,info.isOutCallSelect,info.bookingId), true, R.id.flBookingContainer);
+                            BookingFragment3.newInstance(true,info.subServices,item,info), true, R.id.flBookingContainer);
                 }
             });
         }

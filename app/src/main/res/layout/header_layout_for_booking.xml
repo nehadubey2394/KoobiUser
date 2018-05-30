@@ -64,7 +64,7 @@
                 android:id="@+id/ivHeaderUser2"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:padding="12dp"
+                android:padding="14dp"
                 android:src="@drawable/user_ico"
                 android:layout_marginRight="5dp"
                 android:layout_alignParentRight="true"

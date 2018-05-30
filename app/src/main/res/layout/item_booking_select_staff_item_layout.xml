@@ -44,39 +44,82 @@
                 app:civ_border_color="@color/transparent"
                 />
 
-            <TextView
-                android:id="@+id/tvStaffArtistName"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:ems="10"
-                android:ellipsize="end"
-                android:fontFamily="@font/roboto_medium"
                 android:gravity="center_vertical"
-                android:maxLines="2"
-                android:maxWidth="180dp"
-                android:padding="2dp"
-                android:text="Neha"
-                android:textColor="@color/text_color"
-                android:textSize="12sp" />
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvStaffArtistName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:ems="10"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:maxWidth="180dp"
+                    android:padding="2dp"
+                    android:text="Neha"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tvSpaciality"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:ems="10"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:maxWidth="180dp"
+                    android:padding="2dp"
+                    android:text="Expert"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
-        <TextView
-            android:id="@+id/tvSpaciality"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/roboto_regular"
-            android:gravity="right|center_vertical"
-            android:maxLines="2"
-            android:padding="2dp"
-            android:text="Hair Expert"
-            android:layout_marginRight="6dp"
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
             android:layout_centerVertical="true"
+            android:gravity="right|center"
+            android:padding="2dp"
             android:layout_alignParentRight="true"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="right|center_vertical"
+                android:maxLines="2"
+                android:padding="2dp"
+                android:text="250"
+                android:textColor="@color/grey"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="right|center_vertical"
+                android:maxLines="2"
+                android:textColor="@color/grey"
+                android:textSize="14sp" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 

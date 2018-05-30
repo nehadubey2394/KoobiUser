@@ -16,6 +16,7 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.Booking3ServiceAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.data.model.booking.BookingInfo;
 import com.mualab.org.user.data.model.booking.BookingServices3;
 import com.mualab.org.user.data.model.booking.SubServices;
 
@@ -29,21 +30,34 @@ public class BookingFragment3 extends Fragment {
     private String mParam1,bookingId="";
     private SubServices subServices;
     private ArtistsSearchBoard item;
-    private  boolean isOutCallSelect,fromConfirmBooking = false;
+    private BookingInfo info;
+    private  boolean fromConfirmBooking = false;
 
     public BookingFragment3() {
         // Required empty public constructor
     }
 
+    /*    public static BookingFragment3 newInstance(boolean fromConfirmBooking,SubServices subServices,
+                                                   ArtistsSearchBoard item, boolean isOutCallSelect,
+                                                   String bookingId,String bookStaffId) {
+            BookingFragment3 fragment = new BookingFragment3();
+            Bundle args = new Bundle();
+            args.putBoolean("param1", fromConfirmBooking);
+            args.putSerializable("param2", subServices);
+            args.putSerializable("param3", item);
+            args.putBoolean("param4", isOutCallSelect);
+            args.putString("param5", bookingId);
+            fragment.setArguments(args);
+            return fragment;
+        } */
     public static BookingFragment3 newInstance(boolean fromConfirmBooking,SubServices subServices,
-                                               ArtistsSearchBoard item, boolean isOutCallSelect,String bookingId) {
+                                               ArtistsSearchBoard item,  BookingInfo info) {
         BookingFragment3 fragment = new BookingFragment3();
         Bundle args = new Bundle();
         args.putBoolean("param1", fromConfirmBooking);
         args.putSerializable("param2", subServices);
         args.putSerializable("param3", item);
-        args.putBoolean("param4", isOutCallSelect);
-        args.putString("param5", bookingId);
+        args.putSerializable("param4", info);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,10 +72,11 @@ public class BookingFragment3 extends Fragment {
 
         if (getArguments() != null) {
             fromConfirmBooking = getArguments().getBoolean("param1");
-            isOutCallSelect = getArguments().getBoolean("param4");
             subServices = (SubServices) getArguments().getSerializable("param2");
             item = (ArtistsSearchBoard) getArguments().getSerializable("param3");
-            bookingId =  getArguments().getString("param5");
+            info = (BookingInfo) getArguments().getSerializable("param4");
+            //  isOutCallSelect = getArguments().getBoolean("param4");
+            //  bookingId =  getArguments().getString("param5");
         }
     }
 
@@ -88,8 +103,7 @@ public class BookingFragment3 extends Fragment {
         arrayList = subServices.artistservices;
 
 
-        adapter = new Booking3ServiceAdapter(mContext, arrayList,item,isOutCallSelect,
-                subServices,fromConfirmBooking,bookingId);
+        adapter = new Booking3ServiceAdapter(mContext, arrayList,item,subServices,fromConfirmBooking,info);
 
     }
 

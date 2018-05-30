@@ -30,7 +30,7 @@ public class BookingInfo implements Serializable {
     public String artistName;
     @SerializedName("profilePic")
     public String profilePic;
-    public String staffId;
+    public String staffId = "";
     @SerializedName("artistId")
     public String artistId;
     @SerializedName("serviceType")
@@ -62,6 +62,8 @@ public class BookingInfo implements Serializable {
     public boolean isOutCallSelect;
     @SerializedName("dateTime")
     public Date dateTime;
-    public String bookStaffId;
+    public String bookStaffId = "";
+    public String inCallPrice,outCallPrice;
+    public String completionTime;
 
 }

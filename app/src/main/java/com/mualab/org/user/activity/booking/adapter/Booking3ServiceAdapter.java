@@ -58,17 +58,16 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     // Constructor of the class
     public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList,
-                                  ArtistsSearchBoard item,boolean isOutCallSelect,SubServices
-                                          subServices,boolean fromConfirmBooking,String bookingId) {
+                                  ArtistsSearchBoard item,SubServices subServices,boolean fromConfirmBooking, BookingInfo info) {
         this.context = context;
         this.artistsList = artistsList;
         this.item = item;
-        this.isOutCallSelect = isOutCallSelect;
         this.subServices = subServices;
         this.fromConfirmBooking = fromConfirmBooking;
         utility = new Util(context);
         this.serviceTitle = subServices.subServiceName;
-        this.bookingId = bookingId;
+        this.isOutCallSelect = info.isOutCallSelect;
+        this.bookingId = info.bookingId;
     }
 
     @Override
@@ -204,6 +203,10 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     bookingInfo.artistAddress = item.address;
                     bookingInfo.item = item;
                     bookingInfo.userId = String.valueOf(user.id);
+                    //new in multiple staff
+                    bookingInfo.outCallPrice = services3.outCallPrice;
+                    bookingInfo.inCallPrice = services3.inCallPrice;
+                    bookingInfo.completionTime = services3.completionTime;
 
                     if (isOutCallSelect) {
                         bookingInfo.preperationTime = item.outCallpreprationTime;
@@ -249,14 +252,18 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
                     }else {
-                        List<StaffInfo> staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
+                        ((BookingActivity) context).addFragment(
+                                BookingFragment1.newInstance(serviceTitle, item, bookingInfo, fromConfirmBooking), true, R.id.flBookingContainer);
+
+                      /*  List<StaffInfo> staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
                         if (staffList.size()!=0) {
+
                             ((BookingActivity) context).addFragment(
                                     BookingFragment1.newInstance(serviceTitle, item, bookingInfo, fromConfirmBooking), true, R.id.flBookingContainer);
                         }else {
                             ((BookingActivity)context).addFragment(
                                     BookingFragment4.newInstance(subServices.subServiceName,false,bookingInfo), true, R.id.flBookingContainer);
-                        }
+                        }*/
                     }
                     break;
 

@@ -60,7 +60,7 @@ import static com.mualab.org.user.utils.constants.Constant.PLACE_AUTOCOMPLETE_RE
 
 public class RefineArtistActivity extends AppCompatActivity implements View.OnClickListener,DatePickerListener {
     private ExpandableListView lvExpandable;
-    private boolean isServiceOpen = false,isClear = false;
+    private boolean isServiceOpen = false,isClear = false,isFavClick;
     private ImageView ivPrice,ivDistance;
     private TextView tv_refine_dnt,tv_refine_loc;
     private RefineServiceExpandListAdapter expandableListAdapter;
@@ -80,6 +80,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             refineSearchBoard = (RefineSearchBoard) bundle.getSerializable("params");
+            isFavClick =  bundle.getBoolean("param2");
         }
         initView();
         setViewId();
@@ -223,6 +224,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             time = refineSearchBoard.time;
             date_time = refineSearchBoard.date;
             location = refineSearchBoard.location;
+            isFavClick = refineSearchBoard.isFavClick;
             dayId = Integer.parseInt(refineSearchBoard.day);
 
             if (!date_time.equals(""))
@@ -364,6 +366,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             refineSearchBoard.time = time;
             refineSearchBoard.date = date_time;
             refineSearchBoard.location = location;
+            refineSearchBoard.isFavClick = isFavClick;
             refineSearchBoard.tempSerevice.addAll(tempSerevice);
         }
 

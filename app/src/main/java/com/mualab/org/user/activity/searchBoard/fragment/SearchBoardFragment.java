@@ -73,7 +73,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     private SearchBoardAdapter listAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private List<ArtistsSearchBoard> artistsList;
-    private boolean isFavClick = false;
+    private static boolean isFavClick = false;
     private RefineSearchBoard item;
     private String subServiceId = "",mainServId = "",searchKeyword="",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="",date;
 
@@ -97,7 +97,6 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             item = (RefineSearchBoard) getArguments().getSerializable("param1");
-            initView();
         }
         if(artistsList==null)
             artistsList = new ArrayList<>();
@@ -115,6 +114,9 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         searchview = view.findViewById(R.id.searchview);
         CardView cvFilter = view.findViewById(R.id.cvFilter);
         CardView cvFavourite = view.findViewById(R.id.cvFavourite);
+
+        initView();
+
         cvFilter.setOnClickListener(this);
         cvFavourite.setOnClickListener(this);
         return view;
@@ -129,6 +131,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             serviceType = item.serviceType;
             sortSearch = item.sortSearch;
             sortType = item.sortType;
+            isFavClick = item.isFavClick;
             time = item.time;
             if (item.day.equals("100")){
                 day = "";
@@ -140,7 +143,11 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                 Mualab.currentLocationForBooking.lat = Double.parseDouble(lat);
                 Mualab.currentLocationForBooking.lng = Double.parseDouble(lng);
             }
-
+        }
+        if (isFavClick){
+            ivStar.setImageResource(R.drawable.fill_star_ico);
+        } else {
+            ivStar.setImageResource(R.drawable.star_ico);
         }
     }
 
@@ -203,12 +210,24 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
     }
 
+    private void showProgress(){
+        ll_loadingBox.setVisibility(View.VISIBLE);
+        tv_msg.setVisibility(View.GONE);
+        progress_bar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgress(){
+        ll_loadingBox.setVisibility(View.GONE);
+        progress_bar.setVisibility(View.GONE);
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.cvFilter:
                 Intent intent = new Intent(mContext,  RefineArtistActivity.class);
                 intent.putExtra("params",item);
+                intent.putExtra("param2",isFavClick);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 getActivity().finish();
@@ -217,15 +236,18 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             case R.id.cvFavourite:
                 artistsList.clear();
                 if (!isFavClick){
+                    showProgress();
                     isFavClick = true;
                     ivStar.setImageResource(R.drawable.fill_star_ico);
                     apiForGetFavArtist(0, false);
                 } else {
+                    showProgress();
                     isFavClick = false;
                     ivStar.setImageResource(R.drawable.star_ico);
                     apiForGetArtist(0, false);
 
                 }
+
                 break;
 
         }

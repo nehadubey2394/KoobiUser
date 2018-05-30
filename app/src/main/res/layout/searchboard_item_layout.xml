@@ -47,11 +47,11 @@
 
             <ImageView
                 android:id="@+id/ivFav"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:gravity="center"
                 android:layout_marginLeft="4dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:background="@drawable/fill_star_ico"
                 />
 
