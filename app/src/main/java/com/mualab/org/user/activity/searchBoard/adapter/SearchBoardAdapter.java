@@ -18,18 +18,19 @@ import com.mualab.org.user.utils.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private ArrayList<ArtistsSearchBoard> artistsList;
+    private List<ArtistsSearchBoard> artistsList;
     private Util utility;
     private boolean showLoader;
 
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
     // Constructor of the class
-    public SearchBoardAdapter(Context context, ArrayList<ArtistsSearchBoard> artistsList) {
+    public SearchBoardAdapter(Context context, List<ArtistsSearchBoard> artistsList) {
         this.context = context;
         this.artistsList = artistsList;
         utility = new Util(context);
@@ -101,14 +102,21 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (!item.profileImage.equals("")){
             Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(holder.ivProfile);
+        }else {
+            holder.ivProfile.setImageDrawable(context.getResources().getDrawable(R.drawable.defoult_user_img));
         }
+
+        if (item.isFav)
+            holder.ivFav.setVisibility(View.VISIBLE);
+        else
+            holder.ivFav.setVisibility(View.GONE);
 
         holder.tvServices.setText(item.categoryName);
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDistance,tvServices,tvArtistName,tvRating;
-        ImageView ivProfile;
+        ImageView ivProfile,ivFav;
         AppCompatButton btnBook;
         RatingBar rating;
         private ViewHolder(View itemView)
@@ -116,6 +124,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             super(itemView);
 
             ivProfile = itemView.findViewById(R.id.ivProfile);
+            ivFav = itemView.findViewById(R.id.ivFav);
             tvDistance = itemView.findViewById(R.id.tvDistance);
             tvArtistName = itemView.findViewById(R.id.tvArtistName);
             tvServices = itemView.findViewById(R.id.tvServices);

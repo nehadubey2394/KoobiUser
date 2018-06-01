@@ -3,6 +3,7 @@ package com.mualab.org.user.activity.booking.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment5;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.booking.StaffInfo;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
@@ -40,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -51,17 +54,20 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private ArtistsSearchBoard item;
     private SubServices subServices;
     private Util utility;
+    private   long mLastClickTime = 0;
 
     // Constructor of the class
-    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList, ArtistsSearchBoard item,boolean isOutCallSelect,SubServices subServices,boolean fromConfirmBooking) {
+    public Booking3ServiceAdapter(Context context, ArrayList<BookingServices3> artistsList,
+                                  ArtistsSearchBoard item,SubServices subServices,boolean fromConfirmBooking, BookingInfo info) {
         this.context = context;
         this.artistsList = artistsList;
         this.item = item;
-        this.isOutCallSelect = isOutCallSelect;
         this.subServices = subServices;
         this.fromConfirmBooking = fromConfirmBooking;
         utility = new Util(context);
         this.serviceTitle = subServices.subServiceName;
+        this.isOutCallSelect = info.isOutCallSelect;
+        this.bookingId = info.bookingId;
     }
 
     @Override
@@ -145,6 +151,11 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         @Override
         public void onClick(View view) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
             switch (view.getId()){
                 case R.id.lyRemove:
                     if (fromConfirmBooking){
@@ -165,11 +176,6 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     break;
 
                 case R.id.lyServiceDetail:
-                    if(isClicked){
-                        return;
-                    }
-                    isClicked = true;
-
                     Session session = Mualab.getInstance().getSessionManager();
                     User user = session.getUser();
                     BookingServices3 services3 = artistsList.get(getAdapterPosition());
@@ -187,6 +193,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     bookingInfo.sId = subServices.serviceId;
                     bookingInfo.subServices = subServices;
                     bookingInfo.isOutCallSelect = isOutCallSelect;
+                    bookingInfo.bookingId = bookingId;
                     //       subServices.bookedArtistServices.addAll(artistsList);
 
                     //add data from services
@@ -196,6 +203,10 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     bookingInfo.artistAddress = item.address;
                     bookingInfo.item = item;
                     bookingInfo.userId = String.valueOf(user.id);
+                    //new in multiple staff
+                    bookingInfo.outCallPrice = services3.outCallPrice;
+                    bookingInfo.inCallPrice = services3.inCallPrice;
+                    bookingInfo.completionTime = services3.completionTime;
 
                     if (isOutCallSelect) {
                         bookingInfo.preperationTime = item.outCallpreprationTime;
@@ -241,9 +252,18 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
                     }else {
-                        ((BookingActivity)context).addFragment(
-                                BookingFragment1.newInstance(serviceTitle,item, bookingInfo,fromConfirmBooking), true, R.id.flBookingContainer);
+                        ((BookingActivity) context).addFragment(
+                                BookingFragment1.newInstance(serviceTitle, item, bookingInfo, fromConfirmBooking), true, R.id.flBookingContainer);
 
+                      /*  List<StaffInfo> staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
+                        if (staffList.size()!=0) {
+
+                            ((BookingActivity) context).addFragment(
+                                    BookingFragment1.newInstance(serviceTitle, item, bookingInfo, fromConfirmBooking), true, R.id.flBookingContainer);
+                        }else {
+                            ((BookingActivity)context).addFragment(
+                                    BookingFragment4.newInstance(subServices.subServiceName,false,bookingInfo), true, R.id.flBookingContainer);
+                        }*/
                     }
                     break;
 

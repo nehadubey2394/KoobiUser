@@ -91,7 +91,7 @@
     <string name="error_required_field">Please enter required field</string>
     <string name="error_email_or_username_required">Please enter email or username</string>
     <string name="error_username_required">Please enter username</string>
-    <string name="error_username_contain_space">User name cannot contains blank space.</string>
+    <string name="error_username_contain_space">username can not contain blank space</string>
     <string name="error_username_length">Username must be at least 4 characters long.</string>
     <string name="error_user_name_exist">That username is already being used.</string>
 
@@ -341,7 +341,7 @@
     <string name="read_more">show more</string>
     <string name="read_less">show less</string>
     <string name="gps_permission_alert">Need enable location and permission for search near by artist.</string>
-    <string name="no_artist_found">No Artist available on this location</string>
+    <string name="no_artist_found"> No Record Found</string>
     <string name="search">Search…</string>
     <string name="tag_services">Tag Services</string>
     <string name="tag_people">Tag People</string>

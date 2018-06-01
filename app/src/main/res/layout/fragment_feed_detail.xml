@@ -65,7 +65,7 @@
 
     </LinearLayout>-->
 
-
+<!--
     <views.refreshview.RjRefreshLayout
         android:id="@+id/mSwipeRefreshLayout"
         android:layout_width="match_parent"
@@ -78,6 +78,13 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp" />
 
-    </views.refreshview.RjRefreshLayout>
+    </views.refreshview.RjRefreshLayout>-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvFeed"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp" />
 
 </LinearLayout>

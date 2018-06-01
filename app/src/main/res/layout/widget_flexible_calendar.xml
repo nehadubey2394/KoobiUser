@@ -61,7 +61,8 @@
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/ic_navigate_next_white"
+                    android:rotation="180"
+                    android:src="@drawable/white_back_ico"
                     />
 
             </RelativeLayout>
@@ -91,7 +92,7 @@
 
                 <ImageView
                     android:layout_width="25dp"
-                    android:layout_height="24dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:layout_centerInParent="true"
                     android:src="@drawable/white_back_ico"
@@ -114,7 +115,9 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_centerInParent="true" android:background="@drawable/ic_navigate_next_white"
+                    android:layout_centerInParent="true"
+                    android:rotation="180"
+                    android:background="@drawable/white_back_ico"
                     />
 
             </RelativeLayout>

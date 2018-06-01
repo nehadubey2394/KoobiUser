@@ -39,18 +39,19 @@
                 android:fontFamily="@font/roboto_medium"
                 android:gravity="center"
                 android:maxLines="1"
-                android:maxWidth="250dp"
+                android:maxWidth="225dp"
                 android:padding="2dp"
                 android:text="Neha"
                 android:textColor="@color/text_color"
                 android:textSize="14sp" />
 
             <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:id="@+id/ivFav"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:gravity="center"
                 android:layout_marginLeft="4dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:background="@drawable/fill_star_ico"
                 />
 

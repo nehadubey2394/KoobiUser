@@ -30,4 +30,15 @@
         android:background="@color/screen_bg_color"
         android:padding="5dp"/>
 
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_artist_found"
+        android:textColor="@color/text_color"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/roboto_regular"/>
+
 </RelativeLayout>

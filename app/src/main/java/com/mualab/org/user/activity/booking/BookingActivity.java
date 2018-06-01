@@ -28,18 +28,20 @@ import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.adapter.AdapterBusinessDays;
 import com.mualab.org.user.activity.booking.background_service.ExpiredBookingJobService;
+import com.mualab.org.user.activity.booking.fragment.BookingFragment1;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment2;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment5;
 import com.mualab.org.user.activity.booking.listner.HideFilterListener;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.data.model.booking.StaffInfo;
+import com.mualab.org.user.data.model.booking.StaffServices;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.model.booking.BookingServices3;
-import com.mualab.org.user.data.model.booking.BookingStaff;
 import com.mualab.org.user.data.model.booking.BusinessDay;
 import com.mualab.org.user.data.model.booking.Services;
 import com.mualab.org.user.data.model.booking.SubServices;
@@ -83,7 +85,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             lyArtistDetail.setVisibility(visibility);
     }
 
- public void setTitleVisibility(String text){
+    public void setTitleVisibility(String text){
         if(title_booking!=null) {
             title_booking.setVisibility(View.VISIBLE);
             title_booking.setText(text);
@@ -139,12 +141,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         apiForGetArtistDetail();
 
-        // addFragment(new BookingFragment2(), false, R.id.flBookingContainer);
-
-       /* if (mParam1.equals("1")){
-        }else {
-            addFragment(new BookingFragment1(), false, R.id.flBookingContainer);
-        }*/
         ivHeaderBack2.setOnClickListener(this);
     }
 
@@ -295,7 +291,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         return businessDays;
     }
 
-
     private void apiForGetArtistDetail(){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
@@ -323,7 +318,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         params.put("userId", String.valueOf(user.id));
         // params.put("appType", "user");
 
-        HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "artistDetail", new HttpResponceListner.Listener() {
+        HttpTask task = new HttpTask(new HttpTask.Builder(BookingActivity.this, "artistDetailNew", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
@@ -333,7 +328,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (status.equalsIgnoreCase("success")) {
                         JSONObject jsonObject = js.getJSONObject("artistDetail");
-                        //    item = new ArtistsSearchBoard();
                         item._id = jsonObject.getString("_id");
                         item.userName = jsonObject.getString("userName");
                         item.firstName = jsonObject.getString("firstName");
@@ -348,12 +342,15 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                         item.radius = jsonObject.getString("radius");
 
                         item.businessName = jsonObject.getString("businessName");
-                        if (jsonObject.has("address"))
-                            item.address = jsonObject.getString("address");
                         item.inCallpreprationTime = jsonObject.getString("inCallpreprationTime");
                         item.outCallpreprationTime = jsonObject.getString("outCallpreprationTime");
-                        item.businessType = businessType;
                         item.serviceType = jsonObject.getString("serviceType");
+
+                        //  Gson mainGson = new Gson();
+                        // item = mainGson.fromJson(String.valueOf(jsonObject), ArtistsSearchBoard.class);
+                        if (jsonObject.has("address"))
+                            item.address = jsonObject.getString("address");
+                        item.businessType = businessType;
 
                         JSONArray allServiceArray = jsonObject.getJSONArray("allService");
                         if (allServiceArray!=null) {
@@ -367,7 +364,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                 if (subServiesArray!=null) {
                                     for (int k=0; k<subServiesArray.length(); k++){
                                         JSONObject jObj = subServiesArray.getJSONObject(k);
-                                        //          SubServices subServices = gson.fromJson(String.valueOf(jObj), SubServices.class);
+                                        // Gson gson = new Gson();
+                                        // SubServices subServices = gson.fromJson(String.valueOf(jObj), SubServices.class);
                                         SubServices subServices = new SubServices();
                                         subServices._id = jObj.getString("_id");
                                         subServices.serviceId = jObj.getString("serviceId");
@@ -377,23 +375,25 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                         JSONArray artistservices = jObj.getJSONArray("artistservices");
                                         for (int m=0; m<artistservices.length(); m++){
                                             JSONObject jsonObject3 = artistservices.getJSONObject(m);
+                                            // Gson gson3 = new Gson();
+                                            // BookingServices3 services3 = gson3.fromJson(String.valueOf(jsonObject3), BookingServices3.class);
+                                            // services3.setSelected(false);
+                                            // services3.setBooked(false);
                                             BookingServices3 services3 = new BookingServices3();
-
                                             services3._id = jsonObject3.getString("_id");
-                                            services3.setSelected(false);
-                                            services3.setBooked(false);
                                             services3.title = jsonObject3.getString("title");
                                             services3.completionTime = jsonObject3.getString("completionTime");
                                             services3.outCallPrice = jsonObject3.getString("outCallPrice");
                                             services3.inCallPrice = jsonObject3.getString("inCallPrice");
+                                            services3.setSelected(false);
+                                            services3.setBooked(false);
 
-                                            if (!services3.outCallPrice.equals("0") || !services3.outCallPrice.equals("null")){
+                                            if ( !services3.outCallPrice.equals("null") || !services3.outCallPrice.equals("0")){
                                                 services3.isOutCall3 = true;
                                                 subServices.isOutCall2 = true;
                                                 services.isOutCall = true;
                                             }
                                             subServices.artistservices.add(services3);
-
                                         }
 
                                         services.arrayList.add(subServices);
@@ -401,20 +401,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                                     item.allService.add(services);
                                 }
                             }
-                        }
-
-                        if (businessType.equals("business")){
-                            JSONArray staffInfo = jsonObject.getJSONArray("staffInfo");
-                            if (staffInfo!=null) {
-                                Gson gson = new Gson();
-                                for (int a=0; a<staffInfo.length(); a++){
-                                    JSONObject staffInfoJSONObject = staffInfo.getJSONObject(a);
-                                    BookingStaff bookingStaff = gson.fromJson(String.valueOf(staffInfoJSONObject), BookingStaff.class);
-                                    item.staffList.add(bookingStaff);
-
-                                }
-                            }
-
                         }
 
                         ArrayList<TimeSlot> timeSlots = new ArrayList<>();
@@ -503,6 +489,39 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                             adapter.notifyDataSetChanged();
                             updateView();
                         }
+
+                        JSONArray staffInfoArray = jsonObject.getJSONArray("staffInfo");
+                        if (staffInfoArray!=null) {
+                            for (int a=0; a<staffInfoArray.length(); a++) {
+                                Gson gson = new Gson();
+                                JSONObject staffInfoJSONObject = staffInfoArray.getJSONObject(a);
+                                StaffInfo staffInfo = gson.fromJson(String.valueOf(staffInfoJSONObject), StaffInfo.class);
+
+                                JSONArray staffHoursArray = staffInfoJSONObject.getJSONArray("staffHours");
+                                if (staffHoursArray!=null) {
+                                    for (int b = 0; b < staffHoursArray.length(); b++) {
+                                        JSONObject staffTimeObj = staffHoursArray.getJSONObject(b);
+                                        int day = Integer.parseInt(staffTimeObj.getString("day"));
+                                        TimeSlot timeSlotNew = new TimeSlot(day);
+                                        timeSlotNew.dayId = day;
+                                        timeSlotNew.startTime = staffTimeObj.getString("startTime");
+                                        timeSlotNew.endTime = staffTimeObj.getString("endTime");
+                                        staffInfo.staffHours.add(timeSlotNew);
+                                    }
+                                }
+
+                                JSONArray staffServiceArray = staffInfoJSONObject.getJSONArray("staffService");
+                                if (staffServiceArray!=null) {
+                                    for (int c = 0; c < staffServiceArray.length(); c++) {
+                                        JSONObject staffServObj = staffServiceArray.getJSONObject(c);
+                                        Gson gson2 = new Gson();
+                                        StaffServices services = gson2.fromJson(String.valueOf(staffServObj), StaffServices.class);
+                                        staffInfo.staffServices.add(services);
+                                    }
+                                }
+                                item.staffInfo.add(staffInfo);
+                            }
+                        }
                     }
                     //  showToast(message);
                 } catch (Exception e) {
@@ -532,7 +551,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         task.execute(this.getClass().getName());
     }
-
 
     public void addFragment(Fragment fragment, boolean addToBackStack, int containerId) {
         String backStackName = fragment.getClass().getName();
@@ -659,7 +677,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         task.execute(this.getClass().getName());
     }
 
-
     @Override
     public void onBackPressed() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.flBookingContainer);
@@ -667,11 +684,14 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
 
-        if (currentFragment instanceof BookingFragment5 && BookingFragment4.arrayListbookingInfo.size()>0){
-            fm.popBackStack();
+        if (i==1 && currentFragment instanceof BookingFragment5 && BookingFragment4.arrayListbookingInfo.size()>0){
+            showAlertDailog(fm,i);
         }
         else if (currentFragment instanceof BookingFragment4 && BookingFragment4.arrayListbookingInfo.size()==0){
             finish();
+        }
+        else if (currentFragment instanceof BookingFragment1){
+            fm.popBackStack();
         }
         else if (i==3 && BookingFragment4.arrayListbookingInfo.size()>0){
             showAlertDailog(fm,i);
@@ -730,7 +750,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                 //  millisUntilFinished / 1000;
             }
             public void onFinish() {
-                countDownTimer = null;//set CountDownTimer to null
+                //  countDownTimer = null;//set CountDownTimer to null
                 if (BookingFragment4.arrayListbookingInfo.size()!=0)
                     apiForDeleteAllPendingBooking();
             }
@@ -767,17 +787,16 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (status.equalsIgnoreCase("success")) {
 
+                        MyToast.getInstance(BookingActivity.this).showDasuAlert("Booking session has been expired, please try again");
                         stopService(new Intent(BookingActivity.this, ExpiredBookingJobService.class));
 
                         BookingFragment4.arrayListbookingInfo.clear();
+                        stopCountdown();
                         Session session = Mualab.getInstance().getSessionManager();
                         session.setUserChangedLocLat("");
                         session.setUserChangedLocLng("");
                         session.setUserChangedLocName("");
-                        countDownTimer.cancel();
-                        stopCountdown();
                         finish();
-                        MyToast.getInstance(BookingActivity.this).showDasuAlert("Booking session has been expired, please try again");
 
                     }else {
                     }

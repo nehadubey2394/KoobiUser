@@ -17,6 +17,7 @@ import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.adapter.ServiceExpandListAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
+import com.mualab.org.user.data.model.booking.BookingInfo;
 import com.mualab.org.user.data.model.booking.BookingServices3;
 import com.mualab.org.user.data.model.booking.Services;
 import com.mualab.org.user.data.model.booking.SubServices;
@@ -194,8 +195,12 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     private void onChildClickListener(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l){
         Services servicesItem = services.get(groupPosition);
         SubServices subServices = servicesItem.arrayList.get(childPosition);
+        BookingInfo info = new BookingInfo();
+        info.isOutCallSelect = isOutCallSelect;
+        info.bookingId = "";
         ((BookingActivity)mContext).addFragment(
-                BookingFragment3.newInstance(false,subServices,item,isOutCallSelect), true, R.id.flBookingContainer);
+                BookingFragment3.newInstance(false,subServices,item,info),
+                true, R.id.flBookingContainer);
     }
 
     public void OutCallFilter() {

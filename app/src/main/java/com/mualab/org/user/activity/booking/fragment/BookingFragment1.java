@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
@@ -16,9 +17,10 @@ import com.mualab.org.user.activity.booking.adapter.BookingSelectStaffAdapter;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
-import com.mualab.org.user.data.model.booking.BookingStaff;
+import com.mualab.org.user.data.model.booking.StaffInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class BookingFragment1 extends Fragment {
@@ -29,6 +31,7 @@ public class BookingFragment1 extends Fragment {
     private ArtistsSearchBoard item;
     private BookingInfo bookingInfo;
     private boolean isEdit;
+    private List<StaffInfo> staffList;
 
     public BookingFragment1() {
         // Required empty public constructor
@@ -73,8 +76,24 @@ public class BookingFragment1 extends Fragment {
     }
 
     private void initView(){
-        ArrayList<BookingStaff> staffList = item.staffList;
+
+        staffList = new ArrayList<>();
+        staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
+
+        //  staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
+        int pos = staffList.size()-1;
+
+        StaffInfo staffInfo = new StaffInfo();
+        staffInfo.staffImage = item.profileImage;
+        staffInfo.staffName = item.businessName;
+        staffInfo.job = "";
+        staffInfo.mediaAccess = "";
+        staffInfo.holiday = "";
+        staffInfo.staffId = bookingInfo.artistId;
+        staffList.add(staffInfo);
+
         staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
+
     }
 
     private void setViewId(View rootView){
@@ -82,10 +101,19 @@ public class BookingFragment1 extends Fragment {
             ((BookingActivity) mContext).setTitleVisibility(getString(R.string.title_booking));
         }
 
+        TextView tvNoData = rootView.findViewById(R.id.tvNoData);
         RecyclerView rvBookingSelectStaff = rootView.findViewById(R.id.rvBookingSelectStaff);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvBookingSelectStaff.setLayoutManager(layoutManager);
         rvBookingSelectStaff.setAdapter(staffAdapter);
+
+        if (staffList.size()==0){
+            rvBookingSelectStaff.setVisibility(View.GONE);
+            tvNoData.setVisibility(View.VISIBLE);
+        }else {
+            rvBookingSelectStaff.setVisibility(View.VISIBLE);
+            tvNoData.setVisibility(View.GONE);
+        }
     }
 
     @Override

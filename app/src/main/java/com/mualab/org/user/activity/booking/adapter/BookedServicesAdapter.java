@@ -1,8 +1,6 @@
 package com.mualab.org.user.activity.booking.adapter;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -15,11 +13,8 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment3;
-import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
-import com.mualab.org.user.data.model.booking.BookingServices3;
 
 import java.util.ArrayList;
 
@@ -76,12 +71,16 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 @Override
                 public void onClick(View view) {
                     BookingInfo info = artistsList.get(getAdapterPosition());
-
                     FragmentManager fm = context.getSupportFragmentManager();
                     fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+                    info.bookStaffId = info.staffId;
+                  /*  ((BookingActivity)context).addFragment(
+                            BookingFragment3.newInstance(true,info.subServices,item,
+                                    info.isOutCallSelect,info.bookingId,info.staffId), true, R.id.flBookingContainer);
+                }
+            });*/
                     ((BookingActivity)context).addFragment(
-                            BookingFragment3.newInstance(true,info.subServices,item,info.isOutCallSelect), true, R.id.flBookingContainer);
+                            BookingFragment3.newInstance(true,info.subServices,item,info), true, R.id.flBookingContainer);
                 }
             });
         }

@@ -1,58 +1,42 @@
 package com.mualab.org.user.data.model.SearchBoard;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.mualab.org.user.data.model.ArtistServices;
 import com.mualab.org.user.data.model.booking.BookingStaff;
 import com.mualab.org.user.data.model.booking.Services;
+import com.mualab.org.user.data.model.booking.StaffInfo;
+import com.mualab.org.user.data.model.booking.StaffServices;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mindiii on 16/1/18.
  */
 public class ArtistsSearchBoard implements Serializable {
-
-    // public ArtistsSearchBoard(){}
-
-    /*"_id":1,
-"userName":"pankaj",
-"firstName":"Pankaj",
-"lastName":"Patidar",
-"profileImage":"http://koobi.co.uk:3000/uploads/profile/1517822717364.jpg",
-"ratingCount":"0",
-"reviewCount":"0",
-"postCount":"0",
-"businessName":"Test",*/
-
-
-    /*
- "_id":12,
-"reviewCount":"0",
-"profileImage":"cara2v.com:8000/uploads/profile/1516193068409.jpg",
-"userName":"tt",
-"firstName":"WEED",
-"distance":0.6648645718639293,
-"service":[
-{
-"_id":9,
-"serviceId":1,
-"subserviceId":1,
-"description":"trgg",
-"title":"Hardware"
-}
-]*/
     public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,
             lastName,distance,ratingCount,businessType,serviceType,inCallpreprationTime,outCallpreprationTime,address,categoryName,radius;
     public  boolean isOutCallSelected = false;
-
+    public  boolean isFav;
     public  ArrayList<ArtistServices>service;
     public  ArrayList<Services>allService = new ArrayList<>();
     public ArrayList<BookingStaff>staffList = new ArrayList<>();
 
+    public ArrayList<StaffInfo>staffInfo = new ArrayList<>();
+
+    public List<StaffInfo> findArtistByServiceId(int serviceId){
+        List<StaffInfo> list = new ArrayList<>();
+
+        for(StaffInfo tmpArtist : staffInfo){
+            StaffServices service = tmpArtist.findServces(serviceId);
+            if(service!=null)
+                list.add(new StaffInfo(tmpArtist).setSerVice(service));
+        }
+        return list;
+    }
+
     public double latitude,longitude;
+
 
  /*   @Override
     public int describeContents() {
