@@ -1,5 +1,6 @@
 package com.mualab.org.user.activity.booking.background_service;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.Intent;
@@ -7,10 +8,13 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.local.prefs.Session;
@@ -73,7 +77,7 @@ public class ExpiredBookingJobService extends Service {
 
     //Start Countodwn method
     public void startTimer() {
-        countDownTimer = new CountDownTimer(500000, 1000) {
+        countDownTimer = new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 //  millisUntilFinished / 1000;
             }
@@ -121,12 +125,23 @@ public class ExpiredBookingJobService extends Service {
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                       /* BookingFragment4.arrayListbookingInfo.clear();
+                        Session session = Mualab.getInstance().getSessionManager();
+                        session.setUserChangedLocLat("");
+                        session.setUserChangedLocLng("");
+                        session.setUserChangedLocName("");*/
+                        Log.i("", "All services deleted...");
                         BookingFragment4.arrayListbookingInfo.clear();
                         Session session = Mualab.getInstance().getSessionManager();
                         session.setUserChangedLocLat("");
                         session.setUserChangedLocLng("");
                         session.setUserChangedLocName("");
-                        Log.i("", "All services deleted...");
+                        stopCountdown();
+                        Toast.makeText((getApplicationContext()),"Booking session has been expired, please try again",Toast.LENGTH_LONG).show();
+                        stopService(new Intent(getApplicationContext(), ExpiredBookingJobService.class));
+                        if (BookingActivity.mcontext!=null)
+                            BookingActivity.mcontext.finish();
+
                     }else {
                     }
                 } catch (Exception e) {

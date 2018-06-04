@@ -93,8 +93,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
                 holder.tvTime.setText(hours+min);
         }
 
-
-        holder.tvPrice.setText("£"+prise);
+        holder.tvPrice.setText("£"+String.format("%.2f", prise));
 
         if (!item.staffImage.equals("")){
             Picasso.with(context).load(item.staffImage).placeholder(R.drawable.defoult_user_img).

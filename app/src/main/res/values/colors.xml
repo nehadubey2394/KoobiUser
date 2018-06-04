@@ -133,4 +133,6 @@
     <color name="mcam_color_light">#FAFAFA</color>
     <color name="mcam_color_dark">#424242</color>
 
+    <color name="blue_btn_bg_color">#f83272</color>
+
 </resources>

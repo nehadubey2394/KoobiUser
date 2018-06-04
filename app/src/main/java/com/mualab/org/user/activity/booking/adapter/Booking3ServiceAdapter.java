@@ -109,7 +109,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }else {
             prise = Double.parseDouble(item.inCallPrice);
         }
-        holder.tvAmount.setText(""+prise);
+        holder.tvAmount.setText(""+String.format("%.2f", prise));
 
         if (fromConfirmBooking){
             if (item.isBooked()) {

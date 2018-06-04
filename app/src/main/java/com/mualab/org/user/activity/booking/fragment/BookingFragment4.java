@@ -199,8 +199,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 if (info.msId.equals(bookingInfo.msId)) {
                     isMatch=true;
                     String tmpStaffId = bookingInfo.staffId;
+                    double tmpPrice = bookingInfo.price;
                     bookingInfo = info;
                     bookingInfo.staffId = tmpStaffId;
+                    bookingInfo.price = tmpPrice;
                     alreadyAddedFound = true;
                     break;
                 }
@@ -558,7 +560,11 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         params.put("longitude", lng);
         params.put("userId", String.valueOf(user.id));
         params.put("serviceTime", bookingInfo.serviceTime);
-        params.put("staffId", bookingInfo.staffId);//artistId
+        if ( bookingInfo.staffId.equals(""))
+            params.put("staffId", "0");
+        else
+            params.put("staffId", bookingInfo.staffId);//artistId
+
         params.put("businessType", bookingInfo.item.businessType);
 
         if (isEdit && !alreadyAddedFound) {
@@ -702,7 +708,6 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                         bookingInfo.bookingId = js.getString("bookingId");
 
                     if (status.equalsIgnoreCase("success")) {
-                        mContext.startService(new Intent(mContext, ExpiredBookingJobService.class));
 
                         ((BookingActivity)mContext).startTimer();
 
