@@ -56,6 +56,10 @@ public class BookingFragment1 extends Fragment {
             item = (ArtistsSearchBoard) getArguments().getSerializable("param2")  ;
             bookingInfo = (BookingInfo) getArguments().getSerializable("param3");
             isEdit = getArguments().getBoolean("param4");
+            if(mContext instanceof BookingActivity) {
+                ((BookingActivity) mContext).setReviewPostVisibility(0);
+                ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
+            }
         }
     }
 
@@ -81,11 +85,9 @@ public class BookingFragment1 extends Fragment {
         staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
 
         //  staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
-        int pos = staffList.size()-1;
-
         StaffInfo staffInfo = new StaffInfo();
         staffInfo.staffImage = item.profileImage;
-        staffInfo.staffName = item.businessName;
+        staffInfo.staffName = item.userName;
         staffInfo.job = "";
         staffInfo.mediaAccess = "";
         staffInfo.holiday = "";
@@ -121,6 +123,8 @@ public class BookingFragment1 extends Fragment {
         super.onDestroy();
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setTitleVisibility(mParam1);
+                ((BookingActivity) mContext).setReviewPostVisibility(8);
+                ((BookingActivity) mContext).setTitleVisibility(mParam1);
         }
     }
 

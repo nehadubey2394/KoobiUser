@@ -1,6 +1,8 @@
 package com.mualab.org.user.activity.booking;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -74,6 +76,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView ivHeaderProfile;
     private String businessType;
     private  CountDownTimer countDownTimer;
+    public static AppCompatActivity mcontext;
 
     public void setReviewPostVisibility(int visibility){
         if(lyReviewPost!=null)
@@ -115,6 +118,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         Intent i = getIntent();
         item = (ArtistsSearchBoard) i.getSerializableExtra("item");
         businessType = item.businessType;
+        mcontext = BookingActivity.this;
         initView();
     }
 
@@ -745,7 +749,9 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     //Start Countodwn method
     public void startTimer() {
-        countDownTimer = new CountDownTimer(300000, 1000) {
+        startService(new Intent(BookingActivity.this, ExpiredBookingJobService.class));
+
+       /* countDownTimer = new CountDownTimer(300000, 1000) {
             public void onTick(long millisUntilFinished) {
                 //  millisUntilFinished / 1000;
             }
@@ -755,7 +761,14 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                     apiForDeleteAllPendingBooking();
             }
         }.start();
+*/
+    }
 
+    public static void refreshParentActivity(Context context) {
+        Activity parentActivity = (Activity) context;
+        Intent intent = parentActivity.getIntent();
+        parentActivity.finish();
+        context.startActivity(intent);
     }
 
     private void apiForDeleteAllPendingBooking(){
@@ -788,16 +801,16 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                     if (status.equalsIgnoreCase("success")) {
 
                         MyToast.getInstance(BookingActivity.this).showDasuAlert("Booking session has been expired, please try again");
-                        stopService(new Intent(BookingActivity.this, ExpiredBookingJobService.class));
-
                         BookingFragment4.arrayListbookingInfo.clear();
                         stopCountdown();
                         Session session = Mualab.getInstance().getSessionManager();
                         session.setUserChangedLocLat("");
                         session.setUserChangedLocLng("");
                         session.setUserChangedLocName("");
+                        FragmentManager fm = getSupportFragmentManager();
+                        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        stopService(new Intent(BookingActivity.this, ExpiredBookingJobService.class));
                         finish();
-
                     }else {
                     }
                 } catch (Exception e) {
