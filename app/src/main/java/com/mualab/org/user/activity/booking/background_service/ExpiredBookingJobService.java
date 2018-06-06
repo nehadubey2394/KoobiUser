@@ -77,7 +77,7 @@ public class ExpiredBookingJobService extends Service {
 
     //Start Countodwn method
     public void startTimer() {
-        countDownTimer = new CountDownTimer(30000, 1000) {
+        countDownTimer = new CountDownTimer(300000, 1000) {
             public void onTick(long millisUntilFinished) {
                 //  millisUntilFinished / 1000;
             }

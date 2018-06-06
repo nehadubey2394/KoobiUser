@@ -560,7 +560,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         params.put("longitude", lng);
         params.put("userId", String.valueOf(user.id));
         params.put("serviceTime", bookingInfo.serviceTime);
-        if ( bookingInfo.staffId.equals(""))
+        if (bookingInfo.staffId.equals(""))
             params.put("staffId", "0");
         else
             params.put("staffId", bookingInfo.staffId);//artistId
@@ -686,8 +686,13 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             params.put("type", "");
             params.put("bookingId","");
         }else if (isEdit){
-            params.put("type", "edit");
-            params.put("bookingId",bookingInfo.bookingId);
+            if (!bookingInfo.staffId.equals(bookingInfo.bookStaffId)){
+                params.put("type", "");
+                params.put("bookingId","");
+            }else {
+                params.put("type", "edit");
+                params.put("bookingId",bookingInfo.bookingId);
+            }
         }
         else {
             params.put("bookingId","");
@@ -708,6 +713,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                         bookingInfo.bookingId = js.getString("bookingId");
 
                     if (status.equalsIgnoreCase("success")) {
+                        mContext.stopService(new Intent(mContext, ExpiredBookingJobService.class));
 
                         ((BookingActivity)mContext).startTimer();
 
