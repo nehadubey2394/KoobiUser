@@ -11,13 +11,13 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.utils.Util;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -114,7 +114,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.tvServices.setText(item.categoryName);
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvDistance,tvServices,tvArtistName,tvRating;
         ImageView ivProfile,ivFav;
         AppCompatButton btnBook;
@@ -132,16 +132,27 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             btnBook = itemView.findViewById(R.id.btnBook);
             rating = itemView.findViewById(R.id.rating);
 
-            btnBook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ArtistsSearchBoard item = artistsList.get(getAdapterPosition());
+            btnBook.setOnClickListener(this);
+            ivProfile.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            ArtistsSearchBoard item = artistsList.get(getAdapterPosition());
+            switch (v.getId()){
+                case R.id.btnBook:
                     Intent intent = new Intent(context, BookingActivity.class);
                     intent.putExtra("item",item);
-                    intent.putExtra("mParam","1");
                     context.startActivity(intent);
-                }
-            });
+                    break;
+
+                    case R.id.ivProfile:
+                        Intent intent2 = new Intent(context, ArtistProfileActivity.class);
+                        intent2.putExtra("item",item);
+                        //intent2.putExtra("artistId",item._id);
+                        context.startActivity(intent2);
+                    break;
+            }
         }
     }
 

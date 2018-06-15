@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -77,6 +78,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private String businessType;
     private  CountDownTimer countDownTimer;
     public static AppCompatActivity mcontext;
+    private  long mLastClickTime = 0;
 
     public void setReviewPostVisibility(int visibility){
         if(lyReviewPost!=null)
@@ -150,27 +152,24 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(final View view) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
         switch (view.getId()){
             case R.id.ivHeaderBack2 :
                 onBackPressed();
                 break;
 
             case R.id.tvOpeningTime :
-                long mLastClickTime = 1000;
-                view.setEnabled(false);
-
+               /* view.setEnabled(false);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         view.setEnabled(true);
                     }
                 }, mLastClickTime);
-
-               /* if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();*/
-
+*/
                 if (businessDays.size()!=0)
                     showDialog();
                 break;

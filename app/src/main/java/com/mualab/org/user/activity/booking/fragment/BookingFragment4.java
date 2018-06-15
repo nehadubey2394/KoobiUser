@@ -666,7 +666,15 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
 
         Map<String, String> params = new HashMap<>();
         params.put("artistId", artistId);
-        params.put("staff", bookingInfo.staffId);
+        if (bookingInfo.staffId.equals("")) {
+            params.put("staffId", "0");
+            params.put("staff", "0");
+        }
+        else{
+            params.put("staff", bookingInfo.staffId);
+            params.put("staffId", bookingInfo.staffId);
+        }
+
         params.put("serviceId", bookingInfo.sId);
         params.put("subServiceId", bookingInfo.ssId);
         params.put("artistServiceId", bookingInfo.msId);

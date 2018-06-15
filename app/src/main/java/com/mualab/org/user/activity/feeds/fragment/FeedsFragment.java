@@ -134,7 +134,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
 
     private MediaUri mediaUri;
     private BaseListner baseListner;
-   // private int fragCount;
+    // private int fragCount;
     private int CURRENT_FEED_STATE = 0;
     private boolean isPulltoRefrash = false;
     private boolean isEditTextFocaused;
@@ -185,8 +185,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         collapsing_toolbar = null;
         rvMyStory = null;
     }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -332,8 +330,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         });
     }
 
-
-
     @Override
     public void onResume() {
         super.onResume();
@@ -376,7 +372,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
 
                 if (intent != null) {
                     startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());
-                   // else startActivityForResult(intent, Constant.POST_FEED_DATA);
+                    // else startActivityForResult(intent, Constant.POST_FEED_DATA);
                 }else {
                     Animation shake = AnimationUtils.loadAnimation(mContext, R.anim.shake);
                     edCaption.startAnimation(shake);
@@ -682,7 +678,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     @Override
     public void onFeedClick(Feeds feed, int index, View view) {
         publicationQuickView(feed, index);
-       /* */
+        /* */
     }
 
     @Override
@@ -743,7 +739,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 .setBodyContentType(HttpTask.ContentType.APPLICATION_JSON))
                 .execute(TAG);
     }
-
 
 
     public void checkPermissionAndPicImageOrVideo(String title) {

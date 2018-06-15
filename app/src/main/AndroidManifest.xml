@@ -178,8 +178,31 @@
             android:name=".activity.booking.background_service.ExpiredBookingJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".activity.explore.SearchFeedActivity" />
-        <activity android:name=".activity.explore.FeedDetailActivity"></activity>
+        <activity
+            android:name=".activity.explore.SearchFeedActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.explore.FeedDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.artist_profile.activity.ArtistProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
+        <activity
+            android:name=".activity.artist_profile.activity.FollowersActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.artist_profile.activity.ArtistServicesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.artist_profile.activity.CertificateActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".activity.my_profile.MyProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" ></activity>
     </application>
 
 </manifest>

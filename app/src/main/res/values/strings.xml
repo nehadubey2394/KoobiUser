@@ -160,6 +160,7 @@
     <string name="title_searchboard">SearchBoard</string>
     <string name="title_select_service">Select service</string>
     <string name="btn_book">Book</string>
+    <string name="btn_book_now">Book Now</string>
     <string name="text_out_call">Out Call</string>
     <string name="text_out_call_services">Out Call Services</string>
     <string name="text_location">Location</string>
@@ -356,5 +357,21 @@
     <string name="rec">REC</string>
     <string name="explore">Explore</string>
     <string name="add_more_story">Add More Story</string>
+    <string name="profile">Profile</string>
 
+    <!--Profile-->
+    <string name="text_certificate">Certificate</string>
+    <string name="text_follower">Followers</string>
+    <string name="text_following">Following</string>
+    <string name="videos">Videos</string>
+    <string name="feeds">Feeds</string>
+    <string name="images">Images</string>
+    <string name="about_me">About me</string>
+    <string name="about_us">About Us</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="payment_history">Payment History</string>
+    <string name="inbox">Inbox</string>
+    <string name="rate_this_app">Rate this app</string>
+    <string name="payment_info">Payment Info</string>
+    <string name="about_mualab">About Mualab</string>
 </resources>

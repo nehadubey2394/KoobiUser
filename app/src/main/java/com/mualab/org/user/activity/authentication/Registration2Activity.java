@@ -23,6 +23,7 @@ import android.widget.ViewSwitcher;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.image.cropper.CropImage;
 import com.image.cropper.CropImageView;
@@ -231,7 +232,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
             case 4:
                 findViewById(R.id.btnContinue2).setEnabled(false);
-                String deviceToken = "android without firebase"; //FirebaseInstanceId.getInstance().getToken();
+                String deviceToken =  FirebaseInstanceId.getInstance().getToken();//"android without firebase";
                 Map<String, String> params = new HashMap<>();
                 params.put("userName", user.userName);
                 params.put("firstName", user.firstName);

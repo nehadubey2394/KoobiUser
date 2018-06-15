@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_edit_profile"
+            android:icon="@drawable/profile_ico"
+            android:title="@string/edit_profile" />
+
+        <item
+            android:id="@+id/nav_inbox"
+            android:icon="@drawable/chat_ico"
+            android:title="@string/inbox" />
+
+        <item
+            android:id="@+id/nav_booking"
+            android:icon="@drawable/booking_ico"
+            android:title="@string/title_booking" />
+
+        <item
+            android:id="@+id/nav_payment_history"
+            android:icon="@drawable/payment_history_ico"
+            android:title="@string/payment_history" />
+
+        <item
+            android:id="@+id/nav_rate"
+            android:icon="@drawable/rating_star_ico"
+            android:title="@string/rate_this_app" />
+
+        <item
+            android:id="@+id/nav_payment_info"
+            android:icon="@drawable/payment_info_ico"
+            android:title="@string/payment_info" />
+
+        <item
+            android:id="@+id/nav_about_mualab"
+            android:icon="@drawable/slider_about_us_ico"
+            android:title="@string/about_mualab" />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout_ico"
+            android:title="@string/payment_info" />
+    </group>
+</menu>

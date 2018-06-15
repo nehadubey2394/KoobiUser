@@ -334,7 +334,7 @@ public class CommentsActivity extends AppCompatActivity {
 
             }
         }).setProgress(false)
-        .setParam(map)).execute(TAG);
+                .setParam(map)).execute(TAG);
     }
 
     private void apiForAddComments(final String comments, final Bitmap bitmap) {

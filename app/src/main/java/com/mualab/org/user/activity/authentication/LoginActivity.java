@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.main.MainActivity;
@@ -180,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean isValidInput = true;
         String username = ed_username.getText().toString().trim();
         String password = ed_password.getText().toString().trim();
-        String deviceToken = "androidTest";//FirebaseInstanceId.getInstance().getToken();
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();//"androidTest";
 
         if (!validateName() || !validatePassword()) {
             isValidInput = false;
