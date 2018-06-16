@@ -724,11 +724,13 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        MyToast.getInstance(MyProfileActivity.this).showDasuAlert("Under development");
         switch (item.getItemId()) {
-          /*  case R.id.nav_logout:
-                ShareRide.getInstance().session.logout();
-                break;*/
+            case R.id.nav_logout:
+                Mualab.getInstance().getSessionManager().logout();
+                break;
+            default:
+                MyToast.getInstance(MyProfileActivity.this).showDasuAlert("Under development");
+                break;
         }
         drawer.closeDrawer(GravityCompat.END);
         return true;

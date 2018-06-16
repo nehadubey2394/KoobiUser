@@ -258,7 +258,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-
     private boolean doubleBackToExitPressedOnce;
     private Runnable runnable;
     @Override
