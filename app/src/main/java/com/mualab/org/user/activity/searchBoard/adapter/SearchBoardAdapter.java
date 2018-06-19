@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
@@ -119,6 +120,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ImageView ivProfile,ivFav;
         AppCompatButton btnBook;
         RatingBar rating;
+        RelativeLayout lyContainer;
         private ViewHolder(View itemView)
         {
             super(itemView);
@@ -131,9 +133,11 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvRating = itemView.findViewById(R.id.tvRating);
             btnBook = itemView.findViewById(R.id.btnBook);
             rating = itemView.findViewById(R.id.rating);
+            lyContainer = itemView.findViewById(R.id.lyContainer);
 
             btnBook.setOnClickListener(this);
-            ivProfile.setOnClickListener(this);
+          //  ivProfile.setOnClickListener(this);
+            lyContainer.setOnClickListener(this);
         }
 
         @Override
@@ -146,11 +150,17 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     context.startActivity(intent);
                     break;
 
-                    case R.id.ivProfile:
-                        Intent intent2 = new Intent(context, ArtistProfileActivity.class);
-                        intent2.putExtra("item",item);
-                        //intent2.putExtra("artistId",item._id);
-                        context.startActivity(intent2);
+              /*  case R.id.ivProfile:
+                    Intent intent2 = new Intent(context, ArtistProfileActivity.class);
+                    intent2.putExtra("item",item);
+                    //intent2.putExtra("artistId",item._id);
+                    context.startActivity(intent2);*/
+
+                case R.id.lyContainer:
+                    Intent intent3 = new Intent(context, ArtistProfileActivity.class);
+                    intent3.putExtra("item",item);
+                    //intent2.putExtra("artistId",item._id);
+                    context.startActivity(intent3);
                     break;
             }
         }

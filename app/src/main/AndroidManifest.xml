@@ -55,6 +55,7 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
             android:windowSoftInputMode="stateHidden|adjustNothing" />
         <activity
             android:name=".activity.authentication.LoginActivity"
@@ -191,18 +192,21 @@
         <activity
             android:name=".activity.artist_profile.activity.FollowersActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/StatusBarBlack"
+            />
         <activity
             android:name=".activity.artist_profile.activity.ArtistServicesActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/StatusBarBlack" />
         <activity
             android:name=".activity.artist_profile.activity.CertificateActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activity.my_profile.MyProfileActivity"
+            android:theme="@style/StatusBarBlack">
+        </activity>
+        <activity android:name=".activity.my_profile.activity.MyProfileActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StatusBarBlack" ></activity>
+            android:theme="@style/StatusBarBlack" >
+        </activity>
     </application>
 
 </manifest>

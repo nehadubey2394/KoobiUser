@@ -765,9 +765,9 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         params.put("userId", String.valueOf(user.id));
         params.put("artistId", artistId);
         if (profileData.favoriteStatus.equals("1"))
-            params.put("type", "unfavorite");
-        else
             params.put("type", "favorite");
+        else
+            params.put("type", "unfavorite");
 
 
         HttpTask task = new HttpTask(new HttpTask.Builder(ArtistProfileActivity.this, "addFavorite", new HttpResponceListner.Listener() {
@@ -952,12 +952,14 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         if (requestCode == 10) {
             apiForGetProfile();
             //apiForGetAllFeeds(0, 10, true);
-        } else if (requestCode == Constant.ACTIVITY_COMMENT) {
-            if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
-                int pos = data.getIntExtra("feedPosition", 0);
-                Feeds feed = (Feeds) data.getSerializableExtra("feed");
-                feeds.get(pos).commentCount = feed.commentCount;
-                feedAdapter.notifyItemChanged(pos);
+        } else if (data != null){
+            if (requestCode == Constant.ACTIVITY_COMMENT) {
+                if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
+                    int pos = data.getIntExtra("feedPosition", 0);
+                    Feeds feed = (Feeds) data.getSerializableExtra("feed");
+                    feeds.get(pos).commentCount = feed.commentCount;
+                    feedAdapter.notifyItemChanged(pos);
+                }
             }
         }
     }
@@ -970,7 +972,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         if (!fragmentPopped) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_in,0,0);
-            transaction.add(R.id.container1, fragment, backStackName);
+            transaction.add(R.id.container, fragment, backStackName);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
             transaction.commit();
@@ -1023,7 +1025,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onBackPressed() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container1);
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
         if (i > 0) {

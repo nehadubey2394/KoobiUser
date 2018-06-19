@@ -68,6 +68,7 @@
             android:layout_height="48dp"
             android:padding="12dp"
             android:src="@drawable/user_ico"
+            android:visibility="gone"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true" />

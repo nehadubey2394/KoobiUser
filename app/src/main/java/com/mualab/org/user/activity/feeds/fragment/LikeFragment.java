@@ -105,8 +105,8 @@ public class LikeFragment extends Fragment {
 
         if(activity!=null){
             tvHeaderTitle = activity.findViewById(R.id.tvHeaderTitle);
-            ivHeaderBack = activity.findViewById(R.id.ivHeaderBack);
-            ibtnChat = activity.findViewById(R.id.ibtnChat);
+            ivHeaderBack = activity.findViewById(R.id.btnBack);
+            ibtnChat = activity.findViewById(R.id.ivChat);
             ivAppIcon = activity.findViewById(R.id.ivAppIcon);
             tvHeaderTitle.setVisibility(View.VISIBLE);
             ivHeaderBack.setVisibility(View.VISIBLE);

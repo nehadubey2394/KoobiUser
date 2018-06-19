@@ -6,6 +6,7 @@
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="0dp"
     app:cardElevation="2dp"
+    android:id="@+id/topLayout1"
     >
 
     <RelativeLayout
@@ -51,7 +52,7 @@
             android:gravity="center"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textColor="@color/text_color"
             android:fontFamily="@font/roboto_bold"
             />
@@ -69,6 +70,30 @@
             />
 
         <ImageView
+            android:id="@+id/ivAppIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:tint="@color/black"
+            android:src="@drawable/logo_small" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivUserProfile"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            app:civ_border_width="2dp"
+            android:src="@drawable/defoult_user_img"
+            android:background="@drawable/gradient_circle_img"
+            app:civ_border_color="@color/transparent"
+            android:layout_alignParentRight="true"
+            android:tint="@color/black"
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:layout_alignParentEnd="true"/>
+
+        <!--<ImageView
             android:id="@+id/ivUserProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +103,7 @@
             android:tint="@color/black"
             android:layout_centerVertical="true"
             android:visibility="gone"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true" />-->
 
 
         <ImageView

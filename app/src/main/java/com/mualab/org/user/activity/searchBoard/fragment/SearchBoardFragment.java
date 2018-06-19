@@ -88,8 +88,8 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof MainActivity)
-            ((MainActivity)context).setBgColor(R.color.screen_bg_color);
+        //if(context instanceof MainActivity)
+        //    ((MainActivity)context).setBgColor(R.color.screen_bg_color);
     }
 
     @Override

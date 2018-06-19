@@ -59,7 +59,6 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(mContext instanceof BookingActivity) {
-            ((BookingActivity) mContext).setReviewPostVisibility(0);
             ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
         }
 

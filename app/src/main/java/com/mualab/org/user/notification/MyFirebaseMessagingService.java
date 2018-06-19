@@ -78,6 +78,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void handleNow() {
         Log.d(TAG, "Short lived task is done.");
+        sendNotification("Mualab Social");
     }
 
     /**

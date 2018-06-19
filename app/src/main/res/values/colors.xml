@@ -28,6 +28,7 @@
     <color name="white_transperent">#50FFFFFF</color>
     <color name="colorPrimary_alpha10">#1003A7E9</color>
     <color name="grey">#828282</color>
+    <color name="dark_grey">#434343</color>
 
     <color name="light_gray">#ffefefef</color>
     <color name="light_gray_shadow">#D3D3D3</color>

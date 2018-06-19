@@ -165,8 +165,8 @@ public class BaseActivity extends AppCompatActivity implements BaseListner, Base
         if (!fragmentPopped) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in,R.anim.fade_in,0,0);
-            transaction.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right,
-                    R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+           /* transaction.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right,
+                    R.anim.slide_in_from_right, R.anim.slide_out_to_left);*/
             transaction.add(R.id.container, fragment, backStackName);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);

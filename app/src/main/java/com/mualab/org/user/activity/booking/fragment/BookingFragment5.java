@@ -224,6 +224,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             price = price+item.price;
         }
         tvTotalPrice.setText("£"+String.format("%.2f", price));
+        totalPrice = String.format("%.2f", price);
         btnEditDate.setOnClickListener(this);
         btnEditLocation.setOnClickListener(this);
         btnConfirmBooking.setOnClickListener(this);

@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,10 +21,11 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
-import com.mualab.org.user.activity.my_profile.MyProfileActivity;
+import com.mualab.org.user.activity.my_profile.activity.MyProfileActivity;
+import com.mualab.org.user.activity.notification.fragment.NotificationFragment;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
@@ -33,6 +35,7 @@ import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.network.NetworkChangeReceiver;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -42,11 +45,12 @@ import java.util.Map;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
+    private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification;
     private int clickedId = 0;
-    public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon;
+    public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon,ibtnChat;
     public TextView tvHeaderTitle;
-    public RelativeLayout rlHeader1, rootLayout;
+    public RelativeLayout rootLayout;
+    public CardView rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
     public RefineSearchBoard item;
 
@@ -62,7 +66,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setStatusbarColor();
+        //  setStatusbarColor();
 
         // FirebaseCrash.logcat(Log.ERROR, "Build Date:", "16/04/2018");
         // FirebaseCrash.report(new Throwable("Build Date: 16/04/2018"));
@@ -109,11 +113,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ibtnAddFeed = findViewById(R.id.ibtnAddFeed);
         ibtnSearch = findViewById(R.id.ibtnSearch);
         ibtnNotification = findViewById(R.id.ibtnNotification);
-        ibtnChat = findViewById(R.id.ibtnChat);
+        ibtnChat = findViewById(R.id.ivChat);
 
         ivAppIcon = findViewById(R.id.ivAppIcon);
-        ivHeaderBack = findViewById(R.id.ivHeaderBack);
-        ivHeaderUser = findViewById(R.id.ivHeaderUser);
+        ivHeaderBack = findViewById(R.id.btnBack);
+        ivHeaderUser = findViewById(R.id.ivUserProfile);
+        ivHeaderUser.setVisibility(View.VISIBLE);
+        User user = Mualab.getInstance().getSessionManager().getUser();
+        Picasso.with(MainActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
+                fit().into(ivHeaderUser);
+
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         rlHeader1 = findViewById(R.id.topLayout1);
         rootLayout = findViewById(R.id.rootLayout);
@@ -178,7 +187,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.ivAppIcon :
                 break;
 
-            case R.id.ivHeaderUser :
+            case R.id.ivUserProfile :
                 startActivity(new Intent(MainActivity.this, MyProfileActivity.class));
                 break;
 
@@ -242,7 +251,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(new AddFeedFragment(), false);
+                    replaceFragment(new NotificationFragment(), false);
                 }
                 break;
         }

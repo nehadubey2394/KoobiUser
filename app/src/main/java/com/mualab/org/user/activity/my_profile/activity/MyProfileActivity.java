@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.my_profile;
+package com.mualab.org.user.activity.my_profile.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -8,8 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.design.internal.NavigationMenuView;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +41,8 @@ import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
+import com.mualab.org.user.activity.my_profile.adapter.NavigationMenuAdapter;
+import com.mualab.org.user.activity.my_profile.model.NavigationItem;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.User;
@@ -74,8 +73,7 @@ import views.refreshview.CircleHeaderView;
 import views.refreshview.OnRefreshListener;
 import views.refreshview.RjRefreshLayout;
 
-public class MyProfileActivity extends AppCompatActivity implements View.OnClickListener,
-        NavigationView.OnNavigationItemSelectedListener,ArtistFeedAdapter.Listener{
+public class MyProfileActivity extends AppCompatActivity implements View.OnClickListener,ArtistFeedAdapter.Listener{
     private DrawerLayout drawer;
     private String TAG = this.getClass().getName();;
     private User user;
@@ -91,6 +89,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
     private boolean isPulltoRefrash = false;
     private  long mLastClickTime = 0;
     private UserProfileData profileData = null;
+    private List<NavigationItem> navigationItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +102,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         Session session = Mualab.getInstance().getSessionManager();
         user = session.getUser();
         feeds = new ArrayList<>();
+        navigationItems = new ArrayList<>();
 
         Toolbar toolbar =  findViewById(R.id.toolbar);
         LinearLayout lyImage = toolbar.findViewById(R.id.ly_images);
@@ -122,7 +122,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         ivUserProfile.setVisibility(View.GONE);
         ivDrawer.setVisibility(View.VISIBLE);
 
-        final AppBarLayout mainView = findViewById(R.id.appbar);
+        //   final AppBarLayout mainView = findViewById(R.id.appbar);
         ivDrawer.setVisibility(View.VISIBLE);
 
         NavigationView navigationView =  findViewById(R.id.nav_view);
@@ -133,10 +133,19 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);;
         drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
         navigationView.setItemIconTintList(null);
-        navigationView.setNavigationItemSelectedListener(this);
-        NavigationMenuView navMenuView = (NavigationMenuView) navigationView.getChildAt(0);
-        navMenuView.addItemDecoration(new DividerItemDecoration(MyProfileActivity.this,
-                DividerItemDecoration.VERTICAL));
+        //  navigationView.setNavigationItemSelectedListener(this);
+        //  NavigationMenuView navMenuView = (NavigationMenuView) navigationView.getChildAt(0);
+        //  navMenuView.addItemDecoration(new DividerItemDecoration(MyProfileActivity.this,
+        //         DividerItemDecoration.VERTICAL));
+
+        addItems();
+
+        RecyclerView rycslidermenu = findViewById(R.id.rycslidermenu);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MyProfileActivity.this);
+        rycslidermenu.setLayoutManager(layoutManager);
+        NavigationMenuAdapter listAdapter = new NavigationMenuAdapter(MyProfileActivity.this, navigationItems,drawer);
+
+        rycslidermenu.setAdapter(listAdapter);
 
         final RelativeLayout rlContent = findViewById(R.id.rlContent);
         drawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
@@ -150,8 +159,8 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                 rlContent.setTranslationX(-slideX);
             }
         });
-        TextView user_name = headerView.findViewById(R.id.user_name);
-        CircleImageView user_image = headerView.findViewById(R.id.user_image);
+        TextView user_name = findViewById(R.id.user_name);
+        CircleImageView user_image = findViewById(R.id.user_image);
         User user = Mualab.getInstance().getSessionManager().getUser();
         Picasso.with(MyProfileActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
                 fit().into(user_image);
@@ -588,12 +597,14 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         if (requestCode == 10) {
             apiForGetProfile();
             //apiForGetAllFeeds(0, 10, true);
-        } else if (requestCode == Constant.ACTIVITY_COMMENT) {
-            if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
-                int pos = data.getIntExtra("feedPosition", 0);
-                Feeds feed = (Feeds) data.getSerializableExtra("feed");
-                feeds.get(pos).commentCount = feed.commentCount;
-                feedAdapter.notifyItemChanged(pos);
+        } else if (data != null){
+            if (requestCode == Constant.ACTIVITY_COMMENT) {
+                if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
+                    int pos = data.getIntExtra("feedPosition", 0);
+                    Feeds feed = (Feeds) data.getSerializableExtra("feed");
+                    feeds.get(pos).commentCount = feed.commentCount;
+                    feedAdapter.notifyItemChanged(pos);
+                }
             }
         }
     }
@@ -606,7 +617,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         if (!fragmentPopped) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_in,0,0);
-            transaction.add(R.id.container1, fragment, backStackName);
+            transaction.add(R.id.container, fragment, backStackName);
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
             transaction.commit();
@@ -722,23 +733,59 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_logout:
-                Mualab.getInstance().getSessionManager().logout();
-                break;
-            default:
-                MyToast.getInstance(MyProfileActivity.this).showDasuAlert("Under development");
-                break;
+    private void addItems(){
+        NavigationItem item;
+        for(int i=0;i<8;i++) {
+            item = new NavigationItem();
+            switch (i) {
+                case 0:
+                    item.itemName = getString(R.string.edit_profile);
+                    item.itemImg = R.drawable.profile_ico;
+
+                    break;
+                case 1:
+                    item.itemName =getString(R.string.inbox);
+                    item.itemImg = R.drawable.chat_ico;
+
+                    break;
+
+                case 2:
+                    item.itemName = getString(R.string.title_booking);
+                    item.itemImg = R.drawable.booking_ico;
+                    break;
+
+                case 3:
+                    item.itemName = getString(R.string.payment_history);
+                    item.itemImg = R.drawable.payment_history_ico;
+                    break;
+
+                case 4:
+                    item.itemName = getString(R.string.rate_this_app);
+                    item.itemImg = R.drawable.rating_star_ico;
+                    break;
+                case 5:
+                    item.itemName = getString(R.string.payment_info);
+                    item.itemImg = R.drawable.payment_info_ico;
+                    break;
+                case 6:
+                    item.itemName = getString(R.string.about_mualab);
+                    item.itemImg = R.drawable.slider_about_us_ico;
+                    break;
+                case 7:
+                    item.itemName = "Logout";
+                    item.itemImg = R.drawable.logout_ico;
+
+                    break;
+
+            }
+            navigationItems.add(item);
         }
-        drawer.closeDrawer(GravityCompat.END);
-        return true;
     }
+
 
     @Override
     public void onBackPressed() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container1);
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
         if (i > 0) {
