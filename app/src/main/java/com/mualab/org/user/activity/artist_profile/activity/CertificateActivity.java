@@ -191,8 +191,8 @@ public class CertificateActivity extends AppCompatActivity implements OnCertific
 
     private void showLargeImage(Certificate certificate){
         View dialogView = View.inflate(CertificateActivity.this, R.layout.dialog_large_image_view, null);
-        final Dialog dialog = new Dialog(CertificateActivity.this,android.R.style.Theme_Light);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final Dialog dialog = new Dialog(CertificateActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
         dialog.setContentView(dialogView);
@@ -211,7 +211,7 @@ public class CertificateActivity extends AppCompatActivity implements OnCertific
         dialog.show();
     }
 
-    private void apiForRemoveCertificate(final int index){
+  /*  private void apiForRemoveCertificate(final int index){
         final  Certificate certificate = certificates.get(index);
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
@@ -324,7 +324,7 @@ public class CertificateActivity extends AppCompatActivity implements OnCertific
         task.postImage("certificateImage", bitmap);
     }
 
-/*
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

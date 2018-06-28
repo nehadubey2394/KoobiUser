@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.my_profile.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.AppCompatImageView;
@@ -12,7 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.booking_histories.activity.BookingHisoryActivity;
 import com.mualab.org.user.activity.my_profile.model.NavigationItem;
+import com.mualab.org.user.activity.payment.activity.PaymentHistoryActivity;
+import com.mualab.org.user.activity.payment.modle.PaymentHistory;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 
@@ -93,50 +97,41 @@ public class NavigationMenuAdapter extends RecyclerView.Adapter<NavigationMenuAd
             switch(getAdapterPosition()) {
                 case 0:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
                     MyToast.getInstance(context).showDasuAlert("Under development");
                     break;
 
                 case 1:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
                     MyToast.getInstance(context).showDasuAlert("Under development");
                     break;
 
                 case 2:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
-                    MyToast.getInstance(context).showDasuAlert("Under development");
-                    //      context.finish();
+                    context.startActivity(new Intent(context,BookingHisoryActivity.class));
                     break;
 
                 case 3:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
-                    MyToast.getInstance(context).showDasuAlert("Under development");
+                    context.startActivity(new Intent(context,PaymentHistoryActivity.class));
                     break;
 
                 case 4:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
-                    Mualab.getInstance().getSessionManager().logout();
+                    MyToast.getInstance(context).showDasuAlert("Under development");
                     break;
 
                 case 5:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
-                    Mualab.getInstance().getSessionManager().logout();
+                    MyToast.getInstance(context).showDasuAlert("Under development");
                     break;
 
                 case 6:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
-                    Mualab.getInstance().getSessionManager().logout();
+                    MyToast.getInstance(context).showDasuAlert("Under development");
                     break;
 
                 case 7:
                     sSelect = item.itemName;
-                    notifyDataSetChanged();
                     Mualab.getInstance().getSessionManager().logout();
                     break;
                 default:

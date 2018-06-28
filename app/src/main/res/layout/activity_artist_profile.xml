@@ -405,7 +405,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/loading"
-                android:textColor="@color/text_color" />
+                android:textColor="@color/colorPrimary" />
         </LinearLayout>
 
         <TextView

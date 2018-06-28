@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -41,6 +42,7 @@ public class FollowersActivity extends AppCompatActivity {
     private boolean isFollowers;
     private EndlessRecyclerViewScrollListener scrollListener;
     private String userId;
+    private LinearLayout ll_loadingBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class FollowersActivity extends AppCompatActivity {
     }
 
     private void setView() {
+        ll_loadingBox = findViewById(R.id.ll_loadingBox);
         TextView tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         if (isFollowers)
             tvHeaderTitle.setText(getString(R.string.text_follower));
@@ -87,17 +90,21 @@ public class FollowersActivity extends AppCompatActivity {
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    followersAdapter.showLoading(true);
-                    if (isFollowers)
-                        apiForGetFollowers(page);
-                    else
-                        apiForGetFollowing(page);
-                    //apiForLoadMoreArtist(page);
+                    if (totalItemsCount > 19){
+                        followersAdapter.showLoading(true);
+                        if (isFollowers)
+                            apiForGetFollowers(page);
+                        else
+                            apiForGetFollowing(page);
+                    }
                 }
             };
         }
 
+        rycFollowers.addOnScrollListener(scrollListener);
+
         if(followers.size()==0) {
+            ll_loadingBox.setVisibility(View.VISIBLE);
             if (isFollowers)
                 apiForGetFollowers(0);
             else
@@ -125,7 +132,7 @@ public class FollowersActivity extends AppCompatActivity {
         params.put("userId", userId);
         params.put("loginUserId", String.valueOf(user.id));
         params.put("page", String.valueOf(page));
-        params.put("limit", "");
+        params.put("limit", "20");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(FollowersActivity.this, "followerList", new HttpResponceListner.Listener() {
             @Override
@@ -134,6 +141,8 @@ public class FollowersActivity extends AppCompatActivity {
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
+
+                    ll_loadingBox.setVisibility(View.GONE);
 
                     if (status.equalsIgnoreCase("success")) {
                         followersAdapter.showLoading(false);
@@ -153,7 +162,7 @@ public class FollowersActivity extends AppCompatActivity {
                                 Followers item = gson.fromJson(String.valueOf(object), Followers.class);
                                 followers.add(item);
                             }
-                        }else {
+                        }else if (followers.size()==0){
                             rycFollowers.setVisibility(View.GONE);
                             tvNoData.setVisibility(View.VISIBLE);
                         }
@@ -172,19 +181,23 @@ public class FollowersActivity extends AppCompatActivity {
             @Override
             public void ErrorListener(VolleyError error) {
                 try{
+                    ll_loadingBox.setVisibility(View.GONE);
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
                         // MyToast.getInstance(BookingActivity.this).showDasuAlert(helper.error_Messages(error));
                     }
                 }catch (Exception e){
+                    tvNoData.setVisibility(View.VISIBLE);
+                    tvNoData.setText("Something went wrong!");
+                    ll_loadingBox.setVisibility(View.GONE);
                     e.printStackTrace();
                 }
 
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 
@@ -211,12 +224,13 @@ public class FollowersActivity extends AppCompatActivity {
         params.put("userId", userId);
         params.put("loginUserId", String.valueOf(user.id));
         params.put("page", String.valueOf(page));
-        params.put("limit", "");
+        params.put("limit", "20");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(FollowersActivity.this, "followingList", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    ll_loadingBox.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -239,7 +253,7 @@ public class FollowersActivity extends AppCompatActivity {
                                 Followers item = gson.fromJson(String.valueOf(object), Followers.class);
                                 followers.add(item);
                             }
-                        }else {
+                        }else if (followers.size()==0){
                             rycFollowers.setVisibility(View.GONE);
                             tvNoData.setVisibility(View.VISIBLE);
                         }
@@ -250,7 +264,9 @@ public class FollowersActivity extends AppCompatActivity {
                     }
                     //  showToast(message);
                 } catch (Exception e) {
-                    Progress.hide(FollowersActivity.this);
+                    ll_loadingBox.setVisibility(View.GONE);
+                    tvNoData.setVisibility(View.VISIBLE);
+                    tvNoData.setText("Something went wrong!");
                     e.printStackTrace();
                 }
             }
@@ -270,7 +286,7 @@ public class FollowersActivity extends AppCompatActivity {
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 

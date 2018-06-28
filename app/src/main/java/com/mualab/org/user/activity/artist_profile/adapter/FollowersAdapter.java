@@ -94,6 +94,16 @@ public class FollowersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
 
+        if (viewHolder instanceof LoadingViewHolder) {
+            LoadingViewHolder loaderViewHolder = (LoadingViewHolder) viewHolder;
+            if (showLoader) {
+                loaderViewHolder.progressBar.setVisibility(View.VISIBLE);
+            } else {
+                loaderViewHolder.progressBar.setVisibility(View.GONE);
+            }
+            return;
+        }
+
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final Followers item = followersList.get(position);
 

@@ -811,7 +811,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
             switch (requestCode){
                 case Constant.CAMERA_REQUEST:
                     try {
-
                         Bitmap bitmap = ImagePicker.getImageFromResult(mContext, requestCode,resultCode,data);
                         Uri picUri = ImagePicker.getImageURIFromResult(mContext,requestCode,resultCode,data);
                         if(bitmap!=null && picUri!=null){

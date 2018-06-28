@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.searchBoard.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
-import com.mualab.org.user.activity.booking.BookingActivity;
+import com.mualab.org.user.activity.make_booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.utils.Util;
@@ -27,6 +28,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private List<ArtistsSearchBoard> artistsList;
     private Util utility;
     private boolean showLoader;
+    private  long mLastClickTime = 0;
 
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
@@ -136,12 +138,17 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             lyContainer = itemView.findViewById(R.id.lyContainer);
 
             btnBook.setOnClickListener(this);
-          //  ivProfile.setOnClickListener(this);
+            //  ivProfile.setOnClickListener(this);
             lyContainer.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
             ArtistsSearchBoard item = artistsList.get(getAdapterPosition());
             switch (v.getId()){
                 case R.id.btnBook:

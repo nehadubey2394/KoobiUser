@@ -16,5 +16,5 @@ public class Notification {
 },*/
 
     public String _id,notifincationType,readStatus,type,senderId,userName,firstName,lastName,
-            profileImage,message;
+            profileImage,message,timeElapsed;
 }

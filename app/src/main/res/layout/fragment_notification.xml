@@ -25,8 +25,15 @@
         android:textColor="@color/text_color"
         android:textSize="16sp"
         android:gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_centerInParent="true"
         android:fontFamily="@font/roboto_regular"/>
+
+    <include
+        layout="@layout/layout_inner_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

@@ -77,12 +77,23 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, int position) {
+
+        if (viewHolder instanceof LoadingViewHolder) {
+            LoadingViewHolder loaderViewHolder = (LoadingViewHolder) viewHolder;
+            if (showLoader) {
+                loaderViewHolder.progressBar.setVisibility(View.VISIBLE);
+            } else {
+                loaderViewHolder.progressBar.setVisibility(View.GONE);
+            }
+            return;
+        }
 
         final ViewHolder holder = ((ViewHolder) viewHolder);
         final Notification item = notificationList.get(position);
 
         holder.tvName.setText(item.firstName);
+        holder.tvTimeElapsed.setText(item.timeElapsed);
         if (item.type.equals("social")){
             holder.tvName.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.ivUserImg.setBackground(context.getResources().getDrawable(R.drawable.bg_blue_circle_profile));
@@ -103,12 +114,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        TextView tvName,tvMsg;
+        TextView tvName,tvMsg,tvTimeElapsed;
         CircleImageView ivUserImg;
         private ViewHolder(View itemView)
         {
             super(itemView);
             ivUserImg = itemView.findViewById(R.id.ivUserImg);
+            tvTimeElapsed = itemView.findViewById(R.id.tvTimeElapsed);
             tvName = itemView.findViewById(R.id.tvName);
             tvMsg = itemView.findViewById(R.id.tvMsg);
 

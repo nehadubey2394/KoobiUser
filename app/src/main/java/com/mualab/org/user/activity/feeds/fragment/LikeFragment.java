@@ -228,7 +228,7 @@ public class LikeFragment extends Fragment {
                         }
                         if (likedList.size() == 0) {
                             ll_loadingBox.setVisibility(View.VISIBLE);
-                            tvMsg.setText(getString(R.string.no_like_yet));
+                            tvMsg.setText(getString(R.string.text_empty_data));
                             tvMsg.setVisibility(View.VISIBLE);
                         } else {
                             ll_loadingBox.setVisibility(View.GONE);
@@ -236,7 +236,7 @@ public class LikeFragment extends Fragment {
                         likeListAdapter.notifyDataSetChanged();
                     }else {
                         if (likedList.size() == 0) {
-                            tvMsg.setText(getString(R.string.no_like_yet));
+                            tvMsg.setText(getString(R.string.text_empty_data));
                             tvMsg.setVisibility(View.VISIBLE);
                         } else {
                             ll_loadingBox.setVisibility(View.GONE);

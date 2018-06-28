@@ -184,8 +184,6 @@ public class CommentsActivity extends AppCompatActivity {
         getCommentList(0, searchFilter);
     }
 
-
-
     // check permission or Get image from camera or gallery
     public void getPermissionAndPicImage() {
 
@@ -215,7 +213,6 @@ public class CommentsActivity extends AppCompatActivity {
             break;
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -255,8 +252,6 @@ public class CommentsActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -310,7 +305,7 @@ public class CommentsActivity extends AppCompatActivity {
 
                         if(commentList.size()==0) {
                             tv_no_comments.setVisibility(View.VISIBLE);
-                            tv_no_comments.setText(getString(R.string.no_comment_yet));
+                            tv_no_comments.setText(getString(R.string.text_empty_data));
                         }else {
                             ll_loadingBox.setVisibility(View.GONE);
                         }
@@ -319,7 +314,7 @@ public class CommentsActivity extends AppCompatActivity {
                     e.printStackTrace();
                     if(commentList.size()==0) {
                         tv_no_comments.setVisibility(View.VISIBLE);
-                        tv_no_comments.setText(getString(R.string.no_comment_yet));
+                        tv_no_comments.setText(getString(R.string.text_empty_data));
                     }
                 }
             }
@@ -369,6 +364,7 @@ public class CommentsActivity extends AppCompatActivity {
                         comment.firstName = Mualab.currentUser.firstName;
                         comment.firstName = Mualab.currentUser.lastName;
                         comment.userName = Mualab.currentUser.userName;
+                        comment.type = bitmap==null?"text":"image";
                         comment.profileImage = Mualab.currentUser.profileImage;
                         comment.timeElapsed = "1 second ago";
                         comment.commentLikeCount = 0;
@@ -409,8 +405,6 @@ public class CommentsActivity extends AppCompatActivity {
             }}).setProgress(true)
                 .setParam(map)).postImage("comment", bitmap);
     }
-
-
 
     protected void setStatusbarColor(){
         Window window = this.getWindow();

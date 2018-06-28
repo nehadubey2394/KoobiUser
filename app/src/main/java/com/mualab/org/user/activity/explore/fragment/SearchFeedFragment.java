@@ -66,7 +66,7 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     private List<Feeds> feeds;
     private ExploreGridViewAdapter feedAdapter;
 
-   // private int fragCount;
+    // private int fragCount;
     private ExSearchTag exSearchTag;
     private boolean isPulltoRefrash;
 
@@ -180,7 +180,6 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
     }
 
 
-
     /*Api call and parse methods */
     private void searchFeed(final int page, final boolean isEnableProgress){
 
@@ -200,12 +199,14 @@ public class SearchFeedFragment extends Fragment implements ExploreGridViewAdapt
 
         Map<String, String> params = new HashMap<>();
         if(exSearchTag.type == ExSearchTag.SearchType.TOP || exSearchTag.type == ExSearchTag.SearchType.PEOPLE){
-            params.put("userId", ""+exSearchTag.id);
+            params.put("userId", ""+ ""+Mualab.currentUser.id);
             params.put("findData", ""+exSearchTag.id);
         }else {
             params.put("userId", ""+Mualab.currentUser.id);
+            //  params.put("userId", ""+exSearchTag.id);
             params.put("findData", ""+exSearchTag.title.replace("#",""));
         }
+        params.put("loginUserId", ""+Mualab.currentUser.id);
         params.put("type", exSearchTag.getType());
         params.put("feedType", "");
         params.put("search", "");

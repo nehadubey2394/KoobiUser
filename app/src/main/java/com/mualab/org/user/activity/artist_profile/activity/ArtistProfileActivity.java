@@ -36,7 +36,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.Followers;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
-import com.mualab.org.user.activity.booking.BookingActivity;
+import com.mualab.org.user.activity.make_booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
@@ -467,8 +467,10 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
                 ivActive.setVisibility(View.VISIBLE);
             }
 
-            Picasso.with(ArtistProfileActivity.this).load(profileData.profileImage).placeholder(R.drawable.defoult_user_img).
-                    fit().into(iv_Profile);
+            if (!profileData.profileImage.isEmpty() && !profileData.profileImage.equals("")) {
+                Picasso.with(ArtistProfileActivity.this).load(profileData.profileImage).placeholder(R.drawable.defoult_user_img).
+                        fit().into(iv_Profile);
+            }
 
         }
 
@@ -954,8 +956,8 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
             //apiForGetAllFeeds(0, 10, true);
         } else if (data != null){
             if (requestCode == Constant.ACTIVITY_COMMENT) {
-                if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
-                    int pos = data.getIntExtra("feedPosition", 0);
+                if(CURRENT_FEED_STATE == Constant.FEED_STATE){
+                    int pos = data.getIntExtra("feedPosition",0);
                     Feeds feed = (Feeds) data.getSerializableExtra("feed");
                     feeds.get(pos).commentCount = feed.commentCount;
                     feedAdapter.notifyItemChanged(pos);

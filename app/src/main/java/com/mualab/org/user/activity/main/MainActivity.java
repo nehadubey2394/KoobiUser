@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
@@ -53,6 +54,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public CardView rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
     public RefineSearchBoard item;
+    private  long mLastClickTime = 0;
 
     public void setBgColor(int color){
         if(rlHeader1!=null)
@@ -120,8 +122,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderUser = findViewById(R.id.ivUserProfile);
         ivHeaderUser.setVisibility(View.VISIBLE);
         User user = Mualab.getInstance().getSessionManager().getUser();
-        Picasso.with(MainActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
-                fit().into(ivHeaderUser);
+
+        if (!user.profileImage.isEmpty() && !user.profileImage.equals("")){
+            Picasso.with(MainActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
+                    fit().into(ivHeaderUser);
+        }
 
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         rlHeader1 = findViewById(R.id.topLayout1);
@@ -173,6 +178,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 800){
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         switch (view.getId()){
 
             case R.id.ivHeaderBack :

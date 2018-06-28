@@ -79,8 +79,7 @@
             style="@style/TextView.Bold"
             android:id="@+id/tvBuisnessName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Beauty Zone"
+            android:layout_height="60dp"
             android:textSize="18sp"
             android:layout_marginLeft="10dp"
             android:paddingLeft="2dp"
@@ -95,6 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:gravity="center_vertical"
+            android:visibility="visible"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView

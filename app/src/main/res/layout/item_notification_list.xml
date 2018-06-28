@@ -61,8 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btnFollow"
-                    android:text="A few second ago"
+                    android:id="@+id/tvTimeElapsed"
                     android:padding="2dp"
                     android:gravity="right"
                     android:textSize="12sp"
@@ -75,13 +74,13 @@
 
             <TextView
                 android:id="@+id/tvMsg"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="neha"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:maxWidth="162dp"
                 android:gravity="left"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:textColor="@color/gray"
                 android:fontFamily="@font/roboto_regular"

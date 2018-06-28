@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -46,6 +47,7 @@ public class NotificationFragment extends BaseFragment {
     private List<Notification> notificationList;
     private NotificationAdapter notificationAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private LinearLayout ll_loadingBox;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -73,11 +75,10 @@ public class NotificationFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_notification, container, false);
         // Inflate the layout for this fragment
-        return rootView;
+        return inflater.inflate(R.layout.fragment_notification, container, false);
     }
 
     @Override
@@ -90,6 +91,7 @@ public class NotificationFragment extends BaseFragment {
         notificationList = new ArrayList<>();
         notificationAdapter = new NotificationAdapter(mContext,notificationList);
 
+        ll_loadingBox = rootView.findViewById(R.id.ll_loadingBox);
         tvNoData = rootView.findViewById(R.id.tvNoData);
         rycNotification = rootView.findViewById(R.id.rycNotification);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
@@ -101,14 +103,20 @@ public class NotificationFragment extends BaseFragment {
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    notificationAdapter.showLoading(true);
-                    apiForGetNotifications(page);
+                    if (totalItemsCount>19) {
+                        notificationAdapter.showLoading(true);
+                        apiForGetNotifications(page);
+                    }
                 }
             };
         }
 
-        if (notificationList.size()==0)
+        rycNotification.addOnScrollListener(scrollListener);
+
+        if (notificationList.size()==0) {
+            ll_loadingBox.setVisibility(View.VISIBLE);
             apiForGetNotifications(0);
+        }
     }
 
     private void apiForGetNotifications(final int page){
@@ -131,12 +139,13 @@ public class NotificationFragment extends BaseFragment {
         params.put("userId",String.valueOf(user.id));
         params.put("type", "");
         params.put("page", String.valueOf(page));
-        params.put("limit", "");
+        params.put("limit", "20");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(mContext, "getNotificationList", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
+                    ll_loadingBox.setVisibility(View.GONE);
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
@@ -160,7 +169,7 @@ public class NotificationFragment extends BaseFragment {
                                 Notification item = gson.fromJson(String.valueOf(object), Notification.class);
                                 notificationList.add(item);
                             }
-                        }else {
+                        }else if (notificationList.size()==0){
                             rycNotification.setVisibility(View.GONE);
                             tvNoData.setVisibility(View.VISIBLE);
                         }
@@ -171,7 +180,9 @@ public class NotificationFragment extends BaseFragment {
                     }
                     //  showToast(message);
                 } catch (Exception e) {
-                    Progress.hide(mContext);
+                    tvNoData.setVisibility(View.VISIBLE);
+                    tvNoData.setText("Something went wrong!");
+                    ll_loadingBox.setVisibility(View.GONE);
                     e.printStackTrace();
                 }
             }
@@ -179,6 +190,7 @@ public class NotificationFragment extends BaseFragment {
             @Override
             public void ErrorListener(VolleyError error) {
                 try{
+                    ll_loadingBox.setVisibility(View.GONE);
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
@@ -191,7 +203,7 @@ public class NotificationFragment extends BaseFragment {
 
             }})
                 .setAuthToken(user.authToken)
-                .setProgress(true)
+                .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         //.setBody(params, "application/x-www-form-urlencoded"));
 

@@ -207,6 +207,7 @@ public class LoginActivity extends AppCompatActivity {
             params.put("userName", username);
             params.put("password", password);
             params.put("deviceToken",deviceToken);
+            params.put("firebaseToken", deviceToken);
             params.put("deviceType", "2");
             params.put("appType", "user");
             params.put("userType", "user");

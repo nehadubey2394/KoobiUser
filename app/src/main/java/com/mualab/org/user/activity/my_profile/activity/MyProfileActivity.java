@@ -162,8 +162,11 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         TextView user_name = findViewById(R.id.user_name);
         CircleImageView user_image = findViewById(R.id.user_image);
         User user = Mualab.getInstance().getSessionManager().getUser();
-        Picasso.with(MyProfileActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
-                fit().into(user_image);
+
+        if (!user.profileImage.isEmpty() && !user.profileImage.equals("")) {
+            Picasso.with(MyProfileActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
+                    fit().into(user_image);
+        }
 
         user_name.setText(user.firstName+" "+user.lastName);
 
@@ -404,6 +407,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
+        tv_no_data_msg.setVisibility(View.GONE);
 
         if (!ConnectionDetector.isConnected()) {
             new NoConnectionDialog(MyProfileActivity.this, new NoConnectionDialog.Listner() {
@@ -444,6 +448,9 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
                     }else MyToast.getInstance(MyProfileActivity.this).showSmallMessage(message);
                 } catch (Exception e) {
+                    ll_progress.setVisibility(View.GONE);
+                    tv_no_data_msg.setVisibility(View.VISIBLE);
+                    tv_no_data_msg.setText("Something went wrong!");
                     e.printStackTrace();
                     // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
                 }
@@ -489,46 +496,51 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                 }
 
                 Gson gson = new Gson();
-                for (int i = 0; i < array.length(); i++) {
+                if (array.length()!=0) {
+                    for (int i = 0; i < array.length(); i++) {
+                        try {
+                            JSONObject jsonObject = array.getJSONObject(i);
+                            Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
 
-                    try{
-                        JSONObject jsonObject = array.getJSONObject(i);
-                        Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
-
-                        /*tmp get data and set into actual json format*/
-                        if(feed.userInfo!=null && feed.userInfo.size()>0){
-                            Feeds.User user = feed.userInfo.get(0);
-                            feed.userName = user.userName;
-                            feed.fullName = user.firstName+" "+user.lastName;
-                            feed.profileImage = user.profileImage;
-                            feed.userId = user._id;
-                            feed.crd =feed.timeElapsed;
-                        }
-
-                        if(feed.feedData!=null && feed.feedData.size()>0){
-
-                            feed.feed = new ArrayList<>();
-                            feed.feedThumb = new ArrayList<>();
-
-                            for(Feeds.Feed tmp : feed.feedData){
-                                feed.feed.add(tmp.feedPost);
-                                if(!TextUtils.isEmpty(feed.feedData.get(0).videoThumb))
-                                    feed.feedThumb.add(tmp.feedPost);
+                            /*tmp get data and set into actual json format*/
+                            if (feed.userInfo != null && feed.userInfo.size() > 0) {
+                                Feeds.User user = feed.userInfo.get(0);
+                                feed.userName = user.userName;
+                                feed.fullName = user.firstName + " " + user.lastName;
+                                feed.profileImage = user.profileImage;
+                                feed.userId = user._id;
+                                feed.crd = feed.timeElapsed;
                             }
 
-                            if(feed.feedType.equals("video"))
-                                feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+                            if (feed.feedData != null && feed.feedData.size() > 0) {
+
+                                feed.feed = new ArrayList<>();
+                                feed.feedThumb = new ArrayList<>();
+
+                                for (Feeds.Feed tmp : feed.feedData) {
+                                    feed.feed.add(tmp.feedPost);
+                                    if (!TextUtils.isEmpty(feed.feedData.get(0).videoThumb))
+                                        feed.feedThumb.add(tmp.feedPost);
+                                }
+
+                                if (feed.feedType.equals("video"))
+                                    feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+                            }
+
+                            feeds.add(feed);
+
+                        } catch (JsonParseException e) {
+                            ll_progress.setVisibility(View.GONE);
+                            tv_no_data_msg.setVisibility(View.VISIBLE);
+                            tv_no_data_msg.setText("Something went wrong!");
+                            e.printStackTrace();
                         }
 
-                        feeds.add(feed);
-
-                    }catch (JsonParseException e){
-                        e.printStackTrace();
-                        FirebaseCrash.log(e.getLocalizedMessage());
-                    }
-
-                } // loop end.
-
+                    }// loop end.
+                } else if (feeds.size()==0){
+                    rvFeed.setVisibility(View.GONE);
+                    tv_no_data_msg.setVisibility(View.VISIBLE);
+                }
                 feedAdapter.notifyDataSetChanged();
 
             } else if (status.equals("fail") && feeds.size()==0) {
@@ -781,7 +793,6 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
             navigationItems.add(item);
         }
     }
-
 
     @Override
     public void onBackPressed() {

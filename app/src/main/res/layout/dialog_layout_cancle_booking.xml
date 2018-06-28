@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="180dp"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="@drawable/bg_dialog_alert"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_marginTop="-2dp"
+            android:background="@drawable/bg_dialog_box"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:text="@string/alert"
+                android:fontFamily="@font/roboto_regular"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:background="@color/white"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:padding="10dp"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:text="@string/are_you_sure_want_to_cancel_the_appointment"
+                android:gravity="center"
+                android:fontFamily="@font/roboto_medium"
+                android:layout_marginTop="20dp"
+                />
+
+            <RelativeLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                >
+
+                <android.support.v7.widget.AppCompatButton
+                    style="@style/My_Button_Small.Invert"
+                    android:id="@+id/btnYes"
+                    android:layout_width="80dp"
+                    android:layout_height="28dp"
+                    android:text="@string/yes"
+                    android:layout_gravity="center_vertical"
+                    android:padding="2dp"
+                    android:layout_alignParentLeft="true"
+                    android:textSize="12sp"
+                    />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btnNo"
+                    style="@style/My_Button_Small.Invert"
+                    android:layout_width="80dp"
+                    android:layout_height="28dp"
+                    android:text="@string/no"
+                    android:layout_gravity="center_vertical"
+                    android:padding="2dp"
+                    android:textSize="12sp"
+                    android:layout_alignParentRight="true"
+                    />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -19,7 +19,7 @@
     <style name="StatusBarBlack" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimaryDark">@color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:statusBarColor">@color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -67,7 +67,9 @@
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 
-
+    <style name="DefaultNumberPickerTheme" parent="AppTheme">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+    </style>
 
     <!-- ActionBar styles -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">

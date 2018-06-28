@@ -135,6 +135,13 @@ public class HttpTask {
             return this;
         }
 
+
+        public Builder setParam(Map<String, String> params,String contentType){
+            this.params = params;
+            this.bodyContentType = contentType;
+            return this;
+        }
+
         public Builder setAuthToken(String authToken){
             this.authToken = authToken;
             return this;

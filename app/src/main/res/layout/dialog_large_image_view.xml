@@ -19,8 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_arrow_back_black"
-            android:tint="@color/white"
+            android:src="@drawable/white_back_ico"
             android:layout_marginLeft="5dp"
             />
 

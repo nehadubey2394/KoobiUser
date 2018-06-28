@@ -185,14 +185,14 @@ public class MyFlexibleCalendar extends MyUICalendar {
 
                         if (year>=cYear && month>=cMonth){
                             if (year==cYear && month==cMonth && dayOfMonth<cDay){
-                                MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
+                                MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for make_booking.");
                             }else {
                                 mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
                                 txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
                                 txtDay.setTextColor(getSelectedItemTextColor());
                             }
                         }else {
-                            MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for booking.");
+                            MyToast.getInstance(mContext).showSmallCustomToast("You can't select previous date for make_booking.");
                         }
                     }
                 }
