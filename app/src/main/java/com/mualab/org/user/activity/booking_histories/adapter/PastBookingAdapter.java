@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatRatingBar;
@@ -79,7 +80,6 @@ public class PastBookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void showLoading(boolean status) {
         showLoader = status;
     }
-
 
     @NonNull
     @Override
@@ -223,8 +223,13 @@ public class PastBookingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Override
         public void onClick(View view) {
+            long mLastClickTime = 0;
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 900) {
+                return;
+            }
             final BookingHistory item = pastBookings.get(getAdapterPosition());
             switch (view.getId()){
+
                 case R.id.rlDropDown:
                     if (item.reviewByUser.equals("")) {
                         if (item.isExpand){

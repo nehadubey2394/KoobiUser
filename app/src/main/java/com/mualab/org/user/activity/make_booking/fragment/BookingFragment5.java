@@ -389,6 +389,11 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         AppCompatButton btnCancel = DialogView.findViewById(R.id.btnCancel);
         AppCompatButton btnDone = DialogView.findViewById(R.id.btnDone);
 
+        if (item.bankStatus.equals("0"))
+            rdOnline.setVisibility(View.GONE);
+        else
+            rdOnline.setVisibility(View.VISIBLE);
+
         rdGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
@@ -417,7 +422,6 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
 
         dialog.show();
     }
-
 
     private void getLocation() {
         try {

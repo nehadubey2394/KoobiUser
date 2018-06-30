@@ -1,5 +1,6 @@
 package com.mualab.org.user.activity.feeds;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,9 +37,16 @@ import com.image.cropper.CropImage;
 import com.image.cropper.CropImageView;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.booking_histories.model.BookingHistory;
 import com.mualab.org.user.activity.feeds.adapter.CommentAdapter;
 import com.mualab.org.user.activity.feeds.model.Comment;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.local.prefs.Session;
+import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
+import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.Helper;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.listner.EndlessRecyclerViewScrollListener;
@@ -52,9 +60,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 public class CommentsActivity extends AppCompatActivity {
     public static String TAG = CommentsActivity.class.getName();
@@ -144,7 +157,8 @@ public class CommentsActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(commnets)){
                     btn_post_comments.setEnabled(false);
                     KeyboardUtil.hideKeyboard(btn_post_comments, CommentsActivity.this);
-                    apiForAddComments(commnets, null);
+                     apiForAddComments(commnets, null);
+                    //apiPostTextComment(commnets, null);
                 }else {
                     Animation shake = AnimationUtils.loadAnimation(CommentsActivity.this, R.anim.shake);
                     btn_post_comments.startAnimation(shake);
@@ -290,12 +304,19 @@ public class CommentsActivity extends AppCompatActivity {
                     String status = js.getString("status");
                     String message = js.getString("message");
                     if (status.equalsIgnoreCase("success")) {
+                        String myString= null;
                         ll_loadingBox.setVisibility(View.GONE);
                         JSONArray array = js.getJSONArray("commentList");
                         Gson gson = new Gson();
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject jsonObject = array.getJSONObject(i);
                             Comment comment = gson.fromJson(String.valueOf(jsonObject), Comment.class);
+                            try {
+                                myString= URLDecoder.decode(comment.comment, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            comment.comment = myString;
                             commentList.add(comment);
                         }
                         //recyclerView.smoothScrollToPosition(0);
@@ -333,14 +354,25 @@ public class CommentsActivity extends AppCompatActivity {
     }
 
     private void apiForAddComments(final String comments, final Bitmap bitmap) {
+        String enCodedStatusCode = "";
 
         Map<String, String> map = new HashMap<>();
         map.putAll(Mualab.feedBasicInfo);
         map.put("feedId", ""+feed._id);
         map.put("postUserId", ""+feed.userId);
         map.put("type", bitmap==null?"text":"image");
+
+        if (bitmap==null){
+            try {
+                enCodedStatusCode = URLEncoder.encode(comments,
+                        HTTP.UTF_8);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
         if(comments!=null)
-            map.put("comment", comments);
+            map.put("comment", enCodedStatusCode);
 
         new HttpTask(new HttpTask.Builder(this, "addComment", new HttpResponceListner.Listener() {
             @Override
@@ -354,11 +386,22 @@ public class CommentsActivity extends AppCompatActivity {
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+                        //  getCommentList(0, searchFilter = "");
                         isDataUpdated = true;
                         ed_comments.setText("");
+                        JSONObject jsonObject = js.getJSONObject("commentData");
                         Comment comment = new Comment();
-
-                        feed.commentCount = js.getInt("commentCount");
+                        comment.id = jsonObject.getInt("feedId");
+                        comment.comment = jsonObject.getString("comment");
+                        comment.firstName = Mualab.currentUser.firstName;
+                        comment.firstName = Mualab.currentUser.lastName;
+                        comment.userName = Mualab.currentUser.userName;
+                        comment.type = bitmap==null?"text":"image";
+                        comment.profileImage = Mualab.currentUser.profileImage;
+                        comment.timeElapsed = "1 second ago";
+                        comment.commentLikeCount = 0;
+                        comment.isLike = 0;
+                        /*feed.commentCount = js.getInt("commentCount");
                         comment.id = js.getInt("_id");
                         comment.comment = comments;
                         comment.firstName = Mualab.currentUser.firstName;
@@ -368,7 +411,23 @@ public class CommentsActivity extends AppCompatActivity {
                         comment.profileImage = Mualab.currentUser.profileImage;
                         comment.timeElapsed = "1 second ago";
                         comment.commentLikeCount = 0;
-                        comment.isLike = 0;
+                        comment.isLike = 0;*/
+                        /*"commentData": {
+        "feedId": "4",
+        "postUserId": "4",
+        "commentById": "3",
+        "comment": "http://localhost:3000/uploads/commentImage/1530257394233.jpg",
+        "gender": "male",
+        "age": "25",
+        "city": "indore",
+        "state": "mp",
+        "country": "india",
+        "type": "image",
+        "crd": "2018-06-29T12:59:54+05:30",
+        "upd": "2018-06-29T12:59:54+05:30",
+        "_id": 6,
+        "commentCount": 5
+    }*/
                         commentList.add(comment);
 
                     }if (commentList.size() == 0) {
@@ -402,8 +461,105 @@ public class CommentsActivity extends AppCompatActivity {
                     tv_no_comments.setVisibility(View.VISIBLE);
                     tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));
                 }
-            }}).setProgress(true)
+            }})
+                .setProgress(true)
                 .setParam(map)).postImage("comment", bitmap);
+    }
+
+    private void apiPostTextComment(final String comments, final Bitmap bitmap){
+        Session session = Mualab.getInstance().getSessionManager();
+        final User user = session.getUser();
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(CommentsActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiPostTextComment(comments,bitmap);
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.putAll(Mualab.feedBasicInfo);
+        params.put("feedId", ""+feed._id);
+        params.put("postUserId", ""+feed.userId);
+        params.put("type", bitmap==null?"text":"image");
+        if(comments!=null)
+            params.put("comment", comments);
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(CommentsActivity.this, "addComment", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                String status = "";
+                try {
+                    JSONObject js = new JSONObject(response);
+                    status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+                        isDataUpdated = true;
+                        ed_comments.setText("");
+                        JSONObject jsonObject = js.getJSONObject("commentData");
+                        Comment comment = new Comment();
+                        comment.id = jsonObject.getInt("feedId");
+                        comment.comment = jsonObject.getString("comment");
+                        comment.firstName = Mualab.currentUser.firstName;
+                        comment.firstName = Mualab.currentUser.lastName;
+                        comment.userName = Mualab.currentUser.userName;
+                        comment.type = bitmap==null?"text":"image";
+                        comment.profileImage = Mualab.currentUser.profileImage;
+                        comment.timeElapsed = "1 second ago";
+                        comment.commentLikeCount = 0;
+                        comment.isLike = 0;
+                        commentList.add(comment);
+                    }
+                    if (commentList.size() == 0) {
+                        tv_no_comments.setVisibility(View.VISIBLE);
+                    } else {
+                        tv_no_comments.setVisibility(View.GONE);
+                    }
+
+                    commentAdapter.notifyDataSetChanged();
+                    recyclerView.smoothScrollToPosition(commentList.size()-1);
+
+                    //  showToast(message);
+                } catch (Exception e) {
+                    if(!TextUtils.isEmpty(status) && status.equals("success")){
+                        commentList.clear();
+                        scrollListener.resetState();
+                        getCommentList(0, searchFilter = "");
+                    } else if(commentList.size()==0) {
+                        tv_no_comments.setVisibility(View.VISIBLE);
+                        tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));
+                    }
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                        // MyToast.getInstance(BookingActivity.this).showDasuAlert(helper.error_Messages(error));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(true)
+                .setBodyContentType(HttpTask.ContentType.FORM_DATA)
+                .setParam(params));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
     }
 
     protected void setStatusbarColor(){

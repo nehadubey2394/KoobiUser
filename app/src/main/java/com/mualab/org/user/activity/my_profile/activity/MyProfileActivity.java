@@ -446,7 +446,10 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                         //removeProgress();
                         ParseAndUpdateUI(response);
 
-                    }else MyToast.getInstance(MyProfileActivity.this).showSmallMessage(message);
+                    }else if (page==0){
+                        rvFeed.setVisibility(View.GONE);
+                        tv_no_data_msg.setVisibility(View.VISIBLE);
+                    }
                 } catch (Exception e) {
                     ll_progress.setVisibility(View.GONE);
                     tv_no_data_msg.setVisibility(View.VISIBLE);

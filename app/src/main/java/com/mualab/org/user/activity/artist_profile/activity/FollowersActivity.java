@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import views.refreshview.CircleHeaderView;
+import views.refreshview.OnRefreshListener;
+import views.refreshview.RjRefreshLayout;
+
 public class FollowersActivity extends AppCompatActivity {
     private RecyclerView rycFollowers;
     private TextView tvNoData;
@@ -43,6 +48,9 @@ public class FollowersActivity extends AppCompatActivity {
     private EndlessRecyclerViewScrollListener scrollListener;
     private String userId;
     private LinearLayout ll_loadingBox;
+    private RjRefreshLayout mRefreshLayout;
+    private boolean isPulltoRefrash = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +86,27 @@ public class FollowersActivity extends AppCompatActivity {
         layoutManager.scrollToPositionWithOffset(0, 0);
         rycFollowers.setLayoutManager(layoutManager);
         rycFollowers.setAdapter(followersAdapter);
+        mRefreshLayout =  findViewById(R.id.mSwipeRefreshLayout);
+        final CircleHeaderView header = new CircleHeaderView(FollowersActivity.this);
+        mRefreshLayout.addHeader(header);
+
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                scrollListener.resetState();
+                isPulltoRefrash = true;
+                if (isFollowers)
+                    apiForGetFollowers(0);
+                else
+                    apiForGetFollowing(0);
+            }
+
+            @Override
+            public void onLoadMore() {
+
+            }
+        });
+
 
         findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +184,14 @@ public class FollowersActivity extends AppCompatActivity {
                         tvNoData.setVisibility(View.GONE);
 
                         JSONArray jsonArray = js.getJSONArray("followerList");
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(true, 500);
+                            int prevSize = followers.size();
+                            followers.clear();
+                            followersAdapter.notifyItemRangeRemoved(0, prevSize);
+                        }
+
                         if (jsonArray!=null && jsonArray.length()!=0) {
                             for (int i=0; i<jsonArray.length(); i++){
                                 Gson gson = new Gson();
@@ -167,9 +204,13 @@ public class FollowersActivity extends AppCompatActivity {
                             tvNoData.setVisibility(View.VISIBLE);
                         }
                         followersAdapter.notifyDataSetChanged();
-                    }else {
+                    }else  if (page==0) {
                         rycFollowers.setVisibility(View.GONE);
                         tvNoData.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+                        }
                     }
                     //  showToast(message);
                 } catch (Exception e) {
@@ -182,6 +223,13 @@ public class FollowersActivity extends AppCompatActivity {
             public void ErrorListener(VolleyError error) {
                 try{
                     ll_loadingBox.setVisibility(View.GONE);
+                    if(isPulltoRefrash){
+                        isPulltoRefrash = false;
+                        mRefreshLayout.stopRefresh(false, 500);
+                        int prevSize = followers.size();
+                        followers.clear();
+                        followersAdapter.notifyItemRangeRemoved(0, prevSize);
+                    }
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
@@ -246,6 +294,14 @@ public class FollowersActivity extends AppCompatActivity {
                         tvNoData.setVisibility(View.GONE);
 
                         JSONArray jsonArray = js.getJSONArray("followingList");
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(true, 500);
+                            int prevSize = followers.size();
+                            followers.clear();
+                            followersAdapter.notifyItemRangeRemoved(0, prevSize);
+                        }
+
                         if (jsonArray!=null && jsonArray.length()!=0) {
                             for (int i=0; i<jsonArray.length(); i++){
                                 Gson gson = new Gson();
@@ -258,9 +314,14 @@ public class FollowersActivity extends AppCompatActivity {
                             tvNoData.setVisibility(View.VISIBLE);
                         }
                         followersAdapter.notifyDataSetChanged();
-                    }else {
+                    }else  if (page==0) {
                         rycFollowers.setVisibility(View.GONE);
                         tvNoData.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
                     //  showToast(message);
                 } catch (Exception e) {
@@ -274,6 +335,13 @@ public class FollowersActivity extends AppCompatActivity {
             @Override
             public void ErrorListener(VolleyError error) {
                 try{
+                    if(isPulltoRefrash){
+                        isPulltoRefrash = false;
+                        mRefreshLayout.stopRefresh(false, 500);
+                        int prevSize = followers.size();
+                        followers.clear();
+                        followersAdapter.notifyItemRangeRemoved(0, prevSize);
+                    }
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();

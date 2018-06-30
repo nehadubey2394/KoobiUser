@@ -540,7 +540,6 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
             }).show();
         }
 
-
         Map<String, String> params = new HashMap<>();
         params.put("feedType", feedType);
         params.put("search", "");
@@ -548,6 +547,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         params.put("limit", String.valueOf(feedLimit));
         params.put("type", "");
         params.put("userId", artistId);
+        params.put("loginUserId", String.valueOf(user.id));
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(ArtistProfileActivity.this, "profileFeed", new HttpResponceListner.Listener() {
@@ -564,7 +564,11 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
                         //removeProgress();
                         ParseAndUpdateUI(response);
 
-                    }else MyToast.getInstance(ArtistProfileActivity.this).showSmallMessage(message);
+                    }
+                    else if (page==0) {
+                        rvFeed.setVisibility(View.GONE);
+                        tv_no_data_msg.setVisibility(View.VISIBLE);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     // MyToast.getInstance(mContext).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
@@ -669,6 +673,9 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
 
                 }
                 feedAdapter.notifyDataSetChanged();
+            }else {
+                rvFeed.setVisibility(View.GONE);
+                tv_no_data_msg.setVisibility(View.VISIBLE);
             }
 
         } catch (JSONException e) {

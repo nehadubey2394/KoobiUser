@@ -14,7 +14,7 @@ import java.util.List;
  * Created by mindiii on 16/1/18.
  */
 public class ArtistsSearchBoard implements Serializable {
-    public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,
+    public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,bankStatus,
             lastName,distance,ratingCount,businessType,serviceType,inCallpreprationTime,outCallpreprationTime,address,categoryName,radius;
     public  boolean isOutCallSelected = false;
     public  boolean isFav;

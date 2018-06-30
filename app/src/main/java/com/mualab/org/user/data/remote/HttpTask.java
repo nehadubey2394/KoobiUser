@@ -329,8 +329,6 @@ public class HttpTask {
     }
 
 
-
-
     /*post file from multipart data form*/
     public void postFile(final String key, final File file, final Bitmap videoThumb){
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, api, new Response.Listener<NetworkResponse>() {

@@ -15,6 +15,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import views.refreshview.CircleHeaderView;
+import views.refreshview.OnRefreshListener;
+import views.refreshview.RjRefreshLayout;
+
 
 public class SearchBoardFragment extends BaseFragment implements View.OnClickListener {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,8 +80,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     private EndlessRecyclerViewScrollListener scrollListener;
     private List<ArtistsSearchBoard> artistsList;
     private static boolean isFavClick = false;
+    private boolean isPulltoRefrash;
     private RefineSearchBoard item;
     private String subServiceId = "", mainServId = "", searchKeyword = "", sortType = "0", sortSearch = "distance", serviceType = "", lat = "", lng = "", time = "", day = "", date;
+    private RjRefreshLayout mRefreshLayout;
 
     public static SearchBoardFragment newInstance(RefineSearchBoard item, String param2) {
         SearchBoardFragment fragment = new SearchBoardFragment();
@@ -155,10 +162,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         rvSearchBoard.setLayoutManager(layoutManager);
         listAdapter = new SearchBoardAdapter(mContext, artistsList);
         rvSearchBoard.setAdapter(listAdapter);
+        rvSearchBoard.setItemAnimator(null);
+        rvSearchBoard.setHasFixedSize(true);
         searchKeyword = "";
         KeyboardUtil.hideKeyboard(searchview, mContext);
         apiForDeleteAllPendingBooking();
@@ -177,6 +187,28 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
         // Adds the scroll listener to RecyclerView
         rvSearchBoard.addOnScrollListener(scrollListener);
+
+        final CircleHeaderView header = new CircleHeaderView(getContext());
+
+        mRefreshLayout.addHeader(header);
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                scrollListener.resetState();
+                isPulltoRefrash = true;
+                if (isFavClick)
+                    apiForGetFavArtist(0, false);
+                else
+                    apiForGetArtist(0, false);
+                // apiForGetArtist(0, false);
+            }
+
+            @Override
+            public void onLoadMore() {
+                Log.e(TAG, "onLoadMore: ");
+            }
+        });
+
 
         searchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -327,6 +359,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                         JSONArray artistArray = js.getJSONArray("artistList");
                         Gson gson = new Gson();
                         if (artistArray != null && artistArray.length() > 0) {
+                            if(isPulltoRefrash){
+                                isPulltoRefrash = false;
+                                mRefreshLayout.stopRefresh(true, 500);
+                                int prevSize = artistsList.size();
+                                artistsList.clear();
+                                listAdapter.notifyItemRangeRemoved(0, prevSize);
+                            }
                             //rvSearchBoard.setVisibility(View.VISIBLE);
                             ll_loadingBox.setVisibility(View.GONE);
 
@@ -360,6 +399,11 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
                         ll_loadingBox.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
 
                     //  showToast(message);
@@ -370,6 +414,11 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
                         ll_loadingBox.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
                 }
             }
@@ -378,6 +427,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             public void ErrorListener(VolleyError error) {
                 progress_bar.setVisibility(View.GONE);
                 tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(false, 500);
+                    int prevSize = artistsList.size();
+                    artistsList.clear();
+                    listAdapter.notifyItemRangeRemoved(0, prevSize);
+                }
             }
         })
                 .setAuthToken(Mualab.currentUser.authToken)
@@ -438,6 +494,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                         Gson gson = new Gson();
                         if (artistArray != null && artistArray.length() > 0) {
                             //rvSearchBoard.setVisibility(View.VISIBLE);
+                            if(isPulltoRefrash){
+                                isPulltoRefrash = false;
+                                mRefreshLayout.stopRefresh(true, 500);
+                                int prevSize = artistsList.size();
+                                artistsList.clear();
+                                listAdapter.notifyItemRangeRemoved(0, prevSize);
+                            }
                             ll_loadingBox.setVisibility(View.GONE);
 
                             for (int i = 0; i < artistArray.length(); i++) {
@@ -480,6 +543,11 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
                         ll_loadingBox.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
                 }
             }
@@ -488,6 +556,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             public void ErrorListener(VolleyError error) {
                 progress_bar.setVisibility(View.GONE);
                 tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(false, 500);
+                    int prevSize = artistsList.size();
+                    artistsList.clear();
+                    listAdapter.notifyItemRangeRemoved(0, prevSize);
+                }
             }
         })
                 .setAuthToken(Mualab.currentUser.authToken)

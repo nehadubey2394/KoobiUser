@@ -146,7 +146,6 @@
                 android:fontFamily="@font/roboto_regular"
                 android:maxLines="2"
                 android:maxWidth="180dp"
-                android:text="00/00/0000"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/text_color"
                 android:layout_gravity="end"

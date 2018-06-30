@@ -14,21 +14,6 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true" />
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btnPay"
-        style="@style/My_Button_Small.Invert"
-        android:layout_width="90dp"
-        android:layout_height="30dp"
-        android:text="@string/pay"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp"
-        android:textSize="14sp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/header"
-        />
-
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +23,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_below="@+id/btnPay"
+        android:layout_below="@+id/header"
         >
 
         <LinearLayout
@@ -112,6 +97,20 @@
 
                     </LinearLayout>
 
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/btnPay"
+                        style="@style/My_Button_Small.Invert"
+                        android:layout_width="90dp"
+                        android:layout_height="30dp"
+                        android:text="@string/pay"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="5dp"
+                        android:textSize="13sp"
+                        android:layout_alignParentRight="true"
+                        />
+
                 </RelativeLayout>
 
             </android.support.v7.widget.CardView>
@@ -156,7 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto_medium"
-                        android:text="@string/text_date_and_time"
+                        android:text="@string/appoinment_date_and_time"
                         android:textColor="@color/colorPrimary"
                         android:textSize="15sp" />
 
@@ -187,6 +186,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
                 android:background="@color/gray2" />
 
 
@@ -256,6 +256,8 @@
                 android:background="@color/gray2"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
                 />
 
             <RelativeLayout
@@ -315,7 +317,7 @@
                             android:id="@+id/tvPayType"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/roboto_regular"
+                            android:fontFamily="@font/roboto_medium"
                             android:textColor="@color/text_color"
                             android:layout_alignParentRight="true"
                             android:textSize="15sp" />
@@ -336,7 +338,7 @@
                         android:id="@+id/tvTransectionId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
+                        android:fontFamily="@font/roboto_medium"
                         android:maxLines="2"
                         android:text="--"
                         android:layout_marginTop="5dp"
@@ -353,6 +355,8 @@
                 android:background="@color/gray2"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
                 />
 
             <RelativeLayout
@@ -422,6 +426,8 @@
                 android:background="@color/gray2"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
                 />
 
             <RelativeLayout
@@ -474,6 +480,8 @@
                 android:background="@color/gray2"
                 android:layout_marginTop="4dp"
                 android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
                 />
 
             <android.support.v7.widget.RecyclerView
@@ -494,8 +502,8 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp"
-                android:paddingRight="12dp"
+                android:layout_marginRight="5dp"
+                android:paddingRight="2dp"
                 android:layout_alignParentRight="true"
                 android:layout_above="@+id/rlBottom"
                 >
@@ -505,7 +513,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_color"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     style="@style/TextView.Bold"
                     android:padding="4dp"
                     android:layout_marginLeft="10dp"
@@ -516,15 +524,14 @@
                     android:id="@+id/tvTotalPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_blue"
-                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
                     style="@style/TextView.Bold"
                     android:layout_marginLeft="5dp"
                     android:padding="4dp"
                     />
 
             </LinearLayout>
-
 
         </LinearLayout>
 

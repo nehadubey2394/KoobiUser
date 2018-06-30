@@ -99,19 +99,12 @@ public class FutureBookingAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (item.bookStatus.equals("0")){
             holder.btnWaiting.setVisibility(View.VISIBLE);
             holder.btnWaiting.setText(context.getString(R.string.a_waiting_confirmation));
-        }else if (item.bookStatus.equals("3") && item.paymentStatus.equals("0")){
+        }else if (item.bookStatus.equals("3") && (item.paymentStatus.equals("0")) && item.paymentType.equals("2")){
             holder.btnWaiting.setVisibility(View.VISIBLE);
             holder.btnWaiting.setText(R.string.pay);
-        }else {
+        }else{
             holder.btnWaiting.setVisibility(View.GONE);
         }
-
-        if (item.paymentType.equals("3")){
-            holder.btnWaiting.setVisibility(View.GONE);
-        }/*else {
-            holder.btnWaiting.setText(R.string.pay);
-            holder.btnWaiting.setVisibility(View.VISIBLE);
-        }*/
 
         if (!item.profileImage.equals("")){
             Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
@@ -151,15 +144,19 @@ public class FutureBookingAdapter extends RecyclerView.Adapter<RecyclerView.View
                 case R.id.btnWaiting:
                     final BookingHistory item = futureBookings.get(getAdapterPosition());
                     if (item.bookStatus.equals("3") && (item.paymentStatus.equals("0") && item.paymentType.equals("2"))){
-                       /* Intent intent = new Intent(new Intent(context,PaymentActivity.class));
-                        intent.putExtra("itemDetail",item);*/
                         Intent intent = new Intent(context, PaymentActivity.class);
                         intent.putExtra("bookingId",  String.valueOf(item._id));
                         intent.putExtra("totalPrice",  item.totalPrice);
                         context.startActivityForResult(intent, 30);
-                    }/*else if (item.bookStatus.equals("3") && item.paymentStatus.equals("0")){
-                        apiForPaymentByCash();
-                    }*/
+                    }else {
+                        if (item.bookStatus.equals("0")){
+                            Intent intent3 = new Intent(context, BookingDetailActivity.class);
+                            intent3.putExtra("bookingId",  String.valueOf(item._id));
+                            intent3.putExtra("artistName",  item.userName);
+                            intent3.putExtra("artistProfile",  item.profileImage);
+                            context.startActivityForResult(intent3, 30);
+                        }
+                    }
                     break;
 
                 case  R.id.rlContainer:
@@ -168,88 +165,13 @@ public class FutureBookingAdapter extends RecyclerView.Adapter<RecyclerView.View
                     intent.putExtra("bookingId",  String.valueOf(item2._id));
                     intent.putExtra("artistName",  item2.userName);
                     intent.putExtra("artistProfile",  item2.profileImage);
-                    context.startActivityForResult(intent, 2);
+                    context.startActivityForResult(intent, 30);
                     // MyToast.getInstance(context).showDasuAlert("Under developement");
                     break;
             }
 
         }
     }
-/*
-    private void apiForPaymentByCash(){
-        Session session = Mualab.getInstance().getSessionManager();
-        final User user = session.getUser();
-        if (!ConnectionDetector.isConnected()) {
-            new NoConnectionDialog(context, new NoConnectionDialog.Listner() {
-                @Override
-                public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                    if(isConnected){
-                        dialog.dismiss();
-                        apiForPaymentByCash();
-                    }
-                }
-            }).show();
-        }
-
-        String url = Uri.parse("cardPayment")
-                .buildUpon()
-                .appendQueryParameter("number", "")
-                .appendQueryParameter("cvv", "")
-                .appendQueryParameter("exp_month", "")
-                .appendQueryParameter("exp_year", "")
-                .appendQueryParameter("id", "")
-                .build().toString();
-
-        String sParam = "number="+number+"cvv"+sCvv+"exp_month"+expireMnth+"exp_year"+expireYear+"id"+bookingId;
-
-        HttpTask task = new HttpTask(new HttpTask.Builder(context, url, new HttpResponceListner.Listener() {
-            @Override
-            public void onResponse(String response, String apiName) {
-                try {
-                    JSONObject js = new JSONObject(response);
-                    String status = js.getString("status");
-                    String message = js.getString("message");
-
-                    if (status.equalsIgnoreCase("success")) {
-                        MyToast.getInstance(context).showDasuAlert(message);
-                        Intent intent = new Intent();
-                        intent.putExtra("isChanged", "true");
-                        ((PaymentActivity)context).setResult(RESULT_OK, intent);
-                        ((PaymentActivity)context).finish();
-                    }else {
-                        MyToast.getInstance(context).showDasuAlert(message);
-                    }
-                    //  showToast(message);
-                } catch (Exception e) {
-                    Progress.hide(context);
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void ErrorListener(VolleyError error) {
-                try{
-                    Helper helper = new Helper();
-                    if (helper.error_Messages(error).contains("Session")){
-                        Mualab.getInstance().getSessionManager().logout();
-                        // MyToast.getInstance(BookingActivity.this).showDasuAlert(helper.error_Messages(error));
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-
-            }})
-                .setAuthToken(user.authToken)
-                .setProgress(true)
-                .setMethod(Request.Method.GET)
-                */
-    /*.setBody(params, HttpTask.ContentType.APPLICATION_JSON)*//*
-);
-
-        task.execute(this.getClass().getName());
-    }
-*/
 
     private String changeDateFormate(String sDate){
         SimpleDateFormat inputDf = new SimpleDateFormat("yyyy-MM-dd");

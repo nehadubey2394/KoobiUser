@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import views.refreshview.CircleHeaderView;
+import views.refreshview.OnRefreshListener;
+import views.refreshview.RjRefreshLayout;
+
 
 public class NotificationFragment extends BaseFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,6 +53,8 @@ public class NotificationFragment extends BaseFragment {
     private NotificationAdapter notificationAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private LinearLayout ll_loadingBox;
+    private RjRefreshLayout mRefreshLayout;
+    private boolean isPulltoRefrash;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -93,6 +100,21 @@ public class NotificationFragment extends BaseFragment {
 
         ll_loadingBox = rootView.findViewById(R.id.ll_loadingBox);
         tvNoData = rootView.findViewById(R.id.tvNoData);
+        mRefreshLayout =  rootView.findViewById(R.id.mSwipeRefreshLayout);
+        final CircleHeaderView header = new CircleHeaderView(getContext());
+        mRefreshLayout.addHeader(header);
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                scrollListener.resetState();
+                isPulltoRefrash = true;
+                apiForGetNotifications(0);
+            }
+
+            @Override
+            public void onLoadMore() {
+            }
+        });
         rycNotification = rootView.findViewById(R.id.rycNotification);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
         layoutManager.scrollToPositionWithOffset(0, 0);
@@ -162,6 +184,13 @@ public class NotificationFragment extends BaseFragment {
                         tvNoData.setVisibility(View.GONE);
 
                         JSONArray jsonArray = js.getJSONArray("notificationList");
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+                            int prevSize = notificationList.size();
+                            notificationList.clear();
+                            notificationAdapter.notifyItemRangeRemoved(0, prevSize);
+                        }
                         if (jsonArray!=null && jsonArray.length()!=0) {
                             for (int i=0; i<jsonArray.length(); i++){
                                 Gson gson = new Gson();
@@ -177,6 +206,11 @@ public class NotificationFragment extends BaseFragment {
                     }else {
                         rycNotification.setVisibility(View.GONE);
                         tvNoData.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
                     //  showToast(message);
                 } catch (Exception e) {
@@ -191,6 +225,13 @@ public class NotificationFragment extends BaseFragment {
             public void ErrorListener(VolleyError error) {
                 try{
                     ll_loadingBox.setVisibility(View.GONE);
+                    if(isPulltoRefrash){
+                        isPulltoRefrash = false;
+                        mRefreshLayout.stopRefresh(false, 500);
+                        int prevSize = notificationList.size();
+                        notificationList.clear();
+                        notificationAdapter.notifyItemRangeRemoved(0, prevSize);
+                    }
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();

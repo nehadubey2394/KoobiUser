@@ -1,12 +1,12 @@
 package com.mualab.org.user.activity.payment.activity;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.booking_histories.adapter.FutureBookingAdapter;
 import com.mualab.org.user.activity.payment.adapter.PaymentHistoryAdapter;
 import com.mualab.org.user.activity.payment.modle.PaymentHistory;
 import com.mualab.org.user.application.Mualab;
@@ -45,7 +44,7 @@ import views.refreshview.RjRefreshLayout;
 public class PaymentHistoryActivity extends AppCompatActivity implements View.OnClickListener{
     private PaymentHistoryAdapter paymentHistoryAdapter;
     private List<PaymentHistory> paymentHistories;
-    private TextView tvDiscount,tvHistory,tvRefrell,tvNoData;
+    private TextView tvDiscount,tvHistory,tvRefrell,tvNoData,tvHeaderTitle;
     private LinearLayout tabDiscount, tabRefrell,tabHistory,ll_progress;
     private long mLastClickTime = 0;
     private RecyclerView rycHistory;
@@ -72,7 +71,7 @@ public class PaymentHistoryActivity extends AppCompatActivity implements View.On
         ImageView ivUserProfile = findViewById(R.id.ivUserProfile);
         ivUserProfile.setVisibility(View.GONE);
 
-        TextView tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         tvHeaderTitle.setText(getString(R.string.payment_history));
         tvNoData = findViewById(R.id.tvNoData);
         tvDiscount = findViewById(R.id.tvDiscount);
@@ -142,6 +141,7 @@ public class PaymentHistoryActivity extends AppCompatActivity implements View.On
                 if (clickId != 1) {
                     clickId = 1;
                     tvNoData.setVisibility(View.GONE);
+                    tvHeaderTitle.setText(getString(R.string.payment_history));
                     tabHistory.setBackgroundResource(R.drawable.bg_tab_selected);
                     tabDiscount.setBackgroundResource(R.drawable.bg_tab_unselected);
                     tabRefrell.setBackgroundResource(R.drawable.bg_tab_midile_unselected);
@@ -156,6 +156,7 @@ public class PaymentHistoryActivity extends AppCompatActivity implements View.On
                 if (clickId != 2) {
                     clickId = 2;
                     tvNoData.setVisibility(View.GONE);
+                    tvHeaderTitle.setText(getString(R.string.refrell_earnings));
                     tabRefrell.setBackgroundResource(R.drawable.bg_tab_middle_selected);
                     tabHistory.setBackgroundResource(R.drawable.bg_second_tab_unselected);
                     tabDiscount.setBackgroundResource(R.drawable.bg_tab_unselected);
@@ -173,6 +174,7 @@ public class PaymentHistoryActivity extends AppCompatActivity implements View.On
                 if (clickId != 3) {
                     clickId = 3;
                     tvNoData.setVisibility(View.GONE);
+                    tvHeaderTitle.setText(getString(R.string.discount_code));
                     tabHistory.setBackgroundResource(R.drawable.bg_second_tab_unselected);
                     tabDiscount.setBackgroundResource(R.drawable.bg_second_tab_selected);
                     tabRefrell.setBackgroundResource(R.drawable.bg_tab_midile_unselected);
@@ -315,6 +317,16 @@ public class PaymentHistoryActivity extends AppCompatActivity implements View.On
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 20 && resultCode != 0) {
+            if (data != null) {
+                apiForPaymentHistory(0,true);
+            }
         }
     }
 

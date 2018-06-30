@@ -108,9 +108,16 @@
 
     </LinearLayout>
 
+    <views.refreshview.RjRefreshLayout
+        android:id="@+id/mSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/lyFilter"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvSearchBoard"
-        android:layout_below="@+id/lyFilter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"
@@ -118,6 +125,8 @@
         android:layout_marginLeft="3dp"
         android:overScrollMode="never"
         android:padding="5dp"/>
+
+    </views.refreshview.RjRefreshLayout>
 
     <include
         layout="@layout/layout_inner_loader"

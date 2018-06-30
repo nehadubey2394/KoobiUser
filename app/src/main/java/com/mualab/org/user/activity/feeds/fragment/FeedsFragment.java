@@ -111,7 +111,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     private TextView  tvImages, tvVideos, tvFeeds,tv_msg;
     private LinearLayout ll_header;
     private RjRefreshLayout mRefreshLayout;
-
+    private boolean isPulltoRefrash = false;
     //private EditText edCaption;
     private ImageView iv_selectedImage;
     private LinearLayout ll_progress;
@@ -136,7 +136,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     private BaseListner baseListner;
     // private int fragCount;
     private int CURRENT_FEED_STATE = 0;
-    private boolean isPulltoRefrash = false;
     private boolean isEditTextFocaused;
 
 

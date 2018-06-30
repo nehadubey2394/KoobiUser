@@ -105,7 +105,7 @@ public class CertificateActivity extends AppCompatActivity implements OnCertific
 
         Map<String, String> params = new HashMap<>();
         params.put("artistId", artistId);
-        params.put("type", "artist");
+        params.put("type", "user");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(CertificateActivity.this, "getAllCertificate", new HttpResponceListner.Listener() {
             @Override

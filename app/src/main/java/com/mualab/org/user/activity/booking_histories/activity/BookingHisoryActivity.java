@@ -313,10 +313,6 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
             if (data != null) {
                 apiForGetBooking(0,true);
             }
-        }else if (requestCode == 2 && resultCode != 0) {
-            if (data != null) {
-                apiForGetBooking(0,true);
-            }
         }
     }
 

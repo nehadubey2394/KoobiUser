@@ -2,20 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-   >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rycNotification"
+    <views.refreshview.RjRefreshLayout
+        android:id="@+id/mSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/header"
-        android:overScrollMode="never"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="2dp"
-        android:scrollbars="none" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rycNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="never"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="2dp"
+            android:scrollbars="none" />
+
+    </views.refreshview.RjRefreshLayout>
 
     <TextView
         android:id="@+id/tvNoData"

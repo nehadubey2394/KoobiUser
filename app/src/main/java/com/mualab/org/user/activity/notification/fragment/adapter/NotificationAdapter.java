@@ -4,6 +4,7 @@ package com.mualab.org.user.activity.notification.fragment.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.tvName.setText(item.firstName);
         holder.tvTimeElapsed.setText(item.timeElapsed);
+      //  holder.tvMsg.setText(item.message);
+        String currentString = item.message;
+        String[] separated = currentString.split(" ",2);
+        String sName = separated[0];
+        String msg = separated[1];
+
+        String changedText = "<font color='black'>" + sName + "</font>";
+
+       // String sourceString = "<big><b>" + changedText + "</b></big> " + msg;
+        String sourceString = "<big>" + changedText + "</big> " + msg;
+
+        holder.tvMsg.setText(Html.fromHtml(sourceString));
+
         if (item.type.equals("social")){
             holder.tvName.setTextColor(context.getResources().getColor(R.color.colorAccent));
             holder.ivUserImg.setBackground(context.getResources().getDrawable(R.drawable.bg_blue_circle_profile));
@@ -103,7 +117,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.ivUserImg.setBackground(context.getResources().getDrawable(R.drawable.bg_pink_circle_profile));
         }
 
-        holder.tvMsg.setText(item.message);
         if (!item.profileImage.equals("")){
             Picasso.with(context).load(item.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(holder.ivUserImg);

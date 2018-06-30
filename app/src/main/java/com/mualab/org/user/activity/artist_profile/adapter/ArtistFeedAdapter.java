@@ -595,6 +595,15 @@ public class ArtistFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void apiForLikes(final Feeds feed) {
+        /*  let dicParam  = ["feedId": objFeeds._id,
+                             "userId":objFeeds.userInfo?._id ?? 0,
+                             "likeById":self.myId,
+                             "age":objAppShareData.getAge(from: dicUser["dob"] as! String),
+                             "gender":dicUser["gender"] as! String,
+                             "city":address.locality ?? "",
+                             "state":address.administrativeArea ?? "",
+                             "country":address.country ?? "",
+                             "type":"feed"]  as [String : Any]*/
         Map<String, String> map = new HashMap<>();
         map.putAll(Mualab.feedBasicInfo);
         map.put("feedId", ""+feed._id);
@@ -602,7 +611,9 @@ public class ArtistFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         map.put("userId", ""+feed.userId);
         map.put("type", "feed");// feed or comment
         Mualab.getInstance().getRequestQueue().cancelAll("like"+feed._id);
-        new HttpTask(new HttpTask.Builder(mContext, "like", new HttpResponceListner.Listener() {
+
+        new HttpTask(new HttpTask.Builder(mContext, "like",
+                new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
 
@@ -729,7 +740,6 @@ public class ArtistFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             return 0;
         }
     }
-
 
     private void followUnfollow(final Feeds feeds, final int position){
 

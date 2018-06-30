@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
@@ -58,7 +59,6 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
     private Bookings item;
     private AppCompatButton btnPay;
     private boolean isChangedOccured = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +129,10 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
+        long mLastClickTime = 0;
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 900) {
+            return;
+        }
         switch (v.getId()){
             case R.id.btnBack:
                 onBackPressed();
@@ -475,6 +479,8 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
             else
                 btnPay.setVisibility(View.GONE);
 
+            btnPay.setText("Pay £"+bookingInfo.totalPrice);
+
             tvPayType.setText("Online");
         }else {
             tvPayType.setText("Cash");
@@ -487,7 +493,8 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
 
         switch (bookingInfo.bookStatus) {
             case "0":
-                tvBookingStatus.setText(getString(R.string.booking)+" "+getString(R.string.pending));
+                //tvBookingStatus.setText(getString(R.string.booking)+" "+getString(R.string.pending));
+                tvBookingStatus.setText(getString(R.string.a_waiting_confirmation));
                 break;
             case "1":
                 tvBookingStatus.setText(getString(R.string.booking)+" "+getString(R.string.confirmed));
@@ -531,6 +538,7 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 40 && resultCode != 0) {
             if (data != null) {
+                isChangedOccured = true;
                 apiForGetBookingDetail(true);
             }
         }
@@ -550,4 +558,17 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
         return date;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!isChangedOccured)
+            finish();
+        else {
+            Intent intent = new Intent();
+            intent.putExtra("isChangedOccured", "true");
+            setResult(RESULT_OK, intent);
+            finish();
+
+        }
+        super.onBackPressed();
+    }
 }

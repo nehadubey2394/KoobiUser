@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="280dp"
         android:layout_height="200dp"
         android:layout_centerInParent="true"
-        android:gravity="center_horizontal"
         android:orientation="vertical"
         android:background="@drawable/bg_dialog_alert"
 
@@ -20,6 +19,7 @@
             android:weightSum="2"
             android:orientation="horizontal"
             android:layout_marginTop="-2dp"
+            android:layout_alignParentTop="true"
             android:background="@drawable/bg_dialog_box"
             >
             <TextView
@@ -36,84 +36,80 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/white"
+        <RadioGroup
+            android:id="@+id/rdGrp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
             >
 
-            <RadioGroup
-                android:id="@+id/rdGrp"
+            <RadioButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rdOnline"
-                    android:padding="5dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/online_payment"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_regular"
-                    android:buttonTint="@color/colorPrimary"
-                    />
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:id="@+id/rdCash"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/cash"
-                    android:layout_marginTop="6dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:buttonTint="@color/colorPrimary"
-                    />
-
-            </RadioGroup>
-
-            <RelativeLayout
-                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="25dp"
-                >
+                android:id="@+id/rdOnline"
+                android:padding="5dp"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/online_payment"
+                android:checked="true"
+                android:fontFamily="@font/roboto_regular"
+                android:buttonTint="@color/colorPrimary"
+                />
 
-                <android.support.v7.widget.AppCompatButton
-                    style="@style/My_Button_Small.Invert"
-                    android:id="@+id/btnCancel"
-                    android:layout_width="80dp"
-                    android:layout_height="28dp"
-                    android:text="@string/cancel_label"
-                    android:layout_gravity="center_vertical"
-                    android:padding="2dp"
-                    android:layout_alignParentLeft="true"
-                    android:textSize="12sp"
-                    />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:id="@+id/rdCash"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/cash"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/roboto_regular"
+                android:buttonTint="@color/colorPrimary"
+                />
 
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/btnDone"
-                    style="@style/My_Button_Small.Invert"
-                    android:layout_width="80dp"
-                    android:layout_height="28dp"
-                    android:text="@string/done"
-                    android:layout_gravity="center_vertical"
-                    android:padding="2dp"
-                    android:textSize="12sp"
-                    android:layout_alignParentRight="true"
-                    />
+        </RadioGroup>
 
-            </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:weightSum="2"
+            >
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnCancel"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:text="@string/cancel_label"
+                android:layout_gravity="center_vertical"
+                android:padding="2dp"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:layout_marginRight="3dp"
+                android:background="@drawable/bg_left_bottom_corner_round"
+                android:textSize="12sp"
+                />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnDone"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:text="@string/done"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp"
+                android:textAllCaps="false"
+                android:background="@drawable/bg_right_bottom_corner_round"
+                android:layout_gravity="center_vertical"
+                android:padding="2dp"
+                android:textSize="12sp"
+                />
 
         </LinearLayout>
-    </LinearLayout>
+
+
+    </RelativeLayout>
 
 </RelativeLayout>
