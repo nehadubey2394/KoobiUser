@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.searchBoard.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,15 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.booking.BookingActivity;
+import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
+import com.mualab.org.user.activity.make_booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.utils.Util;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,6 +28,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private List<ArtistsSearchBoard> artistsList;
     private Util utility;
     private boolean showLoader;
+    private  long mLastClickTime = 0;
 
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
@@ -114,11 +117,12 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.tvServices.setText(item.categoryName);
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvDistance,tvServices,tvArtistName,tvRating;
         ImageView ivProfile,ivFav;
         AppCompatButton btnBook;
         RatingBar rating;
+        RelativeLayout lyContainer;
         private ViewHolder(View itemView)
         {
             super(itemView);
@@ -131,17 +135,41 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvRating = itemView.findViewById(R.id.tvRating);
             btnBook = itemView.findViewById(R.id.btnBook);
             rating = itemView.findViewById(R.id.rating);
+            lyContainer = itemView.findViewById(R.id.lyContainer);
 
-            btnBook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ArtistsSearchBoard item = artistsList.get(getAdapterPosition());
+            btnBook.setOnClickListener(this);
+            //  ivProfile.setOnClickListener(this);
+            lyContainer.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
+            ArtistsSearchBoard item = artistsList.get(getAdapterPosition());
+            switch (v.getId()){
+                case R.id.btnBook:
                     Intent intent = new Intent(context, BookingActivity.class);
                     intent.putExtra("item",item);
-                    intent.putExtra("mParam","1");
                     context.startActivity(intent);
-                }
-            });
+                    break;
+
+              /*  case R.id.ivProfile:
+                    Intent intent2 = new Intent(context, ArtistProfileActivity.class);
+                    intent2.putExtra("item",item);
+                    //intent2.putExtra("artistId",item._id);
+                    context.startActivity(intent2);*/
+
+                case R.id.lyContainer:
+                    Intent intent3 = new Intent(context, ArtistProfileActivity.class);
+                    intent3.putExtra("item",item);
+                    //intent2.putExtra("artistId",item._id);
+                    context.startActivity(intent3);
+                    break;
+            }
         }
     }
 

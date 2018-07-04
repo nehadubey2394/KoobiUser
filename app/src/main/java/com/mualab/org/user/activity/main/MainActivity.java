@@ -4,9 +4,11 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,9 +22,11 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
+import com.mualab.org.user.activity.my_profile.activity.MyProfileActivity;
+import com.mualab.org.user.activity.notification.fragment.NotificationFragment;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.activity.feeds.fragment.AddFeedFragment;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.dialogs.MySnackBar;
@@ -32,6 +36,7 @@ import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.network.NetworkChangeReceiver;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -41,13 +46,15 @@ import java.util.Map;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification,ibtnChat;
+    private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification;
     private int clickedId = 0;
-    public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon;
+    public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon,ibtnChat;
     public TextView tvHeaderTitle;
-    public RelativeLayout rlHeader1, rootLayout;
+    public RelativeLayout rootLayout;
+    public CardView rlHeader1;
     private static final int REQUEST_ADD_NEW_STORY = 8719;
     public RefineSearchBoard item;
+    private  long mLastClickTime = 0;
 
     public void setBgColor(int color){
         if(rlHeader1!=null)
@@ -61,10 +68,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setStatusbarColor();
+        //  setStatusbarColor();
 
-       // FirebaseCrash.logcat(Log.ERROR, "Build Date:", "16/04/2018");
-       // FirebaseCrash.report(new Throwable("Build Date: 16/04/2018"));
+        // FirebaseCrash.logcat(Log.ERROR, "Build Date:", "16/04/2018");
+        // FirebaseCrash.report(new Throwable("Build Date: 16/04/2018"));
 
         Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
         Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);
@@ -108,11 +115,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ibtnAddFeed = findViewById(R.id.ibtnAddFeed);
         ibtnSearch = findViewById(R.id.ibtnSearch);
         ibtnNotification = findViewById(R.id.ibtnNotification);
-        ibtnChat = findViewById(R.id.ibtnChat);
+        ibtnChat = findViewById(R.id.ivChat);
 
         ivAppIcon = findViewById(R.id.ivAppIcon);
-        ivHeaderBack = findViewById(R.id.ivHeaderBack);
-        ivHeaderUser = findViewById(R.id.ivHeaderUser);
+        ivHeaderBack = findViewById(R.id.btnBack);
+        ivHeaderUser = findViewById(R.id.ivUserProfile);
+        ivHeaderUser.setVisibility(View.VISIBLE);
+        User user = Mualab.getInstance().getSessionManager().getUser();
+
+        if (!user.profileImage.isEmpty() && !user.profileImage.equals("")){
+            Picasso.with(MainActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
+                    fit().into(ivHeaderUser);
+        }
+
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         rlHeader1 = findViewById(R.id.topLayout1);
         rootLayout = findViewById(R.id.rootLayout);
@@ -125,6 +140,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderBack.setOnClickListener(this);
         ibtnChat.setOnClickListener(this);
         ivAppIcon.setOnClickListener(this);
+        ivHeaderUser.setOnClickListener(this);
         ibtnLeaderBoard.setImageResource(R.drawable.active_leaderboard_ico);
         tvHeaderTitle.setText(getString(R.string.title_searchboard));
         ivHeaderBack.setVisibility(View.GONE);
@@ -136,48 +152,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final int RESULT_ADD_NEW_STORY = 7891;
     public void openNewStoryActivity(){
         showToast(getString(R.string.under_development));
-        /*Intent intent = new Intent(this, NewStoryActivity.class);
-        startActivityForResult(intent, REQUEST_ADD_NEW_STORY);*/
-
-       /* FilePaths filePaths = new FilePaths();
-        File saveFolder = new File(filePaths.STORIES);
-        try{
-            if (!saveFolder.mkdirs());
-        }catch (RuntimeException e){
-            e.printStackTrace();
-        }
-        //RjCamera camera = new RjCamera(this);
-        new RjCamera(this)
-                .allowRetry(true)                                  // Whether or not 'Retry' is visible during playback
-                .autoSubmit(false)                                 // Whether or not user is allowed to playback videos after recording. This can affect other things, discussed in the next section.
-                .saveDir(saveFolder)                               // The folder recorded videos are saved to
-                .showPortraitWarning(false)                        // Whether or not a warning is displayed if the user presses record in portrait orientation
-                .defaultToFrontFacing(false)                       // Whether or not the camera will initially show the front facing camera
-                .retryExits(false)                                 // If true, the 'Retry' button in the playback screen will exit the camera instead of going back to the recorder
-                .restartTimerOnRetry(false)                        // If true, the countdown timer is reset to 0 when the user taps 'Retry' in playback
-                .continueTimerInPlayback(false)                    // If true, the countdown timer will continue to go down during playback, rather than pausing.
-                .videoEncodingBitRate(DEFAULT_BITRATE * 5)         // Sets a custom bit rate for video recording.
-                .audioEncodingBitRate(50000)                       // Sets a custom bit rate for audio recording.
-                .videoFrameRate(30)                                // Sets a custom frame rate (FPS) for video recording.
-                .videoPreferredHeight(720)                         // Sets a preferred height for the recorded video output.
-                .videoPreferredAspect(16f / 9f)                    // Sets a preferred aspect ratio for the recorded video output.
-                .maxAllowedFileSize(1024 * 1024 * 20)              // Sets a max file size of 20MB, recording will stop if file reaches this limit. Keep in mind, the FAT file system has a file size limit of 4GB.
-                .iconRecord(R.drawable.mcam_action_capture)        // Sets a custom icon for the button used to start recording
-                .iconStop(R.drawable.mcam_action_stop)             // Sets a custom icon for the button used to stop recording
-                .iconFrontCamera(R.drawable.ic_camera_rear_white)  // Sets a custom icon for the button used to switch to the front camera
-                .iconRearCamera(R.drawable.ic_camera_rear_white)   // Sets a custom icon for the button used to switch to the rear camera
-                .iconPlay(R.drawable.evp_action_play)              // Sets a custom icon used to start playback
-                .iconPause(R.drawable.evp_action_pause)            // Sets a custom icon used to pause playback
-                .iconRestart(R.drawable.evp_action_restart)        // Sets a custom icon used to restart playback
-                .labelRetry(R.string.mcam_retry)                   // Sets a custom button label for the button used to retry recording, when available
-                .audioDisabled(false)                              // Set to true to record video without any audio.
-                .countdownSeconds(60f)
-                .stillShot()
-                .start(REQUEST_ADD_NEW_STORY);*/
-
-       /* startActivityForResult(new Intent(MainActivity.this, CameraActivity.class),
-                REQUEST_ADD_NEW_STORY);*/
-
     }
 
     @Override
@@ -204,6 +178,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 800){
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         switch (view.getId()){
 
             case R.id.ivHeaderBack :
@@ -216,6 +195,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ivAppIcon :
+                break;
+
+            case R.id.ivUserProfile :
+                startActivity(new Intent(MainActivity.this, MyProfileActivity.class));
                 break;
 
             case R.id.ibtnLeaderBoard :
@@ -250,21 +233,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.ibtnAddFeed :
                 startActivity(new Intent(MainActivity.this, GalleryActivity.class));
-                //showToast(getString(R.string.under_development));
-               /* if (clickedId!=3) {
-                    setInactiveTab();
-                    clickedId = 3;
-                    tvHeaderTitle.setText(getString(R.string.title_searchboard));
-                    ibtnAddFeed.setImageResource(R.drawable.active_add_ico);
-                    tvHeaderTitle.setText(R.string.title_photo);
-                    ivHeaderBack.setVisibility(View.GONE);
-                    ivHeaderUser.setVisibility(View.GONE);
-                    ibtnChat.setVisibility(View.GONE);
-                    ivAppIcon.setVisibility(View.GONE);
-                    tvHeaderTitle.setVisibility(View.VISIBLE);
-                    startActivity(new Intent(MainActivity.this, GalleryActivity.class));
-                    //replaceFragment(new AddFeedFragment(), false);
-                }*/
+
                 break;
 
             case R.id.ibtnSearch :
@@ -292,7 +261,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(new AddFeedFragment(), false);
+                    replaceFragment(new NotificationFragment(), false);
                 }
                 break;
         }
@@ -308,12 +277,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-
     private boolean doubleBackToExitPressedOnce;
     private Runnable runnable;
     @Override
     public void onBackPressed() {
-          /* Handle double click to finish activity*/
+        /* Handle double click to finish activity*/
         Handler handler = new Handler();
         FragmentManager fm = getSupportFragmentManager();
         int i = fm.getBackStackEntryCount();
@@ -336,7 +304,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             super.onBackPressed();
         }
     }
-
 
     private void addMyStory( Bitmap bitmap){
 

@@ -135,6 +135,13 @@ public class HttpTask {
             return this;
         }
 
+
+        public Builder setParam(Map<String, String> params,String contentType){
+            this.params = params;
+            this.bodyContentType = contentType;
+            return this;
+        }
+
         public Builder setAuthToken(String authToken){
             this.authToken = authToken;
             return this;
@@ -320,8 +327,6 @@ public class HttpTask {
         multipartRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 0, 1f));
         VolleySingleton.getInstance(context.getApplicationContext()).addToRequestQueue(multipartRequest);
     }
-
-
 
 
     /*post file from multipart data form*/

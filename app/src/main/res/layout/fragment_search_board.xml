@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/screen_bg_color"
+    android:background="@color/white"
     android:focusable="true"
     android:clickable="true"
     android:focusableInTouchMode="true"
@@ -38,6 +38,8 @@
                 android:layout_height="wrap_content"
                 app:iconifiedByDefault="false"
                 app:searchIcon="@null"
+                android:background="@null"
+                app:queryBackground="@color/white"
                 android:lineSpacingExtra="0dp"
                 android:lineSpacingMultiplier="0"
                 android:textColor="@color/text_color"
@@ -106,9 +108,16 @@
 
     </LinearLayout>
 
+    <views.refreshview.RjRefreshLayout
+        android:id="@+id/mSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/lyFilter"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvSearchBoard"
-        android:layout_below="@+id/lyFilter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"
@@ -116,6 +125,8 @@
         android:layout_marginLeft="3dp"
         android:overScrollMode="never"
         android:padding="5dp"/>
+
+    </views.refreshview.RjRefreshLayout>
 
     <include
         layout="@layout/layout_inner_loader"

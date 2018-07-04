@@ -15,6 +15,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ import com.mualab.org.user.R;
 
 import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.main.MainActivity;
-import com.mualab.org.user.activity.booking.fragment.BookingFragment4;
+import com.mualab.org.user.activity.make_booking.fragment.BookingFragment4;
 import com.mualab.org.user.activity.searchBoard.RefineArtistActivity;
 import com.mualab.org.user.activity.searchBoard.adapter.SearchBoardAdapter;
 import com.mualab.org.user.application.Mualab;
@@ -54,10 +55,15 @@ import com.mualab.org.user.utils.LocationDetector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import views.refreshview.CircleHeaderView;
+import views.refreshview.OnRefreshListener;
+import views.refreshview.RjRefreshLayout;
 
 
 public class SearchBoardFragment extends BaseFragment implements View.OnClickListener {
@@ -74,8 +80,10 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     private EndlessRecyclerViewScrollListener scrollListener;
     private List<ArtistsSearchBoard> artistsList;
     private static boolean isFavClick = false;
+    private boolean isPulltoRefrash;
     private RefineSearchBoard item;
-    private String subServiceId = "",mainServId = "",searchKeyword="",sortType ="0",sortSearch ="distance",serviceType="",lat="",lng="",time="",day="",date;
+    private String subServiceId = "", mainServId = "", searchKeyword = "", sortType = "0", sortSearch = "distance", serviceType = "", lat = "", lng = "", time = "", day = "", date;
+    private RjRefreshLayout mRefreshLayout;
 
     public static SearchBoardFragment newInstance(RefineSearchBoard item, String param2) {
         SearchBoardFragment fragment = new SearchBoardFragment();
@@ -88,8 +96,8 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof MainActivity)
-            ((MainActivity)context).setBgColor(R.color.screen_bg_color);
+        //if(context instanceof MainActivity)
+        //    ((MainActivity)context).setBgColor(R.color.screen_bg_color);
     }
 
     @Override
@@ -98,7 +106,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         if (getArguments() != null) {
             item = (RefineSearchBoard) getArguments().getSerializable("param1");
         }
-        if(artistsList==null)
+        if (artistsList == null)
             artistsList = new ArrayList<>();
     }
 
@@ -122,8 +130,8 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         return view;
     }
 
-    private void initView(){
-        if (item!=null){
+    private void initView() {
+        if (item != null) {
             lat = item.latitude;
             lng = item.longitude;
             subServiceId = item.subservice;
@@ -133,18 +141,18 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             sortType = item.sortType;
             isFavClick = item.isFavClick;
             time = item.time;
-            if (item.day.equals("100")){
+            if (item.day.equals("100")) {
                 day = "";
-            }else
+            } else
                 day = item.day;
             date = item.date;
 
-            if (!lat.equals("") && !lng.equals("")){
+            if (!lat.equals("") && !lng.equals("")) {
                 Mualab.currentLocationForBooking.lat = Double.parseDouble(lat);
                 Mualab.currentLocationForBooking.lng = Double.parseDouble(lng);
             }
         }
-        if (isFavClick){
+        if (isFavClick) {
             ivStar.setImageResource(R.drawable.fill_star_ico);
         } else {
             ivStar.setImageResource(R.drawable.star_ico);
@@ -154,15 +162,18 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
         rvSearchBoard.setLayoutManager(layoutManager);
         listAdapter = new SearchBoardAdapter(mContext, artistsList);
         rvSearchBoard.setAdapter(listAdapter);
+        rvSearchBoard.setItemAnimator(null);
+        rvSearchBoard.setHasFixedSize(true);
         searchKeyword = "";
         KeyboardUtil.hideKeyboard(searchview, mContext);
         apiForDeleteAllPendingBooking();
 
-        if(scrollListener==null)
+        if (scrollListener == null)
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -177,10 +188,32 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         // Adds the scroll listener to RecyclerView
         rvSearchBoard.addOnScrollListener(scrollListener);
 
+        final CircleHeaderView header = new CircleHeaderView(getContext());
+
+        mRefreshLayout.addHeader(header);
+        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                scrollListener.resetState();
+                isPulltoRefrash = true;
+                if (isFavClick)
+                    apiForGetFavArtist(0, false);
+                else
+                    apiForGetArtist(0, false);
+                // apiForGetArtist(0, false);
+            }
+
+            @Override
+            public void onLoadMore() {
+                Log.e(TAG, "onLoadMore: ");
+            }
+        });
+
+
         searchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                KeyboardUtil.hideKeyboard(searchview,mContext);
+                KeyboardUtil.hideKeyboard(searchview, mContext);
                 return false;
             }
 
@@ -200,7 +233,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             }
         });
 
-        if(artistsList.size()==0){
+        if (artistsList.size() == 0) {
             tv_msg.setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
             ll_loadingBox.setVisibility(View.VISIBLE);
             progress_bar.setVisibility(View.VISIBLE);
@@ -210,13 +243,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
     }
 
-    private void showProgress(){
+    private void showProgress() {
         ll_loadingBox.setVisibility(View.VISIBLE);
         tv_msg.setVisibility(View.GONE);
         progress_bar.setVisibility(View.VISIBLE);
     }
 
-    private void hideProgress(){
+    private void hideProgress() {
         ll_loadingBox.setVisibility(View.GONE);
         progress_bar.setVisibility(View.GONE);
     }
@@ -225,9 +258,9 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.cvFilter:
-                Intent intent = new Intent(mContext,  RefineArtistActivity.class);
-                intent.putExtra("params",item);
-                intent.putExtra("param2",isFavClick);
+                Intent intent = new Intent(mContext, RefineArtistActivity.class);
+                intent.putExtra("params", item);
+                intent.putExtra("param2", isFavClick);
                 startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 getActivity().finish();
@@ -235,7 +268,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
             case R.id.cvFavourite:
                 artistsList.clear();
-                if (!isFavClick){
+                if (!isFavClick) {
                     showProgress();
                     isFavClick = true;
                     ivStar.setImageResource(R.drawable.fill_star_ico);
@@ -275,13 +308,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         }
     }
 
-    private synchronized void apiForGetArtist(final int page, final boolean isLoadMore){
+    private synchronized void apiForGetArtist(final int page, final boolean isLoadMore) {
 
         if (!ConnectionDetector.isConnected()) {
             new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
                 @Override
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                    if(isConnected){
+                    if (isConnected) {
                         dialog.dismiss();
                         apiForGetArtist(page, isLoadMore);
                     }
@@ -293,7 +326,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         params.put("latitude", lat);
         params.put("longitude", lng);
         // params.put("distance", "10");
-        params.put("page", ""+page);
+        params.put("page", "" + page);
         params.put("limit", "10");
         params.put("service", mainServId);
         params.put("serviceType", serviceType);
@@ -316,7 +349,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
-                    System.out.println("searchKeyword===="+searchKeyword+"&page "+page);
+                    System.out.println("searchKeyword====" + searchKeyword + "&page " + page);
 
                     if (page == 0) artistsList.clear();
 
@@ -326,6 +359,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                         JSONArray artistArray = js.getJSONArray("artistList");
                         Gson gson = new Gson();
                         if (artistArray != null && artistArray.length() > 0) {
+                            if(isPulltoRefrash){
+                                isPulltoRefrash = false;
+                                mRefreshLayout.stopRefresh(true, 500);
+                                int prevSize = artistsList.size();
+                                artistsList.clear();
+                                listAdapter.notifyItemRangeRemoved(0, prevSize);
+                            }
                             //rvSearchBoard.setVisibility(View.VISIBLE);
                             ll_loadingBox.setVisibility(View.GONE);
 
@@ -356,9 +396,14 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     }
 
                     listAdapter.notifyDataSetChanged();
-                    if(artistsList.size()==0){
+                    if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
                         ll_loadingBox.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
 
                     //  showToast(message);
@@ -366,9 +411,14 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
                     e.printStackTrace();
                     listAdapter.notifyDataSetChanged();
-                    if(artistsList.size()==0){
+                    if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
                         ll_loadingBox.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
                 }
             }
@@ -377,20 +427,28 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             public void ErrorListener(VolleyError error) {
                 progress_bar.setVisibility(View.GONE);
                 tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
-            }})
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(false, 500);
+                    int prevSize = artistsList.size();
+                    artistsList.clear();
+                    listAdapter.notifyItemRangeRemoved(0, prevSize);
+                }
+            }
+        })
                 .setAuthToken(Mualab.currentUser.authToken)
                 .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         task.execute(TAG);
     }
 
-    private synchronized void apiForGetFavArtist(final int page, final boolean isLoadMore){
+    private synchronized void apiForGetFavArtist(final int page, final boolean isLoadMore) {
 
         if (!ConnectionDetector.isConnected()) {
             new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
                 @Override
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                    if(isConnected){
+                    if (isConnected) {
                         dialog.dismiss();
                         apiForGetFavArtist(page, isLoadMore);
                     }
@@ -402,7 +460,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         params.put("latitude", lat);
         params.put("longitude", lng);
         // params.put("distance", "10");
-        params.put("page", ""+page);
+        params.put("page", "" + page);
         params.put("limit", "10");
         params.put("service", mainServId);
         params.put("serviceType", serviceType);
@@ -425,7 +483,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
-                    System.out.println("searchKeyword===="+searchKeyword+"&page "+page);
+                    System.out.println("searchKeyword====" + searchKeyword + "&page " + page);
 
                     if (page == 0) artistsList.clear();
 
@@ -436,6 +494,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                         Gson gson = new Gson();
                         if (artistArray != null && artistArray.length() > 0) {
                             //rvSearchBoard.setVisibility(View.VISIBLE);
+                            if(isPulltoRefrash){
+                                isPulltoRefrash = false;
+                                mRefreshLayout.stopRefresh(true, 500);
+                                int prevSize = artistsList.size();
+                                artistsList.clear();
+                                listAdapter.notifyItemRangeRemoved(0, prevSize);
+                            }
                             ll_loadingBox.setVisibility(View.GONE);
 
                             for (int i = 0; i < artistArray.length(); i++) {
@@ -465,7 +530,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     }
 
                     listAdapter.notifyDataSetChanged();
-                    if(artistsList.size()==0){
+                    if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
                         ll_loadingBox.setVisibility(View.VISIBLE);
                     }
@@ -475,9 +540,14 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
                     e.printStackTrace();
                     listAdapter.notifyDataSetChanged();
-                    if(artistsList.size()==0){
+                    if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
                         ll_loadingBox.setVisibility(View.VISIBLE);
+                        if(isPulltoRefrash){
+                            isPulltoRefrash = false;
+                            mRefreshLayout.stopRefresh(false, 500);
+
+                        }
                     }
                 }
             }
@@ -486,14 +556,22 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             public void ErrorListener(VolleyError error) {
                 progress_bar.setVisibility(View.GONE);
                 tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
-            }})
+                if(isPulltoRefrash){
+                    isPulltoRefrash = false;
+                    mRefreshLayout.stopRefresh(false, 500);
+                    int prevSize = artistsList.size();
+                    artistsList.clear();
+                    listAdapter.notifyItemRangeRemoved(0, prevSize);
+                }
+            }
+        })
                 .setAuthToken(Mualab.currentUser.authToken)
                 .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
         task.execute(TAG);
     }
 
-    private void apiForDeleteAllPendingBooking(){
+    private void apiForDeleteAllPendingBooking() {
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -501,7 +579,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             new NoConnectionDialog(mContext, new NoConnectionDialog.Listner() {
                 @Override
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                    if(isConnected){
+                    if (isConnected) {
                         dialog.dismiss();
                         apiForDeleteAllPendingBooking();
                     }
@@ -527,7 +605,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                         session.setUserChangedLocLng("");
                         session.setUserChangedLocName("");
 
-                    }else {
+                    } else {
                     }
                 } catch (Exception e) {
                     Progress.hide(mContext);
@@ -537,17 +615,18 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
             @Override
             public void ErrorListener(VolleyError error) {
-                try{
+                try {
                     Helper helper = new Helper();
-                    if (helper.error_Messages(error).contains("Session")){
+                    if (helper.error_Messages(error).contains("Session")) {
                         Mualab.getInstance().getSessionManager().logout();
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
 
-            }})
+            }
+        })
                 .setAuthToken(user.authToken)
                 .setProgress(false)
                 .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
@@ -582,7 +661,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                                 Mualab.currentLocationForBooking.lat = latitude;
                                 Mualab.currentLocationForBooking.lng = longitude;
 
-                                if (lng.equals("") && lat.equals("")){
+                                if (lng.equals("") && lat.equals("")) {
                                     lat = String.valueOf(latitude);
                                     lng = String.valueOf(longitude);
                                 }
@@ -595,13 +674,13 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                         }
                     });
 
-                }else {
+                } else {
                     progress_bar.setVisibility(View.GONE);
                     tv_msg.setText(R.string.gps_permission_alert);
                     locationDetector.showLocationSettingDailod(getActivity());
                 }
             }
-        }else {
+        } else {
             if (isFavClick)
                 apiForGetFavArtist(0, false);
             else

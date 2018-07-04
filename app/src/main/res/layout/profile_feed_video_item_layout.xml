@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white_gray_border"
+    android:layout_margin="5dp"
+    android:orientation="vertical">
+
+    <include layout="@layout/feed_item_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_imageView"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp">
+
+        <ImageView
+            android:id="@+id/ivFeedCenter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foregroundGravity="center"
+            android:scaleType="centerCrop"
+            android:foreground="@drawable/play_bg_icon"
+            android:src="@drawable/gallery_placeholder" />
+
+        <View
+            android:id="@+id/vBgLike"
+            android:layout_width="220dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_like_circle_background"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/ivLike"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:src="@drawable/inactive_like_ico"
+            android:tint="@color/colorPrimary"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <include
+        layout="@layout/profile_feed_item_footer"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+    <com.hendraanggrian.widget.SocialTextView
+        android:id="@+id/tv_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="web|email"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/text_color"
+        android:visibility="gone" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray" />
+
+</LinearLayout>

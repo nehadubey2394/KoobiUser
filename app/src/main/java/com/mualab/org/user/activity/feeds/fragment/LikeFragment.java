@@ -105,8 +105,8 @@ public class LikeFragment extends Fragment {
 
         if(activity!=null){
             tvHeaderTitle = activity.findViewById(R.id.tvHeaderTitle);
-            ivHeaderBack = activity.findViewById(R.id.ivHeaderBack);
-            ibtnChat = activity.findViewById(R.id.ibtnChat);
+            ivHeaderBack = activity.findViewById(R.id.btnBack);
+            ibtnChat = activity.findViewById(R.id.ivChat);
             ivAppIcon = activity.findViewById(R.id.ivAppIcon);
             tvHeaderTitle.setVisibility(View.VISIBLE);
             ivHeaderBack.setVisibility(View.VISIBLE);
@@ -228,7 +228,7 @@ public class LikeFragment extends Fragment {
                         }
                         if (likedList.size() == 0) {
                             ll_loadingBox.setVisibility(View.VISIBLE);
-                            tvMsg.setText(getString(R.string.no_like_yet));
+                            tvMsg.setText(getString(R.string.text_empty_data));
                             tvMsg.setVisibility(View.VISIBLE);
                         } else {
                             ll_loadingBox.setVisibility(View.GONE);
@@ -236,7 +236,7 @@ public class LikeFragment extends Fragment {
                         likeListAdapter.notifyDataSetChanged();
                     }else {
                         if (likedList.size() == 0) {
-                            tvMsg.setText(getString(R.string.no_like_yet));
+                            tvMsg.setText(getString(R.string.text_empty_data));
                             tvMsg.setVisibility(View.VISIBLE);
                         } else {
                             ll_loadingBox.setVisibility(View.GONE);

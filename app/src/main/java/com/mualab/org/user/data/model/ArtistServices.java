@@ -15,4 +15,5 @@ public class ArtistServices implements Serializable{
 
     public String _id,serviceId,subserviceId,description,title;
 
+
 }

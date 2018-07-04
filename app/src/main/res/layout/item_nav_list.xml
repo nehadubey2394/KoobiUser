@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_marginTop="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rlItem"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="2dp"
+        android:layout_marginLeft="5sp"
+        >
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/ivMenuItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/profile_ico"
+            />
+
+
+        <TextView
+            android:id="@+id/tvMenuItemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:layout_toRightOf="@+id/ivMenuItem"
+            android:layout_marginLeft="16dp"
+            android:layout_centerVertical="true"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:textColor="@color/dark_grey"
+            android:fontFamily="@font/roboto_regular"
+            android:maxLines="1"
+            />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/rlItem"
+        android:background="@color/gray">
+
+    </View>
+</RelativeLayout>

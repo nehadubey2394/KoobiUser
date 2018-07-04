@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/topLayout1"
-        layout="@layout/header_layout_for_allscreen"
+        layout="@layout/new_header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible"
@@ -20,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/topLayout1"
+        android:layout_marginTop="4dp"
         android:layout_above="@+id/bottomMenuLayout"/>
 
     <android.support.design.widget.CoordinatorLayout

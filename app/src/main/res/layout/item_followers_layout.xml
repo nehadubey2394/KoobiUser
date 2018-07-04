@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="vertical"
+    android:background="@color/screen_bg_color"
+    android:layout_marginTop="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            app:civ_border_width="2dp"
+            android:src="@drawable/defoult_user_img"
+            android:background="@drawable/gradient_circle_img"
+            app:civ_border_color="@color/transparent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_alignParentLeft="true"/>
+
+        <TextView
+            android:id="@+id/tvFollowerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:text="neha"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text_color"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="14sp"
+            android:layout_toRightOf="@+id/ivProfile"
+            />
+
+        <android.support.v7.widget.AppCompatButton
+            style="@style/My_Button_Small.Invert"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:id="@+id/btnFollow"
+            android:text="@string/follow"
+            android:gravity="center"
+            android:padding="2dp"
+            android:visibility="visible"
+            android:textSize="10sp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray2"
+        android:layout_marginTop="12dp"/>
+
+
+</LinearLayout>

@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="Expiry Date"
+            android:fontFamily="@font/roboto_regular"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <NumberPicker
+            android:id="@+id/monthPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:theme="@style/DefaultNumberPickerTheme"
+            android:layout_marginRight="12dp"
+            />
+        <NumberPicker
+            android:id="@+id/yearPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:theme="@style/DefaultNumberPickerTheme"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="40dp" >
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel_label"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Set"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:layout_marginLeft="5dp"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+</LinearLayout>

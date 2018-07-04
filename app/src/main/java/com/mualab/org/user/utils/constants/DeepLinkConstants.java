@@ -14,7 +14,7 @@ public class DeepLinkConstants {
     public static final String IMPORT_CUSTOMERS = "import";
     public static final String INVITE_CUSTOMERS = "invite_your_customers";
     public static final String REVIEWS = "reviews";
-    public static final String SHOW_BOOKING = "show-booking";
+    public static final String SHOW_BOOKING = "show-make_booking";
     public static final String SHOW_BUSINESS = "show-business";
     public static final String SIGNUP = "get_started";
     public static final String SMS_AUTO_RESPONDER_SETTINGS = "sms_auto_responder_settings";

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="178dp"
+        android:layout_height="200dp"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="5dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:id="@+id/ivCertificate"
+                android:layout_width="match_parent"
+                android:layout_height="146dp"
+                android:scaleType="centerCrop"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                >
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="neha"
+                    android:padding="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:maxWidth="120dp"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/text_color_yellow"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

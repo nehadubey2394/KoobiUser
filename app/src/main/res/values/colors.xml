@@ -12,6 +12,8 @@
     <color name="textColorSecondary">#757575</color>
     <color name="shadow_green">#00bb27</color>
 
+    <color name="text_color_yellow">#f2a92a </color>
+    <color name="text_color_green">#00bb27  </color>
 
     <color name="colorInitial">#FFC107</color>
     <color name="colorProgress">#00796B</color>
@@ -25,15 +27,17 @@
     <color name="transparent">#00000000</color>
     <color name="white_transperent">#50FFFFFF</color>
     <color name="colorPrimary_alpha10">#1003A7E9</color>
-    <color name="grey">#828282</color>
-
-    <color name="light_gray">#ffefefef</color>
     <color name="light_gray_shadow">#D3D3D3</color>
 
     <color name="gray">#999999</color>
+    <color name="grey1">#f5f5f5</color>
     <color name="gray2">#E0E0E0</color>
     <color name="gray3">#ececec</color>
     <color name="dark_gray">#FF595959</color>
+    <color name="grey">#828282</color>
+    <color name="dark_grey">#434343</color>
+    <color name="light_gray">#ffefefef</color>
+
 
     <color name="light_blue">#ff0d8cd1</color>
     <color name="yellow">#ffff00</color>

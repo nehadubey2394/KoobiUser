@@ -266,11 +266,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 imageHolder.weakRefAdapter = new WeakReference<>(new ViewPagerAdapter(mContext, feeds.feed, new ViewPagerAdapter.Listner() {
                     @Override
                     public void onSingleTap() {
-                            int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
-                            if (feeds.feedType.equalsIgnoreCase("image")) {
-                                listener.onFeedClick(feeds, pos, imageHolder.rl_imageView);
+                        int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
+                        if (feeds.feedType.equalsIgnoreCase("image")) {
+                            listener.onFeedClick(feeds, pos, imageHolder.rl_imageView);
 
-                            } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
+                        } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
                                 mContext.startActivity(new Intent(Intent.ACTION_VIEW)
                                         .setDataAndType(Uri.parse(feeds.feed.get(pos)), "video/mp4")
                                         .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
@@ -446,8 +446,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.ivShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // int adapterPosition = holder.getAdapterPosition();
-               // Feeds feed = feedItems.get(adapterPosition);
+                // int adapterPosition = holder.getAdapterPosition();
+                // Feeds feed = feedItems.get(adapterPosition);
                 // shareDialog(feed, 0);
             }
         });
@@ -455,7 +455,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // holder.btnFollow.setEnabled(false);
+                // holder.btnFollow.setEnabled(false);
                 int adapterPosition = holder.getAdapterPosition();
                 Feeds feed = feedItems.get(adapterPosition);
                 followUnfollow(feed, adapterPosition);
@@ -765,7 +765,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             }
         })
-        .setParam(map)).execute("like"+feed._id);
+                .setParam(map)).execute("like"+feed._id);
 
     }
 
@@ -862,7 +862,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);*/
 
-               // listener.onFeedClick(feed, adapterPosition);
+                // listener.onFeedClick(feed, adapterPosition);
 
             } else if (feed.feedType.equalsIgnoreCase("video")) {
                 if(feed.feedThumb!=null && feed.feedThumb.size()>0){

@@ -55,6 +55,7 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
             android:windowSoftInputMode="stateHidden|adjustNothing" />
         <activity
             android:name=".activity.authentication.LoginActivity"
@@ -79,7 +80,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".activity.booking.BookingActivity"
+            android:name=".activity.make_booking.BookingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreen" />
         <activity
@@ -175,11 +176,52 @@
         </provider>
 
         <service
-            android:name=".activity.booking.background_service.ExpiredBookingJobService"
+            android:name=".activity.make_booking.background_service.ExpiredBookingJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <activity android:name=".activity.explore.SearchFeedActivity" />
-        <activity android:name=".activity.explore.FeedDetailActivity"></activity>
+        <activity
+            android:name=".activity.explore.SearchFeedActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.explore.FeedDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.artist_profile.activity.ArtistProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
+        <activity
+            android:name=".activity.artist_profile.activity.FollowersActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
+        <activity
+            android:name=".activity.artist_profile.activity.ArtistServicesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
+        <activity
+            android:name=".activity.artist_profile.activity.CertificateActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"></activity>
+        <activity
+            android:name=".activity.my_profile.activity.MyProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"></activity>
+        <activity
+            android:name=".activity.booking_histories.activity.BookingHisoryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".activity.payment.activity.PaymentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".activity.booking_histories.activity.BookingDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"></activity>
+        <activity android:name=".activity.payment.activity.PaymentHistoryActivity"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="stateHidden"></activity>
     </application>
 
 </manifest>

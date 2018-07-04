@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    tools:context=".activity.booking_histories.activity.BookingHisoryActivity">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/new_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true" />
+
+    <RelativeLayout
+        android:id="@+id/rlTabs"
+        android:layout_below="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp">
+
+        <LinearLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:clickable="true"
+            android:background="@drawable/bg_tab_layout"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:id="@+id/tabPast"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/bg_tab_selected"
+                android:clickable="true"
+                android:focusable="true">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tvPast"
+                    android:paddingLeft="5dp"
+                    android:gravity="center"
+                    android:text="@string/past_booking"
+                    android:fontFamily="@font/roboto_light"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tabFuture"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:clickable="true"
+                android:background="@drawable/bg_tab_unselected"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/tvFuture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/roboto_light"
+                    android:cursorVisible="true"
+                    android:paddingLeft="5dp"
+                    android:gravity="center"
+                    android:text="@string/future_booking"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rycPastBooking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="2dp"
+            android:layout_below="@+id/rlTabs"
+            android:visibility="gone"
+            />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rycFutureBooking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="2dp"
+            android:visibility="gone"
+            android:layout_below="@+id/rlTabs"
+
+            />
+
+
+    <TextView
+        android:id="@+id/tvNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data_available"
+        android:textColor="@color/text_color"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/roboto_regular"/>
+
+    <LinearLayout
+        android:id="@+id/ll_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressTintMode="multiply"
+            android:progressTint="@color/colorPrimary"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/tv_msg"
+            style="@style/TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/loading"
+            android:textColor="@color/colorPrimary" />
+    </LinearLayout>
+
+</RelativeLayout>

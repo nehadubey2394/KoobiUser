@@ -1,5 +1,7 @@
 package com.mualab.org.user.activity.authentication;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -14,6 +16,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -23,6 +26,7 @@ import android.widget.ViewSwitcher;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.image.cropper.CropImage;
 import com.image.cropper.CropImageView;
@@ -41,7 +45,10 @@ import com.mualab.org.user.utils.StatusBarUtil;
 
 import org.json.JSONObject;
 import java.io.IOException;
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -210,7 +217,8 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 break;
 
             case R.id.tv_dob:
-                setDateField();
+                datePicker();
+                //  setDateField();
                 break;
 
         }
@@ -231,7 +239,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
             case 4:
                 findViewById(R.id.btnContinue2).setEnabled(false);
-                String deviceToken = "android without firebase"; //FirebaseInstanceId.getInstance().getToken();
+                String deviceToken =  FirebaseInstanceId.getInstance().getToken();//"android without firebase";
                 Map<String, String> params = new HashMap<>();
                 params.put("userName", user.userName);
                 params.put("firstName", user.firstName);
@@ -470,6 +478,30 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         return true;
     }
 
+    private void datePicker(){
+        // Get Current Date
+        final Calendar c = GregorianCalendar.getInstance();
+        int mYear = c.get(GregorianCalendar.YEAR);
+        int mMonth = c.get(GregorianCalendar.MONTH);
+        int mDay = c.get(GregorianCalendar.DAY_OF_MONTH);
+        final int[] dayId = {c.get(GregorianCalendar.DAY_OF_WEEK) - 1};
+        String weekday = new DateFormatSymbols().getShortWeekdays()[dayId[0]];
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Date date = new Date(year, monthOfYear, dayOfMonth-1);
+                        dayId[0] = date.getDay()-1;
+                        String sDate = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                        tv_dob.setText(sDate);
+
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis() - 1000);
+        datePickerDialog.show();
+    }
+
     private void showToast(String msg){
         if (!TextUtils.isEmpty(msg)){
             MyToast.getInstance(this).showDasuAlert(msg);
@@ -494,7 +526,6 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     }
-
 
     private void checkUserRember(User user){
         SharedPreferanceUtils sp = new SharedPreferanceUtils(this);

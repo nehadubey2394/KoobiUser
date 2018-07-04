@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".activity.booking_histories.activity.BookingDetailActivity">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/new_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nsView"
+        android:layout_above="@+id/rlBottom"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_below="@+id/header"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="2dp"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginTop="2dp"
+                app:cardCornerRadius="0dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginLeft="4dp"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    >
+                    <View
+                        android:id="@+id/lineView"
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:background="@color/colorPrimary"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/lineView"
+                        android:layout_marginLeft="8dp"
+                        android:gravity="center_vertical"
+                        android:padding="2dp"
+                        android:orientation="horizontal">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/ivSelectStaffProfile"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center_vertical"
+                            app:civ_border_width="1dp"
+                            android:src="@drawable/defoult_user_img"
+                            android:background="@drawable/gradient_circle_img"
+                            app:civ_border_color="@color/transparent"
+                            />
+
+                        <TextView
+                            android:id="@+id/tvStaffArtistName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:ems="10"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/roboto_medium"
+                            android:gravity="center_vertical"
+                            android:maxLines="2"
+                            android:maxWidth="180dp"
+                            android:padding="2dp"
+                            android:textColor="@color/text_color"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/btnPay"
+                        style="@style/My_Button_Small.Invert"
+                        android:layout_width="90dp"
+                        android:layout_height="30dp"
+                        android:text="@string/pay"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="5dp"
+                        android:textSize="13sp"
+                        android:layout_alignParentRight="true"
+                        />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/lyCalender"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:background="@drawable/bg_white_circle_gray_strock"
+                    android:gravity="center"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/ivCalender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/booking_calender_ico"
+                        android:padding="2dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lyLinear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toRightOf="@+id/lyCalender"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/appoinment_date_and_time"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvBookingDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="NA"
+                        android:layout_marginTop="1dp"
+                        android:textColor="@color/text_color"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvBookingTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="NA"
+                        android:textColor="@color/text_color"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                android:background="@color/gray2" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="2dp"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/lyLoc"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/bg_white_circle_gray_strock"
+                    android:gravity="center"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/ivLoc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/booking_location_ico"
+                        android:padding="2dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lyLinear2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toEndOf="@+id/lyLoc"
+                    android:layout_toRightOf="@+id/lyLoc"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/text_location"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvBookingLoc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:maxLines="2"
+                        android:text="NA"
+                        android:textColor="@color/text_color"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray2"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="2dp"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/lyPaymDetail"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/bg_white_circle_gray_strock"
+                    android:gravity="center"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/ivPaymDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/payment_ico"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lyLinear3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toEndOf="@+id/lyPaymDetail"
+                    android:layout_toRightOf="@+id/lyPaymDetail"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="@string/payment_details"
+                            android:textColor="@color/colorPrimary"
+                            android:layout_alignParentLeft="true"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/tvPayType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/roboto_medium"
+                            android:textColor="@color/text_color"
+                            android:layout_alignParentRight="true"
+                            android:textSize="15sp" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:maxLines="2"
+                        android:text="@string/transection_id"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/text_color"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvTransectionId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:maxLines="2"
+                        android:text="--"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/text_color"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray2"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="2dp"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/lyBookStatus"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/bg_white_circle_gray_strock"
+                    android:gravity="center"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/ivBookStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/booking_ico"
+                        android:padding="2dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lyLinear4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toEndOf="@+id/lyBookStatus"
+                    android:layout_toRightOf="@+id/lyBookStatus"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/booking_status"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvBookingStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:maxLines="2"
+                        android:text="NA"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/text_color"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray2"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/lyServices"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/bg_white_circle_gray_strock"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/ivServices"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/booking_services_ico"
+                        android:padding="2dp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvServices"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/lyServices"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/text_services"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp" />
+
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray2"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="5dp"
+
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rycServices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:nestedScrollingEnabled="true"
+                android:overScrollMode="never"
+                android:scrollbars="none" />
+
+            <LinearLayout
+                android:id="@+id/llPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:paddingRight="2dp"
+                android:layout_alignParentRight="true"
+                android:layout_above="@+id/rlBottom"
+                >
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_color"
+                    android:textSize="18sp"
+                    style="@style/TextView.Bold"
+                    android:padding="4dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/total"
+                    />
+
+                <TextView
+                    android:id="@+id/tvTotalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    style="@style/TextView.Bold"
+                    android:layout_marginLeft="5dp"
+                    android:padding="4dp"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rlBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp">
+
+        <LinearLayout
+            android:id="@+id/llBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:layout_centerInParent="true"
+
+            >
+
+            <ImageView
+                android:id="@+id/ivChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/booking_chat_ico"
+                />
+
+            <ImageView
+                android:id="@+id/ivCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/booking_phone_ico"
+                />
+            <ImageView
+                android:id="@+id/ivLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/booking_map_ico"
+                />
+            <ImageView
+                android:id="@+id/ivCancle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/booking_close_ico"
+                />
+
+        </LinearLayout>
+
+        <!--
+                <LinearLayout
+                    android:id="@+id/llBottom2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="4dp"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    >
+
+
+                    <ImageView
+                        android:id="@+id/ivAccept"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/accept_ico"
+                        />
+
+                    <ImageView
+                        android:id="@+id/ivReject"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/close_ico"
+                        />
+
+                    <ImageView
+                        android:id="@+id/ivCounter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/counter_ico"
+                        />
+
+                </LinearLayout>
+        -->
+
+    </RelativeLayout>
+
+</RelativeLayout>

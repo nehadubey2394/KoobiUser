@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.main.MainActivity;
@@ -41,7 +42,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private TextView ed_username, ed_password;
-   // private TextInputLayout input_layout_UserName, input_layout_password;
+    // private TextInputLayout input_layout_UserName, input_layout_password;
     private ImageView ivFacebook, ivInstragram;
     private SharedPreferanceUtils sp;
     private Session session;
@@ -63,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         input_layout_password = findViewById(R.id.input_layout_password);*/
         ivFacebook = findViewById(R.id.ivFacebook);
         ivInstragram = findViewById(R.id.ivInstragram);
-       // ed_password.addTextChangedListener(new MyTextWatcher(ed_password));
+        // ed_password.addTextChangedListener(new MyTextWatcher(ed_password));
     }
 
     @Override
@@ -180,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         boolean isValidInput = true;
         String username = ed_username.getText().toString().trim();
         String password = ed_password.getText().toString().trim();
-        String deviceToken = "androidTest";//FirebaseInstanceId.getInstance().getToken();
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();//"androidTest";
 
         if (!validateName() || !validatePassword()) {
             isValidInput = false;
@@ -206,6 +207,7 @@ public class LoginActivity extends AppCompatActivity {
             params.put("userName", username);
             params.put("password", password);
             params.put("deviceToken",deviceToken);
+            params.put("firebaseToken", deviceToken);
             params.put("deviceType", "2");
             params.put("appType", "user");
             params.put("userType", "user");
@@ -221,17 +223,23 @@ public class LoginActivity extends AppCompatActivity {
                             Gson gson = new Gson();
                             JSONObject userObj = js.getJSONObject("users");
                             User user = gson.fromJson(String.valueOf(userObj), User.class);
-                            session.createSession(user);
-                            session.setPassword(user.password);
-                            checkUserRember(user);
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.putExtra("user", user);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                            finish();
-                        }
-                        showToast(message);
+
+                            if (user.status.equals("0")){
+                                showToast("You are currenlty inactive by admin");
+                            }else {
+                                showToast(message);
+                                session.createSession(user);
+                                session.setPassword(user.password);
+                                checkUserRember(user);
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("user", user);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                finish();
+                            }
+                        }else
+                            showToast(message);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -245,7 +253,6 @@ public class LoginActivity extends AppCompatActivity {
                     .execute(this.getClass().getName());
         }
     }
-
 
     private void forgotPassword(final Dialog dialog, String emailId){
 
@@ -322,7 +329,6 @@ public class LoginActivity extends AppCompatActivity {
         }*/
         return true;
     }
-
 
     @Override
     public void onBackPressed() {

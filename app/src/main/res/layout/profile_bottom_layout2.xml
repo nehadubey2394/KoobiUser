@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/lowerLayout2"
+    android:orientation="vertical"
+    android:weightSum="3"
+    android:gravity="center"
+    android:animateLayoutChanges="true"
+    android:layout_gravity="center_horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:gravity="bottom"
+        android:layout_marginBottom="2dp"
+        android:layout_gravity="center_horizontal">
+
+        <LinearLayout
+            android:id="@+id/llFollowers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+
+            >
+
+            <TextView
+                android:id="@+id/tv_profile_followers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:text="NA"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/text_follower"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginTop="1dp"
+                android:gravity="center"
+                android:textSize="15sp" />
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="35dp"
+            android:background="@color/text_color"
+            android:layout_marginBottom="2dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/llFollowing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:gravity="center"
+            >
+            <TextView
+                android:id="@+id/tv_profile_following"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:text="NA"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/text_following"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginTop="1dp"
+                android:gravity="center"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="35dp"
+            android:background="@color/text_color"
+            android:layout_marginBottom="2dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/llPost"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            >
+            <TextView
+                android:id="@+id/tv_profile_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="NA"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@string/text_post"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginTop="1dp"
+                android:gravity="center"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

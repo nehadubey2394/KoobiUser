@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="vertical"
+    android:layout_marginTop="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivUserImg"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:civ_border_width="2dp"
+            android:src="@drawable/defoult_user_img"
+            android:background="@drawable/gradient_circle_img"
+            app:civ_border_color="@color/transparent"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_alignParentLeft="true"/>
+
+        <LinearLayout
+            android:id="@+id/llMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:padding="2dp"
+            android:layout_toRightOf="@+id/ivUserImg"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="neha"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:gravity="left"
+                    android:maxWidth="160dp"
+                    android:layout_alignParentLeft="true"
+                    android:textColor="@color/text_color"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="14sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:gravity="right"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentRight="true"
+                    />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="neha"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/dark_grey"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="14sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvTimeElapsed"
+                android:padding="2dp"
+                android:gravity="right"
+                android:textSize="13sp"
+                android:textColor="@color/gray"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray2"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/ivUserImg"/>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
