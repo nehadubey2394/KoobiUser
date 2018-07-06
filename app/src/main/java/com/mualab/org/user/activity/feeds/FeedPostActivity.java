@@ -55,6 +55,7 @@ import com.hendraanggrian.widget.FilteredAdapter;
 import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
+import com.mualab.org.user.activity.people_tag.activity.DemoTagActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
@@ -353,7 +354,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                         ThumbImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
                                 Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));
                     }else {
-                         ThumbImage = ThumbnailUtils.extractThumbnail(
+                        ThumbImage = ThumbnailUtils.extractThumbnail(
                                 BitmapFactory.decodeFile(
                                         ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size() - 1)),
                                                 this)), 200, 200);
@@ -437,8 +438,28 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
 
             case R.id.ll_tagPepole:
-            case R.id.ll_tagService:
+                if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
+
+                    if (mediaUri.mediaType == Constant.IMAGE_STATE) {
+
+                        Intent intent = new Intent(FeedPostActivity.this, DemoTagActivity.class);
+                        intent.putExtra("imageArray", (Serializable) mediaUri.uriList);
+                        intent.putExtra("startIndex", 0);
+                        startActivity(intent);
+                    } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
+
+                        startActivity(new Intent(Intent.ACTION_VIEW)
+                                .setDataAndType(Uri.parse(mediaUri.uriList.get(0)), "video/mp4")
+                                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                    }
+                }
+
+                // startActivity(new Intent(FeedPostActivity.this, DemoTagActivity.class));
                 MyToast.getInstance(this).showSmallMessage(getString(R.string.under_development));
+
+                break;
+            case R.id.ll_tagService:
+
                 break;
 
             /*case R.id.iv_feedPost:
@@ -771,18 +792,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-
-
-
-    /*Rj*/
-
-    private FusedLocationProviderClient mFusedLocationClient;
-
-
-
     private void getLocation() {
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -882,7 +894,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
             ViewHolder(@NonNull View view) {
                 this.textView = view.findViewById(R.id.textViewName);
-               // SetFont.setfontRagular(this.textView, FeedPostActivity.this);
+                // SetFont.setfontRagular(this.textView, FeedPostActivity.this);
             }
         }
     }

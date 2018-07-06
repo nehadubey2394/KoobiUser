@@ -418,4 +418,8 @@
     <string name="history">History</string>
     <string name="refrell_earnings">Referral Earnings</string>
     <string name="discount_code">Discount Code</string>
+
+    <string name="search_for_some_one">Search for someone</string>
+    <string name="tap_photo_tag_someone_drag_to_move_or_tap_to_delete">Tap photo to tag someone.\nDrag to move, or tap to delete.</string>
+
 </resources>

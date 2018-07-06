@@ -110,7 +110,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         Session session = Mualab.getInstance().getSessionManager();
         final User user = session.getUser();
 
-        holder.tvFollowerName.setText(item.firstName);
+        holder.tvFollowerName.setText(item.userName);
 
         if (isFollowers){
             if (item.followerStatus.equals("1")){

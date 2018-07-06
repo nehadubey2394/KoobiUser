@@ -107,10 +107,10 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
             scrollListener1 = new EndlessRecyclerViewScrollListener(layoutManager1) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    if (totalItemsCount>19) {
-                        futureBookingAdapter.showLoading(true);
-                        apiForGetBooking(page, false);
-                    }
+                    //  if (totalItemsCount>19) {
+                    futureBookingAdapter.showLoading(true);
+                    apiForGetBooking(page, false);
+                    // }
                 }
             };
         }
@@ -118,10 +118,10 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
             scrollListener2 = new EndlessRecyclerViewScrollListener(layoutManager2) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    if (totalItemsCount>19) {
-                        pastBookingAdapter.showLoading(true);
-                        apiForGetBooking(page, false);
-                    }
+                    // if (totalItemsCount>19) {
+                    pastBookingAdapter.showLoading(true);
+                    apiForGetBooking(page, false);
+                    //}
                 }
             };
         }
@@ -158,7 +158,7 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
         params.put("userId", String.valueOf(user.id));
         params.put("type", sBookingTYpe);
         params.put("page", String.valueOf(page));
-        params.put("limit", "20");
+        params.put("limit", "10");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(BookingHisoryActivity.this, "userBooking", new HttpResponceListner.Listener() {
             @Override

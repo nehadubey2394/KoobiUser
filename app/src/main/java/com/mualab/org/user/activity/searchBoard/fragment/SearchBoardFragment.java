@@ -79,7 +79,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     private SearchBoardAdapter listAdapter;
     private EndlessRecyclerViewScrollListener scrollListener;
     private List<ArtistsSearchBoard> artistsList;
-    private static boolean isFavClick = false;
+    public static boolean isFavClick = false;
     private boolean isPulltoRefrash;
     private RefineSearchBoard item;
     private String subServiceId = "", mainServId = "", searchKeyword = "", sortType = "0", sortSearch = "distance", serviceType = "", lat = "", lng = "", time = "", day = "", date;

@@ -246,6 +246,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         Map<String, String> params = new HashMap<>();
         params.put("userId", artistId);
         params.put("loginUserId", String.valueOf(user.id));
+        params.put("viewBy", "user");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(ArtistProfileActivity.this, "getProfile", new HttpResponceListner.Listener() {
             @Override
@@ -463,9 +464,9 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
             tvServiceCount.setText(profileData.serviceCount);
             rating.setRating(Float.parseFloat(profileData.ratingCount));
 
-            if (profileData.isCertificateVerify.equals("0")){
+            if (profileData.isCertificateVerify.equals("1")){
                 ivActive.setVisibility(View.VISIBLE);
-            }
+            }else ivActive.setVisibility(View.GONE);
 
             if (!profileData.profileImage.isEmpty() && !profileData.profileImage.equals("")) {
                 Picasso.with(ArtistProfileActivity.this).load(profileData.profileImage).placeholder(R.drawable.defoult_user_img).
@@ -547,6 +548,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         params.put("limit", String.valueOf(feedLimit));
         params.put("type", "");
         params.put("userId", artistId);
+        params.put("viewBy", "user");
         params.put("loginUserId", String.valueOf(user.id));
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
@@ -947,7 +949,8 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onFeedClick(Feeds feed, int index, View v) {
-        publicationQuickView(feed, index);
+        //publicationQuickView(feed, index);
+        showLargeImage(feed,index);
     }
 
     @Override
@@ -1027,6 +1030,35 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         builder.setCancelable(true);
         builder.show();
     }
+
+    private void showLargeImage(Feeds feeds, int index){
+        View dialogView = View.inflate(ArtistProfileActivity.this, R.layout.dialog_large_image_view, null);
+        final Dialog dialog = new Dialog(ArtistProfileActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
+        dialog.setContentView(dialogView);
+
+        ImageView postImage = dialogView.findViewById(R.id.ivCertificate);
+        ImageView btnBack = dialogView.findViewById(R.id.btnBack);
+        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
+        tvCertiTitle.setText("Images");
+
+        Picasso.with(ArtistProfileActivity.this).load(feeds.feed.get(index))
+                .priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
+        /*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).
+                priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);*/
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
+    }
+
 
     public void hideQuickView(){
         if(builder != null) builder.dismiss();
