@@ -45,38 +45,59 @@
     </LinearLayout>
 
     <LinearLayout
+        android:background="@drawable/gray_boder_white_bg"
         android:id="@+id/header_search_someone"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
-        <EditText
-            android:id="@+id/search_for_a_person"
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchview"
+            android:theme="@style/ExploreSearchView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:gravity="start|center_vertical"
-            android:hint="@string/search_for_some_one"
-            android:inputType="text"
-            android:padding="10dp"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/text_color"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content"
+            app:iconifiedByDefault="false"
+            android:lineSpacingExtra="0dp"
+            android:lineSpacingMultiplier="0"
+            app:queryHint="Search"/>
 
-        <TextView
-            android:id="@+id/cancel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:background="@null"
-            android:gravity="center"
-            android:text="@string/cancel_label"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
 
     </LinearLayout>
+
+    <!-- <LinearLayout
+         android:id="@+id/header_search_someone"
+         android:layout_width="match_parent"
+         android:layout_height="50dp"
+         android:orientation="horizontal"
+         android:visibility="visible">
+
+         <EditText
+             android:id="@+id/search_for_a_person"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_weight="1"
+             android:background="@android:color/transparent"
+             android:gravity="start|center_vertical"
+             android:hint="@string/search_for_some_one"
+             android:inputType="text"
+             android:padding="10dp"
+             android:fontFamily="@font/roboto_regular"
+             android:textColor="@color/text_color"
+             android:textSize="18sp" />
+
+         <TextView
+             android:id="@+id/cancel"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_weight="3"
+             android:background="@null"
+             android:gravity="center"
+             android:text="@string/cancel_label"
+             android:textColor="@android:color/black"
+             android:textSize="18sp" />
+
+     </LinearLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -94,19 +115,19 @@
             app:carrotTopColor="@color/blue"
             app:instaTextColor="@android:color/white" />
 
-        <TextView
-            android:id="@+id/tap_photo_to_tag_someone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/insta_tag"
-            android:layout_gravity="bottom"
-            android:background="#DFDFE1"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="@string/tap_photo_tag_someone_drag_to_move_or_tap_to_delete"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="normal" />
+        <!--   <TextView
+               android:id="@+id/tap_photo_to_tag_someone"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:layout_below="@id/insta_tag"
+               android:layout_gravity="bottom"
+               android:background="#DFDFE1"
+               android:gravity="center"
+               android:visibility="gone"
+               android:text="@string/tap_photo_tag_someone_drag_to_move_or_tap_to_delete"
+               android:textColor="@android:color/black"
+               android:textSize="18sp"
+               android:textStyle="normal" />-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_some_one_to_be_tagged"
