@@ -190,6 +190,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginTop="10dp"
+                    android:visibility="gone"
                     android:background="@drawable/bg_rounded_gray_broder_fill_gray"
                     android:orientation="horizontal">
 

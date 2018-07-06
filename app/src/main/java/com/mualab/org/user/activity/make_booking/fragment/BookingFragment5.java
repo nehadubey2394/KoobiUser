@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,15 +36,15 @@ import com.mualab.org.user.activity.make_booking.BookingActivity;
 import com.mualab.org.user.activity.make_booking.adapter.BookedServicesAdapter;
 import com.mualab.org.user.activity.make_booking.background_service.ExpiredBookingJobService;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.MyToast;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.model.booking.BookingInfo;
-import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
+import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.Helper;
 import com.squareup.picasso.Picasso;
@@ -273,7 +272,12 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                         MyToast.getInstance(mContext).showDasuAlert("Enter your location");
                     }
                 }else {
-                    showPaymentDialog();
+                    if (item.bankStatus.equals("1")) {
+                        showPaymentDialog();
+                    }else {
+                        paymentType = "3";
+                        apiForConfirmBooking();
+                    }
                 }
 
                 break;
@@ -389,8 +393,11 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         AppCompatButton btnCancel = DialogView.findViewById(R.id.btnCancel);
         AppCompatButton btnDone = DialogView.findViewById(R.id.btnDone);
 
-        if (item.bankStatus.equals("0"))
+        if (item.bankStatus.equals("0")) {
             rdOnline.setVisibility(View.GONE);
+            rdCash.setChecked(true);
+            paymentType = "3";
+        }
         else
             rdOnline.setVisibility(View.VISIBLE);
 
@@ -409,7 +416,10 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                apiForConfirmBooking();
+                if (!paymentType.equals(""))
+                    apiForConfirmBooking();
+                else
+                    MyToast.getInstance(mContext).showDasuAlert("Please select payment method");
             }
         });
 
@@ -477,8 +487,14 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
                 session.setUserChangedLocLng(String.valueOf(cLng));
                 session.setUserChangedLocName(location);
             }
-            if (isConfirmbookingClicked)
-                showPaymentDialog();
+            if (isConfirmbookingClicked) {
+                if (item.bankStatus.equals("1")) {
+                    showPaymentDialog();
+                }else {
+                    paymentType = "3";
+                    apiForConfirmBooking();
+                }
+            }
 
 
         }

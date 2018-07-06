@@ -17,7 +17,9 @@ import com.mualab.org.user.activity.booking_histories.activity.BookingHisoryActi
 import com.mualab.org.user.activity.my_profile.model.NavigationItem;
 import com.mualab.org.user.activity.payment.activity.PaymentHistoryActivity;
 import com.mualab.org.user.activity.payment.modle.PaymentHistory;
+import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.dialogs.MyToast;
 
 import java.util.List;
@@ -131,7 +133,9 @@ public class NavigationMenuAdapter extends RecyclerView.Adapter<NavigationMenuAd
                     break;
 
                 case 7:
+                    Session session = new Session(context);
                     sSelect = item.itemName;
+                    SearchBoardFragment.isFavClick = false;
                     Mualab.getInstance().getSessionManager().logout();
                     break;
                 default:

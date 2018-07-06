@@ -269,6 +269,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
         Map<String, String> params = new HashMap<>();
         params.put("userId", String.valueOf(user.id));
+        params.put("viewBy", "");
         params.put("loginUserId", String.valueOf(user.id));
 
         HttpTask task = new HttpTask(new HttpTask.Builder(MyProfileActivity.this, "getProfile", new HttpResponceListner.Listener() {
@@ -430,6 +431,8 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         params.put("limit", String.valueOf(feedLimit));
         params.put("type", "");
         params.put("userId", String.valueOf(user.id));
+        params.put("loginUserId", String.valueOf(user.id));
+        params.put("viewBy", "");
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
         new HttpTask(new HttpTask.Builder(MyProfileActivity.this, "profileFeed", new HttpResponceListner.Listener() {
@@ -598,7 +601,8 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onFeedClick(Feeds feed, int index, View v) {
-        publicationQuickView(feed, index);
+        //publicationQuickView(feed, index);
+        showLargeImage(feed,index);
     }
 
     @Override
@@ -795,6 +799,34 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
             }
             navigationItems.add(item);
         }
+    }
+
+    private void showLargeImage(Feeds feeds, int index){
+        View dialogView = View.inflate(MyProfileActivity.this, R.layout.dialog_large_image_view, null);
+        final Dialog dialog = new Dialog(MyProfileActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
+        dialog.setContentView(dialogView);
+
+        ImageView postImage = dialogView.findViewById(R.id.ivCertificate);
+        ImageView btnBack = dialogView.findViewById(R.id.btnBack);
+        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
+        tvCertiTitle.setText("Images");
+
+        Picasso.with(MyProfileActivity.this).load(feeds.feed.get(index))
+                .priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
+        /*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).
+                priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);*/
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override

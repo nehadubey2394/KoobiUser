@@ -110,10 +110,10 @@ public class PaymentHistoryActivity extends AppCompatActivity implements View.On
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager1) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    if (totalItemsCount>19) {
+                  //  if (totalItemsCount>19) {
                         paymentHistoryAdapter.showLoading(true);
                         apiForPaymentHistory(page, false);
-                    }
+                    //}
                 }
             };
         }

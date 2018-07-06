@@ -157,7 +157,7 @@ public class CommentsActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(commnets)){
                     btn_post_comments.setEnabled(false);
                     KeyboardUtil.hideKeyboard(btn_post_comments, CommentsActivity.this);
-                     apiForAddComments(commnets, null);
+                    apiForAddComments(commnets, null);
                     //apiPostTextComment(commnets, null);
                 }else {
                     Animation shake = AnimationUtils.loadAnimation(CommentsActivity.this, R.anim.shake);
@@ -294,6 +294,7 @@ public class CommentsActivity extends AppCompatActivity {
         map.put("search", search.toLowerCase());
         map.put("limit",  "20");
         Mualab.getInstance().getRequestQueue().cancelAll(TAG);
+
         new HttpTask(new HttpTask.Builder(this, "commentList", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -393,6 +394,15 @@ public class CommentsActivity extends AppCompatActivity {
                         Comment comment = new Comment();
                         comment.id = jsonObject.getInt("feedId");
                         comment.comment = jsonObject.getString("comment");
+
+                        if (bitmap==null) {
+                            try {
+                                comment.comment = URLDecoder.decode(jsonObject.getString("comment"), "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                         comment.firstName = Mualab.currentUser.firstName;
                         comment.firstName = Mualab.currentUser.lastName;
                         comment.userName = Mualab.currentUser.userName;
@@ -428,7 +438,7 @@ public class CommentsActivity extends AppCompatActivity {
         "_id": 6,
         "commentCount": 5
     }*/
-                        commentList.add(comment);
+                        commentList.add(0,comment);
 
                     }if (commentList.size() == 0) {
                         tv_no_comments.setVisibility(View.VISIBLE);

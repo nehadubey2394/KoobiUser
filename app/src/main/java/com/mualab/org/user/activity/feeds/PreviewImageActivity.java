@@ -97,7 +97,6 @@ public class PreviewImageActivity extends AppCompatActivity {
             dots[currentPage].setTextColor(Color.parseColor("#212121"));
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

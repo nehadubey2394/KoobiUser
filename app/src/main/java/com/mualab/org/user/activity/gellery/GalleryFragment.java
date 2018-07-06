@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class GalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
@@ -230,7 +231,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
     }
 
 
-
     public void expandToolbar(){
         appbar.setExpanded(true, true);
     }
@@ -322,7 +322,7 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-            getActivity().finish();
+            Objects.requireNonNull(getActivity()).finish();
         }
     }
 

@@ -184,13 +184,13 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
     private void callSearchAPI(final String searchKeyWord, int pageNo){
 
         Map<String, String> params = new HashMap<>();
-         params.put("userId", ""+Mualab.currentUser.id);
-         params.put("type", exSearchType);
-         params.put("page", ""+pageNo);
-         params.put("limit", "20");
-         params.put("search", searchKeyWord);
-         //String tag = TAG + exSearchType;
-         Mualab.getInstance().cancelPendingRequests(exSearchType);
+        params.put("userId", ""+Mualab.currentUser.id);
+        params.put("type", exSearchType);
+        params.put("page", ""+pageNo);
+        params.put("limit", "20");
+        params.put("search", searchKeyWord);
+        //String tag = TAG + exSearchType;
+        Mualab.getInstance().cancelPendingRequests(exSearchType);
         new HttpTask(new HttpTask.Builder(mContext, "exploreSearch", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {

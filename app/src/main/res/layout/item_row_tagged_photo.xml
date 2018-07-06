@@ -1,0 +1,62 @@
+<!--
+  ~
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout_tagged_photo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.mualab.org.user.activity.people_tag.instatag.InstaTag
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/insta_tag_tagged_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:canWeAddTags="false"
+        app:carrotBottomColor="@color/colorPrimary"
+        app:carrotLeftColor="@color/yellow"
+        app:carrotRightColor="@color/colorPrimaryTransprent1"
+        app:carrotTopColor="@color/blue"
+        app:hideAnimation="@anim/bounce_up"
+        app:instaBackgroundColor="@color/gray"
+        app:instaTextColor="@android:color/white"
+        app:showAllCarrots="false"
+        app:likeColor="@android:color/white"
+        app:likeSize="@dimen/dp256"
+        app:showAnimation="@anim/bounce_down" />
+
+
+    <ImageView
+        android:id="@+id/tag_indicator"
+        android:layout_width="@dimen/dp50"
+        android:layout_height="@dimen/dp50"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/dp25"
+        android:background="@drawable/ico_about_info"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/tag_heart"
+        android:layout_width="@dimen/dp40"
+        android:layout_height="@dimen/dp40"
+        android:visibility="gone"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/dp25"
+        android:background="@drawable/like_icon"
+        tools:ignore="ContentDescription" />
+
+</FrameLayout>

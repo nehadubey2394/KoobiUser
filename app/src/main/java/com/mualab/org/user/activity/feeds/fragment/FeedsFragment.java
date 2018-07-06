@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -74,6 +76,7 @@ import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.WrapContentLinearLayoutManager;
 import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.mualab.org.user.utils.media.PathUtil;
+import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -676,7 +679,8 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
 
     @Override
     public void onFeedClick(Feeds feed, int index, View view) {
-        publicationQuickView(feed, index);
+        // publicationQuickView(feed, index);
+        showLargeImage(feed,index);
         /* */
     }
 
@@ -689,7 +693,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 makeSceneTransitionAnimation((Activity) mContext, v, "image");
         startActivityForResult(intent, Constant.POST_FEED_DATA, options.toBundle());*/
     }
-
 
     private void getStoryList(){
         Map<String, String> params = new HashMap<>();
@@ -1005,5 +1008,34 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
             startActivity(intent);
         }
     }
+
+    private void showLargeImage(Feeds feeds, int index){
+        View dialogView = View.inflate(mContext, R.layout.dialog_large_image_view, null);
+        final Dialog dialog = new Dialog(mContext,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
+        dialog.setContentView(dialogView);
+
+        ImageView postImage = dialogView.findViewById(R.id.ivCertificate);
+        ImageView btnBack = dialogView.findViewById(R.id.btnBack);
+        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
+        tvCertiTitle.setText("Images");
+
+        Picasso.with(mContext).load(feeds.feed.get(index))
+                .priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
+        /*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).
+                priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);*/
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
+    }
+
 
 }

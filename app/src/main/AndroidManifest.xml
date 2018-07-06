@@ -30,6 +30,8 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
+    <protected-broadcast android:name="com.motorola.motocare.INTENT_TRIGGER" />
+
     <application
         android:name=".application.Mualab"
         android:allowBackup="true"
@@ -50,6 +52,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.main.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -200,28 +203,34 @@
         <activity
             android:name=".activity.artist_profile.activity.CertificateActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StatusBarBlack"></activity>
+            android:theme="@style/StatusBarBlack" />
         <activity
             android:name=".activity.my_profile.activity.MyProfileActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StatusBarBlack"></activity>
+            android:theme="@style/StatusBarBlack" />
         <activity
             android:name=".activity.booking_histories.activity.BookingHisoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.payment.activity.PaymentActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.booking_histories.activity.BookingDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StatusBarBlack"></activity>
-        <activity android:name=".activity.payment.activity.PaymentHistoryActivity"
+            android:theme="@style/StatusBarBlack" />
+        <activity
+            android:name=".activity.payment.activity.PaymentHistoryActivity"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.people_tag.activity.DemoTagActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack">
+
+        </activity>
     </application>
 
 </manifest>

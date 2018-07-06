@@ -178,7 +178,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (SystemClock.elapsedRealtime() - mLastClickTime < 800){
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 700){
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
@@ -232,7 +232,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ibtnAddFeed :
-                startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                if (clickedId!=6) {
+                   // setInactiveTab();
+                    clickedId = 6;
+                 //   ibtnAddFeed.setImageResource(R.drawable.active_add_ico);
+                   /* tvHeaderTitle.setText(R.string.title_explore);
+                    ivHeaderUser.setVisibility(View.VISIBLE);
+                    tvHeaderTitle.setVisibility(View.VISIBLE);
+                    ibtnChat.setVisibility(View.GONE);
+                    ivAppIcon.setVisibility(View.GONE);*/
+                    startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+
+                }
 
                 break;
 

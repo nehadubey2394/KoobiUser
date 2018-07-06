@@ -119,13 +119,13 @@ public class FollowersActivity extends AppCompatActivity {
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                    if (totalItemsCount > 19){
-                        followersAdapter.showLoading(true);
-                        if (isFollowers)
-                            apiForGetFollowers(page);
-                        else
-                            apiForGetFollowing(page);
-                    }
+                    // if (totalItemsCount > 19){
+                    followersAdapter.showLoading(true);
+                    if (isFollowers)
+                        apiForGetFollowers(page);
+                    else
+                        apiForGetFollowing(page);
+                    //  }
                 }
             };
         }
@@ -161,7 +161,7 @@ public class FollowersActivity extends AppCompatActivity {
         params.put("userId", userId);
         params.put("loginUserId", String.valueOf(user.id));
         params.put("page", String.valueOf(page));
-        params.put("limit", "20");
+        params.put("limit", "10");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(FollowersActivity.this, "followerList", new HttpResponceListner.Listener() {
             @Override
@@ -272,7 +272,7 @@ public class FollowersActivity extends AppCompatActivity {
         params.put("userId", userId);
         params.put("loginUserId", String.valueOf(user.id));
         params.put("page", String.valueOf(page));
-        params.put("limit", "20");
+        params.put("limit", "10");
 
         HttpTask task = new HttpTask(new HttpTask.Builder(FollowersActivity.this, "followingList", new HttpResponceListner.Listener() {
             @Override
