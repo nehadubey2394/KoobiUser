@@ -279,7 +279,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
                 break;
 
             case R.id.tvNext:
-
                 if(!isSupportMultipal){
                     cropImageAsync();
                 }else {

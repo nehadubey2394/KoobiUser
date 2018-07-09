@@ -100,6 +100,6 @@
         android:layout_marginBottom="@dimen/dp15"
         android:layout_marginRight="@dimen/dp12"
         android:layout_marginEnd="@dimen/dp12"
-        android:background="@drawable/delete_ico"
+        android:background="@drawable/cross_icon"
         android:visibility="gone" />
 </FrameLayout>

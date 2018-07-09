@@ -40,30 +40,22 @@
             android:layout_gravity="center"
             android:layout_weight="20"
             android:padding="5dp"
+            android:visibility="gone"
             android:src="@drawable/right_icon" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:background="@drawable/gray_boder_white_bg"
-        android:id="@+id/header_search_someone"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:orientation="horizontal"
-        android:visibility="visible">
-
-        <android.support.v7.widget.SearchView
-            android:id="@+id/searchview"
-            android:theme="@style/ExploreSearchView"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvDone"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:iconifiedByDefault="false"
-            android:lineSpacingExtra="0dp"
-            android:lineSpacingMultiplier="0"
-            app:queryHint="Search"/>
-
+            android:text="@string/done"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/roboto_medium"
+            android:layout_marginRight="6dp"
+            android:padding="5dp"
+            android:textSize="18sp"/>
 
     </LinearLayout>
+
 
     <!-- <LinearLayout
          android:id="@+id/header_search_someone"
@@ -103,7 +95,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <com.mualab.org.user.activity.people_tag.instatag.InstaTag
             android:id="@+id/insta_tag"
             android:layout_width="match_parent"
@@ -114,6 +105,28 @@
             app:carrotRightColor="@color/colorPrimaryTransprent1"
             app:carrotTopColor="@color/blue"
             app:instaTextColor="@android:color/white" />
+
+        <LinearLayout
+            android:background="@drawable/gray_boder_white_bg"
+            android:id="@+id/header_search_someone"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchview"
+                android:theme="@style/ExploreSearchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:iconifiedByDefault="false"
+                android:lineSpacingExtra="0dp"
+                android:lineSpacingMultiplier="0"
+                app:queryHint="Search"/>
+
+        </LinearLayout>
 
         <!--   <TextView
                android:id="@+id/tap_photo_to_tag_someone"
@@ -129,13 +142,6 @@
                android:textSize="18sp"
                android:textStyle="normal" />-->
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_some_one_to_be_tagged"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#EEFFFFFF"
-            android:visibility="gone" />
-
         <include layout="@layout/layout_inner_loader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -144,6 +150,13 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"/>
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_some_one_to_be_tagged"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#EEFFFFFF"
+            android:layout_marginTop="45dp"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

@@ -15,7 +15,7 @@
  *
  */
 
-package com.mualab.org.user.activity.service_tag.adapters;
+package com.mualab.org.user.activity.people_tag.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -32,8 +32,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.service_tag.interfaces.SomeOneClickListener;
-import com.mualab.org.user.activity.service_tag.models.SomeOne;
+import com.mualab.org.user.activity.people_tag.interfaces.SomeOneClickListener;
+import com.mualab.org.user.activity.people_tag.models.SomeOne;
 
 import java.util.List;
 

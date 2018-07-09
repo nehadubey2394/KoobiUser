@@ -15,12 +15,11 @@
  *
  */
 
-package com.tagfeature.utilities;
+package com.mualab.org.user.activity.people_tag.utilities;
 
 import android.util.SparseArray;
 
-
-import com.tagfeature.models.SomeOne;
+import com.mualab.org.user.activity.people_tag.models.SomeOne;
 
 import java.util.ArrayList;
 

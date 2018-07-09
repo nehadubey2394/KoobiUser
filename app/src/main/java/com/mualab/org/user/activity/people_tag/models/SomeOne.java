@@ -15,7 +15,7 @@
  *
  */
 
-package com.tagfeature.models;
+package com.mualab.org.user.activity.people_tag.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

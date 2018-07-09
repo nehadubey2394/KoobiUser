@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tagfeature.instatag;
+package com.mualab.org.user.activity.people_tag.instatag;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -50,7 +50,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tagfeature.R;
+import com.mualab.org.user.R;
 
 import java.util.ArrayList;
 
@@ -182,7 +182,7 @@ public class InstaTag extends RelativeLayout {
     };
 
     public interface Constants {
-        int DEFAULT_COLOR = 0xFF303F9F;
+        int DEFAULT_COLOR = Color.DKGRAY;
         int TAG_TEXT_COLOR = Color.WHITE;
 
         String CARROT_TOP = "CARROT_TOP";
@@ -231,13 +231,13 @@ public class InstaTag extends RelativeLayout {
             likeColor = obtainStyledAttributes.getColor(R.styleable.InstaTag_likeColor,
                     ContextCompat.getColor(context, R.color.colorAccent));
             likeSrc = obtainStyledAttributes.getResourceId(R.styleable.InstaTag_likeSrc,
-                    R.drawable.ic_like);
+                    R.drawable.like_icon);
             likeSize = obtainStyledAttributes
                     .getDimensionPixelSize(R.styleable.InstaTag_likeSize,
                             getResources().getDimensionPixelSize(R.dimen.dp256));
         } else {
             likeColor = ContextCompat.getColor(context, R.color.colorAccent);
-            likeSrc = R.drawable.ic_like;
+            likeSrc = R.drawable.like_icon;
             likeSize = getResources().getDimensionPixelSize(R.dimen.dp256);
         }
         LayoutParams heartParams = new LayoutParams(likeSize, likeSize);
@@ -315,28 +315,28 @@ public class InstaTag extends RelativeLayout {
         if (!showAllCarrots) {
             switch (carrotType) {
                 case Constants.CARROT_TOP:
-                    tagView.findViewById(R.id.carrot_top).setVisibility(View.VISIBLE);
+                    tagView.findViewById(R.id.carrot_top).setVisibility(View.INVISIBLE);
 
                     tagView.findViewById(R.id.carrot_left).setVisibility(View.INVISIBLE);
                     tagView.findViewById(R.id.carrot_right).setVisibility(View.INVISIBLE);
                     tagView.findViewById(R.id.carrot_bottom).setVisibility(View.INVISIBLE);
                     break;
                 case Constants.CARROT_LEFT:
-                    tagView.findViewById(R.id.carrot_left).setVisibility(View.VISIBLE);
+                    tagView.findViewById(R.id.carrot_left).setVisibility(View.INVISIBLE);
 
                     tagView.findViewById(R.id.carrot_top).setVisibility(View.INVISIBLE);
                     tagView.findViewById(R.id.carrot_right).setVisibility(View.INVISIBLE);
                     tagView.findViewById(R.id.carrot_bottom).setVisibility(View.INVISIBLE);
                     break;
                 case Constants.CARROT_RIGHT:
-                    tagView.findViewById(R.id.carrot_right).setVisibility(View.VISIBLE);
+                    tagView.findViewById(R.id.carrot_right).setVisibility(View.INVISIBLE);
 
                     tagView.findViewById(R.id.carrot_top).setVisibility(View.INVISIBLE);
                     tagView.findViewById(R.id.carrot_left).setVisibility(View.INVISIBLE);
                     tagView.findViewById(R.id.carrot_bottom).setVisibility(View.INVISIBLE);
                     break;
                 case Constants.CARROT_BOTTOM:
-                    tagView.findViewById(R.id.carrot_bottom).setVisibility(View.VISIBLE);
+                    tagView.findViewById(R.id.carrot_bottom).setVisibility(View.INVISIBLE);
 
                     tagView.findViewById(R.id.carrot_top).setVisibility(View.INVISIBLE);
                     tagView.findViewById(R.id.carrot_left).setVisibility(View.INVISIBLE);
