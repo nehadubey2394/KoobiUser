@@ -15,7 +15,7 @@
  *
  */
 
-package com.tagfeature.utilities;
+package com.mualab.org.user.activity.people_tag.utilities;
 
 import android.app.Activity;
 import android.view.inputmethod.InputMethodManager;

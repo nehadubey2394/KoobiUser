@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tagfeature.instatag;
+package com.mualab.org.user.activity.people_tag.instatag;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;

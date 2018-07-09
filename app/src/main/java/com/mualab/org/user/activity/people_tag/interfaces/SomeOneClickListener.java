@@ -15,11 +15,14 @@
  *
  */
 
-package com.tagfeature.interfaces;
+package com.mualab.org.user.activity.people_tag.interfaces;
 
 
-import com.tagfeature.models.TaggedPhoto;
+import com.mualab.org.user.activity.explore.model.ExSearchTag;
+import com.mualab.org.user.activity.people_tag.models.SomeOne;
 
-public interface TaggedPhotoClickListener {
-    void onTaggedPhotoClick(TaggedPhoto taggedPhoto, int position);
+public interface SomeOneClickListener {
+    void onSomeOneClicked(SomeOne someOne, int position);
+
+    void onPeopleClicked(ExSearchTag someOne, int position);
 }

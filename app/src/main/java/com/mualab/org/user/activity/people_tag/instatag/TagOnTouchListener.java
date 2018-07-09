@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tagfeature.instatag;
+package com.mualab.org.user.activity.people_tag.instatag;
 
 import android.view.MotionEvent;
 import android.view.View;

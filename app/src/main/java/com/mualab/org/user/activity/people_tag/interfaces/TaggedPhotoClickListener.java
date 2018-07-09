@@ -15,11 +15,11 @@
  *
  */
 
-package com.tagfeature.interfaces;
+package com.mualab.org.user.activity.people_tag.interfaces;
 
 
-import com.tagfeature.models.SomeOne;
+import com.mualab.org.user.activity.people_tag.models.TaggedPhoto;
 
-public interface SomeOneClickListener {
-    void onSomeOneClicked(SomeOne someOne, int position);
+public interface TaggedPhotoClickListener {
+    void onTaggedPhotoClick(TaggedPhoto taggedPhoto, int position);
 }

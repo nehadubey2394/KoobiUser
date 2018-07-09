@@ -15,7 +15,7 @@
  *
  */
 
-package com.tagfeature.utilities;
+package com.mualab.org.user.activity.people_tag.utilities;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

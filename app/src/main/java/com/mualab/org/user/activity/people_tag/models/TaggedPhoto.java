@@ -15,15 +15,15 @@
  *
  */
 
-package com.tagfeature.models;
+package com.mualab.org.user.activity.people_tag.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-
-import com.tagfeature.instatag.TagToBeTagged;
+import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 
 import java.util.ArrayList;
+
 
 public class TaggedPhoto implements Parcelable {
     private String id;

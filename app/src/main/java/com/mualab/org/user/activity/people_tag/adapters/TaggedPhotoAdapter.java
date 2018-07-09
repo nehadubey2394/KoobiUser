@@ -15,7 +15,7 @@
  *
  */
 
-package com.tagfeature.adapters;
+package com.mualab.org.user.activity.people_tag.adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -30,10 +30,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.tagfeature.R;
-import com.tagfeature.instatag.InstaTag;
-import com.tagfeature.interfaces.TaggedPhotoClickListener;
-import com.tagfeature.models.TaggedPhoto;
+import com.mualab.org.user.R;
+import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
+import com.mualab.org.user.activity.people_tag.interfaces.TaggedPhotoClickListener;
+import com.mualab.org.user.activity.people_tag.models.TaggedPhoto;
 
 import java.util.ArrayList;
 
