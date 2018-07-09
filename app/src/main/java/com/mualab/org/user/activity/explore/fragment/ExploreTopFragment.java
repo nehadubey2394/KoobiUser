@@ -63,8 +63,6 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
         // Required empty public constructor
     }
 
-
-
     public static ExploreTopFragment newInstance(String exSearchType) {
         ExploreTopFragment fragment = new ExploreTopFragment();
         Bundle args = new Bundle();
