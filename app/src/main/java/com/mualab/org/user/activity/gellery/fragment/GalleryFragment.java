@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.gellery;
+package com.mualab.org.user.activity.gellery.fragment;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,9 +32,12 @@ import com.image.nocropper.CropperCallback;
 import com.image.nocropper.CropperView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
+import com.mualab.org.user.activity.gellery.BaseGalleryFragment;
+import com.mualab.org.user.activity.gellery.Gallery2Activity;
+import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.gellery.adapter.GalleryAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
-import com.mualab.org.user.activity.gellery.model.VideoLoader;
+import com.mualab.org.user.activity.gellery.model.PhotoLoader;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.listner.GalleryOnClickListener;
@@ -46,16 +51,18 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 
-public class VideoGalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
+public class GalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
 
     private RecyclerView recyclerView;
     private GalleryAdapter galleryAdapter;
     CollapsingToolbarLayout collapsing_toolbar;
     int numberOfColumns = 4;
-    View view;
-
+    private View view;
+    private Bitmap thumbImage = null;
 
     private CropperView showImage;
     private ImageView snap_button;
@@ -66,19 +73,18 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
     private boolean isSupportMultipal;
     private boolean isSnappedToCenter;
 
-
     private int lastindex;
     private Uri lastSelectedUri;
     private LinkedHashMap<String, Uri> mSelected;
     private List<Media> albumList;
 
-    public VideoGalleryFragment() {
+    public GalleryFragment() {
         // Required empty public constructor
     }
 
 
-    public static VideoGalleryFragment newInstance() {
-        VideoGalleryFragment fragment = new VideoGalleryFragment();
+    public static GalleryFragment newInstance() {
+        GalleryFragment fragment = new GalleryFragment();
         Bundle args = new Bundle();
         return fragment;
     }
@@ -153,7 +159,9 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
                         mSelected.remove(media.uri.toString());
                         Map.Entry<String, Uri> last = null;
                         for (Map.Entry<String, Uri> e : mSelected.entrySet()) last = e;
-                        lastSelectedUri = last.getValue();
+                        if (last != null) {
+                            lastSelectedUri = last.getValue();
+                        }
                     } else if(size>9){
                         MySnackBar.showSnackbar(context,rootLayout,"You can select max 10 items");
                     }
@@ -183,7 +191,7 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
         // rotateImage = view.findViewById(R.id.rotateImage);
         ivMultiSelection = view.findViewById(R.id.ivMultiSelection);
         view.findViewById(R.id.tvNext).setOnClickListener(this);
-        view.findViewById(R.id.ivClose).setOnClickListener(this);
+        view.findViewById(R.id.tvClose).setOnClickListener(this);
         appbar = view.findViewById(R.id.appbar);
         recyclerView = view.findViewById(R.id.recyclerView);
         collapsing_toolbar = view.findViewById(R.id.collapsing_toolbar);
@@ -230,7 +238,6 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
     }
 
 
-
     public void expandToolbar(){
         appbar.setExpanded(true, true);
     }
@@ -239,8 +246,8 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
     public void onClick(View view) {
         switch (view.getId()) {
 
-            case R.id.ivClose:
-                getActivity().onBackPressed();
+            case R.id.tvClose:
+                ((Gallery2Activity)context).onBackPressed();
                 break;
 
             case R.id.snap_button:
@@ -279,37 +286,69 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
                 break;
 
             case R.id.tvNext:
-
                 if(!isSupportMultipal){
                     cropImageAsync();
                 }else {
 
-                    Intent intent = null;
+                 /*   Intent intent = null;
                     if (mSelected != null && mSelected.size() > 0) {
                         MediaUri mediaUri = new MediaUri();
                         mediaUri.mediaType = Constant.IMAGE_STATE;
                         mediaUri.isFromGallery = true;
                         mediaUri.addAll(mSelected);
+                        //    mediaUri.addUri(String.valueOf(lastSelectedUri));
+
                         intent = new Intent(context, FeedPostActivity.class);
+
                         intent.putExtra("caption", "");
-                        intent.putExtra("feedType", Constant.IMAGE_STATE);
                         intent.putExtra("mediaUri", mediaUri);
+                        intent.putExtra("feedType", Constant.IMAGE_STATE);
                         intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                    } /*else if(videoUri!=null){
+
+                    } *//*else if(videoUri!=null){
                     intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", "");
                     intent.putExtra("feedType", Constant.VIDEO_STATE);
                     intent.putExtra("videoUri", videoUri.toString());
                     intent.putExtra("fromGallery", false);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                }*/
+                }*//*
 
                     if (intent != null) {
                         // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         startActivityForResult(intent, Constant.POST_FEED_DATA);
+                    }*/
+
+                    Intent intent = new Intent(context, FeedPostActivity.class);
+                    if (mSelected != null && mSelected.size() > 0) {
+                        MediaUri mediaUri = new MediaUri();
+                        mediaUri.mediaType = Constant.IMAGE_STATE;
+                        mediaUri.isFromGallery = true;
+                        mediaUri.addAll(mSelected);
+
+                        thumbImage = ThumbnailUtils
+                                .extractThumbnail(BitmapFactory.decodeFile(
+                                        ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(0)), context)), 100, 100);
+
+
+                        intent.putExtra("caption", "");
+                        intent.putExtra("mediaUri", mediaUri);
+                        intent.putExtra("thumbImage", thumbImage);
+                        intent.putExtra("feedType", Constant.IMAGE_STATE);
+                        intent.putExtra("requestCode", Constant.POST_FEED_DATA);
+                    }else {
+                        intent = new Intent(context, FeedPostActivity.class);
+                        intent.putExtra("caption", "");
+                        intent.putExtra("feedType", Constant.TEXT_STATE);
+                        intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     }
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivityForResult(intent, Constant.POST_FEED_DATA);
+                    // else startActivityForResult(intent, Constant.POST_FEED_DATA);
 
                 }
                 break;
@@ -322,7 +361,7 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-            getActivity().finish();
+            Objects.requireNonNull(getActivity()).finish();
         }
     }
 
@@ -342,14 +381,18 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
                 if (bitmap != null) {
 
                     try {
-                        File file = getTemporalFile(context);
-                        Uri uri = FileProvider.getUriForFile(context,
-                                context.getApplicationContext().getPackageName() + ".provider", file);
+
+                        File file = new File(context.getExternalCacheDir(), UUID.randomUUID()
+                                + ".jpg");
+                        Uri uri = FileProvider.getUriForFile(context, context.
+                                getApplicationContext().getPackageName()
+                                + ".provider", file);
 
                         mSelected = new LinkedHashMap<>();
                         mSelected.put(uri.toString(), uri);
                         BitmapUtils.writeBitmapToFile(bitmap, file, 75);
                         //MediaStore.Images.Media.insertImage(context.getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+                        thumbImage = ThumbnailUtils.extractThumbnail(bitmap, 150, 150);
 
                         Intent intent = null;
                         if (mSelected != null && mSelected.size() > 0) {
@@ -357,13 +400,14 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
                             mediaUri.mediaType = Constant.IMAGE_STATE;
                             mediaUri.isFromGallery = true;
                             mediaUri.addAll(mSelected);
+
                             intent = new Intent(context, FeedPostActivity.class);
                             intent.putExtra("caption", "");
-                            intent.putExtra("feedType", Constant.IMAGE_STATE);
                             intent.putExtra("mediaUri", mediaUri);
+                            intent.putExtra("thumbImage", thumbImage);
+                            intent.putExtra("feedType", Constant.IMAGE_STATE);
                             intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                            // intent.putParcelableArrayListExtra("imageUri", new ArrayList<Parcelable>(mSelected));
-                            //intent.putParcelableArrayListExtra("imageUri", mediaUri);
+
                         }
 
                         if (intent != null) {
@@ -401,33 +445,6 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
         isSnappedToCenter = !isSnappedToCenter;
     }
 
-   /* public ArrayList<Media> getAlbums() {
-        ArrayList<Media> photos = new ArrayList<>();
-        try {
-
-            VideoLoader photoLoader = new VideoLoader(context);
-            Cursor photoCursor = photoLoader.loadInBackground();
-
-            if(photoCursor!=null){
-                photoCursor.moveToFirst();
-                do {
-                    Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
-                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                    Media media = new Media();
-                    media.uri = uri;
-                    photos.add(media);
-                }while (photoCursor.moveToNext());
-
-                photoCursor.close();
-            }
-
-            return photos;
-        } catch (final Exception e) {
-            return new ArrayList<>();
-        }
-    }*/
-
-
     public ArrayList<Media> getAlbums() {
         AlbumLoader albumLoader = new AlbumLoader(context);
         ArrayList<Media> photos = new ArrayList<>();
@@ -436,14 +453,13 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
             if (albumCursor.moveToFirst()) {
 
                 do {
-                    VideoLoader photoLoader = new VideoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
+                    PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
                     Cursor photoCursor = photoLoader.loadInBackground();
 
                     if (photoCursor.moveToFirst()) {
                         do {
                             Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
-                            Uri uri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                            int duration = photoCursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION);
+                            Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                             Media media = new Media();
                             media.uri= uri;
                             /*Photo photo = new Photo();

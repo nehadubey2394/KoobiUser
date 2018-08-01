@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -46,7 +47,11 @@ public final class ImageRotator {
         return rotation;
     }
 
-    public static int getRotationFromCamera(Context context, Uri imageFile) {
+    public static File getTemporalFile(Context context) {
+        return new File(context.getExternalCacheDir(), "tempImage.jpg");
+    }
+
+    private static int getRotationFromCamera(Context context, Uri imageFile) {
         int rotate = 0;
         try {
 

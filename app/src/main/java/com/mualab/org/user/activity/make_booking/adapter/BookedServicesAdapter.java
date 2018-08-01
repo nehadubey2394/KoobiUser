@@ -15,6 +15,7 @@ import com.mualab.org.user.activity.make_booking.BookingActivity;
 import com.mualab.org.user.activity.make_booking.fragment.BookingFragment3;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
 import com.mualab.org.user.data.model.booking.BookingInfo;
+import com.mualab.org.user.utils.Util;
 
 import java.util.ArrayList;
 
@@ -24,12 +25,14 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private ArrayList<BookingInfo> artistsList;
     private ArtistsSearchBoard item;
     private  boolean fromConfirmBooking;
+    private Util util;
     // Constructor of the class
     public BookedServicesAdapter(AppCompatActivity context, ArrayList<BookingInfo> artistsList, ArtistsSearchBoard item) {
         this.context = context;
         this.artistsList = artistsList;
         this.item = item;
         this.fromConfirmBooking = fromConfirmBooking;
+        util = new Util(context);
     }
 
     @Override
@@ -54,10 +57,12 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         holder.tvSsName.setText(item.sServiceName);
         holder.tvAsName.setText(item.artistService);
+        holder.tvTime.setText(", "+item.time);
+        holder.tvDate.setText(util.changeDateFormate(item.selectedDate));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvAsName,tvSsName;
+        TextView tvAsName,tvSsName,tvDate,tvTime;
         AppCompatButton btnEditService;
         private ViewHolder(View itemView)
         {
@@ -66,6 +71,8 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             btnEditService = itemView.findViewById(R.id.btnEditService);
             tvAsName = itemView.findViewById(R.id.tvAsName);
             tvSsName = itemView.findViewById(R.id.tvSsName);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            tvTime = itemView.findViewById(R.id.tvTime);
 
             btnEditService.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -74,11 +81,7 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     FragmentManager fm = context.getSupportFragmentManager();
                     fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     info.bookStaffId = info.staffId;
-                  /*  ((BookingActivity)context).addFragment(
-                            BookingFragment3.newInstance(true,info.subServices,item,
-                                    info.isOutCallSelect,info.bookingId,info.staffId), true, R.id.flBookingContainer);
-                }
-            });*/
+
                     ((BookingActivity)context).addFragment(
                             BookingFragment3.newInstance(true,info.subServices,item,info), true, R.id.flBookingContainer);
                 }

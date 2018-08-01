@@ -45,14 +45,16 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
         setContentView(R.layout.activity_feed_detail);
         StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
         Intent intent = getIntent();
-        if (intent != null) {
-            feeds = (Feeds) intent.getSerializableExtra("feed");
-            index =  intent.getIntExtra("index", 0);
-            list = (List<Feeds>) intent.getSerializableExtra("feeds");
+        Bundle args = intent.getBundleExtra("BUNDLE");
+        if (args != null) {
+            feeds = (Feeds) args.getSerializable("feed");
+            index =  args.getInt("index", 0);
+            list = (List<Feeds>) args.getSerializable("feeds");
             //feeds = (Feeds) intent.getExtras().getSerializable(" feed");
         }
 
-        tvTitle = findViewById(R.id.tvTitle);list = (List<Feeds>) intent.getSerializableExtra("feeds");
+        tvTitle = findViewById(R.id.tvTitle);
+        // list = (List<Feeds>) args.getParcelableArrayList("feeds");
 
 
         if(feeds!=null){
@@ -178,6 +180,7 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
         map.put("userId", ""+feed.userId);
         map.put("type", "feed");// feed or comment
         Mualab.getInstance().getRequestQueue().cancelAll("like"+feed._id);
+
         new HttpTask(new HttpTask.Builder(this, "like", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {

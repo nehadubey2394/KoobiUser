@@ -73,13 +73,13 @@ public class TaggedPhoto implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
         dest.writeString(this.imageUri);
-        dest.writeTypedList(this.tagToBeTaggeds);
+     //   dest.writeTypedList(this.tagToBeTaggeds);
     }
 
     private TaggedPhoto(Parcel in) {
         this.id = in.readString();
         this.imageUri = in.readString();
-        this.tagToBeTaggeds = in.createTypedArrayList(TagToBeTagged.CREATOR);
+      //  this.tagToBeTaggeds = in.createTypedArrayList(TagToBeTagged.CREATOR);
     }
 
     public static final Creator<TaggedPhoto> CREATOR = new Creator<TaggedPhoto>() {

@@ -5,10 +5,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -26,6 +28,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,6 +51,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.hendraanggrian.socialview.SocialView;
 import com.image.picker.ImagePicker;
+import com.image.picker.ImageRotator;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.base.BaseListner;
 import com.mualab.org.user.activity.camera.CameraActivity;
@@ -57,7 +61,10 @@ import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
 import com.mualab.org.user.activity.feeds.adapter.HashtagAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
+import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
+import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.activity.story.StoreActivityTest;
+import com.mualab.org.user.activity.story.camera.util.ImageUtil;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
@@ -86,10 +93,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
@@ -118,6 +128,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     //private EditText edCaption;
     private ImageView iv_selectedImage;
     private LinearLayout ll_progress;
+    private Bitmap thumbImage = null;
 
     /*Adapters*/
     private LiveUserAdapter liveUserAdapter;
@@ -359,6 +370,8 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                     intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", TextUtils.isEmpty(caption)?"":caption);
                     intent.putExtra("mediaUri", mediaUri);
+                    intent.putExtra("thumbImage", thumbImage);
+                    intent.putExtra("feedType", Constant.IMAGE_STATE);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     options = ActivityOptionsCompat.
                             makeSceneTransitionAnimation((Activity) mContext, iv_selectedImage, "profile");
@@ -504,7 +517,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         lastFeedTypeId = id;
     }
 
-
     private void apiForGetAllFeeds(final int page, final int feedLimit, final boolean isEnableProgress){
 
         if (!ConnectionDetector.isConnected()) {
@@ -530,6 +542,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         params.put("userId", ""+Mualab.currentUser.id);
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
+
         new HttpTask(new HttpTask.Builder(mContext, "getAllFeeds", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -543,6 +556,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                     if (status.equalsIgnoreCase("success")) {
                         //removeProgress();
                         ParseAndUpdateUI(response);
+
                     }else MyToast.getInstance(mContext).showSmallMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -571,6 +585,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         ll_progress.setVisibility(isEnableProgress?View.VISIBLE:View.GONE);
     }
 
+    @SuppressLint("UseSparseArrays")
     private void ParseAndUpdateUI(final String response) {
 
         try {
@@ -591,11 +606,10 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
 
                 Gson gson = new Gson();
                 for (int i = 0; i < array.length(); i++) {
-
                     try{
                         JSONObject jsonObject = array.getJSONObject(i);
                         Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
-
+                        //   feed.taggedImgMap = new HashMap<>();
                         /*tmp get data and set into actual json format*/
                         if(feed.userInfo!=null && feed.userInfo.size()>0){
                             Feeds.User user = feed.userInfo.get(0);
@@ -621,6 +635,51 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                                 feed.videoThumbnail = feed.feedData.get(0).videoThumb;
                         }
 
+                        JSONArray jsonArray = jsonObject.getJSONArray("peopleTag");
+                        if (jsonArray.length() != 0){
+
+                            for (int j = 0; j < jsonArray.length(); j++) {
+
+                                feed.peopleTagList = new ArrayList<>();
+                                JSONArray arrayJSONArray = jsonArray.getJSONArray(j);
+
+                                for (int k = 0; k < arrayJSONArray.length(); k++) {
+                                    JSONObject object = arrayJSONArray.getJSONObject(k);
+
+                                    HashMap<String,TagDetail> tagDetails = new HashMap<>();
+
+                                    String unique_tag_id = object.getString("unique_tag_id");
+                                    double x_axis = Double.parseDouble(object.getString("x_axis"));
+                                    double y_axis = Double.parseDouble(object.getString("y_axis"));
+
+                                    JSONObject tagOjb = object.getJSONObject("tagDetails");
+                                    TagDetail tag;
+                                    if (tagOjb.has("tabType")){
+                                        tag = gson.fromJson(String.valueOf(tagOjb), TagDetail.class);
+                                      /*  tag.tabType = tagOjb.getString("tabType");
+                                        tag.tagId = tagOjb.getString("tagId");
+                                        tag.title = tagOjb.getString("title");
+                                        tag.userType = tagOjb.getString("userType");*/
+                                    }else {
+                                        JSONObject details = tagOjb.getJSONObject(unique_tag_id);
+                                        tag = gson.fromJson(String.valueOf(details), TagDetail.class);
+                                      /*  tag.tabType = details.getString("tabType");
+                                        tag.tagId = details.getString("tagId");
+                                        tag.title = details.getString("title");
+                                        tag.userType = details.getString("userType");*/
+                                    }
+                                    tagDetails.put(tag.title, tag);
+                                    TagToBeTagged tagged = new TagToBeTagged();
+                                    tagged.setUnique_tag_id(unique_tag_id);
+                                    tagged.setX_co_ord(x_axis);
+                                    tagged.setY_co_ord(y_axis);
+                                    tagged.setTagDetails(tagDetails);
+
+                                    feed.peopleTagList.add(tagged);
+                                }
+                                feed.taggedImgMap.put(j,feed.peopleTagList);
+                            }
+                        }
                         feeds.add(feed);
 
                     }catch (JsonParseException e){
@@ -639,7 +698,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 if(isPulltoRefrash){
                     isPulltoRefrash = false;
                     mRefreshLayout.stopRefresh(false, 500);
-
                 }
                 feedAdapter.notifyDataSetChanged();
             }
@@ -742,7 +800,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 .execute(TAG);
     }
 
-
     public void checkPermissionAndPicImageOrVideo(String title) {
         SelectableDialog dialog = new SelectableDialog(mContext, new SelectableDialog.Listener() {
             @Override
@@ -814,16 +871,53 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 case Constant.CAMERA_REQUEST:
                     try {
                         Bitmap bitmap = ImagePicker.getImageFromResult(mContext, requestCode,resultCode,data);
+
                         Uri picUri = ImagePicker.getImageURIFromResult(mContext,requestCode,resultCode,data);
+
                         if(bitmap!=null && picUri!=null){
-                            mediaUri = new MediaUri();
+                           /* mediaUri = new MediaUri();
                             mediaUri.isFromGallery = false;
                             mediaUri.mediaType = Constant.IMAGE_STATE;
                             mediaUri.addUri(String.valueOf(picUri));
                             Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
                                     BitmapFactory.decodeFile(
                                             ImageVideoUtil.generatePath(picUri, mContext)), 150, 150);
+                            updatePostImageUI(ThumbImage);*/
+
+                            File imageFile = ImageRotator.getTemporalFile(mContext);
+                            Uri photoURI = Uri.fromFile(imageFile);
+
+                            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
+                                    BitmapFactory.decodeFile(
+                                            ImageVideoUtil.generatePath(photoURI, mContext)), 150, 150);
+
+
+                            bitmap = ImagePicker.getImageResized(mContext, photoURI);
+                            int rotation = ImageRotator.getRotation(mContext, photoURI, true);
+                            bitmap = ImageRotator.rotate(bitmap, rotation);
+
+                            File file = new File(mContext.getExternalCacheDir(), UUID.randomUUID() + ".jpg");
+                            picUri = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName()
+                                    + ".provider", file);
+
+                            try {
+                                OutputStream outStream;
+                                outStream = new FileOutputStream(file);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 80, outStream);
+                                // ThumbImage.compress(Bitmap.CompressFormat.PNG, 80, outStream);
+                                outStream.flush();
+                                outStream.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            mediaUri = new MediaUri();
+                            mediaUri.isFromGallery = false;
+                            mediaUri.mediaType = Constant.IMAGE_STATE;
+                            mediaUri.addUri(String.valueOf(picUri));
+                            thumbImage = ThumbImage;
+
                             updatePostImageUI(ThumbImage);
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -839,7 +933,22 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
 
                         List<String>uriList = new ArrayList<>();
                         for(Uri tmp : tmpUri){
-                            uriList.add(String.valueOf(tmp));
+                            String[] projection = {MediaStore.MediaColumns.DATA};
+                            CursorLoader cursorLoader = new CursorLoader(mContext, tmp, projection, null, null, null);
+                            Cursor cursor = cursorLoader.loadInBackground();
+                            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                            cursor.moveToFirst();
+                            String selectedImagePath = cursor.getString(column_index);
+
+                            Bitmap imgBitmap = BitmapFactory.decodeFile(selectedImagePath);
+                            try {
+                                imgBitmap = ImageUtil.modifyOrientation(imgBitmap, selectedImagePath);
+                                Uri imageUri = ImageUtil.getImageUri(mContext,imgBitmap);
+                                uriList.add(String.valueOf(imageUri));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            // uriList.add(String.valueOf(tmp));
                         }
                         mediaUri.addUri(uriList);
                         try {
@@ -847,6 +956,8 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                                     .extractThumbnail(BitmapFactory.decodeFile(
                                             ImageVideoUtil.generatePath(tmpUri.get(0), mContext)), 100, 100);
                             // Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), Uri.parse(mediaUri.uri));
+                            thumbImage = ThumbImage;
+
                             updatePostImageUI(ThumbImage);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -915,7 +1026,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                     if(CURRENT_FEED_STATE == Constant.FEED_STATE){
                         int pos = data.getIntExtra("feedPosition",0);
                         Feeds feed = (Feeds) data.getSerializableExtra("feed");
-                        feeds.get(pos).commentCount = feed.commentCount;
+                        feeds.get(pos).commentCount = feed.commentCount+1;
                         feedAdapter.notifyItemChanged(pos);
                     }
                     break;

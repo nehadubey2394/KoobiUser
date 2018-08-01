@@ -71,12 +71,14 @@ public class AppHelper {
                 if (ous != null)
                     ous.close();
             } catch (IOException e) {
+                e.printStackTrace();
             }
 
             try {
                 if (ios != null)
                     ios.close();
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return ous.toByteArray();

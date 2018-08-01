@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.gellery.model.Media;
 import com.mualab.org.user.listner.GalleryOnClickListener;
@@ -60,16 +59,18 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             holder.ivSelected.setVisibility(View.GONE);
         }
 
-        RequestOptions requestOptions =
+     /*   RequestOptions requestOptions =
                 new RequestOptions()
                         .placeholder(0)
                         .fallback(0)
                         .centerCrop()
                         .skipMemoryCache(false)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);*/
 
         Glide.with(mContext).load(media.uri)
-                .apply(requestOptions)
+                .placeholder(0).fallback(0).centerCrop()
+                .skipMemoryCache(false)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.iv_gallery_item);
     }
 

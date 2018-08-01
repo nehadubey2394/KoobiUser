@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:id="@+id/vRootView"
+    tools:context=".activity.gellery.Gallery2Activity">
+
+    <FrameLayout
+        android:id="@+id/flGalleryContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_color"
+        android:layout_above="@+id/tablayout"
+        >
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:weightSum="3"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvImage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Image"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/colorPrimary"
+            />
+        <TextView
+            android:id="@+id/tvVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Video"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/gray"
+            />
+        <TextView
+            android:id="@+id/tvCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Camera"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/gray"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

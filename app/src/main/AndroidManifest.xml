@@ -38,6 +38,7 @@
         android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.FullScreen"
@@ -52,7 +53,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.main.MainActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -205,7 +205,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack" />
         <activity
-            android:name=".activity.my_profile.activity.MyProfileActivity"
+            android:name=".activity.my_profile.activity.UserProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack" />
         <activity
@@ -226,11 +226,15 @@
             android:name=".activity.payment.activity.PaymentHistoryActivity"
             android:theme="@style/StatusBarBlack"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".activity.people_tag.activity.DemoTagActivity"
+        <activity
+            android:name=".activity.people_tag.activity.DemoTagActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StatusBarBlack">
-
-        </activity>
+            android:theme="@style/StatusBarBlack" />
+        <activity
+            android:name=".activity.people_tag.activity.PeopleTagActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
+        <activity android:name=".activity.gellery.Gallery2Activity"></activity>
     </application>
 
 </manifest>

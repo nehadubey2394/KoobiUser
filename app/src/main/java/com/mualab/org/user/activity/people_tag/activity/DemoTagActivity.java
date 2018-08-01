@@ -2,48 +2,52 @@ package com.mualab.org.user.activity.people_tag.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.activity.people_tag.adapters.PeopleAdapter;
 import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.instatag.TagImageView;
+import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.interfaces.SomeOneClickListener;
 import com.mualab.org.user.activity.people_tag.models.SomeOne;
-import com.mualab.org.user.activity.people_tag.models.TaggedPhoto;
+import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.activity.people_tag.utilities.CommonUtil;
-import com.mualab.org.user.activity.people_tag.utilities.SomeOneData;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.MediaUri;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.utils.KeyboardUtil;
+import com.mualab.org.user.utils.constants.Constant;
+import com.mualab.org.user.utils.media.ImageVideoUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,11 +56,10 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
     private InstaTag mInstaTag;
     private Uri mPhotoToBeTaggedUri;
     private RecyclerView mRecyclerViewSomeOneToBeTagged;
-    private LinearLayout mHeaderSomeOneToBeTagged, mHeaderSearchSomeOne;
+    private LinearLayout  mHeaderSearchSomeOne;
+    private RelativeLayout mHeaderSomeOneToBeTagged;
     // private TextView mTapPhotoToTagSomeOneTextView;
     private int mAddTagInX, mAddTagInY;
-    //private EditText mEditSearchForSomeOne;
-    private SearchView searchview;
     private PeopleAdapter mSomeOneAdapter;
     private final ArrayList<SomeOne> mSomeOnes = new ArrayList<>();
     private List<String> images;
@@ -67,16 +70,17 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
     private TextView tv_msg;
     private RecyclerViewScrollListener endlesScrollListener;
     private String searchKeyword = "";
+    private  long mLastClickTime = 0;
+    private MediaUri mediaUri;
 
-
-    private RequestOptions requestOptions =
+   /* private RequestOptions requestOptions =
             new RequestOptions().placeholder(0)
                     .fallback(0).centerCrop()
-                    .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE);
+                    .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE);*/
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo_tag);
 
@@ -87,6 +91,7 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
             startIndex = intent.getIntExtra("startIndex", 0);
             // feedImages = (ArrayList<Feeds>) getIntent().getSerializableExtra("imageArray");
             images = (ArrayList<String>) getIntent().getSerializableExtra("imageArray");
+            mediaUri = (MediaUri) intent.getSerializableExtra("mediaUri");
         }
 
         //  mPhotoToBeTaggedUri = getIntent().getData();
@@ -109,7 +114,7 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
         //  mTapPhotoToTagSomeOneTextView = findViewById(R.id.tap_photo_to_tag_someone);
         mHeaderSomeOneToBeTagged = findViewById(R.id.header_tag_photo);
         mHeaderSearchSomeOne = findViewById(R.id.header_search_someone);
-        searchview = findViewById(R.id.searchview);
+        SearchView searchview = findViewById(R.id.searchview);
 
         // mEditSearchForSomeOne = findViewById(R.id.searchview);
         // mEditSearchForSomeOne.addTextChangedListener(textWatcher);
@@ -140,7 +145,8 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
 
        /* mSomeOnes.addAll(SomeOneData.getDummySomeOneList());
         mSomeOneAdapter = new PeopleAdapter(mSomeOnes, this, this);*/
-        mSomeOneAdapter = new PeopleAdapter(DemoTagActivity.this,list,this);
+        //  mSomeOneAdapter = new PeopleAdapter(DemoTagActivity.this,list,this);
+        mSomeOneAdapter = new PeopleAdapter(DemoTagActivity.this,list);
         mRecyclerViewSomeOneToBeTagged.setAdapter(mSomeOneAdapter);
         LinearLayoutManager lm = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         mRecyclerViewSomeOneToBeTagged.setLayoutManager(lm);
@@ -169,11 +175,31 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void loadImage() {
-        Glide
-                .with(this)
+        mInstaTag.getTagImageView().setImageURI(null);
+       /* Glide.with(this)
                 .load(mPhotoToBeTaggedUri)
-                .apply(requestOptions)
-                .into(mInstaTag.getTagImageView());
+                .centerCrop().placeholder(R.drawable.gallery_placeholder)
+                .into(mInstaTag.getTagImageView());*/
+        if (images!=null && images.size()!=0){
+            try {
+                Bitmap ThumbImage;
+                if(mediaUri.isFromGallery){
+                    ThumbImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                            Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));
+                }else {
+                    ThumbImage = ThumbnailUtils.extractThumbnail(
+                            BitmapFactory.decodeFile(
+                                    ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size() - 1)),
+                                            this)), 200, 200);
+                }
+
+                mInstaTag.getTagImageView().setImageBitmap(ThumbImage);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private final InstaTag.TaggedImageEvent taggedImageEvent = new InstaTag.TaggedImageEvent() {
@@ -237,6 +263,10 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 700){
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
         switch (v.getId()) {
           /*  case R.id.cancel:
                 CommonUtil.hideKeyboard(this);
@@ -247,7 +277,7 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
                 mHeaderSomeOneToBeTagged.setVisibility(View.VISIBLE);
                 break;*/
             case R.id.done:
-                if (mInstaTag.getListOfTagsToBeTagged().isEmpty()) {
+             /*   if (mInstaTag.getListOfTagsToBeTagged().isEmpty()) {
                     Toast.makeText(this,
                             "Please tag at least one user", Toast.LENGTH_SHORT).show();
                 } else {
@@ -260,21 +290,27 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(this,
                             "Photo tagged successfully", Toast.LENGTH_SHORT).show();
                     finish();
-                }
+                }*/
                 break;
 
-                case R.id.tvDone:
+            case R.id.tvDone:
                 if (mInstaTag.getListOfTagsToBeTagged().isEmpty()) {
-                    Toast.makeText(this,
-                            "Please tag at least one user", Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
-                    ArrayList<TaggedPhoto> taggedPhotoArrayList = Mualab.getInstance().getTaggedPhotos();
+                   /* ArrayList<TaggedPhoto> taggedPhotoArrayList = Mualab.getInstance().getTaggedPhotos();
                     taggedPhotoArrayList.add(
                             new TaggedPhoto(Calendar.getInstance().getTimeInMillis() + "",
                                     mPhotoToBeTaggedUri.toString(),
                                     mInstaTag.getListOfTagsToBeTagged()));
-                    Mualab.getInstance().setTaggedPhotos(taggedPhotoArrayList);
-               //     Toast.makeText(this,"Photo tagged successfully", Toast.LENGTH_SHORT).show();
+                    Mualab.getInstance().setTaggedPhotos(taggedPhotoArrayList);*/
+
+                    ArrayList<TagToBeTagged> tagsList = new ArrayList<>(mInstaTag.getListOfTagsToBeTagged());
+
+                    Gson gson = new GsonBuilder().create();
+                    String jsonArray = gson.toJson(tagsList);
+                    Intent intent = new Intent();
+                    intent.putExtra("tagJson",  jsonArray);
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
                 break;
@@ -289,12 +325,12 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CommonUtil.hideKeyboard(DemoTagActivity.this);
+            /*    CommonUtil.hideKeyboard(DemoTagActivity.this);
                 mInstaTag.addTag(mAddTagInX, mAddTagInY, someOne.getUserName());
                 mRecyclerViewSomeOneToBeTagged.setVisibility(View.GONE);
                 // mTapPhotoToTagSomeOneTextView.setVisibility(View.VISIBLE);
                 mHeaderSearchSomeOne.setVisibility(View.GONE);
-                mHeaderSomeOneToBeTagged.setVisibility(View.VISIBLE);
+                mHeaderSomeOneToBeTagged.setVisibility(View.VISIBLE);*/
             }
         });
     }
@@ -305,7 +341,17 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 CommonUtil.hideKeyboard(DemoTagActivity.this);
-                mInstaTag.addTag(mAddTagInX, mAddTagInY, someOne.title);
+
+                TagDetail tag = new TagDetail("people",String.valueOf(someOne.id), someOne.title,someOne.userType);
+                HashMap<String,TagDetail> tagDetails  = new HashMap<>();
+                tagDetails.put(someOne.title, tag);
+
+                /*HashMap<String,TagDetail> tagDetails = new HashMap<>();
+                tagDetails.put("tabType","people");
+                tagDetails.put("tagId", String.valueOf(someOne.id));
+                tagDetails.put("title ",someOne.title);*/
+
+                mInstaTag.addTag(mAddTagInX, mAddTagInY, someOne.title,tag);
                 mRecyclerViewSomeOneToBeTagged.setVisibility(View.GONE);
                 // mTapPhotoToTagSomeOneTextView.setVisibility(View.VISIBLE);
                 mHeaderSearchSomeOne.setVisibility(View.GONE);
@@ -366,7 +412,7 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
                         }
                         mSomeOneAdapter.notifyDataSetChanged();
                     }
-
+                    tv_msg.setVisibility(View.GONE);
                     if(list.size()==0){
                         tv_msg.setText(getString(R.string.no_data_found));
                     }else {

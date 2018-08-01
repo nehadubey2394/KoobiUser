@@ -12,10 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
-import com.github.florent37.camerafragment.CameraFragment;
-import com.github.florent37.camerafragment.configuration.Configuration;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.story.camera.internal.Camera2Fragment;
+import com.mualab.org.user.activity.gellery.fragment.CameraFragmentNew;
+import com.mualab.org.user.activity.gellery.fragment.GalleryFragment;
+import com.mualab.org.user.activity.gellery.fragment.VideoGalleryFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,9 +76,9 @@ public class GalleryActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
-        adapter.addFragment(cameraFragment, "Camera");
-        // adapter.addFragment(CameraRecFragment.newInstance("",""), "VIDEO");
+       // CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
+        //adapter.addFragment(cameraFragment, "Camera");
+        adapter.addFragment(CameraFragmentNew.newInstance(), "Camera");
         viewPager.setAdapter(adapter);
     }
 

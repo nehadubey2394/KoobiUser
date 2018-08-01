@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.gellery;
+package com.mualab.org.user.activity.gellery.fragment;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -30,9 +30,12 @@ import com.image.nocropper.CropperCallback;
 import com.image.nocropper.CropperView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
+import com.mualab.org.user.activity.gellery.BaseGalleryFragment;
+import com.mualab.org.user.activity.gellery.Gallery2Activity;
+import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.gellery.adapter.GalleryAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
-import com.mualab.org.user.activity.gellery.model.PhotoLoader;
+import com.mualab.org.user.activity.gellery.model.VideoLoader;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.listner.GalleryOnClickListener;
@@ -46,40 +49,32 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
-public class GalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
+public class VideoGalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
 
     private RecyclerView recyclerView;
     private GalleryAdapter galleryAdapter;
     CollapsingToolbarLayout collapsing_toolbar;
     int numberOfColumns = 4;
     View view;
+    private ArrayList<String> pathArrList;
 
-
-    private CropperView showImage;
-    private ImageView snap_button;
     //private ImageView rotateImage;
-    private ImageView ivMultiSelection, ivImage;
     private AppBarLayout appbar;
     private CoordinatorLayout rootLayout;
-    private boolean isSupportMultipal;
-    private boolean isSnappedToCenter;
-
 
     private int lastindex;
     private Uri lastSelectedUri;
-    private LinkedHashMap<String, Uri> mSelected;
     private List<Media> albumList;
 
-    public GalleryFragment() {
+    public VideoGalleryFragment() {
         // Required empty public constructor
     }
 
 
-    public static GalleryFragment newInstance() {
-        GalleryFragment fragment = new GalleryFragment();
+    public static VideoGalleryFragment newInstance() {
+        VideoGalleryFragment fragment = new VideoGalleryFragment();
         Bundle args = new Bundle();
         return fragment;
     }
@@ -88,12 +83,11 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         albumList = new ArrayList<>();
-        mSelected = new LinkedHashMap<>();
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
+        View view = inflater.inflate(R.layout.fragment_video_gallery, container, false);
         initView(view);
         return view;
     }
@@ -128,173 +122,57 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
             @Override
             public void OnClick(Media media , int index) {
 
-                if(isSupportMultipal){
-
-                    int size = mSelected.size();
-                    if(size<10){
-
-                        if(!media.isSelected){
-                            media.isSelected = !media.isSelected;
-                            mSelected.put(media.uri.toString(), media.uri);
-                            lastSelectedUri = media.uri;
-                            lastindex = index;
-
-                        } else{
-
-                            if(mSelected.size()>1){
-                                media.isSelected = !media.isSelected;
-                                mSelected.remove(media.uri.toString());
-                                Map.Entry<String, Uri> last = null;
-                                for (Map.Entry<String, Uri> e : mSelected.entrySet()) last = e;
-                                lastSelectedUri = last.getValue();
-                            }
-                        }
-                    }else if(media.isSelected && size>1){
-                        media.isSelected = !media.isSelected;
-                        mSelected.remove(media.uri.toString());
-                        Map.Entry<String, Uri> last = null;
-                        for (Map.Entry<String, Uri> e : mSelected.entrySet()) last = e;
-                        lastSelectedUri = last.getValue();
-                    } else if(size>9){
-                        MySnackBar.showSnackbar(context,rootLayout,"You can select max 10 items");
-                    }
-
-                }else {
-                    lastindex = index;
-                    lastSelectedUri = media.uri;
-                    mSelected.clear();
-                    mSelected.put(media.uri.toString(), media.uri);
-                }
-
-                refreshUi(lastSelectedUri);
-
-                galleryAdapter.notifyItemChanged(index);
-                if(mSelected.size()<=2)
-                    recyclerView.smoothScrollToPosition(index);
-                expandToolbar();
             }
         });
         recyclerView.setAdapter(galleryAdapter);
     }
 
     private void initView(View view){
-        showImage = view.findViewById(R.id.showImage);
-        snap_button = view.findViewById(R.id.snap_button);
-        ivImage = view.findViewById(R.id.ivImage);
-        // rotateImage = view.findViewById(R.id.rotateImage);
-        ivMultiSelection = view.findViewById(R.id.ivMultiSelection);
         view.findViewById(R.id.tvNext).setOnClickListener(this);
-        view.findViewById(R.id.ivClose).setOnClickListener(this);
+        view.findViewById(R.id.tvClose).setOnClickListener(this);
         appbar = view.findViewById(R.id.appbar);
         recyclerView = view.findViewById(R.id.recyclerView);
         collapsing_toolbar = view.findViewById(R.id.collapsing_toolbar);
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new GridLayoutManager(context, numberOfColumns));
         rootLayout = view.findViewById(R.id.rootLayout);
-        snap_button.setOnClickListener(this);
-        // rotateImage.setOnClickListener(this);
-        ivMultiSelection.setOnClickListener(this);
+
         albumList = getAlbums();
+        pathArrList = getAllVideoPath();
 
         if(albumList!=null && albumList.size()>0){
             Media media = albumList.get(0);
             lastSelectedUri = media.uri;
-            mSelected.put(media.uri.toString(), media.uri);
-            refreshUi(lastSelectedUri);
             //showImage.setUri(media.uri);
             try {
-                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
+                //showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-
-    private void refreshUi(Uri uri){
-
-        if(isSupportMultipal){
-            ivImage.setVisibility(View.VISIBLE);
-            showImage.setVisibility(View.GONE);
-            ivImage.setImageURI(uri);
-
-        } else {
-            showImage.setVisibility(View.VISIBLE);
-            ivImage.setVisibility(View.GONE);
-            //showImage.setUri(uri);
-            try {
-                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,uri));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    public void expandToolbar(){
-        appbar.setExpanded(true, true);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
 
-            case R.id.ivClose:
-                getActivity().onBackPressed();
-                break;
-
-            case R.id.snap_button:
-                snapImage();
-               /* Bitmap bitmap = showImage.getCroppedImage();
-                if (bitmap != null)
-                    Toast.makeText(mContext, "Croping Done", Toast.LENGTH_SHORT).show();*/
-                break;
-
-            case R.id.ivMultiSelection:
-                //getView().findViewById(R.id.ivMultiSelection).setBackground(R.);
-                isSupportMultipal = !isSupportMultipal;
-
-                mSelected.clear();
-                if(lastSelectedUri!=null) mSelected.put(lastSelectedUri.toString(), lastSelectedUri);
-
-                if(isSupportMultipal){
-                    for (Media tmp:albumList) tmp.isSelected = false;
-                    ivMultiSelection.setBackground(ContextCompat.getDrawable(context,R.drawable.circle_selected_bg));
-                    snap_button.setVisibility(View.GONE);
-                    //rotateImage.setVisibility(View.GONE);
-                }else {
-                    snap_button.setVisibility(View.VISIBLE);
-                    // rotateImage.setVisibility(View.VISIBLE);
-                    ivMultiSelection.setBackground(ContextCompat.getDrawable(context,R.drawable.selector_rounded_background));
-                }
-
-                albumList.get(lastindex).isSelected = true;
-                galleryAdapter.setEnableMultipal(isSupportMultipal);
-
-                galleryAdapter.notifyItemChanged(lastindex);
-                recyclerView.smoothScrollToPosition(lastindex);
-                refreshUi(lastSelectedUri);
-
-                // showImage.setImageUriAsync(media.uri);
+            case R.id.tvClose:
+                ((Gallery2Activity)context).onBackPressed();
                 break;
 
             case R.id.tvNext:
-                if(!isSupportMultipal){
-                    cropImageAsync();
-                }else {
 
                     Intent intent = null;
-                    if (mSelected != null && mSelected.size() > 0) {
                         MediaUri mediaUri = new MediaUri();
                         mediaUri.mediaType = Constant.IMAGE_STATE;
                         mediaUri.isFromGallery = true;
-                        mediaUri.addAll(mSelected);
+                        //mediaUri.addAll(mSelected);
                         intent = new Intent(context, FeedPostActivity.class);
                         intent.putExtra("caption", "");
                         intent.putExtra("feedType", Constant.IMAGE_STATE);
                         intent.putExtra("mediaUri", mediaUri);
                         intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                    } /*else if(videoUri!=null){
+                        /*else if(videoUri!=null){
                     intent = new Intent(mContext, FeedPostActivity.class);
                     intent.putExtra("caption", "");
                     intent.putExtra("feedType", Constant.VIDEO_STATE);
@@ -310,7 +188,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
                         startActivityForResult(intent, Constant.POST_FEED_DATA);
                     }
 
-                }
                 break;
         }
     }
@@ -321,7 +198,7 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-            Objects.requireNonNull(getActivity()).finish();
+
         }
     }
 
@@ -333,55 +210,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         }
     }
 
-
-    private void cropImageAsync() {
-        showImage.getCroppedBitmapAsync(new CropperCallback() {
-            @Override
-            public void onCropped(Bitmap bitmap) {
-                if (bitmap != null) {
-
-                    try {
-                        File file = getTemporalFile(context);
-                        Uri uri = FileProvider.getUriForFile(context,
-                                context.getApplicationContext().getPackageName() + ".provider", file);
-
-                        mSelected = new LinkedHashMap<>();
-                        mSelected.put(uri.toString(), uri);
-                        BitmapUtils.writeBitmapToFile(bitmap, file, 75);
-                        //MediaStore.Images.Media.insertImage(context.getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
-
-                        Intent intent = null;
-                        if (mSelected != null && mSelected.size() > 0) {
-                            MediaUri mediaUri = new MediaUri();
-                            mediaUri.mediaType = Constant.IMAGE_STATE;
-                            mediaUri.isFromGallery = true;
-                            mediaUri.addAll(mSelected);
-                            intent = new Intent(context, FeedPostActivity.class);
-                            intent.putExtra("caption", "");
-                            intent.putExtra("feedType", Constant.IMAGE_STATE);
-                            intent.putExtra("mediaUri", mediaUri);
-                            intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                        }
-
-                        if (intent != null) {
-                            // intent.setDataAndType(uri, mimeType);
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            startActivityForResult(intent, Constant.POST_FEED_DATA);
-                        }
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onOutOfMemoryError() {
-
-            }
-        });
-    }
-
     private static File getTemporalFile(Context context) {
         File myFile = new File(context.getExternalCacheDir(), "tempImage.jpg");
         if(myFile.exists())
@@ -389,13 +217,49 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         return myFile;
     }
 
-    private void snapImage() {
-        if (isSnappedToCenter) {
-            showImage.cropToCenter();
-        } else {
-            showImage.fitToCenter();
+   /* public ArrayList<Media> getAlbums() {
+        ArrayList<Media> photos = new ArrayList<>();
+        try {
+
+            VideoLoader photoLoader = new VideoLoader(context);
+            Cursor photoCursor = photoLoader.loadInBackground();
+
+            if(photoCursor!=null){
+                photoCursor.moveToFirst();
+                do {
+                    Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
+                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                    Media media = new Media();
+                    media.uri = uri;
+                    photos.add(media);
+                }while (photoCursor.moveToNext());
+
+                photoCursor.close();
+            }
+
+            return photos;
+        } catch (final Exception e) {
+            return new ArrayList<>();
         }
-        isSnappedToCenter = !isSnappedToCenter;
+    }*/
+
+    private ArrayList<String> getAllVideoPath() {
+        Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = { MediaStore.Video.VideoColumns.DATA };
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        ArrayList<String> pathArrList = new ArrayList<String>();
+        //int vidsCount = 0;
+        if (cursor != null) {
+            //vidsCount = cursor.getCount();
+            //Log.d(TAG, "Total count of videos: " + vidsCount);
+            while (cursor.moveToNext()) {
+                pathArrList.add(cursor.getString(0));
+                //Log.d(TAG, cursor.getString(0));
+            }
+            cursor.close();
+        }
+
+        return pathArrList;
     }
 
     public ArrayList<Media> getAlbums() {
@@ -406,13 +270,14 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
             if (albumCursor.moveToFirst()) {
 
                 do {
-                    PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
+                    VideoLoader photoLoader = new VideoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
                     Cursor photoCursor = photoLoader.loadInBackground();
 
                     if (photoCursor.moveToFirst()) {
                         do {
                             Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
-                            Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                            Uri uri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
+                            int duration = photoCursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION);
                             Media media = new Media();
                             media.uri= uri;
                             /*Photo photo = new Photo();

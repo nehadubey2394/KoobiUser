@@ -101,38 +101,6 @@
                 app:layout_collapseMode="pin"
                 android:gravity="center">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <ImageView
-                        android:id="@+id/snap_button"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:padding="4dp"
-                        android:gravity="center"
-                        android:background="@drawable/selector_rounded_background"
-                        android:src="@android:drawable/ic_menu_crop" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"/>
-
-                    <ImageView
-                        android:id="@+id/ivMultiSelection"
-                        android:layout_width="38dp"
-                        android:layout_height="38dp"
-                        android:padding="10dp"
-                        android:gravity="center"
-                        android:background="@drawable/selector_rounded_background"
-                        android:src="@drawable/ico_multi_selection" />
-
-                </LinearLayout>
-
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>

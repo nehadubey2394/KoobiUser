@@ -193,7 +193,8 @@ public class ArtistFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 final CellFeedViewHolder imageHolder = ((CellFeedViewHolder) holder);
 
-                imageHolder.weakRefAdapter = new WeakReference<>(new ViewPagerAdapter(mContext, feeds.feed, new ViewPagerAdapter.Listner() {
+                imageHolder.weakRefAdapter = new WeakReference<>(new ViewPagerAdapter(mContext, feeds,false,
+                        new ViewPagerAdapter.Listner() {
                     @Override
                     public void onSingleTap() {
                         int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
@@ -614,16 +615,16 @@ public class ArtistFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         new HttpTask(new HttpTask.Builder(mContext, "like",
                 new HttpResponceListner.Listener() {
-            @Override
-            public void onResponse(String response, String apiName) {
+                    @Override
+                    public void onResponse(String response, String apiName) {
 
-            }
+                    }
 
-            @Override
-            public void ErrorListener(VolleyError error) {
+                    @Override
+                    public void ErrorListener(VolleyError error) {
 
-            }
-        })
+                    }
+                })
                 .setParam(map)).execute("like"+feed._id);
 
     }

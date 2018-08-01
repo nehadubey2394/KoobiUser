@@ -293,6 +293,11 @@ public class CommentsActivity extends AppCompatActivity {
         map.put("page",  ""+pageNo);
         map.put("search", search.toLowerCase());
         map.put("limit",  "20");
+        map.put("age", "25");
+        map.put("gender", "male");
+        map.put("city", "indore");
+        map.put("state", "MP");
+        map.put("country", "India");
         Mualab.getInstance().getRequestQueue().cancelAll(TAG);
 
         new HttpTask(new HttpTask.Builder(this, "commentList", new HttpResponceListner.Listener() {
@@ -390,10 +395,24 @@ public class CommentsActivity extends AppCompatActivity {
                         //  getCommentList(0, searchFilter = "");
                         isDataUpdated = true;
                         ed_comments.setText("");
+                        String myString= null;
                         JSONObject jsonObject = js.getJSONObject("commentData");
-                        Comment comment = new Comment();
+
+                        Gson gson = new Gson();
+                        Comment comment = gson.fromJson(String.valueOf(jsonObject), Comment.class);
+                        try {
+                            myString= URLDecoder.decode(comment.comment, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        comment.comment = myString;
+                        //commentList.add(comment);
+
+                       /* Comment comment = new Comment();
                         comment.id = jsonObject.getInt("feedId");
                         comment.comment = jsonObject.getString("comment");
+                        comment.commentById = jsonObject.getInt("commentById");
+                        feed.commentCount = jsonObject.getInt("commentCount");*/
 
                         if (bitmap==null) {
                             try {
@@ -411,33 +430,7 @@ public class CommentsActivity extends AppCompatActivity {
                         comment.timeElapsed = "1 second ago";
                         comment.commentLikeCount = 0;
                         comment.isLike = 0;
-                        /*feed.commentCount = js.getInt("commentCount");
-                        comment.id = js.getInt("_id");
-                        comment.comment = comments;
-                        comment.firstName = Mualab.currentUser.firstName;
-                        comment.firstName = Mualab.currentUser.lastName;
-                        comment.userName = Mualab.currentUser.userName;
-                        comment.type = bitmap==null?"text":"image";
-                        comment.profileImage = Mualab.currentUser.profileImage;
-                        comment.timeElapsed = "1 second ago";
-                        comment.commentLikeCount = 0;
-                        comment.isLike = 0;*/
-                        /*"commentData": {
-        "feedId": "4",
-        "postUserId": "4",
-        "commentById": "3",
-        "comment": "http://localhost:3000/uploads/commentImage/1530257394233.jpg",
-        "gender": "male",
-        "age": "25",
-        "city": "indore",
-        "state": "mp",
-        "country": "india",
-        "type": "image",
-        "crd": "2018-06-29T12:59:54+05:30",
-        "upd": "2018-06-29T12:59:54+05:30",
-        "_id": 6,
-        "commentCount": 5
-    }*/
+
                         commentList.add(0,comment);
 
                     }if (commentList.size() == 0) {

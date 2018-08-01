@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.mualab.org.user.activity.people_tag.instatag.InstaTag
+        android:id="@+id/insta_tag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:canWeAddTags="true"
+        android:transitionName="image"
+        tools:ignore="UnusedAttribute"
+        app:carrotBottomColor="@color/dark_grey"
+        app:carrotLeftColor="@color/dark_grey"
+        app:carrotRightColor="@color/dark_grey"
+        app:carrotTopColor="@color/dark_grey"
+        app:instaTextColor="@android:color/white"
+        />
+
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        style="?android:attr/progressBarStyleSmall"
+        android:visibility="gone" />
+
+   <!-- <android.support.v7.widget.RecyclerView
+        android:id="@+id/rycTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:overScrollMode="never"
+        android:layout_marginBottom="4dp"
+        android:layout_below="@+id/insta_tag"
+        android:scrollbars="none" />
+-->
+
+</RelativeLayout>

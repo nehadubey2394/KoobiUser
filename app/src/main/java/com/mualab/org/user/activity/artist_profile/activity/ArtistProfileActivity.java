@@ -40,6 +40,8 @@ import com.mualab.org.user.activity.make_booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
+import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
+import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.SearchBoard.ArtistsSearchBoard;
@@ -265,7 +267,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
                         Gson gson = new Gson();
 
                         profileData = gson.fromJson(String.valueOf(object), UserProfileData.class);
-
+                        item.businessType = profileData.businessType;
                         //   profileData = gson.fromJson(response, UserProfileData.class);
                         setProfileData(profileData);
                         // updateViewType(profileData,R.id.ly_videos);
@@ -625,7 +627,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
                         try{
                             JSONObject jsonObject = array.getJSONObject(i);
                             Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
-
+                            //   feed.taggedImgMap = new HashMap<>();
                             /*tmp get data and set into actual json format*/
                             if(feed.userInfo!=null && feed.userInfo.size()>0){
                                 Feeds.User user = feed.userInfo.get(0);
@@ -649,6 +651,44 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
 
                                 if(feed.feedType.equals("video"))
                                     feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+                            }
+
+                            JSONArray jsonArray = jsonObject.getJSONArray("peopleTag");
+                            if (jsonArray.length() != 0){
+
+                                for (int j = 0; j < jsonArray.length(); j++) {
+
+                                    feed.peopleTagList = new ArrayList<>();
+                                    JSONArray arrayJSONArray = jsonArray.getJSONArray(j);
+
+                                    for (int k = 0; k < arrayJSONArray.length(); k++) {
+                                        JSONObject object = arrayJSONArray.getJSONObject(k);
+
+                                        HashMap<String,TagDetail> tagDetails = new HashMap<>();
+
+                                        String unique_tag_id = object.getString("unique_tag_id");
+                                        double x_axis = Double.parseDouble(object.getString("x_axis"));
+                                        double y_axis = Double.parseDouble(object.getString("y_axis"));
+
+                                        JSONObject tagOjb = object.getJSONObject("tagDetails");
+                                        TagDetail tag ;
+                                        if (tagOjb.has("tabType")){
+                                            tag = gson.fromJson(String.valueOf(tagOjb), TagDetail.class);
+                                        }else {
+                                            JSONObject details = tagOjb.getJSONObject(unique_tag_id);
+                                            tag = gson.fromJson(String.valueOf(details), TagDetail.class);
+                                        }
+                                        tagDetails.put(tag.title, tag);
+                                        TagToBeTagged tagged = new TagToBeTagged();
+                                        tagged.setUnique_tag_id(unique_tag_id);
+                                        tagged.setX_co_ord(x_axis);
+                                        tagged.setY_co_ord(y_axis);
+                                        tagged.setTagDetails(tagDetails);
+
+                                        feed.peopleTagList.add(tagged);
+                                    }
+                                    feed.taggedImgMap.put(j,feed.peopleTagList);
+                                }
                             }
 
                             feeds.add(feed);
@@ -968,7 +1008,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
             if (requestCode == Constant.ACTIVITY_COMMENT) {
                 if(CURRENT_FEED_STATE == Constant.FEED_STATE){
                     int pos = data.getIntExtra("feedPosition",0);
-                    Feeds feed = (Feeds) data.getSerializableExtra("feed");
+                    Feeds feed = (Feeds) data.getParcelableExtra("feed");
                     feeds.get(pos).commentCount = feed.commentCount;
                     feedAdapter.notifyItemChanged(pos);
                 }
@@ -1058,7 +1098,6 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
 
         dialog.show();
     }
-
 
     public void hideQuickView(){
         if(builder != null) builder.dismiss();

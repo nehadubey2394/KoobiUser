@@ -16,7 +16,9 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/flTag"
+    >
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -40,12 +42,11 @@
 
             <LinearLayout
                 android:id="@+id/carrot_top"
-                android:layout_width="@dimen/dp22"
-                android:layout_height="@dimen/dp20"
+                android:layout_width="@dimen/dp20"
+                android:layout_height="@dimen/dp18"
                 android:layout_gravity="center"
                 android:background="@drawable/tag_shape_carrot_top"
                 android:gravity="center"
-                android:visibility="gone"
                 android:orientation="horizontal" />
 
             <LinearLayout
@@ -55,7 +56,7 @@
                 android:background="@drawable/tag_shape_tag_text"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="5dp">
+                android:padding="2dp">
 
                 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
                     android:id="@+id/tag_text_view"
@@ -63,9 +64,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Tagging"
-                    android:padding="1dp"
+                    android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/sp14" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -94,12 +95,13 @@
 
     <com.mualab.org.user.activity.people_tag.instatag.TagImageView
         android:id="@+id/remove_tag_image_view"
-        android:layout_width="@dimen/dp18"
-        android:layout_height="@dimen/dp18"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginBottom="@dimen/dp15"
+        android:layout_marginBottom="@dimen/dp12"
         android:layout_marginRight="@dimen/dp12"
         android:layout_marginEnd="@dimen/dp12"
+        android:padding="2dp"
         android:background="@drawable/cross_icon"
         android:visibility="gone" />
 </FrameLayout>

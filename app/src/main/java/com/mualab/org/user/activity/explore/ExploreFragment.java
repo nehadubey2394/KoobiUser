@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,8 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.explore.adapter.ExploreGridViewAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
+import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
+import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
@@ -60,7 +63,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
     public static String TAG = ExploreFragment.class.getName();
 
     private Context mContext;
-   // private BaseListner baseListner;
+    // private BaseListner baseListner;
 
     private TextView tvImages, tvVideos, tv_msg;
     private LinearLayout ll_progress;
@@ -68,7 +71,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
     private RjRefreshLayout mRefreshLayout;
 
     /*Adapters*/
-   // private LiveUserAdapter liveUserAdapter;
+    // private LiveUserAdapter liveUserAdapter;
     //private ArrayList<LiveUserInfo> liveUserList;
 
     private ExploreGridViewAdapter feedAdapter;
@@ -90,7 +93,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
     public static ExploreFragment newInstance() {
         ExploreFragment fragment = new ExploreFragment();
         Bundle args = new Bundle();
-       // args.putString(ARG_PARAM1, param1);
+        // args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -132,7 +135,7 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
         super.onCreate(savedInstanceState);
         feeds = new ArrayList<>();
         //liveUserList = new ArrayList<>();
-       // liveUserList.clear();
+        // liveUserList.clear();
         /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
         }*/
@@ -444,6 +447,41 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
                             if(feed.feedType.equals("video"))
                                 feed.videoThumbnail = feed.feedData.get(0).videoThumb;
                         }
+                        JSONArray jsonArray = jsonObject.getJSONArray("peopleTag");
+                        if (jsonArray.length() != 0){
+
+                            for (int j = 0; j < jsonArray.length(); j++) {
+                                JSONArray arrayJSONArray = jsonArray.getJSONArray(j);
+                                feed.peopleTagList = new ArrayList<>();
+                                for (int k = 0; k < arrayJSONArray.length(); k++) {
+                                    JSONObject object = arrayJSONArray.getJSONObject(k);
+
+                                    HashMap<String,TagDetail> tagDetails = new HashMap<>();
+
+                                    String unique_tag_id = object.getString("unique_tag_id");
+                                    double x_axis = Double.parseDouble(object.getString("x_axis"));
+                                    double y_axis = Double.parseDouble(object.getString("y_axis"));
+
+                                    JSONObject tagOjb = object.getJSONObject("tagDetails");
+                                    TagDetail tag;
+                                    if (tagOjb.has("tabType")){
+                                        tag = gson.fromJson(String.valueOf(tagOjb), TagDetail.class);
+                                    }else {
+                                        JSONObject details = tagOjb.getJSONObject(unique_tag_id);
+                                        tag = gson.fromJson(String.valueOf(details), TagDetail.class);
+                                    }
+                                    tagDetails.put(tag.title, tag);
+                                    TagToBeTagged tagged = new TagToBeTagged();
+                                    tagged.setUnique_tag_id(unique_tag_id);
+                                    tagged.setX_co_ord(x_axis);
+                                    tagged.setY_co_ord(y_axis);
+                                    tagged.setTagDetails(tagDetails);
+
+                                    feed.peopleTagList.add(tagged);
+                                }
+                                feed.taggedImgMap.put(j,feed.peopleTagList);
+                            }
+                        }
 
                         feeds.add(feed);
 
@@ -485,11 +523,13 @@ public class ExploreFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void onFeedClick(Feeds feed, int index) {
-       // baseListner.addFragment();
+        // baseListner.addFragment();
         Intent intent = new Intent(mContext, FeedDetailActivity.class);
-        intent.putExtra("feed",  feed);
-        intent.putExtra("feeds", (Serializable) feeds);
-        intent.putExtra("index", index);
-        startActivity(intent);
+        Bundle args = new Bundle();
+        args.putSerializable("feed",  feed);
+        args.putInt("index", index);
+        args.putSerializable("feeds", (Serializable) feeds);
+        intent.putExtra("BUNDLE",args);
+        mContext.startActivity(intent);
     }
 }

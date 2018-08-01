@@ -25,6 +25,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.androidnetworking.utils.Utils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -47,6 +48,7 @@ import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.Helper;
+import com.mualab.org.user.utils.Util;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -206,15 +208,19 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         selectedServices.addAll(tempArray);
 
         firstBooking = selectedServices.get(0);
-        SimpleDateFormat dfInput = new SimpleDateFormat("EEE, d MMMM yyyy");
+        Util utility = new Util(mContext);
+        tvBookingDate.setText(utility.changeDateFormate(firstBooking.selectedDate));
+
+
+      /*  SimpleDateFormat dfInput = new SimpleDateFormat("EEE, d MMMM yyyy");
         SimpleDateFormat dfOutput = new SimpleDateFormat("d MMMM yyyy");
         Date formatedDate = null;
         try {
-            formatedDate = dfInput.parse(firstBooking.date);
-            tvBookingDate.setText(dfOutput.format(formatedDate));
+            formatedDate = dfInput.parse(firstBookingll.date);
+
         } catch (ParseException e) {
             e.printStackTrace();
-        }
+        }*/
 
         tvBookingTime.setText(firstBooking.time);
 
