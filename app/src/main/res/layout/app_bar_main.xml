@@ -71,30 +71,68 @@
                         android:textSize="16sp" />
 
                     <RelativeLayout
-                        android:id="@+id/lyProfilePic"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="6dp"
-                        >
+                        android:layout_marginTop="6dp">
+
+                        <android.support.v7.widget.AppCompatButton
+                            style="@style/My_Button_Small.Invert"
+                            android:layout_width="85dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/btnFollow"
+                            android:text="@string/follow"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            android:layout_marginLeft="12dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            />
 
                         <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true">
+                            android:id="@+id/lyProfilePic"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerInParent="true"
+                            >
 
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:id="@+id/iv_Profile"
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/defoult_user_img"
-                                app:civ_border_width="0dp" />
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true">
+
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/iv_Profile"
+                                    android:layout_width="70dp"
+                                    android:layout_height="70dp"
+                                    android:layout_centerInParent="true"
+                                    android:src="@drawable/defoult_user_img"
+                                    app:civ_border_width="0dp" />
+
+                            </RelativeLayout>
+
+                            <ImageView
+                                android:id="@+id/ivActive"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_alignParentBottom="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginRight="2dp"
+                                android:clickable="false"
+                                android:src="@drawable/ico_varified"
+                                android:visibility="gone" />
 
                         </RelativeLayout>
 
 
                     </RelativeLayout>
+
 
                     <RelativeLayout
                         android:layout_width="match_parent"

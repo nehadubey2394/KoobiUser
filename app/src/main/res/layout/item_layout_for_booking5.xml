@@ -37,6 +37,34 @@
             android:layout_marginTop="2dp"
             android:maxWidth="200dp"
             />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
+            >
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:maxWidth="200dp"
+                />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:fontFamily="@font/roboto_regular"
+                android:maxWidth="200dp"
+                />
+        </LinearLayout>
+
     </LinearLayout>
 
     <android.support.v7.widget.AppCompatButton

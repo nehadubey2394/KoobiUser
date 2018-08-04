@@ -29,8 +29,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.people_tag.interfaces.SomeOneClickListener;
 import com.mualab.org.user.activity.people_tag.models.SomeOne;
@@ -43,12 +41,12 @@ public class SomeOneAdapter extends RecyclerView.Adapter<SomeOneAdapter.ViewHold
     private final Context mContext;
     private final List<SomeOne> mSomeOneList;
     private final SomeOneClickListener mSomeOneClickListener;
-    private RequestOptions requestOptions =
+  /*  private RequestOptions requestOptions =
             new RequestOptions()
                     .centerCrop()
                     .placeholder(R.drawable.defoult_user_img)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .placeholder(R.drawable.defoult_user_img);
+                    .placeholder(R.drawable.defoult_user_img);*/
 
     public SomeOneAdapter(List<SomeOne> someOnes,
                           Context mContext,
@@ -78,8 +76,8 @@ public class SomeOneAdapter extends RecyclerView.Adapter<SomeOneAdapter.ViewHold
 
         Glide
                 .with(mContext)
-                .load(someOne.getUrl())
-                .apply(requestOptions.transforms(new CircleCrop()))
+                .load(someOne.getUrl()).centerCrop().placeholder(R.drawable.defoult_user_img)
+                .diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.drawable.defoult_user_img)
                 .into(holder.imgProfile);
     }
 

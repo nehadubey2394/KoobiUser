@@ -18,6 +18,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Mindiii on 1/29/2018.
  */
@@ -144,5 +148,19 @@ public class Util {
     public static ColorStateList selectorText(Context context, int normal, int pressed) {
         ColorStateList colorStates = new ColorStateList(new int[][]{new int[]{android.R.attr.state_pressed}, new int[]{}}, new int[]{pressed, normal});
         return colorStates;
+    }
+
+    public   String changeDateFormate(String sDate){
+        SimpleDateFormat inputDf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat outputtDf = new SimpleDateFormat("dd/MM/yyyy");
+        Date formatedDate = null;
+        String date = "";
+        try {
+            formatedDate = inputDf.parse(sDate);
+            date =  outputtDf.format(formatedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 }

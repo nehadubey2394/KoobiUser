@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.people_tag.adapters;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
@@ -25,27 +24,23 @@ public class PeopleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private boolean showLoader;
     private final int FEED_TYPE = 1;
     private final int VIEW_TYPE_LOADING = 2;
-
+    private  long mLastClickTime = 0;
     private Context mContext;
     private List<ExSearchTag> mSomeOneList;
     private SomeOneClickListener mSomeOneClickListener = null;
 
-    private RequestOptions requestOptions =
-            new RequestOptions()
-                    .centerCrop()
-                    .placeholder(R.drawable.defoult_user_img)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .placeholder(R.drawable.defoult_user_img);
+    /*private RequestOptions requestOptions = new RequestOptions().centerCrop()
+                    .placeholder(R.drawable.defoult_user_img).diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.defoult_user_img);*/
 
     public void setListener(SomeOneClickListener mSomeOneClickListener){
         this.mSomeOneClickListener = mSomeOneClickListener;
     }
 
 
-    public PeopleAdapter(Context mContext, List<ExSearchTag> mSomeOneList,SomeOneClickListener listener) {
+    public PeopleAdapter(Context mContext, List<ExSearchTag> mSomeOneList ) {
         this.mContext = mContext;
         this.mSomeOneList = mSomeOneList;
-        this.mSomeOneClickListener = listener;
     }
 
     public void showHideLoading(boolean bool){
@@ -100,7 +95,10 @@ public class PeopleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         Glide.with(mContext)
                 .load(searchTag.imageUrl)
-                .apply(requestOptions.transforms(new CircleCrop()))
+                .centerCrop()
+                .placeholder(R.drawable.defoult_user_img)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.defoult_user_img)
                 .into(h.ivProfile);
         h.tvHeader.setText(searchTag.title);
         h.tvDesc.setVisibility(View.GONE);
@@ -122,13 +120,18 @@ public class PeopleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         @Override
         public void onClick(View v) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 700){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
             int pos = getAdapterPosition();
             if(mSomeOneList.size()>pos){
                 ExSearchTag searchTag = mSomeOneList.get(pos);
                 if (mSomeOneClickListener != null)
                     mSomeOneClickListener.onPeopleClicked(searchTag, getAdapterPosition());
-                }
             }
         }
     }
+}
 

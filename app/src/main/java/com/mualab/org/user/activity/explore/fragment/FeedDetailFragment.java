@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -50,7 +51,7 @@ import static android.app.Activity.RESULT_OK;
 public class FeedDetailFragment extends Fragment {
 
     private Context mContext;
-  //  private RjRefreshLayout mRefreshLayout;
+    //  private RjRefreshLayout mRefreshLayout;
     private FeedAdapter adapter;
     private Feeds feed;
     private Uri uri;
@@ -58,6 +59,7 @@ public class FeedDetailFragment extends Fragment {
     private List<Feeds> list = new ArrayList<>();
     private int index;
     private boolean isPulltoRefrash;
+    private int CURRENT_FEED_STATE = 0;
 
 
     public FeedDetailFragment() {
@@ -78,7 +80,7 @@ public class FeedDetailFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        
+
         if(context instanceof FeedsListner){
             feedsListner = (FeedsListner) context;
         }
@@ -112,8 +114,8 @@ public class FeedDetailFragment extends Fragment {
         rvFeed.setLayoutManager(lm);
         rvFeed.setHasFixedSize(true);
 
-      //  mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
-       // final CircleHeaderView header = new CircleHeaderView(getContext());
+        //  mRefreshLayout =  view.findViewById(R.id.mSwipeRefreshLayout);
+        // final CircleHeaderView header = new CircleHeaderView(getContext());
 /*
         mRefreshLayout.addHeader(header);
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -133,9 +135,15 @@ public class FeedDetailFragment extends Fragment {
         adapter = new FeedAdapter(mContext, list, new FeedAdapter.Listener() {
             @Override
             public void onCommentBtnClick(Feeds feed, int pos) {
-                Intent intent = new Intent(mContext, CommentsActivity.class);
+              /*  Intent intent = new Intent(mContext, CommentsActivity.class);
                 intent.putExtra("feed_id", feed._id);
                 intent.putExtra("feedPosition", 0);
+                intent.putExtra("feed", feed);
+                startActivityForResult(intent, Constant.ACTIVITY_COMMENT);*/
+
+                Intent intent = new Intent(mContext, CommentsActivity.class);
+                intent.putExtra("feed_id", feed._id);
+                intent.putExtra("feedPosition", pos);
                 intent.putExtra("feed", feed);
                 startActivityForResult(intent, Constant.ACTIVITY_COMMENT);
             }
@@ -160,7 +168,7 @@ public class FeedDetailFragment extends Fragment {
         rvFeed.setAdapter(adapter);
         rvFeed.scrollToPosition(index);
 
-       // getUpdatedFeed();
+        // getUpdatedFeed();
     }
 
 
@@ -168,11 +176,28 @@ public class FeedDetailFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            Feeds feed = (Feeds) data.getSerializableExtra("feed");
-            list.get(0).commentCount = feed.commentCount;
-            adapter.notifyItemChanged(0);
+
+            switch (requestCode){
+                case Constant.ACTIVITY_COMMENT:
+                    /*   int pos = data.getIntExtra("feedPosition",0);
+        Feeds feed = (Feeds) data.getSerializableExtra("feed");
+        list.get(pos).commentCount = feed.commentCount;
+        adapter.notifyItemChanged(pos);*/
+                  //  if(CURRENT_FEED_STATE == Constant.FEED_STATE){
+                        int pos = data.getIntExtra("feedPosition",0);
+                        Feeds feed = (Feeds) data.getSerializableExtra("feed");
+                        list.get(pos).commentCount = feed.commentCount+1;
+                        adapter.notifyItemChanged(pos);
+                 //   }
+                    break;
+            }
         }
-    }
+
+           /* int pos = data.getIntExtra("feedPosition",0);
+            Feeds feed = (Feeds) data.getParcelableExtra("feed");
+            list.get(0).commentCount = feed.commentCount;
+            adapter.notifyItemChanged(pos);*/
+}
 
     private void getUpdatedFeed(){
         Map<String, String> map = new HashMap<>();

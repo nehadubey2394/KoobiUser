@@ -71,7 +71,8 @@ public class CertificateActivity extends AppCompatActivity implements OnCertific
         tvNoData = findViewById(R.id.tvNoData);
         rycvCertificates = findViewById(R.id.rycvCertificates);
 
-        GridLayoutManager linearLayoutManager = new GridLayoutManager(CertificateActivity.this,2);
+        GridLayoutManager linearLayoutManager = new GridLayoutManager(CertificateActivity.this,
+                2);
         rycvCertificates.setItemAnimator(new DefaultItemAnimator());
         rycvCertificates.setLayoutManager(linearLayoutManager);
         rycvCertificates.setAdapter(certificatesListAdapter);

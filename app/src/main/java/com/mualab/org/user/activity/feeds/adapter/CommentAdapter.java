@@ -131,6 +131,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         map.put("userId", ""+comment.commentById);
         map.put("type", "comment");
 
+       /* map.put("age", "25");
+        map.put("gender", "male");
+        map.put("city", "indore");
+        map.put("state", "MP");
+        map.put("country", "India");*/
+
+
         for (Map.Entry<String,String> entry : map.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();

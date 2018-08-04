@@ -14,6 +14,9 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking_histories.model.BookingInfo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -54,26 +57,14 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         holder.tvStaffName.setText(item.staffName);
         holder.tvServiceName.setText(item.artistServiceName);
+        holder.tvTime.setText(item.startTime);
+        holder.tvDate.setText(changeDateFormate(item.bookingDate));
 
-
-       /* Session session = Mualab.getInstance().getSessionManager();
-        User user = session.getUser();
-        if (user.id.equals(item.staffId)) {
-            holder.tvStaffName.setText("My booking");
-        }
-        if (user.businessType.equals("independent")) {
-            holder.llChangeStaff.setVisibility(View.GONE);
-            holder.tvPrice2.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.llChangeStaff.setVisibility(View.VISIBLE);
-            holder.tvPrice2.setVisibility(View.GONE);
-        }*/
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    class ViewHolder extends RecyclerView.ViewHolder
     {
-        TextView tvServiceName,tvAssignrdStaff,tvStaffName,tvPrice2,tvPrice;
+        TextView tvServiceName,tvAssignrdStaff,tvStaffName,tvPrice2,tvPrice,tvDate,tvTime;
         private ViewHolder(View itemView)
         {
             super(itemView);
@@ -83,21 +74,25 @@ public class BookedServicesAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tvStaffName = itemView.findViewById(R.id.tvStaffName);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvPrice2 = itemView.findViewById(R.id.tvPrice2);
-        }
-
-        @Override
-        public void onClick(View view) {
-
-            switch (view.getId()){
-              /*  case R.id.btnChangeStaff:
-                    BookingInfo bookingInfo = artistsList.get(getAdapterPosition());
-                    if (listener != null) {
-                        listener.onStaffSelect(getAdapterPosition(),bookingInfo);
-                    }
-                    break;*/
-            }
+            tvDate = itemView.findViewById(R.id.tvDate);
+            tvTime = itemView.findViewById(R.id.tvTime);
         }
 
     }
+
+    private String changeDateFormate(String sDate){
+        SimpleDateFormat inputDf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat outputtDf = new SimpleDateFormat("dd/MM/yyyy");
+        Date formatedDate = null;
+        String date = "";
+        try {
+            formatedDate = inputDf.parse(sDate);
+            date =  outputtDf.format(formatedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
 
 }

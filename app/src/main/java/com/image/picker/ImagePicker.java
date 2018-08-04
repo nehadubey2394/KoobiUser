@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Author: Dharmraj Acharya
@@ -77,7 +78,11 @@ public final class ImagePicker {
             intent.putExtra("return-data", true);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", getTemporalFile(fragment.getContext()));
+
+            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().
+                    getPackageName() + ".provider",
+                    getTemporalFile(fragment.getContext()));
+
             intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
             fragment.startActivityForResult(intent, PICK_IMAGE_REQUEST_CODE);
         }
@@ -128,7 +133,8 @@ public final class ImagePicker {
         if (!appManifestContainsPermission(context, Manifest.permission.CAMERA) || hasCameraAccess(context)) {
             Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             takePhotoIntent.putExtra("return-data", true);
-            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", getTemporalFile(context));
+            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().
+                    getPackageName() + ".provider", getTemporalFile(context));
             takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             intentList = addIntentsToList(context, intentList, takePhotoIntent);
         }
@@ -338,6 +344,8 @@ public final class ImagePicker {
         Log.i(TAG, "Final bitmap width = " + (bm != null ? bm.getWidth() : "No final bitmap"));
         return bm;
     }
+
+
 
     public static Bitmap decodeBitmap(Context context, Uri theUri, int sampleSize) {
         Bitmap actuallyUsableBitmap = null;

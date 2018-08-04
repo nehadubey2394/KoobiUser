@@ -28,12 +28,12 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.SearchFeedActivity;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.MyToast;
-import com.mualab.org.user.dialogs.UnfollowDialog;
-import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.mualab.org.user.data.model.feeds.Feeds;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.UnfollowDialog;
+import com.mualab.org.user.listner.OnDoubleTapListener;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -83,7 +83,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         feedItems.clear();
         notifyItemRangeRemoved(0, size);
     }
-
 
     public FeedAdapter(Context mContext, List<Feeds> feedItems, Listener listener) {
         this.mContext = mContext;
@@ -190,110 +189,43 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
         switch (feeds.feedType) {
-          /*  case "text":
-                final FeedTextHolder textHolder = ((FeedTextHolder) holder);
-
-                if (!TextUtils.isEmpty(feeds.profileImage)) {
-                    Picasso.with(mContext)
-                            .load(feeds.profileImage)
-                            .fit()
-                            .into(textHolder.ivProfile);
-                }else  Picasso.with(mContext)
-                        .load(R.drawable.defoult_user_img)
-                        .into(textHolder.ivProfile);
-
-                if (feeds.followingStatus == 1) {
-                    textHolder.btnFollow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
-                    textHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-                    textHolder.btnFollow.setText(R.string.following);
-                } else {
-                    textHolder.btnFollow.setBackgroundResource(R.drawable.button_effect_invert);
-                    textHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-                    textHolder.btnFollow.setText(R.string.follow);
-                }
-                textHolder.tvUserName.setText(feeds.userName);
-                textHolder.tvPostTime.setText(feeds.crd);
-                textHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
-                textHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
-                textHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                textHolder.likeIcon.setChecked(feeds.isLike==1);
-               // textHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
-                textHolder.tv_text.setText(feeds.caption);
-                //ResizableTextView.doResizeTextView(textHolder.tv_text, 50 , "View More", true);
-                break;*/
 
             case "image":{
 
                 final CellFeedViewHolder imageHolder = ((CellFeedViewHolder) holder);
 
-               /* if (!TextUtils.isEmpty(feeds.profileImage)) {
-                    Picasso.with(imageHolder.ivProfile.getContext())
-                            .load(feeds.profileImage)
-                            .fit()
-                            .into(imageHolder.ivProfile);
-                }else  Picasso.with(mContext)
-                        .load(R.drawable.defoult_user_img)
-                        .into(imageHolder.ivProfile);
+                imageHolder.weakRefAdapter = new WeakReference<>(new ViewPagerAdapter(mContext, feeds,true,
+                        new ViewPagerAdapter.Listner() {
+                            @Override
+                            public void onSingleTap() {
+                                int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
+                                if (feeds.feedType.equalsIgnoreCase("image")) {
+                                    listener.onFeedClick(feeds, pos, imageHolder.rl_imageView);
 
-                if (feeds.followingStatus == 1) {
-                    imageHolder.btnFollow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
-                    imageHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-                    imageHolder.btnFollow.setText(R.string.following);
-                } else {
-                    imageHolder.btnFollow.setBackgroundResource(R.drawable.button_effect_invert);
-                    imageHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-                    imageHolder.btnFollow.setText(R.string.follow);
-                }
-
-                imageHolder.btnFollow.setText(feeds.followingStatus==1?"Following":"Follow");
-                imageHolder.tvUserName.setText(feeds.userName);
-                imageHolder.tvPostTime.setText(feeds.crd);
-                imageHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
-
-
-                imageHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
-                imageHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                imageHolder.likeIcon.setChecked(feeds.isLike==1);*/
-                //imageHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
-/*
-
-                if(!TextUtils.isEmpty(feeds.caption)){
-                    imageHolder.tv_text.setVisibility(View.VISIBLE);
-                    imageHolder.tv_text.setText(feeds.caption);
-                }else imageHolder.tv_text.setVisibility(View.GONE);
-*/
-
-                imageHolder.weakRefAdapter = new WeakReference<>(new ViewPagerAdapter(mContext, feeds.feed, new ViewPagerAdapter.Listner() {
-                    @Override
-                    public void onSingleTap() {
-                        int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
-                        if (feeds.feedType.equalsIgnoreCase("image")) {
-                            listener.onFeedClick(feeds, pos, imageHolder.rl_imageView);
-
-                        } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
+                                } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
                                 mContext.startActivity(new Intent(Intent.ACTION_VIEW)
                                         .setDataAndType(Uri.parse(feeds.feed.get(pos)), "video/mp4")
                                         .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
                             }*/
-                    }
+                            }
 
-                    @Override
-                    public void onDoubleTap() {
-                        int pos = imageHolder.getAdapterPosition();
-                        Feeds feed = feedItems.get(pos);
-                        if(feed.isLike==0){
-                            feed.isLike = 1;
-                            feed.likeCount = ++feed.likeCount;
-                            apiForLikes(feeds);
-                        }
-                        notifyItemChanged(pos);
-                    }
+                            @Override
+                            public void onDoubleTap() {
+                                int pos = imageHolder.getAdapterPosition();
+                                Feeds feed = feedItems.get(pos);
+                                if(feed.isLike==0){
+                                    feed.isLike = 1;
+                                    feed.likeCount = ++feed.likeCount;
+                                    apiForLikes(feeds);
+                                }
+                                notifyItemChanged(pos);
+                            }
 
-                    @Override
-                    public void onLongPress() {
+                            @Override
+                            public void onLongPress() {
 
-                    }
-                }));
+                            }
+                        }));
 
                 imageHolder.weakRefViewPager.get().setAdapter(imageHolder.weakRefAdapter.get());
 
@@ -327,31 +259,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case "video":
 
                 final FeedVideoHolder videoHolder = ((FeedVideoHolder) holder);
-                /*if (!TextUtils.isEmpty(feeds.profileImage)) {
-                    Picasso.with(videoHolder.ivProfile.getContext())
-                            .load(feeds.profileImage)
-                            .fit()
-                            .into(videoHolder.ivProfile);
-                }else  Picasso.with(mContext)
-                        .load(R.drawable.defoult_user_img)
-                        .into(videoHolder.ivProfile);
-
-                if (feeds.followingStatus == 1) {
-                    videoHolder.btnFollow.setBackgroundResource(R.drawable.btn_bg_blue_broder);
-                    videoHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-                    videoHolder.btnFollow.setText(R.string.following);
-                } else {
-                    videoHolder.btnFollow.setBackgroundResource(R.drawable.button_effect_invert);
-                    videoHolder.btnFollow.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-                    videoHolder.btnFollow.setText(R.string.follow);
-                }
-                videoHolder.tvUserName.setText(feeds.userName);
-                videoHolder.tvPostTime.setText(feeds.crd);
-                videoHolder.tvUserLocation.setText(TextUtils.isEmpty(feeds.location)?"N/A":feeds.location);
-                videoHolder.tv_like_count.setText(String.valueOf(feeds.likeCount));
-                videoHolder.tv_comments_count.setText(String.valueOf(feeds.commentCount));
-                videoHolder.likeIcon.setChecked(feeds.isLike==1);*/
-                //videoHolder.btnLike.setImageResource(feeds.isLike==1? R.drawable.active_like_ico : R.drawable.inactive_like_ico);
 
                 if(!TextUtils.isEmpty(feeds.videoThumbnail)){
                     Picasso.with(videoHolder.ivFeedCenter.getContext())
@@ -362,11 +269,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         .load(R.drawable.gallery_placeholder)
                         .into(videoHolder.ivFeedCenter);
 
-               /* if(!TextUtils.isEmpty(feeds.caption)){
-                    videoHolder.tv_text.setVisibility(View.VISIBLE);
-                    videoHolder.tv_text.setText(feeds.caption);
-                }else videoHolder.tv_text.setVisibility(View.GONE);
-*/
                 break;
         }
         // }
@@ -702,50 +604,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             dots[currentPage].setTextColor(Color.parseColor("#212121"));
     }
 
-/*
-    private void shareDialog(final Feeds feed, final int innerPosition) {
-
-        new com.app.mualab.share.ShareDialog(mContext, new com.app.mualab.share.ShareDialog.Listner() {
-            @Override
-            public void onClick(String string) {
-
-                if (string.equalsIgnoreCase("facebook"))
-
-                    if(feed.isShare.contains("facebook")){
-                        new DataShare().shareToFacebook(mContext, innerPosition, feed);
-                    }else {
-                        Toasty.error(mContext, "This post is not shareable.").show();
-                    }
-
-                else if (string.equalsIgnoreCase("twitter")) {
-
-                    if(feed.isShare.contains("twitter")){
-                        if (feed.feedType.equalsIgnoreCase("text")) {
-                            new DataShare(mContext, feed.caption).ShareText(feed);
-                        } else if (feed.feedType.equalsIgnoreCase("image")) {
-                            new DataShare(mContext, feed.caption).ShareAndLoadImage(feed.feed.get(innerPosition));
-                        } else if (feed.feedType.equalsIgnoreCase("video")) {
-
-                            new DataShare(mContext, feed.caption).shareVideoToTwitter(mContext,feed.feed.get(0));
-                            // new DataShare(mContext, feed.caption).ShareAndLoadImage(feed.videoThumbnail);
-                        }
-                    }else {
-                        Toasty.error(mContext, "This post is not shareable.").show();
-                    }
-
-                } else if (string.equalsIgnoreCase("mualab")) {
-                    Toast.makeText(mContext, mContext.getString(R.string.under_development), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onDismis(Dialog dialog) {
-                dialog.dismiss();
-            }
-        }).show();
-    }
-*/
-
     private void apiForLikes(final Feeds feed) {
         Map<String, String> map = new HashMap<>();
         map.putAll(Mualab.feedBasicInfo);
@@ -764,8 +622,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             public void ErrorListener(VolleyError error) {
 
             }
-        })
-                .setParam(map)).execute("like"+feed._id);
+        }).setParam(map)).execute("like"+feed._id);
 
     }
 
@@ -827,6 +684,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ll_Dot =  itemView.findViewById(R.id.ll_Dot);
             rl_imageView = itemView.findViewById(R.id.rl_imageView);
             weakRefViewPager = new WeakReference<>((ViewPager) itemView.findViewById(R.id.viewpager));
+
         }
     }
 
@@ -895,7 +753,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return 0;
         }
     }
-
 
     private void followUnfollow(final Feeds feeds, final int position){
 

@@ -14,19 +14,16 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.mualab.org.user.BuildConfig;
-import com.mualab.org.user.activity.people_tag.models.TaggedPhoto;
+import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.Location;
 import com.mualab.org.user.data.model.User;
-import com.mualab.org.user.data.local.prefs.Session;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dharmraj on 21/12/17.
+ * Created by mindiii on 21/12/17.
  **/
 
 public class Mualab extends Application {
@@ -46,7 +43,7 @@ public class Mualab extends Application {
 
     //service tag
     private SharedPreferences mSharedPreferences;
-    private static final String SHARED_PREF_NAME = "insta_tag_preferences";
+    private static final String SHARED_PREF_NAME = "koobi_tag_preferences";
 
     public static Mualab getInstance() {
         if (mInstance.mSharedPreferences == null) {
@@ -143,7 +140,7 @@ public class Mualab extends Application {
     }
 
 
-    public ArrayList<TaggedPhoto> getTaggedPhotos() {
+/*    public ArrayList<TaggedPhoto> getTaggedPhotos() {
         String json = getString(Keys.TAGGED_PHOTOS.getKeyName());
         ArrayList<TaggedPhoto> taggedPhotoArrayList;
         if (!json.equals("")) {
@@ -158,6 +155,12 @@ public class Mualab extends Application {
 
     public void setTaggedPhotos(ArrayList<TaggedPhoto> taggedPhotoArrayList) {
         putString(Keys.TAGGED_PHOTOS.getKeyName(), toJson(taggedPhotoArrayList));
+    }*/
+
+    public void clear() {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.clear();
+        editor.apply();
     }
 
     private enum Keys {

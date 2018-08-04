@@ -21,8 +21,9 @@ import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
+import com.mualab.org.user.activity.gellery.Gallery2Activity;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
-import com.mualab.org.user.activity.my_profile.activity.MyProfileActivity;
+import com.mualab.org.user.activity.my_profile.activity.UserProfileActivity;
 import com.mualab.org.user.activity.notification.fragment.NotificationFragment;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.User;
@@ -76,7 +77,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
         Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);
         Mualab.feedBasicInfo.put("age", "25");
-        Mualab.feedBasicInfo.put("gender", "Male");
+        Mualab.feedBasicInfo.put("gender", "male");
         Mualab.feedBasicInfo.put("city", "indore");
         Mualab.feedBasicInfo.put("state", "MP");
         Mualab.feedBasicInfo.put("country", "India");
@@ -123,7 +124,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderUser.setVisibility(View.VISIBLE);
         User user = Mualab.getInstance().getSessionManager().getUser();
 
-        if (!user.profileImage.isEmpty() && !user.profileImage.equals("")){
+        if (!user.profileImage.isEmpty()){
             Picasso.with(MainActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(ivHeaderUser);
         }
@@ -198,7 +199,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ivUserProfile :
-                startActivity(new Intent(MainActivity.this, MyProfileActivity.class));
+                User user = Mualab.getInstance ().getSessionManager().getUser();
+                Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+                intent.putExtra("userId",String.valueOf(user.id));
+                startActivity(intent);
                 break;
 
             case R.id.ibtnLeaderBoard :
@@ -232,18 +236,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ibtnAddFeed :
-                if (clickedId!=6) {
-                   // setInactiveTab();
-                    clickedId = 6;
-                 //   ibtnAddFeed.setImageResource(R.drawable.active_add_ico);
+                // if (clickedId!=6) {
+                // setInactiveTab();
+                //    clickedId = 6;
+                //   ibtnAddFeed.setImageResource(R.drawable.active_add_ico);
                    /* tvHeaderTitle.setText(R.string.title_explore);
                     ivHeaderUser.setVisibility(View.VISIBLE);
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);*/
-                    startActivity(new Intent(MainActivity.this, GalleryActivity.class));
+                startActivity(new Intent(MainActivity.this, Gallery2Activity.class));
 
-                }
+                //    }
 
                 break;
 

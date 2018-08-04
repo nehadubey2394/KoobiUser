@@ -486,7 +486,9 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
             tvPayType.setText("Cash");
         }
 
-        tvTotalPrice.setText("£"+bookingInfo.totalPrice);
+        double price = Double.parseDouble(bookingInfo.totalPrice);
+
+        tvTotalPrice.setText("£"+price);
 
         if (!bookingInfo.transjectionId.equals(""))
             tvTransectionId.setText(bookingInfo.transjectionId);

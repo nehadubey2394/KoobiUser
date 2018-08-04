@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
+    <!-- <ImageView
+         android:id="@+id/post_image"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:transitionName="image"
+         android:scaleType="centerCrop"
+         tools:ignore="UnusedAttribute" />-->
+
+    <com.mualab.org.user.activity.people_tag.instatag.InstaTag
         android:id="@+id/post_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:canWeAddTags="false"
         android:transitionName="image"
-        android:scaleType="centerCrop"
-        tools:ignore="UnusedAttribute" />
+        tools:ignore="UnusedAttribute"
+        app:carrotBottomColor="@color/dark_grey"
+        app:carrotLeftColor="@color/dark_grey"
+        app:carrotRightColor="@color/dark_grey"
+        app:carrotTopColor="@color/dark_grey"
+        app:hideAnimation="@anim/bounce_up"
+        app:showAllCarrots="false"
+        app:showAnimation="@anim/bounce_down"
+        app:instaTextColor="@android:color/white" />
 
-</LinearLayout>
+
+</RelativeLayout>

@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,12 +14,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -32,7 +31,6 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
@@ -43,6 +41,8 @@ import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
 import com.mualab.org.user.activity.my_profile.adapter.NavigationMenuAdapter;
 import com.mualab.org.user.activity.my_profile.model.NavigationItem;
+import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
+import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.User;
@@ -73,28 +73,31 @@ import views.refreshview.CircleHeaderView;
 import views.refreshview.OnRefreshListener;
 import views.refreshview.RjRefreshLayout;
 
-public class MyProfileActivity extends AppCompatActivity implements View.OnClickListener,ArtistFeedAdapter.Listener{
+public class UserProfileActivity extends AppCompatActivity implements View.OnClickListener,ArtistFeedAdapter.Listener{
     private DrawerLayout drawer;
     private String TAG = this.getClass().getName();;
     private User user;
-    private TextView tvImages,tvVideos,tvFeeds,tv_msg,tv_no_data_msg,tv_dot1,tv_dot2;
+    private TextView tvImages,tvVideos,tvFeeds,tv_msg,tv_no_data_msg,tv_dot1,tv_dot2, tv_profile_followers;
     private LinearLayout ll_progress;
     private RecyclerView rvFeed;
     private RjRefreshLayout mRefreshLayout;
     private RecyclerViewScrollListener endlesScrollListener;
     private int CURRENT_FEED_STATE = 0,lastFeedTypeId;
-    private String feedType = "";
+    private String feedType = "",userId;
     private ArtistFeedAdapter feedAdapter;
     private List<Feeds> feeds;
     private boolean isPulltoRefrash = false;
     private  long mLastClickTime = 0;
     private UserProfileData profileData = null;
     private List<NavigationItem> navigationItems;
+    private AppCompatButton btnFollow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
+        Intent i = getIntent();
+        userId = i.getStringExtra("userId");
         init();
     }
 
@@ -120,10 +123,17 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         ImageView ivUserProfile = findViewById(R.id.ivUserProfile);
         ImageView ivDrawer = findViewById(R.id.btnNevMenu);
         ivUserProfile.setVisibility(View.GONE);
-        ivDrawer.setVisibility(View.VISIBLE);
 
+        btnFollow = findViewById(R.id.btnFollow);
         //   final AppBarLayout mainView = findViewById(R.id.appbar);
-        ivDrawer.setVisibility(View.VISIBLE);
+        if (userId.equals(String.valueOf(user.id))) {
+            ivDrawer.setVisibility(View.VISIBLE);
+            btnFollow.setVisibility(View.GONE);
+        }
+        else {
+            ivDrawer.setVisibility(View.GONE);
+            btnFollow.setVisibility(View.VISIBLE);
+        }
 
         NavigationView navigationView =  findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
@@ -133,17 +143,13 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);;
         drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
         navigationView.setItemIconTintList(null);
-        //  navigationView.setNavigationItemSelectedListener(this);
-        //  NavigationMenuView navMenuView = (NavigationMenuView) navigationView.getChildAt(0);
-        //  navMenuView.addItemDecoration(new DividerItemDecoration(MyProfileActivity.this,
-        //         DividerItemDecoration.VERTICAL));
 
         addItems();
 
         RecyclerView rycslidermenu = findViewById(R.id.rycslidermenu);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(MyProfileActivity.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(UserProfileActivity.this);
         rycslidermenu.setLayoutManager(layoutManager);
-        NavigationMenuAdapter listAdapter = new NavigationMenuAdapter(MyProfileActivity.this, navigationItems,drawer);
+        NavigationMenuAdapter listAdapter = new NavigationMenuAdapter(UserProfileActivity.this, navigationItems,drawer);
 
         rycslidermenu.setAdapter(listAdapter);
 
@@ -163,12 +169,12 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         CircleImageView user_image = findViewById(R.id.user_image);
         User user = Mualab.getInstance().getSessionManager().getUser();
 
-        if (!user.profileImage.isEmpty() && !user.profileImage.equals("")) {
-            Picasso.with(MyProfileActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
+        if (!user.profileImage.isEmpty()) {
+            Picasso.with(UserProfileActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(user_image);
         }
 
-        user_name.setText(user.firstName+" "+user.lastName);
+        user_name.setText(user.userName);
 
 
         rvFeed = findViewById(R.id.rvFeed);
@@ -181,12 +187,12 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         tv_no_data_msg = findViewById(R.id.tv_no_data_msg);
         ll_progress = findViewById(R.id.ll_progress);
 
-        WrapContentLinearLayoutManager lm = new WrapContentLinearLayoutManager(MyProfileActivity.this, LinearLayoutManager.VERTICAL, false);
+        WrapContentLinearLayoutManager lm = new WrapContentLinearLayoutManager(UserProfileActivity.this, LinearLayoutManager.VERTICAL, false);
         rvFeed.setItemAnimator(null);
         rvFeed.setLayoutManager(lm);
         rvFeed.setHasFixedSize(true);
 
-        feedAdapter = new ArtistFeedAdapter(MyProfileActivity.this, feeds,  this);
+        feedAdapter = new ArtistFeedAdapter(UserProfileActivity.this, feeds,  this);
         endlesScrollListener = new RecyclerViewScrollListener(lm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -206,7 +212,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         rvFeed.addOnScrollListener(endlesScrollListener);
 
         mRefreshLayout =  findViewById(R.id.mSwipeRefreshLayout);
-        final CircleHeaderView header = new CircleHeaderView(MyProfileActivity.this);
+        final CircleHeaderView header = new CircleHeaderView(UserProfileActivity.this);
         mRefreshLayout.addHeader(header);
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -249,6 +255,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         ivUserProfile.setOnClickListener(this);
         ivChat.setOnClickListener(this);
         ivDrawer.setOnClickListener(this);
+        btnFollow.setOnClickListener(this);
 
         apiForGetProfile();
     }
@@ -256,7 +263,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
     private void apiForGetProfile(){
 
         if (!ConnectionDetector.isConnected()) {
-            new NoConnectionDialog(MyProfileActivity.this, new NoConnectionDialog.Listner() {
+            new NoConnectionDialog(UserProfileActivity.this, new NoConnectionDialog.Listner() {
                 @Override
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
@@ -268,11 +275,11 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         }
 
         Map<String, String> params = new HashMap<>();
-        params.put("userId", String.valueOf(user.id));
+        params.put("userId",userId);
         params.put("viewBy", "");
         params.put("loginUserId", String.valueOf(user.id));
 
-        HttpTask task = new HttpTask(new HttpTask.Builder(MyProfileActivity.this, "getProfile", new HttpResponceListner.Listener() {
+        HttpTask task = new HttpTask(new HttpTask.Builder(UserProfileActivity.this, "getProfile", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
@@ -282,7 +289,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
-                    Progress.hide(MyProfileActivity.this);
+                    Progress.hide(UserProfileActivity.this);
                     if (status.equalsIgnoreCase("success")) {
                         JSONArray userDetail = js.getJSONArray("userDetail");
                         JSONObject object = userDetail.getJSONObject(0);
@@ -295,12 +302,12 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                         // updateViewType(profileData,R.id.ly_videos);
 
                     }else {
-                        MyToast.getInstance(MyProfileActivity.this).showDasuAlert(message);
+                        MyToast.getInstance(UserProfileActivity.this).showDasuAlert(message);
                     }
                     updateViewType(R.id.ly_feeds);
 
                 } catch (Exception e) {
-                    Progress.hide(MyProfileActivity.this);
+                    Progress.hide(UserProfileActivity.this);
                     e.printStackTrace();
                 }
             }
@@ -329,16 +336,24 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void setProfileData(UserProfileData profileData){
+
         TextView  tv_ProfileName =  findViewById(R.id.tv_ProfileName);
         TextView   tv_username =  findViewById(R.id.tv_username);
         TextView   tvRatingCount =  findViewById(R.id.tvRatingCount);
         TextView   tv_distance =  findViewById(R.id.tv_distance);
         TextView   tv_profile_post =  findViewById(R.id.tv_profile_post);
         TextView  tv_profile_following =  findViewById(R.id.tv_profile_following);
-        TextView  tv_profile_followers =  findViewById(R.id.tv_profile_followers);
+        tv_profile_followers =  findViewById(R.id.tv_profile_followers);
         CircleImageView iv_Profile =  findViewById(R.id.iv_Profile);
         ImageView ivActive =  findViewById(R.id.ivActive);
         RatingBar rating =  findViewById(R.id.rating);
+
+        if (profileData.followerStatus.equals("1")) {
+            btnFollow.setText("Unfollow");
+        }
+        else {
+            btnFollow.setText("Follow");
+        }
 
         if (profileData!=null){
             tv_ProfileName.setText(profileData.firstName+" "+profileData.lastName);
@@ -351,9 +366,10 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
             float ratingCount = Float.parseFloat(profileData.ratingCount);
             rating.setRating(ratingCount);
 
-            Picasso.with(MyProfileActivity.this).load(profileData.profileImage).placeholder(R.drawable.defoult_user_img).
-                    fit().into(iv_Profile);
-
+            if (!profileData.profileImage.isEmpty()){
+                Picasso.with(UserProfileActivity.this).load(profileData.profileImage).
+                        placeholder(R.drawable.defoult_user_img).fit().into(iv_Profile);
+            }
         }
 
     }
@@ -411,7 +427,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         tv_no_data_msg.setVisibility(View.GONE);
 
         if (!ConnectionDetector.isConnected()) {
-            new NoConnectionDialog(MyProfileActivity.this, new NoConnectionDialog.Listner() {
+            new NoConnectionDialog(UserProfileActivity.this, new NoConnectionDialog.Listner() {
                 @Override
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
@@ -430,12 +446,12 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         params.put("page", String.valueOf(page));
         params.put("limit", String.valueOf(feedLimit));
         params.put("type", "");
-        params.put("userId", String.valueOf(user.id));
+        params.put("userId", userId);
         params.put("loginUserId", String.valueOf(user.id));
         params.put("viewBy", "");
         // params.put("appType", "user");
         Mualab.getInstance().cancelPendingRequests(this.getClass().getName());
-        new HttpTask(new HttpTask.Builder(MyProfileActivity.this, "profileFeed", new HttpResponceListner.Listener() {
+        new HttpTask(new HttpTask.Builder(UserProfileActivity.this, "profileFeed", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 ll_progress.setVisibility(View.GONE);
@@ -507,7 +523,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                         try {
                             JSONObject jsonObject = array.getJSONObject(i);
                             Feeds feed = gson.fromJson(String.valueOf(jsonObject), Feeds.class);
-
+                            //  feed.taggedImgMap = new HashMap<>();
                             /*tmp get data and set into actual json format*/
                             if (feed.userInfo != null && feed.userInfo.size() > 0) {
                                 Feeds.User user = feed.userInfo.get(0);
@@ -531,6 +547,44 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
                                 if (feed.feedType.equals("video"))
                                     feed.videoThumbnail = feed.feedData.get(0).videoThumb;
+                            }
+
+                            JSONArray jsonArray = jsonObject.getJSONArray("peopleTag");
+                            if (jsonArray.length() != 0){
+
+                                for (int j = 0; j < jsonArray.length(); j++) {
+
+                                    feed.peopleTagList = new ArrayList<>();
+                                    JSONArray arrayJSONArray = jsonArray.getJSONArray(j);
+
+                                    for (int k = 0; k < arrayJSONArray.length(); k++) {
+                                        JSONObject object = arrayJSONArray.getJSONObject(k);
+
+                                        HashMap<String,TagDetail> tagDetails = new HashMap<>();
+
+                                        String unique_tag_id = object.getString("unique_tag_id");
+                                        double x_axis = Double.parseDouble(object.getString("x_axis"));
+                                        double y_axis = Double.parseDouble(object.getString("y_axis"));
+
+                                        JSONObject tagOjb = object.getJSONObject("tagDetails");
+                                        TagDetail tag ;
+                                        if (tagOjb.has("tabType")){
+                                            tag = gson.fromJson(String.valueOf(tagOjb), TagDetail.class);
+                                        }else {
+                                            JSONObject details = tagOjb.getJSONObject(unique_tag_id);
+                                            tag = gson.fromJson(String.valueOf(details), TagDetail.class);
+                                        }
+                                        tagDetails.put(tag.title, tag);
+                                        TagToBeTagged tagged = new TagToBeTagged();
+                                        tagged.setUnique_tag_id(unique_tag_id);
+                                        tagged.setX_co_ord(x_axis);
+                                        tagged.setY_co_ord(y_axis);
+                                        tagged.setTagDetails(tagDetails);
+
+                                        feed.peopleTagList.add(tagged);
+                                    }
+                                    feed.taggedImgMap.put(j,feed.peopleTagList);
+                                }
                             }
 
                             feeds.add(feed);
@@ -587,7 +641,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onCommentBtnClick(Feeds feed, int pos) {
-        Intent intent = new Intent(MyProfileActivity.this, CommentsActivity.class);
+        Intent intent = new Intent(UserProfileActivity.this, CommentsActivity.class);
         intent.putExtra("feed_id", feed._id);
         intent.putExtra("feedPosition", pos);
         intent.putExtra("feed", feed);
@@ -620,7 +674,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
             if (requestCode == Constant.ACTIVITY_COMMENT) {
                 if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
                     int pos = data.getIntExtra("feedPosition", 0);
-                    Feeds feed = (Feeds) data.getSerializableExtra("feed");
+                    Feeds feed =  data.getParcelableExtra("feed");
                     feeds.get(pos).commentCount = feed.commentCount;
                     feedAdapter.notifyItemChanged(pos);
                 }
@@ -664,17 +718,17 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         view.findViewById(R.id.tvUnfollow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyToast.getInstance(MyProfileActivity.this).showSmallCustomToast(getString(R.string.under_development));
+                MyToast.getInstance(UserProfileActivity.this).showSmallCustomToast(getString(R.string.under_development));
             }
         });
 
-        Picasso.with(MyProfileActivity.this).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+        Picasso.with(UserProfileActivity.this).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
 
         if(TextUtils.isEmpty(feeds.profileImage))
-            Picasso.with(MyProfileActivity.this).load(R.drawable.defoult_user_img).noPlaceholder().into(profileImage);
-        else Picasso.with(MyProfileActivity.this).load(feeds.profileImage).noPlaceholder().into(profileImage);
+            Picasso.with(UserProfileActivity.this).load(R.drawable.defoult_user_img).noPlaceholder().into(profileImage);
+        else Picasso.with(UserProfileActivity.this).load(feeds.profileImage).noPlaceholder().into(profileImage);
 
-        builder = new Dialog(MyProfileActivity.this);
+        builder = new Dialog(UserProfileActivity.this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         //noinspection ConstantConditions
         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -689,7 +743,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 800){
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
@@ -705,6 +759,24 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                 onBackPressed();
                 break;
 
+            case R.id.btnFollow:
+                int followersCount = Integer.parseInt(profileData.followersCount);
+
+                if (profileData.followerStatus.equals("1")) {
+                    profileData.followerStatus = "0";
+                    btnFollow.setText("Follow");
+                    followersCount--;
+                }
+                else {
+                    profileData.followerStatus = "1";
+                    btnFollow.setText("Unfollow");
+                    followersCount++;
+                }
+                profileData.followersCount = String.valueOf(followersCount);
+                tv_profile_followers.setText(""+followersCount);
+                apiForGetFollowUnFollow();
+                break;
+
             case R.id.btnNevMenu :
                 if (drawer.isDrawerOpen(GravityCompat.END)) {
                     drawer.closeDrawer(GravityCompat.END);
@@ -715,22 +787,22 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                 break;
 
             case R.id.llAboutUs:
-                MyToast.getInstance(MyProfileActivity.this).showDasuAlert("Under development");
+                MyToast.getInstance(UserProfileActivity.this).showDasuAlert("Under development");
                 break;
 
             case R.id.ivChat:
-                MyToast.getInstance(MyProfileActivity.this).showDasuAlert("Under development");
+                MyToast.getInstance(UserProfileActivity.this).showDasuAlert("Under development");
                 break;
 
             case R.id.llFollowing:
-               /* Intent intent1 = new Intent(MyProfileActivity.this,FollowersActivity.class);
+               /* Intent intent1 = new Intent(UserProfileActivity.this,FollowersActivity.class);
                 intent1.putExtra("isFollowers",false);
                 intent1.putExtra("artistId",user.id);
                 startActivityForResult(intent1,10);*/
                 Bundle bundle1 = new Bundle();
                 bundle1.putBoolean("isFollowers",false);
                 bundle1.putString("artistId", String.valueOf(user.id));
-                Intent intent1 = new Intent(MyProfileActivity.this,FollowersActivity.class);
+                Intent intent1 = new Intent(UserProfileActivity.this,FollowersActivity.class);
                 intent1.putExtras(bundle1);
                 startActivityForResult(intent1,10);
                 break;
@@ -739,7 +811,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                 Bundle bundle2 = new Bundle();
                 bundle2.putBoolean("isFollowers",true);
                 bundle2.putString("artistId", String.valueOf(user.id));
-                Intent intent2 = new Intent(MyProfileActivity.this,FollowersActivity.class);
+                Intent intent2 = new Intent(UserProfileActivity.this,FollowersActivity.class);
                 intent2.putExtras(bundle2);
                 startActivityForResult(intent2,10);
                 //startActivity(new Intent(mContext,FollowersActivity.class));
@@ -750,6 +822,70 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
                 break;
 
         }
+    }
+
+    private void apiForGetFollowUnFollow(){
+        Session session = Mualab.getInstance().getSessionManager();
+        final User user = session.getUser();
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(UserProfileActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForGetFollowUnFollow();
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", String.valueOf(user.id));
+        //  params.put("followerId", String.valueOf(user.id));
+        params.put("followerId", userId);
+        // params.put("loginUserId", String.valueOf(user.id));
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(UserProfileActivity.this, "followFollowing", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+
+                    }else {
+                        MyToast.getInstance(UserProfileActivity.this).showDasuAlert(message);
+                    }
+                    //  showToast(message);
+                } catch (Exception e) {
+                    Progress.hide(UserProfileActivity.this);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                        // MyToast.getInstance(BookingActivity.this).showDasuAlert(helper.error_Messages(error));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(false)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
     }
 
     private void addItems(){
@@ -802,8 +938,8 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void showLargeImage(Feeds feeds, int index){
-        View dialogView = View.inflate(MyProfileActivity.this, R.layout.dialog_large_image_view, null);
-        final Dialog dialog = new Dialog(MyProfileActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        View dialogView = View.inflate(UserProfileActivity.this, R.layout.dialog_large_image_view, null);
+        final Dialog dialog = new Dialog(UserProfileActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
@@ -814,7 +950,7 @@ public class MyProfileActivity extends AppCompatActivity implements View.OnClick
         TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
         tvCertiTitle.setText("Images");
 
-        Picasso.with(MyProfileActivity.this).load(feeds.feed.get(index))
+        Picasso.with(UserProfileActivity.this).load(feeds.feed.get(index))
                 .priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
 
         /*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).

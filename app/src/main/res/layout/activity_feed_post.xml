@@ -163,6 +163,7 @@
                     android:id="@+id/ll_tagPepole"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
+                    android:weightSum="1"
                     android:background="@drawable/bg_rounded_gray_broder_fill_gray"
                     android:orientation="horizontal">
 
@@ -175,14 +176,28 @@
                         android:src="@drawable/ic_tag" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/TextView"
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
                         android:gravity="center|left"
+                        android:layout_weight="0.9"
                         android:text="@string/tag_people"
                         android:textColor="@color/dark_gray"/>
+
+                    <TextView
+                        android:id="@+id/tvTagCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:padding="5dp"
+                        android:textColor="@color/text_color"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:layout_gravity="center|right"
+                        android:layout_marginRight="4dp"
+                        />
+
                 </LinearLayout>
 
                 <LinearLayout

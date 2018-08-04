@@ -224,7 +224,6 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         }
     }
 
-
     private void nextScreen(){
         progressView3.setBackgroundColor(ContextCompat.getColor(this,R.color.white));
         progressView4.setBackgroundColor(ContextCompat.getColor(this,R.color.white));

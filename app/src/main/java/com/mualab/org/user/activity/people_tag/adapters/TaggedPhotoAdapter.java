@@ -29,7 +29,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.interfaces.TaggedPhotoClickListener;
@@ -44,13 +43,9 @@ public class TaggedPhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final Context mContext;
     private final TaggedPhotoClickListener mTaggedPhotoClickListener;
     private final ArrayList<String> mTaggedPhotoTagsVisibilityStatusHelper;
-    private RequestOptions requestOptions =
-            new RequestOptions()
-                    .placeholder(0)
-                    .fallback(0)
-                    .centerCrop()
-                    .skipMemoryCache(false)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL);
+    /*private RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(0).fallback(0).centerCrop().skipMemoryCache(false)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL);*/
 
 
     public TaggedPhotoAdapter(ArrayList<Object> mObjectArrayList,
@@ -121,14 +116,14 @@ public class TaggedPhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private void configureTaggedPhotoViewHolder(TaggedPhotoViewHolder taggedPhotoViewHolder,
                                                 int position) {
         TaggedPhoto taggedPhoto = (TaggedPhoto) mObjectArrayList.get(position);
-        Glide
-                .with(mContext)
+        Glide.with(mContext)
                 .load(Uri.parse(taggedPhoto.getImageUri()))
-                .apply(requestOptions)
+                .placeholder(0).fallback(0).centerCrop()
+                .skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(taggedPhotoViewHolder.instaTagTaggedPhoto.getTagImageView());
 
         taggedPhotoViewHolder.instaTagTaggedPhoto.
-                addTagViewFromTagsToBeTagged(taggedPhoto.getTagToBeTaggeds());
+                addTagViewFromTagsToBeTagged(taggedPhoto.getTagToBeTaggeds(),false);
         if (mTaggedPhotoTagsVisibilityStatusHelper.contains(((TaggedPhoto)
                 mObjectArrayList.get(taggedPhotoViewHolder.getAdapterPosition())).getId())) {
             taggedPhotoViewHolder.instaTagTaggedPhoto.showTags();

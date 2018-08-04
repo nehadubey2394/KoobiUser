@@ -51,10 +51,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.explore.model.ExSearchTag;
+import com.mualab.org.user.activity.people_tag.listner.RemoveTagListener;
+import com.mualab.org.user.activity.people_tag.models.TagDetail;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class InstaTag extends RelativeLayout {
+public class InstaTag extends RelativeLayout   {
 
     private int mPosX;
     private int mPosY;
@@ -77,8 +82,10 @@ public class InstaTag extends RelativeLayout {
     private Drawable mCarrotBottomDrawable;
 
     private boolean tagsAreAdded;
+    private boolean isAddingTag = true;
     private boolean canWeAddTags;
     private boolean showAllCarrots;
+    private boolean isShowTag;
     private boolean mIsRootIsInTouch = true;
 
     private Animation mShowAnimation;
@@ -90,8 +97,23 @@ public class InstaTag extends RelativeLayout {
 
     private ViewGroup mRoot;
     private ImageView mLikeImage;
+
     private TagImageView mTagImageView;
+
     private final ArrayList<View> mTagList = new ArrayList<>();
+    private  HashMap<String,TagDetail> tagMap  = new HashMap<>();
+
+
+    private Listener listener;
+
+    public interface Listener{
+        void onTagCliked(TagDetail tagDetail);
+        void onTagRemoved(TagDetail tagDetail);
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
 
     private final Runnable mSetRootHeightWidth = new Runnable() {
         @Override
@@ -220,7 +242,9 @@ public class InstaTag extends RelativeLayout {
 
         LayoutInflater inflater =
                 (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.tag_root, this);
+        if (inflater != null) {
+            inflater.inflate(R.layout.tag_root, this);
+        }
 
         mRoot = findViewById(R.id.tag_root);
         mTagImageView = findViewById(R.id.tag_image_view);
@@ -528,8 +552,14 @@ public class InstaTag extends RelativeLayout {
         return (mRootHeight * y.intValue()) / 100;
     }
 
-    public void addTag(int x, int y, String tagText) {
+    public synchronized void addTag(int x, int y, String tagText, final TagDetail tag/*,HashMap<String,TagDetail> tagDetails*/ ) {
         if (tagNotTaggedYet(tagText)) {
+
+            //mTag = tag;
+            if(tagMap!=null){
+                this.tagMap.put(tag.title, tag);
+            }
+
             LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
             final View tagView = layoutInflater.
@@ -576,15 +606,11 @@ public class InstaTag extends RelativeLayout {
             tagTextView.setText(tagText);
             setColorForTag(tagView);
 
-            LayoutParams layoutParams =
-                    new LayoutParams(
-                            LayoutParams.WRAP_CONTENT,
-                            LayoutParams.WRAP_CONTENT);
-            layoutParams.
-                    setMargins(x - tagTextView.length() * 8,
-                            y - tagTextView.length() * 2,
-                            0,
-                            0);
+            LayoutParams layoutParams = new LayoutParams(
+                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(x - tagTextView.length() * 8,
+                    y - tagTextView.length() * 2, 0,0);
             tagView.setLayoutParams(layoutParams);
 
             mTagList.add(tagView);
@@ -593,12 +619,13 @@ public class InstaTag extends RelativeLayout {
             removeTagImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(listener!=null) listener.onTagRemoved(tag);
                     mTagList.remove(tagView);
                     mRoot.removeView(tagView);
                 }
             });
 
-            tagView.setOnTouchListener(new OnTouchListener() {
+          /*  tagView.setOnTouchListener(new OnTouchListener() {
                 public boolean onTouch(final View view, MotionEvent event) {
                     if (canWeAddTags) {
                         mIsRootIsInTouch = false;
@@ -616,7 +643,8 @@ public class InstaTag extends RelativeLayout {
                                 mPosX = X - layoutParams.leftMargin;
                                 mPosY = Y - layoutParams.topMargin;
 
-                                removeTagImageView.setVisibility(View.VISIBLE);
+                                removeTagImageView.setVisibility(View.GONE);
+
                                 break;
                             case MotionEvent.ACTION_UP:
                                 break;
@@ -625,25 +653,37 @@ public class InstaTag extends RelativeLayout {
                             case MotionEvent.ACTION_POINTER_UP:
                                 break;
                             case MotionEvent.ACTION_MOVE:
-                                actionTagMove(tagView, pointerCount, X, Y);
+                                //actionTagMove(tagView, pointerCount, X, Y);
                                 break;
                         }
                         mRoot.invalidate();
                     }
                     return true;
                 }
+            });*/
+
+            tagView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener!=null) listener.onTagCliked(tag);
+                }
             });
-        } else {
-            Toast.makeText(mContext, "This user is already tagged", Toast.LENGTH_SHORT).show();
-        }
+
+            //if(listener!=null) listener.onTagCliked(tag);
+        }/* else {
+            if (isAddingTag){
+                //      Toast.makeText(mContext, "This user is already tagged", Toast.LENGTH_SHORT).show();
+            }
+        }*/
     }
 
-    public void addTagViewFromTagsToBeTagged(ArrayList<TagToBeTagged> tagsToBeTagged) {
+    public void addTagViewFromTagsToBeTagged(ArrayList<TagToBeTagged> tagsToBeTagged,boolean isAddingTag) {
+        this.isAddingTag = isAddingTag;
         if (!tagsAreAdded) {
             for (TagToBeTagged tagToBeTagged : tagsToBeTagged) {
                 addTag(getXWhileAddingTag(tagToBeTagged.getX_co_ord()),
                         getYWhileAddingTag(tagToBeTagged.getY_co_ord()),
-                        tagToBeTagged.getUnique_tag_id());
+                        tagToBeTagged.getUnique_tag_id(), tagToBeTagged.getTagDetails().get(tagToBeTagged.getUnique_tag_id()));
             }
             tagsAreAdded = true;
         }
@@ -662,9 +702,13 @@ public class InstaTag extends RelativeLayout {
                 x = (x / mRootWidth) * 100;
                 double y = view.getY();
                 y = (y / mRootHeight) * 100;
-                tagsToBeTagged.
-                        add(new TagToBeTagged(((TextView) view.
-                                findViewById(R.id.tag_text_view)).getText().toString(), x, y));
+
+                String txt = ((TextView) view.findViewById(R.id.tag_text_view)).getText().toString();
+
+                HashMap<String, TagDetail> map = new HashMap();
+                map.put(txt, tagMap.get(txt));
+
+                tagsToBeTagged.add(new TagToBeTagged(txt, x, y,map ));
             }
         }
         return tagsToBeTagged;
@@ -676,12 +720,17 @@ public class InstaTag extends RelativeLayout {
         }
     }
 
+    public void setTouchListnerDisable() {
+        mRoot.setOnTouchListener(null);
+    }
+
     public void showTags() {
         if (!mTagList.isEmpty()) {
             for (View tagView : mTagList) {
                 tagView.setVisibility(VISIBLE);
                 tagView.startAnimation(mShowAnimation);
             }
+            this.isShowTag = true;
         }
     }
 
@@ -691,7 +740,12 @@ public class InstaTag extends RelativeLayout {
                 tagView.startAnimation(mHideAnimation);
                 tagView.setVisibility(GONE);
             }
+            this.isShowTag = false;
         }
+    }
+
+    public boolean isShowTags() {
+        return isShowTag;
     }
 
     public void removeTags() {
@@ -700,6 +754,18 @@ public class InstaTag extends RelativeLayout {
                 mRoot.removeView(tagView);
             }
             mTagList.clear();
+        }
+    }
+
+    public void removeSingleTags(TagToBeTagged tag) {
+        if (!mTagList.isEmpty()) {
+            for (View tagView : mTagList) {
+                String txt = ((TextView) tagView.findViewById(R.id.tag_text_view)).getText().toString();
+                if (txt.equals(tag.getUnique_tag_id())) {
+                    mRoot.removeView(tagView);
+                    break;
+                }
+            }
         }
     }
 

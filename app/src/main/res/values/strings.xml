@@ -399,7 +399,7 @@
     <string name="cash">Cash</string>
     <string name="payment_details">Payment Details</string>
     <string name="booking_status">Booking Status</string>
-    <string name="transection_id">Transection Id</string>
+    <string name="transection_id">Transaction Id</string>
     <string name="complete_booking">Complete Booking</string>
     <string name="booking">Booking</string>
     <string name="total">Total</string>
