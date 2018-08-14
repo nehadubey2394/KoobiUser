@@ -1,114 +1,130 @@
 package com.mualab.org.user.activity.gellery;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
+import android.view.View;
+import android.widget.TextView;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.camera.CameraActivity;
 import com.mualab.org.user.activity.gellery.fragment.CameraFragmentNew;
 import com.mualab.org.user.activity.gellery.fragment.GalleryFragment;
 import com.mualab.org.user.activity.gellery.fragment.VideoGalleryFragment;
+import com.mualab.org.user.activity.main.MainActivity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class GalleryActivity extends AppCompatActivity {
-
-    private static int lastFragmentIndex;
-    private ViewPager viewPager;
-    private TabLayout tablayout;
-    private FrameLayout vRootView;
+public class GalleryActivity extends AppCompatActivity implements View.OnClickListener{
+    private TextView tvImage,tvVideo,tvCamera;
+    private int clickedView = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
-        viewPager = findViewById(R.id.pager);
-        vRootView = findViewById(R.id.vRootView);
-        tablayout = findViewById(R.id.tablayout);
-        viewPager.setOffscreenPageLimit(3);
-        setupViewPager(viewPager);
+        tvImage = findViewById(R.id.tvImage);
+        tvVideo = findViewById(R.id.tvVideo);
+        tvCamera = findViewById(R.id.tvCamera);
 
+        replaceFragment(GalleryFragment.newInstance(), false, R.id.flGalleryContainer);
 
-        tablayout.setupWithViewPager(viewPager);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                viewPager.getParent().requestDisallowInterceptTouchEvent(true);
-                lastFragmentIndex = position;
-            }
+        tvImage.setOnClickListener(this);
+        tvVideo.setOnClickListener(this);
+        tvCamera.setOnClickListener(this);
+    }
 
-            @Override
-            public void onPageSelected(int position) {
-                viewPager.setCurrentItem(position, false);
-            }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.tvCamera:
+                if (clickedView!=3){
+                    clickedView = 3;
+                   // tvImage.setTextColor(getResources().getColor(R.color.gray));
+                    //tvVideo.setTextColor(getResources().getColor(R.color.gray));
+                   // tvCamera.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    //replaceFragment(CameraFragmentNew.newInstance(), false, R.id.flGalleryContainer);
+                    startActivity(new Intent(GalleryActivity.this, CustomCameraActivity.class));
+                    finish();
+                }
+                break;
+            case R.id.tvVideo:
+                if (clickedView!=2){
+                    clickedView = 2;
+                    tvImage.setTextColor(getResources().getColor(R.color.gray));
+                    tvVideo.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    tvCamera.setTextColor(getResources().getColor(R.color.gray));
+                    replaceFragment(VideoGalleryFragment.newInstance(), false, R.id.flGalleryContainer);
+                }
+                break;
+            case R.id.tvImage:
+                if (clickedView!=1){
+                    clickedView = 1;
+                    tvVideo.setTextColor(getResources().getColor(R.color.gray));
+                    tvCamera.setTextColor(getResources().getColor(R.color.gray));
+                    tvImage.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    replaceFragment(GalleryFragment.newInstance(), false, R.id.flGalleryContainer);
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+                }
+                break;
+        }
+    }
 
-            }
-        });
+    public void addFragment(Fragment fragment, boolean addToBackStack, int containerId) {
+        String backStackName = fragment.getClass().getName();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        boolean fragmentPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
+        if (!fragmentPopped) {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_in,0,0);
+            transaction.add(containerId, fragment, backStackName);
+            if (addToBackStack)
+                transaction.addToBackStack(backStackName);
+            transaction.commit();
+        }
 
-        viewPager.setCurrentItem(lastFragmentIndex);
+    }
+
+    public void replaceFragment(Fragment fragment, boolean addToBackStack, int containerId) {
+        String backStackName = fragment.getClass().getName();
+        FragmentManager fm = getSupportFragmentManager();
+        int i = fm.getBackStackEntryCount();
+        while (i > 0) {
+            fm.popBackStackImmediate();
+            i--;
+        }
+        boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStackName, 0);
+        if (!fragmentPopped) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(containerId, fragment, backStackName).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            if (addToBackStack)
+                transaction.addToBackStack(backStackName);
+            transaction.commit();
+        }
+    }
+
+    /*@Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
+            //  ((GalleryActivity)context).setResult(Activity.RESULT_OK);
+            //finish();
+        }
+    }
+*/
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        viewPager = null;
-        vRootView = null;
-        tablayout = null;
+        Intent in = new Intent(GalleryActivity.this, MainActivity.class);
+        setIntent(in);
     }
-
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(GalleryFragment.newInstance(), "Image");
-        adapter.addFragment(VideoGalleryFragment.newInstance(), "Video");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-       // CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder().build());
-        //adapter.addFragment(cameraFragment, "Camera");
-        adapter.addFragment(CameraFragmentNew.newInstance(), "Camera");
-        viewPager.setAdapter(adapter);
-    }
-
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
-
 }

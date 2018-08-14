@@ -215,12 +215,22 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         liveUserList.clear();
 
         LiveUserInfo me = new LiveUserInfo();
+        if (Mualab.currentUser!=null){
+            me.id = Mualab.currentUser.id;
+            me.userName = "My Story";
+            me.profileImage = Mualab.currentUser.profileImage;
+            me.storyCount = 0;
+            liveUserList.add(me);
+            Progress.hide(mContext);
+
+        }
+       /* LiveUserInfo me = new LiveUserInfo();
         me.id = Mualab.currentUser.id;
         me.userName = "My Story";
         me.profileImage = Mualab.currentUser.profileImage;
         me.storyCount = 0;
         liveUserList.add(me);
-        Progress.hide(mContext);
+        Progress.hide(mContext);*/
     }
 
     @Override
@@ -894,10 +904,9 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                             File imageFile = ImageRotator.getTemporalFile(mContext);
                             Uri photoURI = Uri.fromFile(imageFile);
 
-                            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(
-                                    BitmapFactory.decodeFile(
-                                            ImageVideoUtil.generatePath(photoURI, mContext)), 150, 150);
-
+                            Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(
+                                            ImageVideoUtil.generatePath(photoURI, mContext)),
+                                    150, 150);
 
                             bitmap = ImagePicker.getImageResized(mContext, photoURI);
                             int rotation = ImageRotator.getRotation(mContext, photoURI, true);

@@ -22,13 +22,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
-import com.mualab.org.user.activity.gellery.Gallery2Activity;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.gellery.adapter.VideoGridViewAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
@@ -51,7 +50,7 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
     CollapsingToolbarLayout collapsing_toolbar;
     private List<Media> albumList;
     private Context context;
-    private Gallery2Activity  activity;
+    private GalleryActivity activity;
     //private ImageView rotateImage;
     private AppBarLayout appbar;
     //  private VideoGridViewAdapter videoAdapter;
@@ -60,6 +59,7 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
     private  Bitmap thumbImage = null;
     private ProgressBar progrss;
     private RecyclerView recyclerView;
+    private TextView tvNoDataFound;
 
     public VideoGalleryFragment() {
         // Required empty public constructor
@@ -91,10 +91,12 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
             if (context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            }else {
+                new GetVideoList().execute();
             }
+        }else {
+            new GetVideoList().execute();
         }
-
-        new GetVideoList().execute();
 
         initView(view);
 
@@ -119,6 +121,7 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
         recyclerView = view.findViewById(R.id.recyclerView);
         videoView = view.findViewById(R.id.videoView);
         progrss = view.findViewById(R.id.progrss);
+        tvNoDataFound = view.findViewById(R.id.tvNoDataFound);
         //    mediaController= new MediaController(context);
         //  mediaController.setAnchorView(videoView);
 
@@ -143,8 +146,8 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        if(context instanceof Gallery2Activity)
-            activity = (Gallery2Activity) context;
+       /* if(context instanceof GalleryActivity)
+            activity = (GalleryActivity) context;*/
     }
 
     @Override
@@ -152,11 +155,12 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
         switch (view.getId()) {
 
             case R.id.tvClose:
-                ((Gallery2Activity)context).onBackPressed();
+                ((GalleryActivity)context).onBackPressed();
                 break;
 
             case R.id.tvNext:
                 if (mediaUri!=null){
+                    videoView.stopPlayback();
                     Intent  intent = new Intent(context, FeedPostActivity.class);
                     intent.putExtra("caption", "");
                     intent.putExtra("mediaUri", mediaUri);
@@ -164,10 +168,10 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
                     intent.putExtra("feedType", mediaUri.mediaType);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
 
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     startActivityForResult(intent, Constant.POST_FEED_DATA);
-                    videoView.stopPlayback();
+
                 }
                 break;
         }
@@ -175,7 +179,7 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        // super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
             //  ((GalleryActivity)context).setResult(Activity.RESULT_OK);
@@ -187,6 +191,11 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                new GetVideoList().execute();
+            } else {
+                MyToast.getInstance(context).showSmallMessage("YOUR  PERMISSION DENIED ");
+            }
 
         }
     }
@@ -290,14 +299,54 @@ public class VideoGalleryFragment extends Fragment implements View.OnClickListen
                 //showImage.setUri(media.uri);
                 try {
                     progrss.setVisibility(View.GONE);
+                    tvNoDataFound.setVisibility(View.GONE);
                     // videoView.setMediaController(mediaController);
                     videoView.setVideoURI(media.uri);
                     videoView.requestFocus();
                     videoView.start();
+
+                    String filePath = null;
+                    try {
+                        filePath = String.valueOf(media.uri);
+                        assert filePath != null;
+                        File file = new File(filePath);
+                        // Get length of file in bytes
+                        long fileSizeInBytes = file.length();
+                        // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
+                        long fileSizeInKB = fileSizeInBytes / 1024;
+                        // Convert the KB to MegaBytes (1 MB = 1024 KBytes)
+                        long fileSizeInMB = fileSizeInKB / 1024;
+
+                        if(fileSizeInMB>50){
+                            mediaUri = null;
+                            MyToast.getInstance(context).showSmallMessage("You can't upload more then 50mb.");
+                        }else {
+                            filePath = ImageVideoUtil.generatePath(media.uri, context);
+                            media.thumbImage = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
+
+                            mediaUri = new MediaUri();
+                            mediaUri.uri = String.valueOf(media.uri);
+                            mediaUri.uriList.add(String.valueOf(media.uri));
+                            mediaUri.mediaType = Constant.VIDEO_STATE;
+                            mediaUri.isFromGallery = true;
+                            thumbImage = media.thumbImage;
+
+                            //  videoView.setMediaController(mediaController);
+
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                     //showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }else {
+                tvNoDataFound.setVisibility(View.VISIBLE);
+                progrss.setVisibility(View.GONE);
             }
             videoAdapter.notifyDataSetChanged();
         }

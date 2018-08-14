@@ -59,12 +59,13 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
     private Bookings item;
     private AppCompatButton btnPay;
     private boolean isChangedOccured = false;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_detail);
-        Intent intent = getIntent();
+         intent = getIntent();
         if (intent!=null){
             bookingId =  intent.getStringExtra("bookingId");
             artistName =  intent.getStringExtra("artistName");
@@ -170,7 +171,7 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                actionForBooking("reject",true);
+                actionForBooking("cancel",true);
             }
         });
 
@@ -280,6 +281,7 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
                                 JSONObject object = array.getJSONObject(j);
                                 item._id = object.getString("_id");
                                 item.bookingDate = object.getString("bookingDate");
+                                item.artistId = object.getString("artistId");
                                 item.bookingTime = object.getString("bookingTime");
                                 item.bookStatus = object.getString("bookStatus");
                                 item.paymentType = object.getString("paymentType");
@@ -400,7 +402,7 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
         }
 
         Map<String, String> params = new HashMap<>();
-        params.put("artistId", String.valueOf(user.id));
+        params.put("artistId", bookings.artistId);
         params.put("userId", bookings.userDetail._id);
         params.put("bookingId", bookings._id);
         params.put("serviceId", serviceId);
@@ -564,6 +566,7 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
     public void onBackPressed() {
         if (!isChangedOccured)
             finish();
+
         else {
             Intent intent = new Intent();
             intent.putExtra("isChangedOccured", "true");

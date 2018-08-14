@@ -39,6 +39,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:noHistory="true"
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.FullScreen"
@@ -55,11 +56,15 @@
         </activity>
         <activity
             android:name=".activity.main.MainActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="stateHidden|adjustNothing" />
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="ChatActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.authentication.LoginActivity"
             android:screenOrientation="portrait" />
@@ -115,11 +120,6 @@
         <activity
             android:name=".activity.feeds.CommentsActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".activity.gellery.GalleryActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/StatusBarBlack"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.explore.ExplorSearchActivity"
@@ -234,11 +234,11 @@
             android:name=".activity.people_tag.activity.PeopleTagActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack" />
-        <activity android:name=".activity.gellery.Gallery2Activity" />
-        <activity android:name=".activity.feeds.FeedSingleActivity"
-            android:theme="@style/StatusBarBlack">
-
-        </activity>
+        <activity android:name=".activity.gellery.GalleryActivity" />
+        <activity
+            android:name=".activity.feeds.FeedSingleActivity"
+            android:theme="@style/StatusBarBlack"></activity>
+        <activity android:name=".activity.gellery.CustomCameraActivity"></activity>
     </application>
 
 </manifest>

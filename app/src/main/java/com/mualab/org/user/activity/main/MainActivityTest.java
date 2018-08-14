@@ -521,7 +521,9 @@ public class MainActivityTest extends BaseActivity implements View.OnClickListen
             tvHeaderTitle.setText(getString(R.string.app_name));
             ibtnFeed.setImageResource(R.drawable.active_feeds_ico);
             ivHeaderUser.setVisibility(View.VISIBLE);
+
             replaceFragment(FeedsFragment.newInstance(1), false);
+
             ibtnChat.setVisibility(View.VISIBLE);
             tvHeaderTitle.setVisibility(View.GONE);
             ivAppIcon.setVisibility(View.VISIBLE);

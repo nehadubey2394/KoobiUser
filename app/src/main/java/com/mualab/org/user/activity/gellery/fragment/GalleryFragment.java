@@ -33,7 +33,7 @@ import com.image.nocropper.CropperCallback;
 import com.image.nocropper.CropperView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
-import com.mualab.org.user.activity.gellery.Gallery2Activity;
+import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.gellery.adapter.GalleryAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
 import com.mualab.org.user.activity.gellery.model.PhotoLoader;
@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 
@@ -243,7 +242,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()) {
 
             case R.id.tvClose:
-                ((Gallery2Activity)context).onBackPressed();
+                ((GalleryActivity)context).onBackPressed();
                 break;
 
             case R.id.snap_button:
@@ -356,7 +355,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-            ((Gallery2Activity)context).finish();
+            ((GalleryActivity)context).finish();
         }
     }
 

@@ -1092,8 +1092,10 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         postImage.setRootWidth(postImage.getMeasuredWidth());
         postImage.setRootHeight(postImage.getMeasuredHeight());
 
-        Glide.with(ArtistProfileActivity.this).load(feeds.feed.get(index)).placeholder(R.drawable.gallery_placeholder)
-                .skipMemoryCache(false).into(postImage.getTagImageView());
+        if (feeds.feed.get(index)!=null){
+            Glide.with(ArtistProfileActivity.this).load(feeds.feed.get(index)).placeholder(R.drawable.gallery_placeholder)
+                    .skipMemoryCache(false).into(postImage.getTagImageView());
+        }
 
         postImage.setImageToBeTaggedEvent(taggedImageEvent);
 

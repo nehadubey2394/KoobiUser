@@ -21,12 +21,13 @@ import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseActivity;
+import com.mualab.org.user.activity.booking_histories.activity.BookingHisoryActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
-import com.mualab.org.user.activity.gellery.Gallery2Activity;
+import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.my_profile.activity.UserProfileActivity;
-import com.mualab.org.user.activity.notification.fragment.NotificationFragment;
+import com.mualab.org.user.activity.notification.fragments.NotificationFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.activity.story.StoreActivityTest;
 import com.mualab.org.user.application.Mualab;
@@ -100,7 +101,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         networkChangeReceiver.setListner(new NetworkChangeReceiver.Listner() {
             @Override
             public void onNetworkChange(boolean isConnected) {
-                if(isConnected && network!=null){
+                if(isConnected){
                     network.dismiss();
                 }else network.show();
             }
@@ -196,6 +197,59 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                     break;
 
+                case "1":
+                    Intent booking1 = new Intent(MainActivity.this, BookingHisoryActivity.class);
+                    booking1.putExtra("bookingId", notifyId);
+                    booking1.putExtra("artistName", userName);
+                    booking1.putExtra("artistProfile", urlImageString);
+                    startActivity(booking1);
+                    break;
+
+                case "2":
+                    Intent booking2 = new Intent(MainActivity.this, BookingHisoryActivity.class);
+                    booking2.putExtra("bookingId", notifyId);
+                    booking2.putExtra("artistName", userName);
+                    booking2.putExtra("artistProfile", urlImageString);
+                    startActivity(booking2);
+                    break;
+
+                case "3":
+                    Intent booking3 = new Intent(MainActivity.this, BookingHisoryActivity.class);
+                    booking3.putExtra("bookingId", notifyId);
+                    booking3.putExtra("artistName", userName);
+                    booking3.putExtra("artistProfile", urlImageString);
+
+                    startActivity(booking3);
+                    break;
+
+
+                case "4":
+                    Intent booking4 = new Intent(MainActivity.this, BookingHisoryActivity.class);
+                    booking4.putExtra("bookingId", notifyId);
+                    booking4.putExtra("artistName", userName);
+                    booking4.putExtra("artistProfile", urlImageString);
+                    startActivity(booking4);
+                    break;
+
+
+                case "5":
+                    Intent booking5 = new Intent(MainActivity.this, FeedSingleActivity.class);
+                    booking5.putExtra("feedId", notifyId);
+                    booking5.putExtra("artistName", userName);
+                    booking5.putExtra("artistProfile", urlImageString);
+                    startActivity(booking5);
+                    break;
+
+
+                case "6":
+                    Intent booking6 = new Intent(MainActivity.this, FeedSingleActivity.class);
+                    booking6.putExtra("feedId", notifyId);
+                    booking6.putExtra("artistName", userName);
+                    booking6.putExtra("artistProfile", urlImageString);
+                    startActivity(booking6);
+                    break;
+
+
 
             }
 
@@ -248,6 +302,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == RESULT_OK && requestCode == 734){
+            ibtnFeed.callOnClick();
+        }
 
         if(resultCode == RESULT_OK && requestCode==REQUEST_ADD_NEW_STORY){
 
@@ -335,7 +393,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);*/
-                startActivity(new Intent(MainActivity.this, Gallery2Activity.class));
+
+                   Intent in = new Intent(MainActivity.this, GalleryActivity.class);
+                   startActivityForResult(in,734);
+
 
                 //    }
 

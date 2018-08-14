@@ -39,11 +39,12 @@
 
         </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"
+            android:weightSum="1"
             android:layout_marginLeft="10dp"
             android:orientation="horizontal">
 
@@ -51,6 +52,7 @@
                 android:id="@+id/iv_user_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/defoult_user_img"
                 app:siBorderColor="@color/colorPrimaryDark"
@@ -58,10 +60,12 @@
 
             <TextView
                 android:id="@+id/tv_user_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextView.Bold"
+                android:layout_toRightOf="@+id/iv_user_image"
                 android:layout_marginLeft="5dp"
+                android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:maxLines="2"
                 android:ellipsize="end"
@@ -73,7 +77,10 @@
                 android:shadowRadius="6"
                 tools:ignore="RtlHardcoded" />
 
-        </LinearLayout>
+
+
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
@@ -152,7 +159,24 @@
             android:textColor="#fff"
             tools:ignore="SmallSp" />
 
+
+
     </RelativeLayout>
+
+
+
+    <ImageButton
+        android:layout_width="25dp"
+        android:id="@+id/img_btn"
+        android:padding="2dp"
+        android:background="@null"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="10dp"
+
+        android:src="@drawable/ic_close_white"
+
+        android:layout_height="25dp" />
 
 
 </FrameLayout>

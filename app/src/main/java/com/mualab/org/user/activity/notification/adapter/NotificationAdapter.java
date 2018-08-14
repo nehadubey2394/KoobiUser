@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.notification.fragment.adapter;
+package com.mualab.org.user.activity.notification.adapter;
 
 
 import android.content.Context;
@@ -8,12 +8,12 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
-import com.mualab.org.user.activity.notification.fragment.model.Notification;
+import com.mualab.org.user.activity.notification.model.Notification;
 import com.squareup.picasso.Picasso;
 
 
@@ -28,11 +28,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private boolean showLoader;
     private  final int VIEWTYPE_ITEM = 1;
     private  final int VIEWTYPE_LOADER = 2;
+    private Listener listener;
 
     // Constructor of the class
-    public NotificationAdapter(Context context, List<Notification> notificationList) {
+    public NotificationAdapter(Context context, List<Notification> notificationList,Listener listener) {
         this.context = context;
         this.notificationList = notificationList;
+        this.listener=listener;
     }
 
     @Override
@@ -46,6 +48,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return showLoader?VIEWTYPE_LOADER:VIEWTYPE_ITEM;
         }
         return VIEWTYPE_ITEM;
+    }
+
+    public interface Listener{
+        void onNotificationClick(int pos);
     }
 
     public void showLoading(boolean status) {
@@ -95,7 +101,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.tvName.setText(item.firstName);
         holder.tvTimeElapsed.setText(item.timeElapsed);
-      //  holder.tvMsg.setText(item.message);
+        //  holder.tvMsg.setText(item.message);
         String currentString = item.message;
         String[] separated = currentString.split(" ",2);
         String sName = separated[0];
@@ -103,7 +109,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         String changedText = "<font color='black'>" + sName + "</font>";
 
-       // String sourceString = "<big><b>" + changedText + "</b></big> " + msg;
+        // String sourceString = "<big><b>" + changedText + "</b></big> " + msg;
         String sourceString = "<big>" + changedText + "</big> " + msg;
 
         holder.tvMsg.setText(Html.fromHtml(sourceString));
@@ -129,6 +135,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     {
         TextView tvName,tvMsg,tvTimeElapsed;
         CircleImageView ivUserImg;
+        RelativeLayout relative_click;
         private ViewHolder(View itemView)
         {
             super(itemView);
@@ -136,6 +143,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvTimeElapsed = itemView.findViewById(R.id.tvTimeElapsed);
             tvName = itemView.findViewById(R.id.tvName);
             tvMsg = itemView.findViewById(R.id.tvMsg);
+            relative_click = itemView.findViewById(R.id.relative_click);
+            relative_click.setOnClickListener(this);
 
 
         }
@@ -143,7 +152,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Override
         public void onClick(View view) {
             switch (view.getId()){
-
+                case R.id.relative_click:
+                    listener.onNotificationClick(getAdapterPosition());
+                    break;
             }
 
         }

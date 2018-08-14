@@ -339,12 +339,15 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     @SuppressLint("DefaultLocale")
     private void updateUi() {
+        if(mediaUri != null){
+            if (mediaUri.mediaType == Constant.IMAGE_STATE && mediaUri.uriList.size()>0){
+                findViewById(R.id.ll_tagPepole).setVisibility(View.VISIBLE);
+            }else {
+                findViewById(R.id.ll_tagPepole).setVisibility(View.GONE);
+            }
 
-        if (mediaUri.mediaType == Constant.IMAGE_STATE && mediaUri.uriList.size()>0){
-            findViewById(R.id.ll_tagPepole).setVisibility(View.VISIBLE);
-        }else {
-            findViewById(R.id.ll_tagPepole).setVisibility(View.GONE);
         }
+
 
         if (!TextUtils.isEmpty(caption)) {
             edCaption.setText(caption);
@@ -354,57 +357,13 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
         if (mediaUri != null) {
 
-         /*   if (mediaUri.mediaType == Constant.IMAGE_STATE) {
-
-                try {
-                    feedType = Constant.IMAGE_STATE;
-                    Bitmap ThumbImage;
-                    if(mediaUri.isFromGallery){
-                        ThumbImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
-                                Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));
-                    }else {
-                        ThumbImage = ThumbnailUtils.extractThumbnail(
-                                BitmapFactory.decodeFile(
-                                        ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size() - 1)),
-                                                this)), 200, 200);
-                    }
-
-                    iv_postimage.setImageBitmap(ThumbImage);
-                    if (mediaUri.uriList.size() > 1) {
-                        tvMediaSize.setVisibility(View.VISIBLE);
-                        tvMediaSize.setText(String.format("%d", mediaUri.uriList.size()));
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else */if (mediaUri.mediaType == Constant.VIDEO_STATE) {
+            if (mediaUri.mediaType == Constant.VIDEO_STATE) {
                 if (thumbImage!=null){
                     videoThumb = thumbImage;
                 }else {
                     String filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), this);
                     videoThumb = ImageVideoUtil.getVidioThumbnail(filePath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
                 }
-
-               /* feedType = Constant.VIDEO_STATE;
-                if (mediaUri.isFromGallery) {
-                    String filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(0)), this);
-                    videoThumb = ImageVideoUtil.getVidioThumbnail(filePath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-                } else {
-                    videoThumb = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mediaUri.uriList.get(0)),
-                            this,
-                            MediaStore.Video.Thumbnails.FULL_SCREEN_KIND); //ImageVideoUtil.getCompressBitmap();
-                   *//* SuziLoader loader = new SuziLoader(); //Create it for once
-                    loader.with(this) //Context
-                            .load(mediaUri.uriList.get(0)) //Video path
-                            .into(iv_postimage) // imageview to load the thumbnail
-                            .type("mini") // mini or micro
-                            .show();*//* // to show the thumbnail
-                }
-
-                if (videoThumb != null)
-                    iv_postimage.setImageBitmap(videoThumb);*/
-                // Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mSelectdVideo), this);
             }
         } else {
             feedType = Constant.TEXT_STATE;
@@ -678,7 +637,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private void resetView() {
         if (tempFile != null) {
             try {
-                boolean bool = tempFile.delete();
+                //  boolean bool = tempFile.delete();
             } catch (Exception e) {
                 e.printStackTrace();
             }

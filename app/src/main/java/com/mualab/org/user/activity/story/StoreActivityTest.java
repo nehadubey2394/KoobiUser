@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.story;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -15,6 +16,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -25,8 +27,12 @@ import android.widget.VideoView;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.camera.CameraActivity;
+import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
+import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.data.model.feeds.LiveUserInfo;
 import com.mualab.org.user.data.model.feeds.Story;
@@ -78,6 +84,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     private int counter = 0;
 
     private boolean isRunningStory;
+    private ImageButton img_btn;
     private boolean isFirstTime = true;
     private boolean isStoryTypeVideo;
     private long pressTime = 0L;
@@ -112,6 +119,19 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                     }
                     long limit = 500L;
                     return limit < now - pressTime;
+
+                case MotionEvent.ACTION_SCROLL:
+                    long now1 = System.currentTimeMillis();
+                    storyStatusView.resume();
+                    if(isStoryTypeVideo && mediaPlayer!=null){
+                        try{
+                            videoView.start();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                    long limit1 = 500L;
+                    return limit1 < now1 - pressTime;
             }
             return false;
         }
@@ -131,6 +151,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
         } else finish();
 
         ivPhoto = findViewById(R.id.ivPhoto);
+        img_btn = findViewById(R.id.img_btn);
         progress_bar = findViewById(R.id.imageProgressBar);
         ivUserImg = findViewById(R.id.iv_user_image);
         tvUserName =  findViewById(R.id.tv_user_name);
@@ -138,7 +159,6 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
         storyStatusView = findViewById(R.id.storiesStatus);
         lyVideoView = findViewById(R.id.lyVideoView);
         videoView = findViewById(R.id.videoView);
-
         addMoreStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,12 +167,23 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             }
         });
 
+        img_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+
+            }
+        });
+
+
+
         ivPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 storyStatusView.skip();
             }
         });
+
 
         // bind reverse view
         View reverse = findViewById(R.id.reverse);
@@ -358,12 +389,16 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
     private void updateUI(){
         counter = 0;
-        userInfo = liveUserList.get(currentIndex);
-        addMoreStory.setVisibility(userInfo.id == Mualab.currentUser.id?View.VISIBLE:View.GONE);
-        tvUserName.setText(String.format("%s", userInfo.userName));
-        if(TextUtils.isEmpty(userInfo.profileImage)){
-            Picasso.with(this).load(R.drawable.defoult_user_img).fit().into(ivUserImg);
-        }else Picasso.with(this).load(userInfo.profileImage).fit().into(ivUserImg);
+        if (liveUserList.size()>0){
+            userInfo = liveUserList.get(currentIndex);
+            addMoreStory.setVisibility(userInfo.id == Mualab.currentUser.id?View.VISIBLE:View.GONE);
+            img_btn.setVisibility(userInfo.id == Mualab.currentUser.id?View.GONE:View.VISIBLE);
+
+            tvUserName.setText(String.format("%s", userInfo.userName));
+            if(TextUtils.isEmpty(userInfo.profileImage)){
+                Picasso.with(this).load(R.drawable.defoult_user_img).fit().into(ivUserImg);
+            }else Picasso.with(this).load(userInfo.profileImage).fit().into(ivUserImg);
+        }
     }
 
 
@@ -393,6 +428,18 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
 
     private void getStories() {
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(StoreActivityTest.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        getStories();
+                    }
+                }
+            }).show();
+        }
         Map<String, String> map = new HashMap<>();
         map.put("userId", ""+userInfo.id);
         new HttpTask(new HttpTask.Builder(this, "myStory", new HttpResponceListner.Listener() {
@@ -402,7 +449,11 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
+                    if (message.equals("No record found")){
+                        onBackPressed();
+                    }
                     storyList.clear();
+                    liveUserList.clear();
 
                     if (status.equalsIgnoreCase("success") && !message.equalsIgnoreCase("No results found right now")) {
                         JSONArray array = js.getJSONArray("allMyStory");
