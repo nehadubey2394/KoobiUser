@@ -219,6 +219,7 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
             });
         }
 
+
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             return true;
@@ -231,6 +232,11 @@ public class DemoTagActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         public void onLongPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public void onSinglePress(MotionEvent e) {
 
         }
     };

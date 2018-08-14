@@ -15,7 +15,7 @@ import com.mualab.org.user.R;
 
 public class BaseGalleryFragment extends Fragment{
 
-   // protected CoordinatorLayout.Behavior behavior;
+    // protected CoordinatorLayout.Behavior behavior;
     protected Context context;
     protected GalleryActivity activity;
     private OnFragmentInteractionListener mListener;

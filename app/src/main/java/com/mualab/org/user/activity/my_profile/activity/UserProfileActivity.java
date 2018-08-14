@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
@@ -38,9 +39,11 @@ import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
+import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
 import com.mualab.org.user.activity.my_profile.adapter.NavigationMenuAdapter;
 import com.mualab.org.user.activity.my_profile.model.NavigationItem;
+import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
@@ -91,6 +94,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     private UserProfileData profileData = null;
     private List<NavigationItem> navigationItems;
     private AppCompatButton btnFollow;
+    private ViewPagerAdapter.LongPressListner longPressListner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -674,7 +678,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             if (requestCode == Constant.ACTIVITY_COMMENT) {
                 if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
                     int pos = data.getIntExtra("feedPosition", 0);
-                    Feeds feed =  data.getParcelableExtra("feed");
+                    Feeds feed = (Feeds) data.getSerializableExtra("feed");
                     feeds.get(pos).commentCount = feed.commentCount;
                     feedAdapter.notifyItemChanged(pos);
                 }
@@ -936,7 +940,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             navigationItems.add(item);
         }
     }
-
+    boolean isShow = false;
     private void showLargeImage(Feeds feeds, int index){
         View dialogView = View.inflate(UserProfileActivity.this, R.layout.dialog_large_image_view, null);
         final Dialog dialog = new Dialog(UserProfileActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
@@ -944,17 +948,73 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
         dialog.setContentView(dialogView);
-
-        ImageView postImage = dialogView.findViewById(R.id.ivCertificate);
+        final InstaTag postImage = dialogView.findViewById(R.id.post_image);
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
         TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
         tvCertiTitle.setText("Images");
 
-        Picasso.with(UserProfileActivity.this).load(feeds.feed.get(index))
-                .priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+        postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        postImage.setRootWidth(postImage.getMeasuredWidth());
+        postImage.setRootHeight(postImage.getMeasuredHeight());
 
-        /*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).
-                priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);*/
+        Glide.with(UserProfileActivity.this).load(feeds.feed.get(index)).placeholder(R.drawable.gallery_placeholder)
+                .skipMemoryCache(false).into(postImage.getTagImageView());
+
+        postImage.setImageToBeTaggedEvent(taggedImageEvent);
+
+        ArrayList<TagToBeTagged>tags =  feeds.taggedImgMap.get(index);
+        if (tags!=null && tags.size()!=0){
+            postImage.addTagViewFromTagsToBeTagged(tags,false);
+            postImage.hideTags();
+        }
+
+        //   Picasso.with(mContext).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        longPressListner = new ViewPagerAdapter.LongPressListner() {
+            @Override
+            public void onLongPress() {
+                if (!isShow) {
+                    isShow = true;
+                    postImage.showTags();
+                }
+                else {
+                    isShow = false;
+                    postImage.hideTags();
+                }
+
+            }
+        };
+
+        dialog.show();
+    }
+
+   /* private void showLargeImage(Feeds feeds, int index){
+        View dialogView = View.inflate(UserProfileActivity.this, R.layout.dialog_large_image_view, null);
+        final Dialog dialog = new Dialog(UserProfileActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
+        dialog.setContentView(dialogView);
+
+        InstaTag postImage = dialogView.findViewById(R.id.post_image);
+        ImageView btnBack = dialogView.findViewById(R.id.btnBack);
+        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
+        tvCertiTitle.setText("Images");
+
+        if (!feeds.feed.get(index).isEmpty() && feeds.feed.get(index)!=null){
+            Picasso.with(UserProfileActivity.this).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH)
+                    .placeholder(R.drawable.gallery_placeholder).into(postImage);
+        }
+
+        *//*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).
+                priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);*//*
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -963,7 +1023,35 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         });
 
         dialog.show();
-    }
+    }*/
+
+    private InstaTag.TaggedImageEvent taggedImageEvent = new InstaTag.TaggedImageEvent() {
+
+        @Override
+        public void singleTapConfirmedAndRootIsInTouch(int x, int y) {
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (longPressListner != null)
+                longPressListner.onLongPress();
+        }
+
+        @Override
+        public void onSinglePress(MotionEvent e) {
+        }
+    };
+
 
     @Override
     public void onBackPressed() {

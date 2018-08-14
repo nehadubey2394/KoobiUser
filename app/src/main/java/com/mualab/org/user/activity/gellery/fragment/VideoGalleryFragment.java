@@ -1,13 +1,13 @@
 package com.mualab.org.user.activity.gellery.fragment;
 
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,57 +16,50 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.MediaController;
+import android.widget.ProgressBar;
+import android.widget.VideoView;
 
-import com.image.nocropper.BitmapUtils;
-import com.image.nocropper.CropperCallback;
-import com.image.nocropper.CropperView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
-import com.mualab.org.user.activity.gellery.BaseGalleryFragment;
 import com.mualab.org.user.activity.gellery.Gallery2Activity;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
-import com.mualab.org.user.activity.gellery.adapter.GalleryAdapter;
+import com.mualab.org.user.activity.gellery.adapter.VideoGridViewAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
-import com.mualab.org.user.activity.gellery.model.VideoLoader;
-import com.mualab.org.user.utils.constants.Constant;
-import com.mualab.org.user.dialogs.MySnackBar;
-import com.mualab.org.user.listner.GalleryOnClickListener;
 import com.mualab.org.user.data.model.MediaUri;
+import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.utils.ScreenUtils;
+import com.mualab.org.user.utils.WrapContentGridLayoutManager;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.utils.media.ImageVideoUtil;
-import com.zhihu.matisse.internal.loader.AlbumLoader;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 
-public class VideoGalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
+public class VideoGalleryFragment extends Fragment implements View.OnClickListener,
+        VideoGridViewAdapter.Listener{
 
-    private RecyclerView recyclerView;
-    private GalleryAdapter galleryAdapter;
     CollapsingToolbarLayout collapsing_toolbar;
-    int numberOfColumns = 4;
-    View view;
-    private ArrayList<String> pathArrList;
-
+    private List<Media> albumList;
+    private Context context;
+    private Gallery2Activity  activity;
     //private ImageView rotateImage;
     private AppBarLayout appbar;
-    private CoordinatorLayout rootLayout;
-
-    private int lastindex;
-    private Uri lastSelectedUri;
-    private List<Media> albumList;
+    //  private VideoGridViewAdapter videoAdapter;
+    private VideoView videoView;
+    private MediaUri mediaUri;
+    private  Bitmap thumbImage = null;
+    private ProgressBar progrss;
+    private RecyclerView recyclerView;
 
     public VideoGalleryFragment() {
         // Required empty public constructor
@@ -82,14 +75,12 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        albumList = new ArrayList<>();
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_video_gallery, container, false);
-        initView(view);
-        return view;
+        return inflater.inflate(R.layout.fragment_video_gallery, container, false);
     }
 
     @Override
@@ -103,6 +94,9 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
             }
         }
 
+        new GetVideoList().execute();
+
+        initView(view);
 
         // Disable "Drag" for AppBarLayout (i.e. User can't scroll appBarLayout by directly touching appBarLayout - User can only scroll appBarLayout by only using scrollContent)
         if (appbar.getLayoutParams() != null) {
@@ -116,40 +110,41 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
             });
             layoutParams.setBehavior(appBarLayoutBehaviour);
         }
-
-
-        galleryAdapter = new GalleryAdapter(albumList, context, new GalleryOnClickListener() {
-            @Override
-            public void OnClick(Media media , int index) {
-
-            }
-        });
-        recyclerView.setAdapter(galleryAdapter);
     }
 
     private void initView(View view){
+
+        albumList = new ArrayList<>();
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        videoView = view.findViewById(R.id.videoView);
+        progrss = view.findViewById(R.id.progrss);
+        //    mediaController= new MediaController(context);
+        //  mediaController.setAnchorView(videoView);
+
         view.findViewById(R.id.tvNext).setOnClickListener(this);
         view.findViewById(R.id.tvClose).setOnClickListener(this);
         appbar = view.findViewById(R.id.appbar);
-        recyclerView = view.findViewById(R.id.recyclerView);
+
         collapsing_toolbar = view.findViewById(R.id.collapsing_toolbar);
-        recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new GridLayoutManager(context, numberOfColumns));
-        rootLayout = view.findViewById(R.id.rootLayout);
 
-        albumList = getAlbums();
-        pathArrList = getAllVideoPath();
+        // rootLayout = view.findViewById(R.id.rootLayout);
 
-        if(albumList!=null && albumList.size()>0){
-            Media media = albumList.get(0);
-            lastSelectedUri = media.uri;
-            //showImage.setUri(media.uri);
-            try {
-                //showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        int mNoOfColumns = ScreenUtils.calculateNoOfColumns(context.getApplicationContext());
+        WrapContentGridLayoutManager wgm = new WrapContentGridLayoutManager(context,
+                mNoOfColumns<3?3:mNoOfColumns, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setItemAnimator(null);
+        recyclerView.setLayoutManager(wgm);
+        // recyclerView.setHasFixedSize(true);
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+        if(context instanceof Gallery2Activity)
+            activity = (Gallery2Activity) context;
     }
 
     @Override
@@ -161,44 +156,30 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
                 break;
 
             case R.id.tvNext:
-
-                    Intent intent = null;
-                        MediaUri mediaUri = new MediaUri();
-                        mediaUri.mediaType = Constant.IMAGE_STATE;
-                        mediaUri.isFromGallery = true;
-                        //mediaUri.addAll(mSelected);
-                        intent = new Intent(context, FeedPostActivity.class);
-                        intent.putExtra("caption", "");
-                        intent.putExtra("feedType", Constant.IMAGE_STATE);
-                        intent.putExtra("mediaUri", mediaUri);
-                        intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                        /*else if(videoUri!=null){
-                    intent = new Intent(mContext, FeedPostActivity.class);
+                if (mediaUri!=null){
+                    Intent  intent = new Intent(context, FeedPostActivity.class);
                     intent.putExtra("caption", "");
-                    intent.putExtra("feedType", Constant.VIDEO_STATE);
-                    intent.putExtra("videoUri", videoUri.toString());
-                    intent.putExtra("fromGallery", false);
+                    intent.putExtra("mediaUri", mediaUri);
+                    intent.putExtra("thumbImage", thumbImage);
+                    intent.putExtra("feedType", mediaUri.mediaType);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                }*/
 
-                    if (intent != null) {
-                        // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivityForResult(intent, Constant.POST_FEED_DATA);
-                    }
-
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivityForResult(intent, Constant.POST_FEED_DATA);
+                    videoView.stopPlayback();
+                }
                 break;
         }
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-
+            //  ((GalleryActivity)context).setResult(Activity.RESULT_OK);
+            ((GalleryActivity)context).finish();
         }
     }
 
@@ -206,101 +187,128 @@ public class VideoGalleryFragment extends BaseGalleryFragment implements View.On
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE){
-            galleryAdapter.notifyDataSetChanged();
+
         }
     }
 
-    private static File getTemporalFile(Context context) {
-        File myFile = new File(context.getExternalCacheDir(), "tempImage.jpg");
-        if(myFile.exists())
-            myFile.delete();
-        return myFile;
-    }
-
-   /* public ArrayList<Media> getAlbums() {
-        ArrayList<Media> photos = new ArrayList<>();
-        try {
-
-            VideoLoader photoLoader = new VideoLoader(context);
-            Cursor photoCursor = photoLoader.loadInBackground();
-
-            if(photoCursor!=null){
-                photoCursor.moveToFirst();
-                do {
-                    Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
-                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                    Media media = new Media();
-                    media.uri = uri;
-                    photos.add(media);
-                }while (photoCursor.moveToNext());
-
-                photoCursor.close();
-            }
-
-            return photos;
-        } catch (final Exception e) {
-            return new ArrayList<>();
-        }
-    }*/
-
-    private ArrayList<String> getAllVideoPath() {
+    private List<Media> getAllVideoPath() {
+        List<Media> albumList = new ArrayList<>();
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         String[] projection = { MediaStore.Video.VideoColumns.DATA };
         Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        ArrayList<String> pathArrList = new ArrayList<String>();
         //int vidsCount = 0;
         if (cursor != null) {
             //vidsCount = cursor.getCount();
             //Log.d(TAG, "Total count of videos: " + vidsCount);
             while (cursor.moveToNext()) {
-                pathArrList.add(cursor.getString(0));
+                Media media = new Media();
+                media.uri= Uri.parse(cursor.getString(0));
+                String filePath = ImageVideoUtil.generatePath(media.uri, context);
+                media.thumbImage = ImageVideoUtil.getVidioThumbnail(filePath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+
+                if (!filePath.contains(".3gp") && media.thumbImage!=null)
+                    albumList.add(media);
                 //Log.d(TAG, cursor.getString(0));
             }
             cursor.close();
         }
 
-        return pathArrList;
+        return albumList;
     }
 
-    public ArrayList<Media> getAlbums() {
-        AlbumLoader albumLoader = new AlbumLoader(context);
-        ArrayList<Media> photos = new ArrayList<>();
+    @Override
+    public void onViewClick(Media media, int index) {
+        String filePath = null;
         try {
-            Cursor albumCursor = albumLoader.loadInBackground();
-            if (albumCursor.moveToFirst()) {
+            filePath = String.valueOf(media.uri);
+            assert filePath != null;
+            File file = new File(filePath);
+            // Get length of file in bytes
+            long fileSizeInBytes = file.length();
+            // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
+            long fileSizeInKB = fileSizeInBytes / 1024;
+            // Convert the KB to MegaBytes (1 MB = 1024 KBytes)
+            long fileSizeInMB = fileSizeInKB / 1024;
 
-                do {
-                    VideoLoader photoLoader = new VideoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
-                    Cursor photoCursor = photoLoader.loadInBackground();
+            if(fileSizeInMB>50){
+                mediaUri = null;
+                MyToast.getInstance(context).showSmallMessage("You can't upload more then 50mb.");
+            }else {
+                filePath = ImageVideoUtil.generatePath(media.uri, context);
+                media.thumbImage = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
 
-                    if (photoCursor.moveToFirst()) {
-                        do {
-                            Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
-                            Uri uri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                            int duration = photoCursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION);
-                            Media media = new Media();
-                            media.uri= uri;
-                            /*Photo photo = new Photo();
-                            photo.id = id;
-                            photo.uri = uri;
-                            photo.isSelected = photos.isEmpty();
-                            photos.add(photo);*/
-                            photos.add(media);
-                        } while (photoCursor.moveToNext() /*&& photos.size() < 40*/);
-                    }
-                    photoCursor.close();
-                    /*Album album = new Album();
-                    album.bucketId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID));
-                    album.name = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
-                    album.photos = photos;
-                    album.isSelected = albums.isEmpty();
-                    albums.add(album);*/
-                } while (albumCursor.moveToNext() /*&& albums.size() < 10*/);
+                mediaUri = new MediaUri();
+                mediaUri.uri = String.valueOf(media.uri);
+                mediaUri.uriList.add(String.valueOf(media.uri));
+                mediaUri.mediaType = Constant.VIDEO_STATE;
+                mediaUri.isFromGallery = true;
+                thumbImage = media.thumbImage;
+
+                //  videoView.setMediaController(mediaController);
+                videoView.setVideoURI(media.uri);
+                videoView.requestFocus();
+                videoView.start();
+                expandToolbar();
+
             }
-            albumCursor.close();
-            return photos;
-        } catch (final Exception e) {
-            return new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+      /*  context.startActivity(new Intent(Intent.ACTION_VIEW)
+                .setDataAndType(media.uri, "video/mp4")
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));*/
+
+        /*videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                //close the progress dialog when buffering is done
+                progrss.setVisibility(View.GONE);
+            }
+        });*/
+    }
+
+    public void expandToolbar(){
+        appbar.setExpanded(true, true);
+    }
+
+    private class GetVideoList extends AsyncTask<URI, Void, List<Media>> {
+
+        @Override
+        protected List<Media> doInBackground(URI... uris) {
+            return getAllVideoPath();
+        }
+
+        protected void onPostExecute(List<Media> result) {
+            albumList = result;
+            VideoGridViewAdapter videoAdapter = new VideoGridViewAdapter(context, albumList);
+            recyclerView.setAdapter(videoAdapter);
+            videoAdapter.setListener(VideoGalleryFragment.this);
+
+            if(albumList!=null && albumList.size()>0){
+                Media media = albumList.get(0);
+                //showImage.setUri(media.uri);
+                try {
+                    progrss.setVisibility(View.GONE);
+                    // videoView.setMediaController(mediaController);
+                    videoView.setVideoURI(media.uri);
+                    videoView.requestFocus();
+                    videoView.start();
+                    //showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            videoAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mediaUri = null;
+        albumList.clear();
+        videoView = null;
+        thumbImage = null;
     }
 }

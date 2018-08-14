@@ -216,10 +216,6 @@ public class ArtistFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         notifyItemChanged(pos);
                     }
 
-                    @Override
-                    public void onLongPress() {
-
-                    }
                 }));
 
                 imageHolder.weakRefViewPager.get().setAdapter(imageHolder.weakRefAdapter.get());

@@ -119,7 +119,7 @@
         <activity
             android:name=".activity.gellery.GalleryActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/StatusBarBlack"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.explore.ExplorSearchActivity"
@@ -234,7 +234,11 @@
             android:name=".activity.people_tag.activity.PeopleTagActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack" />
-        <activity android:name=".activity.gellery.Gallery2Activity"></activity>
+        <activity android:name=".activity.gellery.Gallery2Activity" />
+        <activity android:name=".activity.feeds.FeedSingleActivity"
+            android:theme="@style/StatusBarBlack">
+
+        </activity>
     </application>
 
 </manifest>

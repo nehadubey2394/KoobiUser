@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_white_gray_border"
-    android:layout_margin="5dp"
+    android:layout_margin="2dp"
     android:orientation="vertical">
 
     <include layout="@layout/feed_item_header"
@@ -13,7 +13,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="320dp"
         android:id="@+id/rl_imageView"
         >
 

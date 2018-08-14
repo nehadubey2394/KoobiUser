@@ -35,6 +35,10 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
+import static com.image.picker.ImagePicker.PICK_IMAGE_REQUEST_CODE;
+import static com.image.picker.ImagePicker.appManifestContainsPermission;
+import static com.image.picker.ImagePicker.hasCameraAccess;
+import static com.image.picker.ImageRotator.getTemporalFile;
 
 
 public class CameraFragmentNew extends Fragment implements View.OnClickListener{
@@ -107,6 +111,50 @@ public class CameraFragmentNew extends Fragment implements View.OnClickListener{
         }
     }
 
+    private void pickImageFromCamera() {
+
+        if (!appManifestContainsPermission(mContext, Manifest.permission.CAMERA) || hasCameraAccess(mContext)){
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+            Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            contentSelectionIntent.setType("*/*");
+            Intent[] intentArray = new Intent[]{takePictureIntent,takeVideoIntent};
+            chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+            chooserIntent.putExtra(Intent.EXTRA_TITLE, "Choose an action");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+            chooserIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+            Uri uri = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().
+                            getPackageName() + ".provider",
+                    getTemporalFile(mContext));
+
+            chooserIntent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+
+
+           /* Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra("return-data", true);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+            Uri uri = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().
+                            getPackageName() + ".provider",
+                    getTemporalFile(mContext));
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+            if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                long maxVideoSize = 20*1024*1024; // 30 MB
+                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30);
+                intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+                intent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, maxVideoSize);
+                startActivityForResult(intent, Constant.REQUEST_VIDEO_CAPTURE);
+            }*/
+            startActivityForResult(chooserIntent, 1);
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -123,7 +171,7 @@ public class CameraFragmentNew extends Fragment implements View.OnClickListener{
 
                         if(bitmap!=null && picUri!=null){
 
-                            File imageFile = ImageRotator.getTemporalFile(mContext);
+                            File imageFile = getTemporalFile(mContext);
                             Uri photoURI = Uri.fromFile(imageFile);
 
                             Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(

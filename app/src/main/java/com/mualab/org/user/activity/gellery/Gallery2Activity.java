@@ -1,5 +1,7 @@
 package com.mualab.org.user.activity.gellery;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,9 +14,11 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.gellery.fragment.CameraFragmentNew;
 import com.mualab.org.user.activity.gellery.fragment.GalleryFragment;
 import com.mualab.org.user.activity.gellery.fragment.VideoGalleryFragment;
+import com.mualab.org.user.utils.constants.Constant;
 
 public class Gallery2Activity extends AppCompatActivity implements View.OnClickListener{
     private TextView tvImage,tvVideo,tvCamera;
+    private int clickedView = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +29,7 @@ public class Gallery2Activity extends AppCompatActivity implements View.OnClickL
         tvVideo = findViewById(R.id.tvVideo);
         tvCamera = findViewById(R.id.tvCamera);
 
-        addFragment(GalleryFragment.newInstance(), false, R.id.flGalleryContainer);
+        replaceFragment(GalleryFragment.newInstance(), false, R.id.flGalleryContainer);
 
         tvImage.setOnClickListener(this);
         tvVideo.setOnClickListener(this);
@@ -36,22 +40,33 @@ public class Gallery2Activity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tvCamera:
-                tvImage.setTextColor(getResources().getColor(R.color.gray));
-                tvVideo.setTextColor(getResources().getColor(R.color.gray));
-                tvCamera.setTextColor(getResources().getColor(R.color.colorPrimary));
-                replaceFragment(CameraFragmentNew.newInstance(), false, R.id.flGalleryContainer);
+                if (clickedView!=3){
+                    clickedView = 3;
+                    tvImage.setTextColor(getResources().getColor(R.color.gray));
+                    tvVideo.setTextColor(getResources().getColor(R.color.gray));
+                    tvCamera.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    replaceFragment(CameraFragmentNew.newInstance(), false, R.id.flGalleryContainer);
+
+                }
                 break;
             case R.id.tvVideo:
-                tvImage.setTextColor(getResources().getColor(R.color.gray));
-                tvVideo.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tvCamera.setTextColor(getResources().getColor(R.color.gray));
-                replaceFragment(VideoGalleryFragment.newInstance(), false, R.id.flGalleryContainer);
+                if (clickedView!=2){
+                    clickedView = 2;
+                    tvImage.setTextColor(getResources().getColor(R.color.gray));
+                    tvVideo.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    tvCamera.setTextColor(getResources().getColor(R.color.gray));
+                    replaceFragment(VideoGalleryFragment.newInstance(), false, R.id.flGalleryContainer);
+                }
                 break;
             case R.id.tvImage:
-                tvVideo.setTextColor(getResources().getColor(R.color.gray));
-                tvCamera.setTextColor(getResources().getColor(R.color.gray));
-                tvImage.setTextColor(getResources().getColor(R.color.colorPrimary));
-                addFragment(GalleryFragment.newInstance(), false, R.id.flGalleryContainer);
+                if (clickedView!=1){
+                    clickedView = 1;
+                    tvVideo.setTextColor(getResources().getColor(R.color.gray));
+                    tvCamera.setTextColor(getResources().getColor(R.color.gray));
+                    tvImage.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    replaceFragment(GalleryFragment.newInstance(), false, R.id.flGalleryContainer);
+
+                }
                 break;
         }
     }
@@ -86,6 +101,16 @@ public class Gallery2Activity extends AppCompatActivity implements View.OnClickL
             if (addToBackStack)
                 transaction.addToBackStack(backStackName);
             transaction.commit();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
+            //  ((GalleryActivity)context).setResult(Activity.RESULT_OK);
+            finish();
         }
     }
 

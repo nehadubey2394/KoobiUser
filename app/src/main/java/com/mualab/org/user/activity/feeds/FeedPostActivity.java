@@ -352,7 +352,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
 
 
-        if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
+        if (mediaUri != null) {
 
          /*   if (mediaUri.mediaType == Constant.IMAGE_STATE) {
 
@@ -379,8 +379,14 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     e.printStackTrace();
                 }
             } else */if (mediaUri.mediaType == Constant.VIDEO_STATE) {
+                if (thumbImage!=null){
+                    videoThumb = thumbImage;
+                }else {
+                    String filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), this);
+                    videoThumb = ImageVideoUtil.getVidioThumbnail(filePath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+                }
 
-                feedType = Constant.VIDEO_STATE;
+               /* feedType = Constant.VIDEO_STATE;
                 if (mediaUri.isFromGallery) {
                     String filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(0)), this);
                     videoThumb = ImageVideoUtil.getVidioThumbnail(filePath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
@@ -388,16 +394,16 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     videoThumb = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mediaUri.uriList.get(0)),
                             this,
                             MediaStore.Video.Thumbnails.FULL_SCREEN_KIND); //ImageVideoUtil.getCompressBitmap();
-                   /* SuziLoader loader = new SuziLoader(); //Create it for once
+                   *//* SuziLoader loader = new SuziLoader(); //Create it for once
                     loader.with(this) //Context
                             .load(mediaUri.uriList.get(0)) //Video path
                             .into(iv_postimage) // imageview to load the thumbnail
                             .type("mini") // mini or micro
-                            .show();*/ // to show the thumbnail
+                            .show();*//* // to show the thumbnail
                 }
 
                 if (videoThumb != null)
-                    iv_postimage.setImageBitmap(videoThumb);
+                    iv_postimage.setImageBitmap(videoThumb);*/
                 // Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mSelectdVideo), this);
             }
         } else {
@@ -445,23 +451,25 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
 
             case R.id.ll_tagPepole:
-                if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
+                if (feedType == Constant.IMAGE_STATE){
+                    if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
 
-                    if (mediaUri.mediaType == Constant.IMAGE_STATE) {
+                        if (mediaUri.mediaType == Constant.IMAGE_STATE) {
 
-                        Intent intent = new Intent(FeedPostActivity.this, PeopleTagActivity.class);
-                        intent.putExtra("imageArray", (Serializable) mediaUri.uriList);
-                        intent.putExtra("startIndex", 0);
-                        intent.putExtra("mediaUri", mediaUri);
-                        // intent.putExtra("hashmap",  taggedImgMap);
-                        startActivityForResult(intent, 100);
-                        //   MyToast.getInstance(FeedPostActivity.this).showDasuAlert("Under developement");
+                            Intent intent = new Intent(FeedPostActivity.this, PeopleTagActivity.class);
+                            intent.putExtra("imageArray", (Serializable) mediaUri.uriList);
+                            intent.putExtra("startIndex", 0);
+                            intent.putExtra("mediaUri", mediaUri);
+                            // intent.putExtra("hashmap",  taggedImgMap);
+                            startActivityForResult(intent, 100);
+                            //   MyToast.getInstance(FeedPostActivity.this).showDasuAlert("Under developement");
 
-                    } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
+                        } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
 
-                        startActivity(new Intent(Intent.ACTION_VIEW)
-                                .setDataAndType(Uri.parse(mediaUri.uriList.get(0)), "video/mp4")
-                                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                            startActivity(new Intent(Intent.ACTION_VIEW)
+                                    .setDataAndType(Uri.parse(mediaUri.uriList.get(0)), "video/mp4")
+                                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                        }
                     }
                 }
 
@@ -722,7 +730,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         map.put("location", address.placeName);
         map.put("city", TextUtils.isEmpty(address.city)?"":address.city);
         map.put("country", TextUtils.isEmpty(address.country)?"":address.country);
-
         if (TextUtils.isEmpty(address.latitude) || TextUtils.isEmpty(address.longitude)) {
             map.put("latitude", "");
             map.put("longitude", "");
@@ -916,9 +923,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void uploadVideo(Bitmap videoThumb){
-
+        /*/storage/emulated/0/DCIM/Camera/20180808_113328.mp4*/
         Map<String, String> map = prepareCommonPostData();
-        String uri = mediaUri.uriList.get(0);
+        String uri = mediaUri.uri;
         String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
         tempFile = new File(path);
 

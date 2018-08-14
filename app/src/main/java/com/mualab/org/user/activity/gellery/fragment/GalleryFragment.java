@@ -18,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
@@ -32,16 +33,14 @@ import com.image.nocropper.CropperCallback;
 import com.image.nocropper.CropperView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
-import com.mualab.org.user.activity.gellery.BaseGalleryFragment;
 import com.mualab.org.user.activity.gellery.Gallery2Activity;
-import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.gellery.adapter.GalleryAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
 import com.mualab.org.user.activity.gellery.model.PhotoLoader;
-import com.mualab.org.user.utils.constants.Constant;
+import com.mualab.org.user.data.model.MediaUri;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.listner.GalleryOnClickListener;
-import com.mualab.org.user.data.model.MediaUri;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.zhihu.matisse.internal.loader.AlbumLoader;
 
@@ -55,15 +54,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 
-public class GalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
+public class GalleryFragment extends Fragment implements View.OnClickListener{
 
     private RecyclerView recyclerView;
     private GalleryAdapter galleryAdapter;
     CollapsingToolbarLayout collapsing_toolbar;
     int numberOfColumns = 4;
-    private View view;
     private Bitmap thumbImage = null;
-
+    private Context context;
     private CropperView showImage;
     private ImageView snap_button;
     //private ImageView rotateImage;
@@ -81,7 +79,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
     public GalleryFragment() {
         // Required empty public constructor
     }
-
 
     public static GalleryFragment newInstance() {
         GalleryFragment fragment = new GalleryFragment();
@@ -216,7 +213,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
             }
         }
     }
-
 
     private void refreshUi(Uri uri){
 
@@ -355,13 +351,12 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-            Objects.requireNonNull(getActivity()).finish();
+            ((Gallery2Activity)context).finish();
         }
     }
 
@@ -373,6 +368,11 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     private void cropImageAsync() {
         showImage.getCroppedBitmapAsync(new CropperCallback() {
@@ -429,13 +429,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         });
     }
 
-    private static File getTemporalFile(Context context) {
-        File myFile = new File(context.getExternalCacheDir(), "tempImage.jpg");
-        if(myFile.exists())
-            myFile.delete();
-        return myFile;
-    }
-
     private void snapImage() {
         if (isSnappedToCenter) {
             showImage.cropToCenter();
@@ -450,33 +443,24 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         ArrayList<Media> photos = new ArrayList<>();
         try {
             Cursor albumCursor = albumLoader.loadInBackground();
-            if (albumCursor.moveToFirst()) {
+            if (albumCursor != null && albumCursor.moveToFirst()) {
 
                 do {
                     PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
                     Cursor photoCursor = photoLoader.loadInBackground();
 
-                    if (photoCursor.moveToFirst()) {
+                    if (photoCursor != null && photoCursor.moveToFirst()) {
                         do {
                             Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
                             Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                             Media media = new Media();
-                            media.uri= uri;
-                            /*Photo photo = new Photo();
-                            photo.id = id;
-                            photo.uri = uri;
-                            photo.isSelected = photos.isEmpty();
-                            photos.add(photo);*/
+                            media.uri = uri;
+
                             photos.add(media);
                         } while (photoCursor.moveToNext() /*&& photos.size() < 40*/);
                     }
                     photoCursor.close();
-                    /*Album album = new Album();
-                    album.bucketId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID));
-                    album.name = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
-                    album.photos = photos;
-                    album.isSelected = albums.isEmpty();
-                    albums.add(album);*/
+
                 } while (albumCursor.moveToNext() /*&& albums.size() < 10*/);
             }
             albumCursor.close();

@@ -46,6 +46,7 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -61,6 +62,8 @@ import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
 import com.mualab.org.user.activity.feeds.adapter.HashtagAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
+import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
+import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.activity.story.StoreActivityTest;
@@ -129,7 +132,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     private ImageView iv_selectedImage;
     private LinearLayout ll_progress;
     private Bitmap thumbImage = null;
-
+    private ViewPagerAdapter.LongPressListner longPressListner;
     /*Adapters*/
     private LiveUserAdapter liveUserAdapter;
     private ArrayList<LiveUserInfo> liveUserList;
@@ -371,7 +374,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                     intent.putExtra("caption", TextUtils.isEmpty(caption)?"":caption);
                     intent.putExtra("mediaUri", mediaUri);
                     intent.putExtra("thumbImage", thumbImage);
-                    intent.putExtra("feedType", Constant.IMAGE_STATE);
+                    intent.putExtra("feedType", mediaUri.mediaType);
                     intent.putExtra("requestCode", Constant.POST_FEED_DATA);
                     options = ActivityOptionsCompat.
                             makeSceneTransitionAnimation((Activity) mContext, iv_selectedImage, "profile");
@@ -636,48 +639,52 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                         }
 
                         JSONArray jsonArray = jsonObject.getJSONArray("peopleTag");
-                        if (jsonArray.length() != 0){
+                        if (jsonArray!=null && jsonArray.length() != 0){
 
                             for (int j = 0; j < jsonArray.length(); j++) {
 
                                 feed.peopleTagList = new ArrayList<>();
+
                                 JSONArray arrayJSONArray = jsonArray.getJSONArray(j);
 
-                                for (int k = 0; k < arrayJSONArray.length(); k++) {
-                                    JSONObject object = arrayJSONArray.getJSONObject(k);
+                                if (arrayJSONArray!=null && arrayJSONArray.length() != 0){
 
-                                    HashMap<String,TagDetail> tagDetails = new HashMap<>();
+                                    for (int k = 0; k < arrayJSONArray.length(); k++) {
+                                        JSONObject object = arrayJSONArray.getJSONObject(k);
 
-                                    String unique_tag_id = object.getString("unique_tag_id");
-                                    double x_axis = Double.parseDouble(object.getString("x_axis"));
-                                    double y_axis = Double.parseDouble(object.getString("y_axis"));
+                                        HashMap<String,TagDetail> tagDetails = new HashMap<>();
 
-                                    JSONObject tagOjb = object.getJSONObject("tagDetails");
-                                    TagDetail tag;
-                                    if (tagOjb.has("tabType")){
-                                        tag = gson.fromJson(String.valueOf(tagOjb), TagDetail.class);
+                                        String unique_tag_id = object.getString("unique_tag_id");
+                                        double x_axis = Double.parseDouble(object.getString("x_axis"));
+                                        double y_axis = Double.parseDouble(object.getString("y_axis"));
+
+                                        JSONObject tagOjb = object.getJSONObject("tagDetails");
+                                        TagDetail tag;
+                                        if (tagOjb.has("tabType")){
+                                            tag = gson.fromJson(String.valueOf(tagOjb), TagDetail.class);
                                       /*  tag.tabType = tagOjb.getString("tabType");
                                         tag.tagId = tagOjb.getString("tagId");
                                         tag.title = tagOjb.getString("title");
                                         tag.userType = tagOjb.getString("userType");*/
-                                    }else {
-                                        JSONObject details = tagOjb.getJSONObject(unique_tag_id);
-                                        tag = gson.fromJson(String.valueOf(details), TagDetail.class);
+                                        }else {
+                                            JSONObject details = tagOjb.getJSONObject(unique_tag_id);
+                                            tag = gson.fromJson(String.valueOf(details), TagDetail.class);
                                       /*  tag.tabType = details.getString("tabType");
                                         tag.tagId = details.getString("tagId");
                                         tag.title = details.getString("title");
                                         tag.userType = details.getString("userType");*/
-                                    }
-                                    tagDetails.put(tag.title, tag);
-                                    TagToBeTagged tagged = new TagToBeTagged();
-                                    tagged.setUnique_tag_id(unique_tag_id);
-                                    tagged.setX_co_ord(x_axis);
-                                    tagged.setY_co_ord(y_axis);
-                                    tagged.setTagDetails(tagDetails);
+                                        }
+                                        tagDetails.put(tag.title, tag);
+                                        TagToBeTagged tagged = new TagToBeTagged();
+                                        tagged.setUnique_tag_id(unique_tag_id);
+                                        tagged.setX_co_ord(x_axis);
+                                        tagged.setY_co_ord(y_axis);
+                                        tagged.setTagDetails(tagDetails);
 
-                                    feed.peopleTagList.add(tagged);
+                                        feed.peopleTagList.add(tagged);
+                                    }
+                                    feed.taggedImgMap.put(j,feed.peopleTagList);
                                 }
-                                feed.taggedImgMap.put(j,feed.peopleTagList);
                             }
                         }
                         feeds.add(feed);
@@ -983,6 +990,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                         mediaUri.addUri(String.valueOf(data.getData()));
                         Bitmap bitmapThumb = ImageVideoUtil.getVideoToThumbnil(data.getData(), mContext);
                         //Bitmap bitmapThumb = ThumbnailUtils.createVideoThumbnail(String.valueOf(data.getData()), MediaStore.Images.Thumbnails.MICRO_KIND);
+                        thumbImage = bitmapThumb;
                         updatePostImageUI(bitmapThumb);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1013,6 +1021,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                         }else {
                             filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), mContext);
                             Bitmap thumbBitmap = ImageVideoUtil.getVidioThumbnail(filePath); //ImageVideoUtil.getCompressBitmap();
+                            thumbImage = thumbBitmap;
                             updatePostImageUI(thumbBitmap);
                         }
                     } catch (Exception e) {
@@ -1120,6 +1129,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         }
     }
 
+    boolean isShow = false;
     private void showLargeImage(Feeds feeds, int index){
         View dialogView = View.inflate(mContext, R.layout.dialog_large_image_view, null);
         final Dialog dialog = new Dialog(mContext,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
@@ -1127,17 +1137,28 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
         dialog.setContentView(dialogView);
-
-        ImageView postImage = dialogView.findViewById(R.id.ivCertificate);
+        final InstaTag postImage = dialogView.findViewById(R.id.post_image);
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
         TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
         tvCertiTitle.setText("Images");
 
-        Picasso.with(mContext).load(feeds.feed.get(index))
-                .priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+        postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        postImage.setRootWidth(postImage.getMeasuredWidth());
+        postImage.setRootHeight(postImage.getMeasuredHeight());
 
-        /*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).
-                priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);*/
+        Glide.with(mContext).load(feeds.feed.get(index)).placeholder(R.drawable.gallery_placeholder)
+                .into(postImage.getTagImageView());
+
+        postImage.setImageToBeTaggedEvent(taggedImageEvent);
+
+        ArrayList<TagToBeTagged>tags =  feeds.taggedImgMap.get(index);
+        if (tags!=null && tags.size()!=0){
+            postImage.addTagViewFromTagsToBeTagged(tags,false);
+            postImage.hideTags();
+        }
+
+        //   Picasso.with(mContext).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1145,8 +1166,49 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
             }
         });
 
+        longPressListner = new ViewPagerAdapter.LongPressListner() {
+            @Override
+            public void onLongPress() {
+                if (!isShow) {
+                    isShow = true;
+                    postImage.showTags();
+                }
+                else {
+                    isShow = false;
+                    postImage.hideTags();
+                }
+
+            }
+        };
+
         dialog.show();
     }
 
+    private InstaTag.TaggedImageEvent taggedImageEvent = new InstaTag.TaggedImageEvent() {
+        @Override
+        public void singleTapConfirmedAndRootIsInTouch(int x, int y) {
+
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (longPressListner != null)
+                longPressListner.onLongPress();
+        }
+
+        @Override
+        public void onSinglePress(MotionEvent e) {
+        }
+    };
 
 }

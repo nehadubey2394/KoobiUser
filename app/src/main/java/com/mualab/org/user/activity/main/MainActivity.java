@@ -3,11 +3,11 @@ package com.mualab.org.user.activity.main;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,28 +19,32 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
+import com.mualab.org.user.activity.feeds.FeedSingleActivity;
+import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.gellery.Gallery2Activity;
-import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.my_profile.activity.UserProfileActivity;
 import com.mualab.org.user.activity.notification.fragment.NotificationFragment;
-import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.data.model.User;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
-import com.mualab.org.user.dialogs.MySnackBar;
-import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.activity.story.StoreActivityTest;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.SearchBoard.RefineSearchBoard;
+import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.data.model.feeds.LiveUserInfo;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.dialogs.MySnackBar;
+import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.network.NetworkChangeReceiver;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +60,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final int REQUEST_ADD_NEW_STORY = 8719;
     public RefineSearchBoard item;
     private  long mLastClickTime = 0;
+    private ArrayList<LiveUserInfo> liveUserList;
 
     public void setBgColor(int color){
         if(rlHeader1!=null)
@@ -107,10 +112,99 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         initView();
+
         addFragment(SearchBoardFragment.newInstance(item,""), false);
+
+
+        /*Manage Notification*/
+        Intent intent = getIntent();
+        if (intent.getStringExtra("notifyId") != null) {
+            String type = intent.getStringExtra("type");
+            String notifyId = intent.getStringExtra("notifyId");
+            String userName = intent.getStringExtra("userName");
+            String urlImageString = intent.getStringExtra("urlImageString");
+            String userType = intent.getStringExtra("userType");
+            String notifincationType = (intent.hasExtra("notifincationType")) ? intent.getStringExtra("notifincationType") : intent.getStringExtra("notificationType");
+            switch (notifincationType) {
+                case "13":
+                    ibtnFeed.callOnClick();
+                    LiveUserInfo me = new LiveUserInfo();
+                    me.id = Integer.parseInt(notifyId);
+                    me.userName = userName;
+                    me.profileImage = urlImageString;
+                    me.storyCount = 0;
+                    liveUserList.add(me);
+                    Intent intent_story = new Intent(MainActivity.this, StoreActivityTest.class);
+                    Bundle args = new Bundle();
+                    args.putSerializable("ARRAYLIST", liveUserList);
+                    args.putInt("position",0);
+                    intent_story.putExtra("BUNDLE", args);
+                    startActivity(intent_story);
+                    break;
+
+                case "7":
+                    ibtnFeed.callOnClick();
+                    Intent intent1=new Intent(MainActivity.this, FeedSingleActivity.class);
+                    intent1.putExtra("feedId",notifyId);
+                    startActivity(intent1);
+
+                    break;
+
+                case "11":
+                    ibtnFeed.callOnClick();
+                    Intent intent_like_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
+                    intent_like_comment.putExtra("feedId",notifyId);
+                    startActivity(intent_like_comment);
+
+                    break;
+
+                case "9":
+                    ibtnFeed.callOnClick();
+                    Intent intent_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
+                    intent_comment.putExtra("feedId",notifyId);
+                    startActivity(intent_comment);
+                    break;
+
+                case "10":
+                    ibtnFeed.callOnClick();
+                    Intent intent_like_post=new Intent(MainActivity.this, FeedSingleActivity.class);
+                    intent_like_post.putExtra("feedId",notifyId);
+                    startActivity(intent_like_post);
+
+                    break;
+
+                case "12":
+                    ibtnFeed.callOnClick();
+                    if (userType.equals("user")) {
+                        Intent intent_user_profile = new Intent(MainActivity.this, UserProfileActivity.class);
+                        intent_user_profile.putExtra("userId", notifyId);
+                        startActivity(intent_user_profile);
+
+                    } else {
+                        Intent intent_user_profile = new Intent(MainActivity.this, ArtistProfileActivity.class);
+                        intent_user_profile.putExtra("feedId", notifyId);
+                        startActivity(intent_user_profile);
+
+                    }
+
+                    break;
+                case "16":
+                    ibtnFeed.callOnClick();
+                    Intent intent_taged =new Intent(MainActivity.this, FeedSingleActivity.class);
+                    intent_taged.putExtra("feedId",notifyId);
+                    startActivity(intent_taged);
+
+                    break;
+
+
+            }
+
+        }
+
     }
 
     private void initView() {
+        liveUserList = new ArrayList<>();
         ibtnLeaderBoard = findViewById(R.id.ibtnLeaderBoard);
         ibtnFeed = findViewById(R.id.ibtnFeed);
         ibtnAddFeed = findViewById(R.id.ibtnAddFeed);
@@ -147,10 +241,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderBack.setVisibility(View.GONE);
     }
 
-    private final static int DEFAULT_BITRATE = 1024000;
-    private static final int RESULT_START_CAMERA = 4567;
-    private static final int RESULT_START_VIDEO = 4589;
-    private static final int RESULT_ADD_NEW_STORY = 7891;
     public void openNewStoryActivity(){
         showToast(getString(R.string.under_development));
     }
@@ -190,7 +280,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 onBackPressed();
                 break;
 
-            case R.id.ibtnChat :
+            case R.id.ivChat :
                 openNewStoryActivity();
                 //MyToast.getInstance(MainActivity.this).showSmallCustomToast("Under developement");
                 break;

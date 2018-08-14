@@ -70,7 +70,7 @@ public class TagToBeTagged implements Serializable {
     }
 
     public TagToBeTagged(String unique_tag_id, Double x_co_ord, Double y_co_ord,
-                  HashMap<String,TagDetail> tagDetails) {
+                         HashMap<String,TagDetail> tagDetails) {
         this.unique_tag_id = unique_tag_id;
         this.x_axis = x_co_ord;
         this.y_axis = y_co_ord;
