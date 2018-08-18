@@ -55,6 +55,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -258,22 +259,15 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         mLastClickTime = SystemClock.elapsedRealtime();
         switch (v.getId()) {
             case R.id.tvDone:
-                List<Integer> integers = new ArrayList<>();
+
                 ArrayList<TagToBeTagged>tags = new ArrayList<>();
 
                 for(Map.Entry map  :  taggedImgMap.entrySet() ) {
                     int i = (int) map.getKey();
-                  //  integers.add(i);
                     tags.addAll(taggedImgMap.get(i));
                 }
 
                 List<ArrayList<TagToBeTagged>> listOfValues2 = new ArrayList<>();
-
-              /*  if (integers.size()!=0) {
-                    for (int i = 0; i < integers.size(); i++) {
-                        listOfValues2.add(i, taggedImgMap.get(i));
-                    }
-                }*/
 
                 for (int i = 0; i < images.size(); i++){
                     if (taggedImgMap.size()!=0){
@@ -294,6 +288,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
                 String jsonArray = gson.toJson(listOfValues2);
                 Intent intent = new Intent();
                 intent.putExtra("tagJson",  jsonArray);
+                intent.putExtra("listOfValues",  (Serializable)listOfValues2);
                 intent.putExtra("tagCount",  String.valueOf(tags.size()));
                 setResult(RESULT_OK, intent);
                 finish();

@@ -21,6 +21,7 @@ import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivit
 import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
+import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.activity.my_profile.activity.UserProfileActivity;
 import com.mualab.org.user.activity.notification.adapter.NotificationAdapter;
 import com.mualab.org.user.activity.notification.model.Notification;
@@ -336,6 +337,7 @@ public class NotificationFragment extends BaseFragment implements NotificationAd
                 booking1.putExtra("bookingId", notifyId);
                 booking1.putExtra("artistName", userName);
                 booking1.putExtra("notification_list","list");
+                booking1.putExtra("notification_list","list");
                 booking1.putExtra("artistProfile", urlImageString);
                 startActivity(booking1);
 
@@ -346,9 +348,12 @@ public class NotificationFragment extends BaseFragment implements NotificationAd
                 booking2.putExtra("bookingId", notifyId);
                 booking2.putExtra("artistName", userName);
                 booking2.putExtra("notification_list","list");
+                booking2.putExtra("key","notification");
 
                 booking2.putExtra("artistProfile", urlImageString);
                 startActivity(booking2);
+                // ((MainActivity) mContext).finish();
+
 
                 break;
 
@@ -357,10 +362,12 @@ public class NotificationFragment extends BaseFragment implements NotificationAd
                 booking3.putExtra("bookingId", notifyId);
                 booking3.putExtra("artistName", userName);
                 booking3.putExtra("notification_list","list");
+                booking3.putExtra("key","notification");
 
                 booking3.putExtra("artistProfile", urlImageString);
 
                 startActivity(booking3);
+                // ((MainActivity) mContext).finish();
 
                 break;
 
@@ -369,10 +376,12 @@ public class NotificationFragment extends BaseFragment implements NotificationAd
                 Intent booking4 = new Intent(mContext, BookingDetailActivity.class);
                 booking4.putExtra("bookingId", notifyId);
                 booking4.putExtra("artistName", userName);
-                booking4.putExtra("notification_list","list");
+                booking4.putExtra("artistName", userName);
+                booking4.putExtra("key","notification");
 
                 booking4.putExtra("artistProfile", urlImageString);
                 startActivity(booking4);
+                // ((MainActivity) mContext).finish();
 
                 break;
 
@@ -382,18 +391,30 @@ public class NotificationFragment extends BaseFragment implements NotificationAd
                 booking5.putExtra("bookingId", notifyId);
                 booking5.putExtra("artistName", userName);
                 booking5.putExtra("notification_list","list");
+                booking5.putExtra("key","notification");
 
                 booking5.putExtra("artistProfile", urlImageString);
                 startActivity(booking5);
+                //   ((MainActivity) mContext).finish();
                 break;
 
 
             case "6":
-                Intent booking6 = new Intent(mContext, FeedSingleActivity.class);
-                booking6.putExtra("feedId", notifyId);
+                Intent booking6 = new Intent(mContext, BookingDetailActivity.class);
+                booking6.putExtra("bookingId", notifyId);
                 booking6.putExtra("artistName", userName);
+                booking6.putExtra("notification_list","list");
+                booking6.putExtra("key","notification");
                 booking6.putExtra("artistProfile", urlImageString);
                 startActivity(booking6);
+                //   ((MainActivity) mContext).finish();
+                break;
+
+            case "16":
+                Intent intent_taged =new Intent(mContext, FeedSingleActivity.class);
+                intent_taged.putExtra("feedId",notifyId);
+                startActivity(intent_taged);
+
                 break;
 
 

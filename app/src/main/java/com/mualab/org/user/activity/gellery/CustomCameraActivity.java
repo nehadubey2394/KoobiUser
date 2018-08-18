@@ -13,9 +13,11 @@ import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,6 +33,7 @@ import android.widget.VideoView;
 import android.widget.ViewSwitcher;
 
 import com.android.volley.VolleyError;
+import com.mualab.org.user.BuildConfig;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.application.Mualab;
@@ -62,6 +65,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import views.scaleview.ImageSource;
 import views.scaleview.ScaleImageView;
@@ -85,7 +89,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
     private boolean isStartRecord;
     private Bitmap thumbImage;
     private Button btnTakePhoto;
-    private ImageButton btnCameraMode, btnFlashLight;
+    private ImageButton btnCameraMode, btnFlashLight,switchCamera;
     //private Chronometer mChronometer;
 
     private int currentState;
@@ -155,7 +159,10 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
             public void onVideoTaken(File video) {
                 super.onVideoTaken(video);
                 cameraView.stop();
-                captureMediaUri = Uri.fromFile(video);
+                // captureMediaUri = Uri.fromFile(video);
+                captureMediaUri =  FileProvider.getUriForFile(CustomCameraActivity.this,
+                        getApplicationContext().getPackageName()+ ".provider", video);
+                mediaUri.videoFile = video;
                 vUpperPanel.showNext();
                 vLowerPanel.showNext();
                 updateState(STATE_SETUP_VIDEO);
@@ -200,6 +207,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
     public void onDestroy() {
         super.onDestroy();
         cameraView.destroy();
+        countDownTimer = null;
     }
 
     private void showToast(String str){
@@ -217,6 +225,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
         btnTakePhoto = findViewById(R.id.btnTakePhoto);
         btnCameraMode = findViewById(R.id.btnCameraMode);
         btnFlashLight = findViewById(R.id.btnFlashLight);
+        switchCamera = findViewById(R.id.switchCamera);
         //ivBack = findViewById(R.id.ivBack);
 
         cameraView = findViewById(R.id.camera);
@@ -225,10 +234,10 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
 
         btnTakePhoto.setOnClickListener(this);
         btnFlashLight.setOnClickListener(this);
+        switchCamera.setOnClickListener(this);
         // findViewById(R.id.btnAccept).setOnClickListener(this);
         findViewById(R.id.retry).setOnClickListener(this);
         findViewById(R.id.btnBack).setOnClickListener(this);
-        findViewById(R.id.switchCamera).setOnClickListener(this);
         findViewById(R.id.btnCameraMode).setOnClickListener(this);
         findViewById(R.id.add_to_story).setOnClickListener(this);
         isCameraSession = true;
@@ -274,11 +283,10 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
                     if(isStartRecord){
                         btnTakePhoto.setBackgroundResource(R.drawable.btn_capture_video);
                         if(countDownTimer!=null) countDownTimer.onFinish();
-                        // stopRecording();
                     }else {
                         btnTakePhoto.setBackgroundResource(R.drawable.btn_capture_video_active);
                         btnTakePhoto.setEnabled(false);
-                        //startRecording();
+                        cameraView.setSessionType(SessionType.VIDEO);
                         startTimear();
                     }
                 }
@@ -311,7 +319,6 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
                     thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(
                             ImageVideoUtil.generatePath(Uri.parse(path), CustomCameraActivity.this)),
                             150, 150);
-
                     mediaUri.addUri(path);
                 }
 
@@ -435,6 +442,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void stopRecording(){
+
         if(!isCameraSession || isStartRecord){
             cameraView.stopCapturingVideo();
             //mChronometer.stop();\
@@ -446,9 +454,12 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
     private void startRecording(){
         if(cameraView.getSessionType()!=SessionType.PICTURE){
             try {
-                File file = CustomCameraActivity.this.getExternalCacheDir();
+                File file = getExternalCacheDir();
+               // File file = new File(getExternalCacheDir(), UUID.randomUUID() + ".mp4");
                 if (file != null) {
                     isStartRecord = true;
+                    switchCamera.setVisibility(View.GONE);
+                    btnCameraMode.setVisibility(View.GONE);
                     //mChronometer.setBase(SystemClock.elapsedRealtime());
                     photoPath = new File(file.getPath(), "tmp.mp4");
                     cameraView.startCapturingVideo(photoPath);
@@ -486,10 +497,10 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
             }
         }else  {
+            countDownTimer = null;
             super.onBackPressed();
         }
     }
-
 
     private void showTakenPicture(Bitmap bitmap) {
         vUpperPanel.showNext();
@@ -497,7 +508,6 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
         ivTakenPhoto.setImage(ImageSource.bitmap(bitmap));
         updateState(STATE_SETUP_PHOTO);
     }
-
 
     private void updateState(int state) {
         currentState = state;
@@ -552,99 +562,31 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
         }
     }
 
-
-    private void addMyStory(){
-
-        if(ConnectionDetector.isConnected()){
-
-            Map<String,String> map = new HashMap<>();
-            map.put("userId", ""+ Mualab.currentUser.id);
-            map.put("type", isVideoUri?"video":"image");
-            if(isVideoUri){
-
-                ivTakenPhoto.setDrawingCacheEnabled(true);
-                Bitmap bitmap = ivTakenPhoto.getDrawingCache();
-              /* Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(photoPath., this,
-                       MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);*/
-                HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
-                    @Override
-                    public void onResponse(String response, String apiName) {
-                        try {
-                            JSONObject js = new JSONObject(response);
-                            String status = js.getString("status");
-                            String message = js.getString("message");
-                            if (status.equalsIgnoreCase("success")) {
-                                finish();
-                            }
-                            else showToast(message);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void ErrorListener(VolleyError error) {
-                        Log.d("res:", ""+error.getLocalizedMessage());
-                    }})
-                        .setParam(map)
-                        .setAuthToken(Mualab.currentUser.authToken)
-                        .setProgress(true));
-                task.postFile("myStory", photoPath, bitmap);
-
-            }else {
-                Bitmap bitmap = ivTakenPhoto.getBitmap();
-                HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
-                    @Override
-                    public void onResponse(String response, String apiName) {
-                        try {
-                            JSONObject js = new JSONObject(response);
-                            String status = js.getString("status");
-                            String message = js.getString("message");
-                            if (status.equalsIgnoreCase("success")) {
-                                Mualab.isStoryUploaded = true;
-                                finish();
-                            }
-                            else showToast(message);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void ErrorListener(VolleyError error) {
-                        Log.d("res:", ""+error.getLocalizedMessage());
-                    }})
-                        .setParam(map)
-                        .setAuthToken(Mualab.currentUser.authToken)
-                        .setProgress(true));
-                task.postImage("myStory", bitmap);
-            }
-
-        }else showToast(getString(R.string.error_msg_network));
-    }
-
-
     private CountDownTimer countDownTimer;
-    private boolean timerIsRunning;
     private void startTimear(){
         if(countDownTimer!=null)
             countDownTimer.cancel();
-        timerIsRunning = true;
+
+        startRecording();
+
         countDownTimer = new CountDownTimer(60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 btnTakePhoto.setText(String.valueOf(millisUntilFinished / 1000));
-                if(57000<millisUntilFinished)
+
+                if(55000<millisUntilFinished)
                     btnTakePhoto.setEnabled(true);
             }
 
             public void onFinish() {
-                timerIsRunning = false;
                 btnTakePhoto.setText("REC");
                 btnTakePhoto.setEnabled(true);
+                switchCamera.setVisibility(View.VISIBLE);
+                btnCameraMode.setVisibility(View.VISIBLE);
+
                 if(isStartRecord)
                     stopRecording();
             }
         }.start();
-        startRecording();
+
     }
 }

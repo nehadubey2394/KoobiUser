@@ -41,13 +41,13 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()){
             case R.id.tvCamera:
                 if (clickedView!=3){
-                    clickedView = 3;
+                  //  clickedView = 3;
                    // tvImage.setTextColor(getResources().getColor(R.color.gray));
                     //tvVideo.setTextColor(getResources().getColor(R.color.gray));
                    // tvCamera.setTextColor(getResources().getColor(R.color.colorPrimary));
                     //replaceFragment(CameraFragmentNew.newInstance(), false, R.id.flGalleryContainer);
                     startActivity(new Intent(GalleryActivity.this, CustomCameraActivity.class));
-                    finish();
+                   // finish();
                 }
                 break;
             case R.id.tvVideo:

@@ -905,7 +905,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                             Uri photoURI = Uri.fromFile(imageFile);
 
                             Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(
-                                            ImageVideoUtil.generatePath(photoURI, mContext)),
+                                    ImageVideoUtil.generatePath(photoURI, mContext)),
                                     150, 150);
 
                             bitmap = ImagePicker.getImageResized(mContext, photoURI);

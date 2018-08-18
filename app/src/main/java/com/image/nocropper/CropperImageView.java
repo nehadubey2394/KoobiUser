@@ -875,6 +875,8 @@ public class CropperImageView extends ImageView {
                     } catch (OutOfMemoryError e) {
                         bitmap = null;
                         throw e;
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
 
                 }

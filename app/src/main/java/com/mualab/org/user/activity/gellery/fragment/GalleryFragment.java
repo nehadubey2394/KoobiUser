@@ -57,7 +57,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
 
     private RecyclerView recyclerView;
     private GalleryAdapter galleryAdapter;
-    CollapsingToolbarLayout collapsing_toolbar;
+    private CollapsingToolbarLayout collapsing_toolbar;
     int numberOfColumns = 4;
     private Bitmap thumbImage = null;
     private Context context;
@@ -94,22 +94,27 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
-        initView(view);
-        return view;
+        return inflater.inflate(R.layout.fragment_gallery, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initView(view);
+
         if (Build.VERSION.SDK_INT >= 23) {
             if (context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            }else {
+                albumList = getAlbums();
+                setImageList();
             }
+        }else {
+            albumList = getAlbums();
+            setImageList();
         }
-
 
         // Disable "Drag" for AppBarLayout (i.e. User can't scroll appBarLayout by directly touching appBarLayout - User can only scroll appBarLayout by only using scrollContent)
         if (appbar.getLayoutParams() != null) {
@@ -123,7 +128,22 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
             });
             layoutParams.setBehavior(appBarLayoutBehaviour);
         }
+        // setImageList();
+    }
 
+    private void setImageList(){
+        if(albumList!=null && albumList.size()>0){
+            Media media = albumList.get(0);
+            lastSelectedUri = media.uri;
+            mSelected.put(media.uri.toString(), media.uri);
+            refreshUi(lastSelectedUri);
+            //showImage.setUri(media.uri);
+            try {
+                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         galleryAdapter = new GalleryAdapter(albumList, context, new GalleryOnClickListener() {
             @Override
@@ -172,6 +192,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
                 refreshUi(lastSelectedUri);
 
                 galleryAdapter.notifyItemChanged(index);
+
                 if(mSelected.size()<=2)
                     recyclerView.smoothScrollToPosition(index);
                 expandToolbar();
@@ -197,20 +218,6 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         snap_button.setOnClickListener(this);
         // rotateImage.setOnClickListener(this);
         ivMultiSelection.setOnClickListener(this);
-        albumList = getAlbums();
-
-        if(albumList!=null && albumList.size()>0){
-            Media media = albumList.get(0);
-            lastSelectedUri = media.uri;
-            mSelected.put(media.uri.toString(), media.uri);
-            refreshUi(lastSelectedUri);
-            //showImage.setUri(media.uri);
-            try {
-                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void refreshUi(Uri uri){
@@ -231,7 +238,6 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
             }
         }
     }
-
 
     public void expandToolbar(){
         appbar.setExpanded(true, true);
@@ -363,7 +369,8 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE){
-            galleryAdapter.notifyDataSetChanged();
+            albumList = getAlbums();
+            setImageList();
         }
     }
 

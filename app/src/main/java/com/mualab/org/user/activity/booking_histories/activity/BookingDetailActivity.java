@@ -49,7 +49,7 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BookingDetailActivity extends AppCompatActivity implements View.OnClickListener {
-    private String bookingId="",artistName,artistProfile="";
+    private String bookingId="",artistName,artistProfile="",key="";
     private BookedServicesAdapter adapter;
     private TextView tvBookingDate,tvBookingTime,tvBookingLoc,tvUserName,tvBookingStatus,
             tvTransectionId,tvPayType,tvTotalPrice;
@@ -65,11 +65,13 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_detail);
-         intent = getIntent();
+        intent = getIntent();
         if (intent!=null){
             bookingId =  intent.getStringExtra("bookingId");
             artistName =  intent.getStringExtra("artistName");
             artistProfile =  intent.getStringExtra("artistProfile");
+            if (intent.hasExtra("key"))
+                key =  intent.getStringExtra("key");
         }
         initView();
         setViewId();
@@ -564,16 +566,22 @@ public class BookingDetailActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onBackPressed() {
-        if (!isChangedOccured)
+        if(!key.equals("") && key.equals("main")){
+            Intent intent=new Intent(BookingDetailActivity.this,BookingHisoryActivity.class);
+            intent.putExtra("key","main");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
+        }
 
+        if (!isChangedOccured){
+            finish();
+        }
         else {
             Intent intent = new Intent();
             intent.putExtra("isChangedOccured", "true");
             setResult(RESULT_OK, intent);
             finish();
-
         }
-        super.onBackPressed();
     }
 }

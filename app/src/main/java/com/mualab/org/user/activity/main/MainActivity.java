@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseActivity;
+import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
 import com.mualab.org.user.activity.booking_histories.activity.BookingHisoryActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
@@ -114,147 +115,159 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         initView();
 
-        addFragment(SearchBoardFragment.newInstance(item,""), false);
-
-
         /*Manage Notification*/
         Intent intent = getIntent();
-        if (intent.getStringExtra("notifyId") != null) {
-            String type = intent.getStringExtra("type");
-            String notifyId = intent.getStringExtra("notifyId");
-            String userName = intent.getStringExtra("userName");
-            String urlImageString = intent.getStringExtra("urlImageString");
-            String userType = intent.getStringExtra("userType");
-            String notifincationType = (intent.hasExtra("notifincationType")) ? intent.getStringExtra("notifincationType") : intent.getStringExtra("notificationType");
-            switch (notifincationType) {
-                case "13":
-                    ibtnFeed.callOnClick();
-                    LiveUserInfo me = new LiveUserInfo();
-                    me.id = Integer.parseInt(notifyId);
-                    me.userName = userName;
-                    me.profileImage = urlImageString;
-                    me.storyCount = 0;
-                    liveUserList.add(me);
-                    Intent intent_story = new Intent(MainActivity.this, StoreActivityTest.class);
-                    Bundle args = new Bundle();
-                    args.putSerializable("ARRAYLIST", liveUserList);
-                    args.putInt("position",0);
-                    intent_story.putExtra("BUNDLE", args);
-                    startActivity(intent_story);
-                    break;
+        if (intent!=null){
+            if (intent.getStringExtra("notifyId") != null) {
+                String type = intent.getStringExtra("type");
+                String notifyId = intent.getStringExtra("notifyId");
+                String userName = intent.getStringExtra("userName");
+                String urlImageString = intent.getStringExtra("urlImageString");
+                String userType = intent.getStringExtra("userType");
+                String notifincationType = (intent.hasExtra("notifincationType")) ? intent.getStringExtra("notifincationType") : intent.getStringExtra("notificationType");
+                switch (notifincationType) {
+                    case "13":
+                        ibtnFeed.callOnClick();
+                        LiveUserInfo me = new LiveUserInfo();
+                        me.id = Integer.parseInt(notifyId);
+                        me.userName = userName;
+                        me.profileImage = urlImageString;
+                        me.storyCount = 0;
+                        liveUserList.add(me);
+                        Intent intent_story = new Intent(MainActivity.this, StoreActivityTest.class);
+                        Bundle args = new Bundle();
+                        args.putSerializable("ARRAYLIST", liveUserList);
+                        args.putInt("position",0);
+                        intent_story.putExtra("BUNDLE", args);
+                        startActivity(intent_story);
+                        break;
 
-                case "7":
-                    ibtnFeed.callOnClick();
-                    Intent intent1=new Intent(MainActivity.this, FeedSingleActivity.class);
-                    intent1.putExtra("feedId",notifyId);
-                    startActivity(intent1);
+                    case "7":
+                        ibtnFeed.callOnClick();
+                        Intent intent1=new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent1.putExtra("feedId",notifyId);
+                        startActivity(intent1);
 
-                    break;
+                        break;
 
-                case "11":
-                    ibtnFeed.callOnClick();
-                    Intent intent_like_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
-                    intent_like_comment.putExtra("feedId",notifyId);
-                    startActivity(intent_like_comment);
+                    case "11":
+                        ibtnFeed.callOnClick();
+                        Intent intent_like_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_like_comment.putExtra("feedId",notifyId);
+                        startActivity(intent_like_comment);
 
-                    break;
+                        break;
 
-                case "9":
-                    ibtnFeed.callOnClick();
-                    Intent intent_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
-                    intent_comment.putExtra("feedId",notifyId);
-                    startActivity(intent_comment);
-                    break;
+                    case "9":
+                        ibtnFeed.callOnClick();
+                        Intent intent_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_comment.putExtra("feedId",notifyId);
+                        startActivity(intent_comment);
+                        break;
 
-                case "10":
-                    ibtnFeed.callOnClick();
-                    Intent intent_like_post=new Intent(MainActivity.this, FeedSingleActivity.class);
-                    intent_like_post.putExtra("feedId",notifyId);
-                    startActivity(intent_like_post);
+                    case "10":
+                        ibtnFeed.callOnClick();
+                        Intent intent_like_post=new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_like_post.putExtra("feedId",notifyId);
+                        startActivity(intent_like_post);
 
-                    break;
+                        break;
 
-                case "12":
-                    ibtnFeed.callOnClick();
-                    if (userType.equals("user")) {
-                        Intent intent_user_profile = new Intent(MainActivity.this, UserProfileActivity.class);
-                        intent_user_profile.putExtra("userId", notifyId);
-                        startActivity(intent_user_profile);
+                    case "12":
+                        ibtnFeed.callOnClick();
+                        if (userType.equals("user")) {
+                            Intent intent_user_profile = new Intent(MainActivity.this, UserProfileActivity.class);
+                            intent_user_profile.putExtra("userId", notifyId);
+                            startActivity(intent_user_profile);
 
-                    } else {
-                        Intent intent_user_profile = new Intent(MainActivity.this, ArtistProfileActivity.class);
-                        intent_user_profile.putExtra("feedId", notifyId);
-                        startActivity(intent_user_profile);
+                        } else {
+                            Intent intent_user_profile = new Intent(MainActivity.this, ArtistProfileActivity.class);
+                            intent_user_profile.putExtra("feedId", notifyId);
+                            startActivity(intent_user_profile);
+                        }
 
-                    }
+                        break;
+                    case "16":
+                        ibtnFeed.callOnClick();
+                        Intent intent_taged =new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_taged.putExtra("feedId",notifyId);
+                        startActivity(intent_taged);
 
-                    break;
-                case "16":
-                    ibtnFeed.callOnClick();
-                    Intent intent_taged =new Intent(MainActivity.this, FeedSingleActivity.class);
-                    intent_taged.putExtra("feedId",notifyId);
-                    startActivity(intent_taged);
+                        break;
 
-                    break;
+                    case "1":
+                        Intent booking1 = new Intent(MainActivity.this, BookingDetailActivity.class);
+                        booking1.putExtra("bookingId", notifyId);
+                        booking1.putExtra("artistName", userName);
+                        booking1.putExtra("artistProfile", urlImageString);
+                        booking1.putExtra("key","main");
+                        startActivity(booking1);
+                        break;
 
-                case "1":
-                    Intent booking1 = new Intent(MainActivity.this, BookingHisoryActivity.class);
-                    booking1.putExtra("bookingId", notifyId);
-                    booking1.putExtra("artistName", userName);
-                    booking1.putExtra("artistProfile", urlImageString);
-                    startActivity(booking1);
-                    break;
+                    case "2":
+                        Intent booking2 = new Intent(MainActivity.this, BookingDetailActivity.class);
+                        booking2.putExtra("bookingId", notifyId);
+                        booking2.putExtra("artistName", userName);
+                        booking2.putExtra("artistProfile", urlImageString);
+                        booking2.putExtra("key","main");
+                        startActivity(booking2);
+                        break;
 
-                case "2":
-                    Intent booking2 = new Intent(MainActivity.this, BookingHisoryActivity.class);
-                    booking2.putExtra("bookingId", notifyId);
-                    booking2.putExtra("artistName", userName);
-                    booking2.putExtra("artistProfile", urlImageString);
-                    startActivity(booking2);
-                    break;
+                    case "3":
+                        Intent booking3 = new Intent(MainActivity.this, BookingDetailActivity.class);
+                        booking3.putExtra("bookingId", notifyId);
+                        booking3.putExtra("artistName", userName);
+                        booking3.putExtra("artistProfile", urlImageString);
+                        booking3.putExtra("key","main");
 
-                case "3":
-                    Intent booking3 = new Intent(MainActivity.this, BookingHisoryActivity.class);
-                    booking3.putExtra("bookingId", notifyId);
-                    booking3.putExtra("artistName", userName);
-                    booking3.putExtra("artistProfile", urlImageString);
+                        startActivity(booking3);
+                        break;
 
-                    startActivity(booking3);
-                    break;
+                    case "4":
+                        Intent booking4 = new Intent(MainActivity.this, BookingDetailActivity.class);
+                        booking4.putExtra("bookingId", notifyId);
+                        booking4.putExtra("artistName", userName);
+                        booking4.putExtra("artistProfile", urlImageString);
+                        booking4.putExtra("key","main");
+                        startActivity(booking4);
+                        break;
 
+                    case "5":
+                        Intent booking5 = new Intent(MainActivity.this, BookingDetailActivity.class);
+                        booking5.putExtra("bookingId", notifyId);
+                        booking5.putExtra("artistName", userName);
+                        booking5.putExtra("notification_list","list");
+                        booking5.putExtra("key","main");
+                        booking5.putExtra("artistProfile", urlImageString);
+                        startActivity(booking5);
+                        break;
 
-                case "4":
-                    Intent booking4 = new Intent(MainActivity.this, BookingHisoryActivity.class);
-                    booking4.putExtra("bookingId", notifyId);
-                    booking4.putExtra("artistName", userName);
-                    booking4.putExtra("artistProfile", urlImageString);
-                    startActivity(booking4);
-                    break;
+                    case "6":
+                        Intent booking6 = new Intent(MainActivity.this, BookingDetailActivity.class);
+                        booking6.putExtra("bookingId", notifyId);
+                        booking6.putExtra("artistName", userName);
+                        booking6.putExtra("artistProfile", urlImageString);
+                        booking6.putExtra("key","main");
 
-
-                case "5":
-                    Intent booking5 = new Intent(MainActivity.this, FeedSingleActivity.class);
-                    booking5.putExtra("feedId", notifyId);
-                    booking5.putExtra("artistName", userName);
-                    booking5.putExtra("artistProfile", urlImageString);
-                    startActivity(booking5);
-                    break;
-
-
-                case "6":
-                    Intent booking6 = new Intent(MainActivity.this, FeedSingleActivity.class);
-                    booking6.putExtra("feedId", notifyId);
-                    booking6.putExtra("artistName", userName);
-                    booking6.putExtra("artistProfile", urlImageString);
-                    startActivity(booking6);
-                    break;
-
-
-
+                        startActivity(booking6);
+                        break;
+                }
             }
 
+            if (intent.hasExtra("FeedPostActivity")){
+                setInactiveTab();
+                clickedId = 2;
+                tvHeaderTitle.setText(getString(R.string.app_name));
+                ibtnFeed.setImageResource(R.drawable.active_feeds_ico);
+                ivHeaderUser.setVisibility(View.VISIBLE);
+                ibtnChat.setVisibility(View.VISIBLE);
+                tvHeaderTitle.setVisibility(View.GONE);
+                ivAppIcon.setVisibility(View.VISIBLE);
+                ivHeaderBack.setVisibility(View.GONE);
+                replaceFragment(FeedsFragment.newInstance(1), false);
+            }else
+                addFragment(SearchBoardFragment.newInstance(item,""), false);
         }
-
     }
 
     private void initView() {
@@ -394,8 +407,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);*/
 
-                   Intent in = new Intent(MainActivity.this, GalleryActivity.class);
-                   startActivityForResult(in,734);
+                Intent in = new Intent(MainActivity.this, GalleryActivity.class);
+                startActivityForResult(in,734);
 
 
                 //    }
