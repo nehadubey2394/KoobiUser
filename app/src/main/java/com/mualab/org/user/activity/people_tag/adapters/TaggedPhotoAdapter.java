@@ -176,6 +176,11 @@ public class TaggedPhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onLongPress(MotionEvent e) {
                 instaTagTaggedPhoto.animateLike();
             }
+
+            @Override
+            public void onSinglePress(MotionEvent e) {
+
+            }
         };
 
         @Override

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Bookings implements Serializable {
     public String _id,bookingDate,bookingTime,bookStatus,paymentType,paymentStatus,totalPrice,
-            artistServiceName,location,transjectionId,isFinsh;
+            artistServiceName,location,transjectionId,isFinsh,artistId;
 
     public UserDetail userDetail;
    // public List<BookingInfo> todayBookingInfos = new ArrayList<>();

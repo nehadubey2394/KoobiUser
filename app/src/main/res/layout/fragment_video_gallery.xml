@@ -71,23 +71,29 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:expandedTitleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
 
-            <com.image.nocropper.CropperView
-                android:background="#ff282828"
-                android:id="@+id/showImage"
+            <VideoView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:nocropper__grid_opacity="0.8"
-                app:nocropper__grid_thickness="0.8dp"
-                app:nocropper__grid_color="@color/colorAccent"
-                app:nocropper__padding_color="@color/white" />
+                android:layout_height="300dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/videoView" />
 
-            <views.cv.SquareImageView
-                android:id="@+id/ivImage"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:scaleType="centerCrop"
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progrss"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"/>
+
+            <TextView
+                android:id="@+id/tvNoDataFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_data_found"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
                 android:visibility="gone"
-                />
+                android:textSize="16sp"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -113,5 +119,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
+
 
 </android.support.design.widget.CoordinatorLayout>

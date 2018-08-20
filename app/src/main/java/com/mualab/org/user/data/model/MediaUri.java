@@ -2,6 +2,7 @@ package com.mualab.org.user.data.model;
 
 import android.net.Uri;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class MediaUri implements Serializable{
     public String uri;
     public int mediaType;
     public boolean isFromGallery;
+    public File videoFile;
     public List<String> uriList = new ArrayList<>();
 
     public void addUri(String uri){

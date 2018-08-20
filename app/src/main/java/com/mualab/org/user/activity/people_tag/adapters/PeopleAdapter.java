@@ -14,6 +14,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
 import com.mualab.org.user.activity.feeds.adapter.LoadingViewHolder;
 import com.mualab.org.user.activity.people_tag.interfaces.SomeOneClickListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -93,13 +94,11 @@ public class PeopleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final ExSearchTag searchTag = mSomeOneList.get(position);
         final PeopleAdapter.Holder h = ((PeopleAdapter.Holder) holder);
 
-        Glide.with(mContext)
-                .load(searchTag.imageUrl)
-                .centerCrop()
-                .placeholder(R.drawable.defoult_user_img)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .placeholder(R.drawable.defoult_user_img)
-                .into(h.ivProfile);
+        if (searchTag.imageUrl!=null && !searchTag.imageUrl.equals("")){
+            Picasso.with(mContext).load(searchTag.imageUrl).
+                    placeholder(R.drawable.defoult_user_img).fit().into(h.ivProfile);
+        }
+
         h.tvHeader.setText(searchTag.title);
         h.tvDesc.setVisibility(View.GONE);
     }
@@ -127,7 +126,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             int pos = getAdapterPosition();
             if(mSomeOneList.size()>pos){
-                ExSearchTag searchTag = mSomeOneList.get(pos);
+                ExSearchTag searchTag = mSomeOneList.get(getAdapterPosition());
                 if (mSomeOneClickListener != null)
                     mSomeOneClickListener.onPeopleClicked(searchTag, getAdapterPosition());
             }

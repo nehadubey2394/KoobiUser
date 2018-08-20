@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.notification.fragment.model;
+package com.mualab.org.user.activity.notification.model;
 
 public class Notification {
     /*{
@@ -16,5 +16,5 @@ public class Notification {
 },*/
 
     public String _id,notifincationType,readStatus,type,senderId,userName,firstName,lastName,
-            profileImage,message,timeElapsed;
+            profileImage,message,timeElapsed,notifyId,userType;
 }

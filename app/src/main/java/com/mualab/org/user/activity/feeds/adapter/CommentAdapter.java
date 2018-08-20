@@ -99,7 +99,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         holder.tv_comments_time.setText(commentListInfo.timeElapsed);
     }
 
-
     @Override
     public int getItemCount() {
         return commentList.size();

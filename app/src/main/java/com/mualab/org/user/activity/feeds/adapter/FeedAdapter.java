@@ -27,6 +27,7 @@ import com.hendraanggrian.widget.SocialTextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.SearchFeedActivity;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
+import com.mualab.org.user.activity.feeds.listner.OnImageSwipeListener;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.feeds.Feeds;
 import com.mualab.org.user.data.remote.HttpResponceListner;
@@ -69,7 +70,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void showHideLoading(boolean b) {
         loading = b;
     }
-
 
     public interface Listener{
         void onCommentBtnClick(Feeds feed, int pos);
@@ -117,7 +117,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return null;
     }
 
-
     @Override
     public int getItemViewType(int position) {
         Feeds feed = feedItems.get(position);
@@ -141,6 +140,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+
         if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loaderViewHolder = (LoadingViewHolder) holder;
             if (showLoader) {
@@ -201,12 +201,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 int pos = imageHolder.weakRefViewPager.get().getCurrentItem();
                                 if (feeds.feedType.equalsIgnoreCase("image")) {
                                     listener.onFeedClick(feeds, pos, imageHolder.rl_imageView);
-
-                                } /*else if (feeds.feedType.equalsIgnoreCase("video")) {
-                                mContext.startActivity(new Intent(Intent.ACTION_VIEW)
-                                        .setDataAndType(Uri.parse(feeds.feed.get(pos)), "video/mp4")
-                                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
-                            }*/
+                                }
                             }
 
                             @Override
@@ -221,10 +216,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 notifyItemChanged(pos);
                             }
 
-                            @Override
-                            public void onLongPress() {
-
-                            }
                         }));
 
                 imageHolder.weakRefViewPager.get().setAdapter(imageHolder.weakRefAdapter.get());
@@ -240,6 +231,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                         @Override
                         public void onPageSelected(int pos) {
+                         //   onImageSwipeListener
                             Feeds feed = feedItems.get(imageHolder.getAdapterPosition());
                             feed.viewPagerlastPos = pos;
                             addBottomDots(imageHolder.ll_Dot, feed.feed.size(), pos);
@@ -673,10 +665,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class CellFeedViewHolder extends Holder {
+
         private LinearLayout ll_Dot;
         private RelativeLayout rl_imageView;
         private WeakReference<ViewPager> weakRefViewPager;
         private WeakReference<ViewPagerAdapter> weakRefAdapter;
+        private OnImageSwipeListener onImageSwipeListener = null;
+
+        public void setSwipeListner(OnImageSwipeListener onImageSwipeListener){
+            this.onImageSwipeListener = onImageSwipeListener;
+        }
 
         private CellFeedViewHolder(View itemView) {
             super(itemView);

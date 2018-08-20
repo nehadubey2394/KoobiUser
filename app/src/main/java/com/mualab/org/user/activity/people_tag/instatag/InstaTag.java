@@ -29,10 +29,10 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RotateDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -45,19 +45,18 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.explore.model.ExSearchTag;
-import com.mualab.org.user.activity.people_tag.listner.RemoveTagListener;
+import com.mualab.org.user.activity.people_tag.listner.RemoveDuplicateTagListener;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+
+import views.cv.AspectRatioImageView;
 
 public class InstaTag extends RelativeLayout   {
 
@@ -85,7 +84,7 @@ public class InstaTag extends RelativeLayout   {
     private boolean isAddingTag = true;
     private boolean canWeAddTags;
     private boolean showAllCarrots;
-    private boolean isShowTag;
+    private boolean isShowTag = false;
     private boolean mIsRootIsInTouch = true;
 
     private Animation mShowAnimation;
@@ -99,12 +98,14 @@ public class InstaTag extends RelativeLayout   {
     private ImageView mLikeImage;
 
     private TagImageView mTagImageView;
+    // private AspectRatioImageView mTagImageView;
 
     private final ArrayList<View> mTagList = new ArrayList<>();
     private  HashMap<String,TagDetail> tagMap  = new HashMap<>();
 
 
     private Listener listener;
+    private RemoveDuplicateTagListener removeDuplicateTagListener;
 
     public interface Listener{
         void onTagCliked(TagDetail tagDetail);
@@ -113,6 +114,10 @@ public class InstaTag extends RelativeLayout   {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    public void setRemoveDuplicateTagListener(RemoveDuplicateTagListener removeDuplicateTagListener) {
+        this.removeDuplicateTagListener = removeDuplicateTagListener;
     }
 
     private final Runnable mSetRootHeightWidth = new Runnable() {
@@ -154,17 +159,23 @@ public class InstaTag extends RelativeLayout   {
                     hideRemoveButtonFromAllTagView();
                     mIsRootIsInTouch = true;
                 }
+            }else {
+                if (mTaggedImageEvent != null) {
+                    mTaggedImageEvent.onSinglePress(e);
+                }
             }
             return false;
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
+
             return true;
         }
 
         @Override
         public void onShowPress(MotionEvent e) {
+
         }
 
         @Override
@@ -214,6 +225,7 @@ public class InstaTag extends RelativeLayout   {
     }
 
     public interface TaggedImageEvent {
+
         void singleTapConfirmedAndRootIsInTouch(int x, int y);
 
         boolean onDoubleTap(MotionEvent e);
@@ -221,6 +233,8 @@ public class InstaTag extends RelativeLayout   {
         boolean onDoubleTapEvent(MotionEvent e);
 
         void onLongPress(MotionEvent e);
+
+        void onSinglePress(MotionEvent e);
     }
 
     public InstaTag(Context context) {
@@ -496,8 +510,7 @@ public class InstaTag extends RelativeLayout   {
         boolean tagFound = true;
         if (!mTagList.isEmpty()) {
             for (View tagView : mTagList) {
-                if (((TextView) tagView.
-                        findViewById(R.id.tag_text_view)).
+                if (((TextView) tagView.findViewById(R.id.tag_text_view)).
                         getText().toString().equals(tagName)) {
                     tagFound = false;
                     break;
@@ -507,6 +520,39 @@ public class InstaTag extends RelativeLayout   {
             tagFound = true;
         }
         return tagFound;
+    }
+
+    private boolean isTagFound(final String tagName) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                boolean tagFound = false;
+                if (!mTagList.isEmpty()) {
+                    for (View tagView : mTagList) {
+
+                        String text = ((TextView) tagView.findViewById(R.id.tag_text_view)).getText().toString();
+
+                        if (text.equals(tagName)) {
+
+                            mRoot.removeView(tagView);
+
+                            for (TagToBeTagged tagToBeTagged : getListOfTagsToBeTagged()) {
+                                if (tagToBeTagged.getUnique_tag_id().equals(text)){
+                                    if(removeDuplicateTagListener!=null)
+                                        removeDuplicateTagListener.onDuplicateTagRemoved(tagToBeTagged);
+                                    break;
+                                }
+                            }
+                            tagFound = true;
+                            break;
+                        }
+                    }
+                } else {
+                    tagFound = false;
+                }
+            }
+        }, 200);
+        return true;
     }
 
     private void setColor(Drawable drawable, int color) {
@@ -545,85 +591,72 @@ public class InstaTag extends RelativeLayout   {
     }
 
     private int getXWhileAddingTag(Double x) {
-        return (mRootWidth * x.intValue()) / 100;
+        int a = (int) Math.round(x);
+        int a2 = (mRootWidth * a) / 100;
+        // a2 = a2+32;
+        double temp = ((a2*7.8)/100);
+        temp = a2+temp;
+        a2 = (int) Math.round(temp);
+        return a2;
     }
 
     private int getYWhileAddingTag(Double y) {
-        return (mRootHeight * y.intValue()) / 100;
+        int b = (int) Math.round(y);
+        int b2 = (mRootHeight * b) / 100;
+        //   b2 = b2-18;
+        double temp = ((b2*7.9)/100);
+        temp = b2-temp;
+        b2 = (int) Math.round(temp);
+        return b2;
     }
 
     public synchronized void addTag(int x, int y, String tagText, final TagDetail tag/*,HashMap<String,TagDetail> tagDetails*/ ) {
-        if (tagNotTaggedYet(tagText)) {
 
-            //mTag = tag;
-            if(tagMap!=null){
-                this.tagMap.put(tag.title, tag);
+        if (!mTagList.isEmpty()) {
+            for (View tagView : mTagList) {
+                String text = ((TextView) tagView.findViewById(R.id.tag_text_view)).getText().toString();
+                if (text.equals(tagText)) {
+                    mTagList.remove(tagView);
+                    mRoot.removeView(tagView);
+                    break;
+                }
             }
+        }
 
-            LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+        //   if (isTagFound(tagText)) {
 
-            final View tagView = layoutInflater.
-                    inflate(R.layout.view_for_tag, mRoot, false);
-            final TextView tagTextView = tagView.findViewById(R.id.tag_text_view);
+        //mTag = tag;
+        if(tagMap!=null){
+            this.tagMap.put(tag.title, tag);
+        }
 
-            final LinearLayout carrotTopContainer =
-                    tagView.findViewById(R.id.carrot_top);
-            final LinearLayout carrotLeftContainer =
-                    tagView.findViewById(R.id.carrot_left);
-            final LinearLayout carrotRightContainer =
-                    tagView.findViewById(R.id.carrot_right);
-            final LinearLayout carrotBottomContainer =
-                    tagView.findViewById(R.id.carrot_bottom);
+        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
 
-            final ImageView removeTagImageView =
-                    tagView.findViewById(R.id.remove_tag_image_view);
-            final LinearLayout textContainer =
-                    tagView.findViewById(R.id.tag_text_container);
+        final View tagView = layoutInflater.
+                inflate(R.layout.view_for_tag, mRoot, false);
+        final TextView tagTextView = tagView.findViewById(R.id.tag_text_view);
 
-            if (mTagTextDrawable != null) {
-                ViewCompat.setBackground(textContainer, mTagTextDrawable);
-            }
-            if (mCarrotTopDrawable != null) {
-                ViewCompat.setBackground(carrotTopContainer, mCarrotTopDrawable);
-            }
-            if (mCarrotLeftDrawable != null) {
-                ViewCompat.setBackground(carrotLeftContainer, mCarrotLeftDrawable);
-            }
-            if (mCarrotRightDrawable != null) {
-                ViewCompat.setBackground(carrotRightContainer, mCarrotRightDrawable);
-            }
-            if (mCarrotBottomDrawable != null) {
-                ViewCompat.setBackground(carrotBottomContainer, mCarrotBottomDrawable);
-            }
+        tagTextView.setText(tagText);
+        setColorForTag(tagView);
 
-            if (showAllCarrots) {
-                tagView.findViewById(R.id.carrot_top).setVisibility(View.VISIBLE);
-                tagView.findViewById(R.id.carrot_left).setVisibility(View.VISIBLE);
-                tagView.findViewById(R.id.carrot_right).setVisibility(View.VISIBLE);
-                tagView.findViewById(R.id.carrot_bottom).setVisibility(View.VISIBLE);
-            }
+        LayoutParams layoutParams = new LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(x - tagTextView.length() * 8,
+                y - tagTextView.length() * 2, 0,0);
+        tagView.setLayoutParams(layoutParams);
 
-            tagTextView.setText(tagText);
-            setColorForTag(tagView);
+        mTagList.add(tagView);
+        mRoot.addView(tagView);
 
-            LayoutParams layoutParams = new LayoutParams(
-                    LayoutParams.WRAP_CONTENT,
-                    LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(x - tagTextView.length() * 8,
-                    y - tagTextView.length() * 2, 0,0);
-            tagView.setLayoutParams(layoutParams);
-
-            mTagList.add(tagView);
-            mRoot.addView(tagView);
-
-            removeTagImageView.setOnClickListener(new OnClickListener() {
+            /*removeTagImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(listener!=null) listener.onTagRemoved(tag);
                     mTagList.remove(tagView);
                     mRoot.removeView(tagView);
                 }
-            });
+            });*/
 
           /*  tagView.setOnTouchListener(new OnTouchListener() {
                 public boolean onTouch(final View view, MotionEvent event) {
@@ -662,15 +695,16 @@ public class InstaTag extends RelativeLayout   {
                 }
             });*/
 
-            tagView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(listener!=null) listener.onTagCliked(tag);
-                }
-            });
+        tagView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listener!=null) listener.onTagCliked(tag);
+            }
+        });
 
-            //if(listener!=null) listener.onTagCliked(tag);
-        }/* else {
+        //if(listener!=null) listener.onTagCliked(tag);
+        //  }
+        /* else {
             if (isAddingTag){
                 //      Toast.makeText(mContext, "This user is already tagged", Toast.LENGTH_SHORT).show();
             }
@@ -681,8 +715,13 @@ public class InstaTag extends RelativeLayout   {
         this.isAddingTag = isAddingTag;
         if (!tagsAreAdded) {
             for (TagToBeTagged tagToBeTagged : tagsToBeTagged) {
-                addTag(getXWhileAddingTag(tagToBeTagged.getX_co_ord()),
-                        getYWhileAddingTag(tagToBeTagged.getY_co_ord()),
+
+                double x = getXWhileAddingTag(tagToBeTagged.getX_co_ord());
+                double y = getYWhileAddingTag(tagToBeTagged.getY_co_ord());
+
+                System.out.println("x=="+x+"  "+"y=="+y);
+
+                addTag(getXWhileAddingTag(tagToBeTagged.getX_co_ord()), getYWhileAddingTag(tagToBeTagged.getY_co_ord()),
                         tagToBeTagged.getUnique_tag_id(), tagToBeTagged.getTagDetails().get(tagToBeTagged.getUnique_tag_id()));
             }
             tagsAreAdded = true;
@@ -702,6 +741,9 @@ public class InstaTag extends RelativeLayout   {
                 x = (x / mRootWidth) * 100;
                 double y = view.getY();
                 y = (y / mRootHeight) * 100;
+
+                // x = x+32;
+                // y = y-18;
 
                 String txt = ((TextView) view.findViewById(R.id.tag_text_view)).getText().toString();
 
@@ -744,7 +786,7 @@ public class InstaTag extends RelativeLayout   {
         }
     }
 
-    public boolean isShowTags() {
+    public boolean isTagsShow() {
         return isShowTag;
     }
 
@@ -762,6 +804,7 @@ public class InstaTag extends RelativeLayout   {
             for (View tagView : mTagList) {
                 String txt = ((TextView) tagView.findViewById(R.id.tag_text_view)).getText().toString();
                 if (txt.equals(tag.getUnique_tag_id())) {
+                    mTagList.remove(tagView);
                     mRoot.removeView(tagView);
                     break;
                 }
@@ -831,50 +874,6 @@ public class InstaTag extends RelativeLayout   {
 
     public void setRootHeight(int mRootHeight) {
         this.mRootHeight = mRootHeight;
-    }
-
-    public int getTagTextColor() {
-        return mTagTextColor;
-    }
-
-    public int getTagBackgroundColor() {
-        return mTagBackgroundColor;
-    }
-
-    public int getCarrotTopBackGroundColor() {
-        return mCarrotTopBackGroundColor;
-    }
-
-    public int getCarrotLeftBackGroundColor() {
-        return mCarrotLeftBackGroundColor;
-    }
-
-    public int getCarrotRightBackGroundColor() {
-        return mCarrotRightBackGroundColor;
-    }
-
-    public int getCarrotBottomBackGroundColor() {
-        return mCarrotBottomBackGroundColor;
-    }
-
-    public Drawable getTagTextDrawable() {
-        return mTagTextDrawable;
-    }
-
-    public Drawable getCarrotTopDrawable() {
-        return mCarrotTopDrawable;
-    }
-
-    public Drawable getCarrotLeftDrawable() {
-        return mCarrotLeftDrawable;
-    }
-
-    public Drawable getCarrotRightDrawable() {
-        return mCarrotRightDrawable;
-    }
-
-    public Drawable getCarrotBottomDrawable() {
-        return mCarrotBottomDrawable;
     }
 
     public boolean canWeAddTags() {

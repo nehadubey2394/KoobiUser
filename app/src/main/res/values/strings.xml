@@ -359,6 +359,7 @@
     <string name="explore">Explore</string>
     <string name="add_more_story">Add More Story</string>
     <string name="profile">Profile</string>
+    <string name="write_a_message">Write a message....</string>
 
     <!--Profile-->
     <string name="text_certificate">Certificate</string>
@@ -421,5 +422,6 @@
 
     <string name="search_for_some_one">Search for someone</string>
     <string name="tap_photo_tag_someone_drag_to_move_or_tap_to_delete">Tap photo to tag someone.\nDrag to move, or tap to delete.</string>
+    <string name="send">Send</string>
 
 </resources>

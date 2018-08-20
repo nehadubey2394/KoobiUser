@@ -1,4 +1,4 @@
-package com.mualab.org.user.activity.camera;
+package com.mualab.org.user.activity.gellery;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -8,13 +8,18 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,18 +29,23 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 import android.widget.VideoView;
 import android.widget.ViewSwitcher;
 
 import com.android.volley.VolleyError;
+import com.mualab.org.user.BuildConfig;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.feeds.FeedPostActivity;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.model.MediaUri;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.constants.Constant;
+import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraException;
 import com.otaliastudios.cameraview.CameraListener;
@@ -52,15 +62,16 @@ import com.otaliastudios.cameraview.SizeSelectors;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import views.scaleview.ImageSource;
 import views.scaleview.ScaleImageView;
 
-public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
-
+public class CustomCameraActivity extends AppCompatActivity implements View.OnClickListener{
     private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
 
@@ -77,20 +88,23 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private VideoView videoView;
     private boolean isCameraSession;
     private boolean isStartRecord;
-
+    private Bitmap thumbImage;
     private Button btnTakePhoto;
-    private ImageButton btnCameraMode, btnFlashLight;
+    private ImageButton btnCameraMode, btnFlashLight,switchCamera;
     //private Chronometer mChronometer;
 
     private int currentState;
     private File photoPath;
     private Uri captureMediaUri;
     private boolean isVideoUri;
+    private MediaUri mediaUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera);
+        setContentView(R.layout.activity_custom_camera);
+        mediaUri = new MediaUri();
+
         initView();
 
         updateState(STATE_TAKE_PHOTO);
@@ -129,35 +143,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onPictureTaken(byte[] jpeg) {
                 super.onPictureTaken(jpeg);
-                Progress.showProgressOnly(CameraActivity.this);
+                Progress.showProgressOnly(CustomCameraActivity.this);
                 CameraUtils.decodeBitmap(jpeg, 3000, 3000, new CameraUtils.BitmapCallback() {
                     @Override
                     public void onBitmapReady(Bitmap bitmap) {
                         cameraView.stop();
                         showTakenPicture(bitmap);
+                        thumbImage = bitmap;
                         isVideoUri = false;
-                        Progress.hide(CameraActivity.this);
-                        /*File f = new File(CameraActivity.this.getCacheDir(), "tmp.jpg");
-                        try {
-
-                            f.createNewFile();
-                            //Convert bitmap to byte array
-                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 80 *//*ignored for PNG*//*, bos);
-                            byte[] bitmapdata = bos.toByteArray();
-                            //write the bytes in file
-                            FileOutputStream fos = new FileOutputStream(f);
-                            fos.write(bitmapdata);
-                            fos.flush();
-                            fos.close();
-
-                            //mSelected = new ArrayList<>();
-                           // mSelected.add(Uri.fromFile(f));
-                            captureMediaUri = Uri.fromFile(f);
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }*/
+                        Progress.hide(CustomCameraActivity.this);
                     }
                 });
             }
@@ -166,7 +160,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             public void onVideoTaken(File video) {
                 super.onVideoTaken(video);
                 cameraView.stop();
-                captureMediaUri = Uri.fromFile(video);
+                // captureMediaUri = Uri.fromFile(video);
+                captureMediaUri =  FileProvider.getUriForFile(CustomCameraActivity.this,
+                        getApplicationContext().getPackageName()+ ".provider", video);
+                mediaUri.videoFile = video;
                 vUpperPanel.showNext();
                 vLowerPanel.showNext();
                 updateState(STATE_SETUP_VIDEO);
@@ -211,6 +208,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     public void onDestroy() {
         super.onDestroy();
         cameraView.destroy();
+        countDownTimer = null;
     }
 
     private void showToast(String str){
@@ -228,6 +226,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         btnTakePhoto = findViewById(R.id.btnTakePhoto);
         btnCameraMode = findViewById(R.id.btnCameraMode);
         btnFlashLight = findViewById(R.id.btnFlashLight);
+        switchCamera = findViewById(R.id.switchCamera);
         //ivBack = findViewById(R.id.ivBack);
 
         cameraView = findViewById(R.id.camera);
@@ -236,10 +235,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         btnTakePhoto.setOnClickListener(this);
         btnFlashLight.setOnClickListener(this);
+        switchCamera.setOnClickListener(this);
         // findViewById(R.id.btnAccept).setOnClickListener(this);
         findViewById(R.id.retry).setOnClickListener(this);
         findViewById(R.id.btnBack).setOnClickListener(this);
-        findViewById(R.id.switchCamera).setOnClickListener(this);
         findViewById(R.id.btnCameraMode).setOnClickListener(this);
         findViewById(R.id.add_to_story).setOnClickListener(this);
         isCameraSession = true;
@@ -282,48 +281,61 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     animateShutter();
 
                 }else if(currentState == STATE_TAKE_VIDEO){
+
                     if(isStartRecord){
                         btnTakePhoto.setBackgroundResource(R.drawable.btn_capture_video);
                         if(countDownTimer!=null) countDownTimer.onFinish();
-                        // stopRecording();
                     }else {
                         btnTakePhoto.setBackgroundResource(R.drawable.btn_capture_video_active);
                         btnTakePhoto.setEnabled(false);
-                        //startRecording();
+                        cameraView.setSessionType(SessionType.VIDEO);
                         startTimear();
                     }
                 }
                 break;
 
             case R.id.btnAccept:
-                //PublishActivity.openWithPhotoUri(this, Uri.fromFile(photoPath));
 
-
-                /*Intent intent = null;
-                if (mSelected != null && mSelected.size() > 0) {
-                    intent = new Intent(mContext, FeedPostActivity.class);
-                    intent.putExtra("caption", "");
-                    intent.putExtra("feedType", Constant.IMAGE_STATE);
-                    intent.putExtra("fromGallery", false);
-                    intent.putParcelableArrayListExtra("imageUri", new ArrayList<Parcelable>(mSelected));
-                } else if(videoUri!=null){
-                    intent = new Intent(mContext, FeedPostActivity.class);
-                    intent.putExtra("caption", "");
-                    intent.putExtra("feedType", Constant.VIDEO_STATE);
-                    intent.putExtra("videoUri", videoUri.toString());
-                    intent.putExtra("fromGallery", false);
-                    intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                }
-
-                if (intent != null) {
-                    // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivityForResult(intent, Constant.POST_FEED_DATA);
-                }*/
                 break;
 
 
             case R.id.add_to_story:
-                addMyStory();
+                mediaUri.isFromGallery = false;
+                if(isVideoUri){
+                    mediaUri.addUri(String.valueOf(captureMediaUri));
+                    mediaUri.mediaType = Constant.VIDEO_STATE;
+                    ivTakenPhoto.setDrawingCacheEnabled(true);
+
+                    thumbImage = ivTakenPhoto.getDrawingCache();
+                    String path = MediaStore.Images.Media.insertImage(CustomCameraActivity.this.
+                            getContentResolver(), thumbImage, "Title", null);
+                    thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(
+                            ImageVideoUtil.generatePath(Uri.parse(path), CustomCameraActivity.this)),
+                            150, 150);
+                    //  thumbImage = ImageVideoUtil.getVideoToThumbnil(captureMediaUri, CustomCameraActivity.this);
+
+                }else {
+                    thumbImage = ivTakenPhoto.getBitmap();
+                    mediaUri.mediaType = Constant.IMAGE_STATE;
+                    String path = MediaStore.Images.Media.insertImage(CustomCameraActivity.this.
+                            getContentResolver(), thumbImage, "Title", null);
+                    thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(
+                            ImageVideoUtil.generatePath(Uri.parse(path), CustomCameraActivity.this)),
+                            150, 150);
+                    mediaUri.addUri(path);
+                }
+
+                if (mediaUri != null && mediaUri.uriList.size() > 0) {
+                    Intent intent = new Intent(CustomCameraActivity.this,
+                            FeedPostActivity.class);
+                    intent.putExtra("caption", "");
+                    intent.putExtra("mediaUri", mediaUri);
+                    intent.putExtra("thumbImage", thumbImage);
+                    intent.putExtra("feedType",mediaUri.mediaType);
+                    startActivity(intent);
+                    finish();
+                }
+                //  addMyStory();
                 break;
 
 
@@ -433,6 +445,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void stopRecording(){
+
         if(!isCameraSession || isStartRecord){
             cameraView.stopCapturingVideo();
             //mChronometer.stop();\
@@ -444,14 +457,18 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private void startRecording(){
         if(cameraView.getSessionType()!=SessionType.PICTURE){
             try {
-                File file = CameraActivity.this.getExternalCacheDir();
+                File file = getExternalCacheDir();
+                // File file = new File(getExternalCacheDir(), UUID.randomUUID() + ".mp4");
                 if (file != null) {
                     isStartRecord = true;
+                    switchCamera.setVisibility(View.GONE);
+                    btnCameraMode.setVisibility(View.GONE);
                     //mChronometer.setBase(SystemClock.elapsedRealtime());
                     photoPath = new File(file.getPath(), "tmp.mp4");
                     cameraView.startCapturingVideo(photoPath);
                     //mChronometer.start();
                     showToast("Start Recording...");
+                    Toast.makeText(CustomCameraActivity.this,"Need to record at least 10 sec of video",Toast.LENGTH_LONG).show();
                 }
 
             } catch (Exception e) {
@@ -484,10 +501,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 e.printStackTrace();
             }
         }else  {
+            countDownTimer = null;
             super.onBackPressed();
         }
     }
-
 
     private void showTakenPicture(Bitmap bitmap) {
         vUpperPanel.showNext();
@@ -495,7 +512,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         ivTakenPhoto.setImage(ImageSource.bitmap(bitmap));
         updateState(STATE_SETUP_PHOTO);
     }
-
 
     private void updateState(int state) {
         currentState = state;
@@ -550,99 +566,40 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-
-    private void addMyStory(){
-
-        if(ConnectionDetector.isConnected()){
-
-            Map<String,String> map = new HashMap<>();
-            map.put("userId", ""+Mualab.currentUser.id);
-            map.put("type", isVideoUri?"video":"image");
-            if(isVideoUri){
-
-                ivTakenPhoto.setDrawingCacheEnabled(true);
-                Bitmap bitmap = ivTakenPhoto.getDrawingCache();
-              /* Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(photoPath., this,
-                       MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);*/
-                HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
-                    @Override
-                    public void onResponse(String response, String apiName) {
-                        try {
-                            JSONObject js = new JSONObject(response);
-                            String status = js.getString("status");
-                            String message = js.getString("message");
-                            if (status.equalsIgnoreCase("success")) {
-                                finish();
-                            }
-                            else showToast(message);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void ErrorListener(VolleyError error) {
-                        Log.d("res:", ""+error.getLocalizedMessage());
-                    }})
-                        .setParam(map)
-                        .setAuthToken(Mualab.currentUser.authToken)
-                        .setProgress(true));
-                task.postFile("myStory", photoPath, bitmap);
-
-            }else {
-                Bitmap bitmap = ivTakenPhoto.getBitmap();
-                HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
-                    @Override
-                    public void onResponse(String response, String apiName) {
-                        try {
-                            JSONObject js = new JSONObject(response);
-                            String status = js.getString("status");
-                            String message = js.getString("message");
-                            if (status.equalsIgnoreCase("success")) {
-                                Mualab.isStoryUploaded = true;
-                                finish();
-                            }
-                            else showToast(message);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void ErrorListener(VolleyError error) {
-                        Log.d("res:", ""+error.getLocalizedMessage());
-                    }})
-                        .setParam(map)
-                        .setAuthToken(Mualab.currentUser.authToken)
-                        .setProgress(true));
-                task.postImage("myStory", bitmap);
-            }
-
-        }else showToast(getString(R.string.error_msg_network));
-    }
-
-
     private CountDownTimer countDownTimer;
-    private boolean timerIsRunning;
+    private long tempMillisUntilFinished;
+
     private void startTimear(){
         if(countDownTimer!=null)
             countDownTimer.cancel();
-        timerIsRunning = true;
+
+        startRecording();
+
         countDownTimer = new CountDownTimer(60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 btnTakePhoto.setText(String.valueOf(millisUntilFinished / 1000));
-                if(57000<millisUntilFinished)
+
+                tempMillisUntilFinished = millisUntilFinished;
+
+                if(millisUntilFinished<50000) {
                     btnTakePhoto.setEnabled(true);
+                }
+                else {
+                    btnTakePhoto.setEnabled(false);
+                   // showToast("Need to record at least 10 sec of video");
+                }
             }
 
             public void onFinish() {
-                timerIsRunning = false;
                 btnTakePhoto.setText("REC");
                 btnTakePhoto.setEnabled(true);
+                switchCamera.setVisibility(View.VISIBLE);
+                btnCameraMode.setVisibility(View.VISIBLE);
+
                 if(isStartRecord)
                     stopRecording();
             }
         }.start();
-        startRecording();
+
     }
 }

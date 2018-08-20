@@ -50,15 +50,19 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hendraanggrian.socialview.Mention;
 import com.hendraanggrian.socialview.SocialView;
 import com.hendraanggrian.widget.FilteredAdapter;
 import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
+import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.activity.people_tag.activity.DemoTagActivity;
 import com.mualab.org.user.activity.people_tag.activity.PeopleTagActivity;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
+import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.MyToast;
@@ -130,29 +134,28 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private Handler handler;
     private Runnable runnable;
     private  long mLastClickTime = 0;
-    private String tagJson="";
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // FeedPostActivity.this.registerReceiver(receiverUpComplete, new IntentFilter("FILTER"));
-    }
+    private String tagJson="",tagIdsArray="";
+    private  List<ArrayList<TagToBeTagged>> listOfValues ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_post);
         setStatusbarColor();
-
-        Intent intent;
-        if ((intent = getIntent()) != null) {
+        Intent intent = getIntent();
+        if (intent!= null) {
             caption = intent.getStringExtra("caption");
             thumbImage = intent.getParcelableExtra("thumbImage");
             mediaUri = (MediaUri) intent.getSerializableExtra("mediaUri");
             feedType = intent.getIntExtra("feedType", Constant.IMAGE_STATE);
+
+            /*file:///storage/emulated/0/Android/data/com.mualab.org.user/cache/tmp.mp4*/
         }
 
+        listOfValues = new ArrayList<>();
+
         viewDidLoad();
+
         updateUi();
 
         ivShareFbOn.setOnClickListener(new View.OnClickListener() {
@@ -217,7 +220,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                         intent.putExtra("startIndex", 0);
                         startActivity(intent);
                     } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
-
                         startActivity(new Intent(Intent.ACTION_VIEW)
                                 .setDataAndType(Uri.parse(mediaUri.uriList.get(0)), "video/mp4")
                                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
@@ -339,12 +341,15 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
     @SuppressLint("DefaultLocale")
     private void updateUi() {
+        if(mediaUri != null){
+            if (mediaUri.mediaType == Constant.IMAGE_STATE && mediaUri.uriList.size()>0){
+                findViewById(R.id.ll_tagPepole).setVisibility(View.VISIBLE);
+            }else {
+                findViewById(R.id.ll_tagPepole).setVisibility(View.GONE);
+            }
 
-        if (mediaUri.mediaType == Constant.IMAGE_STATE && mediaUri.uriList.size()>0){
-            findViewById(R.id.ll_tagPepole).setVisibility(View.VISIBLE);
-        }else {
-            findViewById(R.id.ll_tagPepole).setVisibility(View.GONE);
         }
+
 
         if (!TextUtils.isEmpty(caption)) {
             edCaption.setText(caption);
@@ -352,53 +357,15 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }
 
 
-        if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
+        if (mediaUri != null) {
 
-         /*   if (mediaUri.mediaType == Constant.IMAGE_STATE) {
-
-                try {
-                    feedType = Constant.IMAGE_STATE;
-                    Bitmap ThumbImage;
-                    if(mediaUri.isFromGallery){
-                        ThumbImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
-                                Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size()-1)));
-                    }else {
-                        ThumbImage = ThumbnailUtils.extractThumbnail(
-                                BitmapFactory.decodeFile(
-                                        ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(mediaUri.uriList.size() - 1)),
-                                                this)), 200, 200);
-                    }
-
-                    iv_postimage.setImageBitmap(ThumbImage);
-                    if (mediaUri.uriList.size() > 1) {
-                        tvMediaSize.setVisibility(View.VISIBLE);
-                        tvMediaSize.setText(String.format("%d", mediaUri.uriList.size()));
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else */if (mediaUri.mediaType == Constant.VIDEO_STATE) {
-
-                feedType = Constant.VIDEO_STATE;
-                if (mediaUri.isFromGallery) {
-                    String filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(0)), this);
+            if (mediaUri.mediaType == Constant.VIDEO_STATE) {
+                if (thumbImage!=null){
+                    videoThumb = thumbImage;
+                }else {
+                    String filePath = ImageVideoUtil.generatePath(Uri.parse(mediaUri.uri), this);
                     videoThumb = ImageVideoUtil.getVidioThumbnail(filePath, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-                } else {
-                    videoThumb = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mediaUri.uriList.get(0)),
-                            this,
-                            MediaStore.Video.Thumbnails.FULL_SCREEN_KIND); //ImageVideoUtil.getCompressBitmap();
-                   /* SuziLoader loader = new SuziLoader(); //Create it for once
-                    loader.with(this) //Context
-                            .load(mediaUri.uriList.get(0)) //Video path
-                            .into(iv_postimage) // imageview to load the thumbnail
-                            .type("mini") // mini or micro
-                            .show();*/ // to show the thumbnail
                 }
-
-                if (videoThumb != null)
-                    iv_postimage.setImageBitmap(videoThumb);
-                // Bitmap bitmap = ImageVideoUtil.getVideoToThumbnil(Uri.parse(mSelectdVideo), this);
             }
         } else {
             feedType = Constant.TEXT_STATE;
@@ -445,23 +412,25 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
 
             case R.id.ll_tagPepole:
-                if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
+                if (feedType == Constant.IMAGE_STATE){
+                    if (mediaUri != null && mediaUri.uriList != null && mediaUri.uriList.size() > 0) {
 
-                    if (mediaUri.mediaType == Constant.IMAGE_STATE) {
+                        if (mediaUri.mediaType == Constant.IMAGE_STATE) {
 
-                        Intent intent = new Intent(FeedPostActivity.this, PeopleTagActivity.class);
-                        intent.putExtra("imageArray", (Serializable) mediaUri.uriList);
-                        intent.putExtra("startIndex", 0);
-                        intent.putExtra("mediaUri", mediaUri);
-                        // intent.putExtra("hashmap",  taggedImgMap);
-                        startActivityForResult(intent, 100);
-                        //   MyToast.getInstance(FeedPostActivity.this).showDasuAlert("Under developement");
+                            Intent intent = new Intent(FeedPostActivity.this, PeopleTagActivity.class);
+                            intent.putExtra("imageArray", (Serializable) mediaUri.uriList);
+                            intent.putExtra("startIndex", 0);
+                            intent.putExtra("mediaUri", mediaUri);
+                            // intent.putExtra("hashmap",  taggedImgMap);
+                            startActivityForResult(intent, 100);
+                            //   MyToast.getInstance(FeedPostActivity.this).showDasuAlert("Under developement");
 
-                    } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
+                        } else if (mediaUri.mediaType == Constant.VIDEO_STATE) {
 
-                        startActivity(new Intent(Intent.ACTION_VIEW)
-                                .setDataAndType(Uri.parse(mediaUri.uriList.get(0)), "video/mp4")
-                                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                            startActivity(new Intent(Intent.ACTION_VIEW)
+                                    .setDataAndType(Uri.parse(mediaUri.uriList.get(0)), "video/mp4")
+                                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                        }
                     }
                 }
 
@@ -476,6 +445,20 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 break;*/
 
             case R.id.tv_post:
+                if (listOfValues.size()!=0){
+                    Gson gson = new GsonBuilder().create();
+                    ArrayList<String> tagIdsArrayList = new ArrayList<>();
+                    for (int i = 0; i<listOfValues.size();i++){
+                        for (TagToBeTagged tag : listOfValues.get(i)){
+                            HashMap<String,TagDetail> tagDetails = tag.getTagDetails();
+                            for(Map.Entry map  :  tagDetails.entrySet() ) {
+                                TagDetail tagDetail = tagDetails.get(map.getKey());
+                                tagIdsArrayList.add(tagDetail.tagId);
+                            }
+                        }
+                    }
+                    tagIdsArray = gson.toJson(tagIdsArrayList);
+                }
                 feedPostPrerareData();
                 break;
 
@@ -638,8 +621,8 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         }else  if (requestCode == 100 && resultCode != 0) {
             if (data != null) {
                 tagJson = data.getStringExtra("tagJson");
+                listOfValues = (List<ArrayList<TagToBeTagged>>) data.getSerializableExtra("listOfValues");
                 String tagCount = data.getStringExtra("tagCount");
-//                taggedImgMap = (HashMap<Integer, ArrayList<TagToBeTagged>>) data.getSerializableExtra("hashmap");
                 tvTagCount.setText(tagCount);
             }
         }
@@ -670,7 +653,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private void resetView() {
         if (tempFile != null) {
             try {
-                boolean bool = tempFile.delete();
+                //  boolean bool = tempFile.delete();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -722,7 +705,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         map.put("location", address.placeName);
         map.put("city", TextUtils.isEmpty(address.city)?"":address.city);
         map.put("country", TextUtils.isEmpty(address.country)?"":address.country);
-
         if (TextUtils.isEmpty(address.latitude) || TextUtils.isEmpty(address.longitude)) {
             map.put("latitude", "");
             map.put("longitude", "");
@@ -730,17 +712,26 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             map.put("latitude", "" + address.latitude);
             map.put("longitude", "" + address.longitude);
         }
+        Gson gson = new GsonBuilder().create();
+        ArrayList<String> tagIdsArrayList = new ArrayList<>();
+        String emptyArray = gson.toJson(tagIdsArrayList);
+
+        if (tagJson!=null && !tagJson.equals(""))
+            map.put("peopleTag",tagJson);
+        else
+            map.put("peopleTag",emptyArray);
+
+        if (tagIdsArray!=null && !tagIdsArray.equals(""))
+            map.put("tagData", tagIdsArray);
+        else
+            map.put("tagData", emptyArray);
+
         return map;
     }
 
     // uploadimage call
     private void apiCallForUploadImages() {
         Map<String, String> map = prepareCommonPostData();
-        if (tagJson!=null)
-            map.put("peopleTag",tagJson);
-        else
-            map.put("peopleTag","");
-
         List<Uri> uris = new ArrayList<>();
         for (String uri : mediaUri.uriList)
             uris.add(Uri.parse(uri));
@@ -773,7 +764,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             if (status.equalsIgnoreCase("success")) {
                 PeopleTagActivity.taggedImgMap.clear();
                 resetView();
-                setResult(Activity.RESULT_OK);
+                // setResult(Activity.RESULT_OK);
+                Intent i = new Intent(FeedPostActivity.this, MainActivity.class);
+                i.putExtra("FeedPostActivity","FeedPostActivity");
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
                 finish();
             } else {
                 MyToast.getInstance(this).showSmallMessage(message);
@@ -916,11 +911,17 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void uploadVideo(Bitmap videoThumb){
-
+        /*/storage/emulated/0/DCIM/Camera/20180808_113328.mp4*/
         Map<String, String> map = prepareCommonPostData();
-        String uri = mediaUri.uriList.get(0);
-        String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
-        tempFile = new File(path);
+        String uri = mediaUri.uri;
+
+        if (mediaUri.videoFile!=null)
+            tempFile = mediaUri.videoFile;
+        else{
+            String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
+            tempFile = new File(path);
+        }
+
 
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
@@ -934,7 +935,11 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     String message = js.getString("message");
                     if (status.equalsIgnoreCase("success")) {
                         resetView();
-                        setResult(Activity.RESULT_OK);
+                        //  setResult(Activity.RESULT_OK);
+                        Intent i = new Intent(FeedPostActivity.this, MainActivity.class);
+                        i.putExtra("FeedPostActivity","FeedPostActivity");
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
                         finish();
                     }else {
                         MyToast.getInstance(FeedPostActivity.this).showSmallMessage(message);
@@ -946,7 +951,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void ErrorListener(VolleyError error) {
-                Log.d("fdashgf", "dfaew");
                 findViewById(R.id.tv_post).setEnabled(true);
                 hideProgressBar();
             }})

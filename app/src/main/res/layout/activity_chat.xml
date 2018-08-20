@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".activity.chat.ChatActivity">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="2dp"
+        android:id="@+id/lyHeader"
+        >
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/white_back_ico"
+                android:tint="@color/gray"
+                android:padding="5dp"
+                />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivUserProfile"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                app:civ_border_width="2dp"
+                android:src="@drawable/defoult_user_img"
+                android:background="@drawable/gradient_circle_img"
+                app:civ_border_color="@color/transparent"
+                android:tint="@color/black"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="12dp"
+                android:padding="2dp"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Isabella"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:maxLines="1"
+                    android:textColor="@color/text_color"
+                    android:fontFamily="@font/roboto_medium"
+                    />
+                <TextView
+                    android:id="@+id/tvOnlineStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="online"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:textColor="@color/dark_grey"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_for_noChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/no_data_found"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/_12ssp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/colorPrimaryDark"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/lyHeader"
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/sendlayout"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+
+    <RelativeLayout
+        android:id="@+id/sendlayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bg_chat">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/iv_for_pickImage"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="5dp"
+                android:src="@drawable/gallery_placeholder" />
+
+            <EditText
+                android:id="@+id/et_for_sendTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/iv_for_pickImage"
+                android:background="@null"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="@string/write_a_message"
+                android:maxHeight="160dp"
+                android:padding="6dp"
+                android:ems="19"
+                android:textColor="@color/text_color"
+                android:textSize="13sp"
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/iv_for_send"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="6dp"
+                android:layout_marginRight="6dp"
+                android:textSize="16sp"
+                android:padding="5dp"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/colorAccent"
+                android:text="@string/send"
+              />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

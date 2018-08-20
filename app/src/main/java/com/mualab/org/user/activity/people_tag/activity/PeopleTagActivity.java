@@ -37,6 +37,7 @@ import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.instatag.TagImageView;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.interfaces.SomeOneClickListener;
+import com.mualab.org.user.activity.people_tag.listner.RemoveDuplicateTagListener;
 import com.mualab.org.user.activity.people_tag.listner.TagListClickListener;
 import com.mualab.org.user.activity.people_tag.models.SomeOne;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
@@ -48,10 +49,13 @@ import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.utils.KeyboardUtil;
+import com.mualab.org.user.utils.ScreenUtils;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,7 +68,6 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
     private RelativeLayout mHeaderSomeOneToBeTagged;
     private int mAddTagInX, mAddTagInY;
     private PeopleAdapter mSomeOneAdapter;
-
     private List<String> images;
     private int startIndex,currentIndex;
     private LinearLayout ll_Dot;
@@ -95,10 +98,15 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
             //  taggedImgMap = (HashMap<Integer, ArrayList<TagToBeTagged>>) intent.getSerializableExtra("hashmap");
         }
 
+        int widthPixels = ScreenUtils.getScreenWidth(PeopleTagActivity.this);
+        widthPixels = widthPixels >=1080?1080: widthPixels;
+
         ll_loadingBox = findViewById(R.id.ll_loadingBox);
         progress_bar = findViewById(R.id.progress_bar);
         tv_msg = findViewById(R.id.tv_msg);
         ll_Dot = findViewById(R.id.ll_Dot);
+
+        TextView tvCancel = findViewById(R.id.tvCancel);
 
         // final TextView cancelTextView = findViewById(R.id.cancel);
         final TagImageView doneImageView = findViewById(R.id.done);
@@ -123,7 +131,8 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         if (taggedImgMap.size()!=0){
             taggedArrayList.clear();
             ArrayList<TagToBeTagged>taggeds =  taggedImgMap.get(startIndex);
-            taggedArrayList.addAll(taggeds);
+            if (taggeds!=null)
+                taggedArrayList.addAll(taggeds);
         }
 
         viewPager = findViewById(R.id.viewpager);
@@ -173,6 +182,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         doneImageView.setOnClickListener(this);
         backImageView.setOnClickListener(this);
         tvDone.setOnClickListener(this);
+        tvCancel.setOnClickListener(this);
 
         searchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -249,20 +259,25 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         mLastClickTime = SystemClock.elapsedRealtime();
         switch (v.getId()) {
             case R.id.tvDone:
-                List<Integer> integers = new ArrayList<>();
+
                 ArrayList<TagToBeTagged>tags = new ArrayList<>();
 
                 for(Map.Entry map  :  taggedImgMap.entrySet() ) {
                     int i = (int) map.getKey();
-                    integers.add(i);
                     tags.addAll(taggedImgMap.get(i));
                 }
 
-                List<ArrayList<TagToBeTagged>> listOfValues2 = new ArrayList<>(integers.size());
+                List<ArrayList<TagToBeTagged>> listOfValues2 = new ArrayList<>();
 
-                if (integers.size()!=0) {
-                    for (int i = 0; i < integers.size(); i++) {
-                        listOfValues2.add(i, taggedImgMap.get(i));
+                for (int i = 0; i < images.size(); i++){
+                    if (taggedImgMap.size()!=0){
+                        if (taggedImgMap.containsKey(i)){
+                            ArrayList<TagToBeTagged>taggeds =  taggedImgMap.get(i);
+                            listOfValues2.add(taggeds);
+                        }else {
+                            ArrayList<TagToBeTagged>taggeds = new ArrayList<>();
+                            listOfValues2.add(taggeds);
+                        }
                     }
                 }
 
@@ -273,6 +288,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
                 String jsonArray = gson.toJson(listOfValues2);
                 Intent intent = new Intent();
                 intent.putExtra("tagJson",  jsonArray);
+                intent.putExtra("listOfValues",  (Serializable)listOfValues2);
                 intent.putExtra("tagCount",  String.valueOf(tags.size()));
                 setResult(RESULT_OK, intent);
                 finish();
@@ -280,10 +296,16 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
                 //}
                 //   }
 
-
                 break;
             case R.id.get_back:
-                finish();
+                onBackPressed();
+                break;
+
+            case R.id.tvCancel:
+                mRecyclerViewSomeOneToBeTagged.setVisibility(View.GONE);
+                mHeaderSearchSomeOne.setVisibility(View.GONE);
+                llSearchPeople.setVisibility(View.GONE);
+                mHeaderSomeOneToBeTagged.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -391,9 +413,15 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         public void onLongPress(MotionEvent e) {
 
         }
+
+        @Override
+        public void onSinglePress(MotionEvent e) {
+
+        }
     };
 
-    class ViewPagerAdapterForTag extends PagerAdapter implements SomeOneClickListener,TagListClickListener{
+    class ViewPagerAdapterForTag extends PagerAdapter implements SomeOneClickListener,
+            TagListClickListener,RemoveDuplicateTagListener {
 
         LayoutInflater mLayoutInflater;
         Context context;
@@ -432,6 +460,8 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
 
             mInstaTag.setImageToBeTaggedEvent(taggedImageEvent);
 
+            mInstaTag.setRemoveDuplicateTagListener(this);
+
             final String url = String.valueOf(imagesList.get(position));
 
             mSomeOneAdapter.setListener(this);
@@ -440,10 +470,12 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
 
             tagListAdapter.setCustomListener(this);
 
-            Glide.with(context)
-                    .load(imagesList.get(position)).placeholder(R.drawable.gallery_placeholder)
-                    .centerCrop().skipMemoryCache(false).skipMemoryCache(false).
-                    into(mInstaTag.getTagImageView());
+         /*   Picasso.with(context).load(imagesList.get(position)).resize(widthPixels,
+                    320).centerInside().
+                    into(mInstaTag.getTagImageView());*/
+
+            Glide.with(context).load(imagesList.get(position)).fitCenter().
+                    placeholder(R.drawable.gallery_placeholder).into(mInstaTag.getTagImageView());
 
 
             if (taggedImgMap.size()!=0){
@@ -488,6 +520,18 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
 
                         final TagDetail tag = new TagDetail("people",String.valueOf(someOne.id),
                                 someOne.title,someOne.userType);
+
+
+                      /*  if (taggedArrayList!=null && taggedArrayList.size()!=0){
+                            for (int i=0;i<taggedArrayList.size();i++){
+                                if (taggedArrayList.get(i).getUnique_tag_id().equals(someOne.title)){
+                                    taggedArrayList.remove(i);
+                                    tagListAdapter.notifyDataSetChanged();
+                                    break;
+                                }
+                            }
+                        }*/
+
 
                         mInstaTag.addTag(mAddTagInX, mAddTagInY, someOne.title,tag);
 
@@ -538,6 +582,37 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
             }
 
         }
+
+        @Override
+        public void onDuplicateTagRemoved(final TagToBeTagged tag) {
+
+            if (taggedArrayList!=null && taggedArrayList.size()!=0){
+                for (int i=0;i<taggedArrayList.size();i++){
+                    if (taggedArrayList.get(i).getUnique_tag_id().equals(tag.getUnique_tag_id())){
+                        taggedArrayList.remove(i);
+                        tagListAdapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
+
+                ArrayList<TagToBeTagged>newtags =  taggedImgMap.get(currentIndex);
+                newtags.remove(tag);
+
+                taggedImgMap.put(currentIndex,newtags);
+            }
+        }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        taggedImgMap.clear();
+        taggedArrayList.clear();
+        Intent intent2 = new Intent();
+        intent2.putExtra("tagJson",  "");
+        intent2.putExtra("tagCount",  "0");
+        setResult(RESULT_OK, intent2);
+        finish();
+
+    }
 }

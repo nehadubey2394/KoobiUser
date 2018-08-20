@@ -5,12 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.mualab.org.user.activity.people_tag.instatag.TagImageView
+     <com.mualab.org.user.activity.people_tag.instatag.TagImageView
+         android:id="@+id/tag_image_view"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:adjustViewBounds="true"
+
+          />
+
+  <!--  <views.cv.AspectRatioImageView
         android:id="@+id/tag_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-         />
+        />-->
 
 </RelativeLayout>

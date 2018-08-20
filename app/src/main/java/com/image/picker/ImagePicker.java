@@ -167,7 +167,7 @@ public final class ImagePicker {
      *
      * @param context context.
      */
-    private static boolean hasCameraAccess(Context context) {
+    public static boolean hasCameraAccess(Context context) {
         return ContextCompat.checkSelfPermission(context,
                 Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
@@ -178,7 +178,7 @@ public final class ImagePicker {
      * @param context context.
      * @return Boolean, indicating if the permission is present.
      */
-    private static boolean appManifestContainsPermission(Context context, String permission) {
+    public static boolean appManifestContainsPermission(Context context, String permission) {
         PackageManager pm = context.getPackageManager();
         try {
             PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_PERMISSIONS);
@@ -293,8 +293,6 @@ public final class ImagePicker {
     }
 
 
-
-
     /**
      * Get stream, save the picture to the temp file and return path.
      *
@@ -321,7 +319,6 @@ public final class ImagePicker {
         }
         return null;
     }
-
 
 
     private static File getTemporalFile(Context context) {

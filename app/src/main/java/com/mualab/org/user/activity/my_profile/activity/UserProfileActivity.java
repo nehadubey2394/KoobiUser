@@ -2,6 +2,8 @@ package com.mualab.org.user.activity.my_profile.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -31,6 +33,9 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
@@ -38,9 +43,11 @@ import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
+import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
 import com.mualab.org.user.activity.my_profile.adapter.NavigationMenuAdapter;
 import com.mualab.org.user.activity.my_profile.model.NavigationItem;
+import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
@@ -73,7 +80,7 @@ import views.refreshview.CircleHeaderView;
 import views.refreshview.OnRefreshListener;
 import views.refreshview.RjRefreshLayout;
 
-public class UserProfileActivity extends AppCompatActivity implements View.OnClickListener,ArtistFeedAdapter.Listener{
+public class UserProfileActivity extends AppCompatActivity implements View.OnClickListener,ArtistFeedAdapter.Listener,NavigationMenuAdapter.Listener{
     private DrawerLayout drawer;
     private String TAG = this.getClass().getName();;
     private User user;
@@ -91,13 +98,17 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     private UserProfileData profileData = null;
     private List<NavigationItem> navigationItems;
     private AppCompatButton btnFollow;
+    private ViewPagerAdapter.LongPressListner longPressListner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
         Intent i = getIntent();
-        userId = i.getStringExtra("userId");
+        if (i!=null){
+            userId = i.getStringExtra("userId");
+
+        }
         init();
     }
 
@@ -149,7 +160,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         RecyclerView rycslidermenu = findViewById(R.id.rycslidermenu);
         LinearLayoutManager layoutManager = new LinearLayoutManager(UserProfileActivity.this);
         rycslidermenu.setLayoutManager(layoutManager);
-        NavigationMenuAdapter listAdapter = new NavigationMenuAdapter(UserProfileActivity.this, navigationItems,drawer);
+        NavigationMenuAdapter listAdapter = new NavigationMenuAdapter(UserProfileActivity.this, navigationItems,drawer,this);
 
         rycslidermenu.setAdapter(listAdapter);
 
@@ -319,6 +330,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                     Helper helper = new Helper();
                     if (helper.error_Messages(error).contains("Session")){
                         Mualab.getInstance().getSessionManager().logout();
+                        FirebaseInstanceId.getInstance().deleteInstanceId();
                         //      MyToast.getInstance(BookingActivity.this).showSmallCustomToast(helper.error_Messages(error));
                     }
                 }catch (Exception e){
@@ -335,6 +347,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         task.execute(getClass().getName());
     }
 
+    @SuppressLint("SetTextI18n")
     private void setProfileData(UserProfileData profileData){
 
         TextView  tv_ProfileName =  findViewById(R.id.tv_ProfileName);
@@ -667,15 +680,16 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        feeds = new ArrayList<>();
         if (requestCode == 10) {
             apiForGetProfile();
             //apiForGetAllFeeds(0, 10, true);
         } else if (data != null){
             if (requestCode == Constant.ACTIVITY_COMMENT) {
                 if (CURRENT_FEED_STATE == Constant.FEED_STATE) {
-                    int pos = data.getIntExtra("feedPosition", 0);
+                    int pos = data.getIntExtra("feedPosition",0);
                     Feeds feed =  data.getParcelableExtra("feed");
-                    feeds.get(pos).commentCount = feed.commentCount;
+                    // feeds.get(pos).commentCount = feed.commentCount;
                     feedAdapter.notifyItemChanged(pos);
                 }
             }
@@ -824,7 +838,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void apiForGetFollowUnFollow(){
+    private void apifortokenUpdate(){
         Session session = Mualab.getInstance().getSessionManager();
         final User user = session.getUser();
 
@@ -834,19 +848,20 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
                     if(isConnected){
                         dialog.dismiss();
-                        apiForGetFollowUnFollow();
+                        apifortokenUpdate();
                     }
                 }
             }).show();
         }
 
         Map<String, String> params = new HashMap<>();
-        params.put("userId", String.valueOf(user.id));
+        params.put("deviceToken","");
+        params.put("firebaseToken","");
         //  params.put("followerId", String.valueOf(user.id));
-        params.put("followerId", userId);
+
         // params.put("loginUserId", String.valueOf(user.id));
 
-        HttpTask task = new HttpTask(new HttpTask.Builder(UserProfileActivity.this, "followFollowing", new HttpResponceListner.Listener() {
+        HttpTask task = new HttpTask(new HttpTask.Builder(UserProfileActivity.this, "updateRecord", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
                 try {
@@ -855,6 +870,14 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                     String message = js.getString("message");
 
                     if (status.equalsIgnoreCase("success")) {
+
+
+                        NotificationManager notificationManager = (NotificationManager) UserProfileActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
+                        assert notificationManager != null; notificationManager.cancelAll();
+                        FirebaseAuth.getInstance().signOut();
+                        Mualab.getInstance().getSessionManager().logout();
+
+
 
                     }else {
                         MyToast.getInstance(UserProfileActivity.this).showDasuAlert(message);
@@ -937,6 +960,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    boolean isShow = false;
     private void showLargeImage(Feeds feeds, int index){
         View dialogView = View.inflate(UserProfileActivity.this, R.layout.dialog_large_image_view, null);
         final Dialog dialog = new Dialog(UserProfileActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
@@ -944,23 +968,51 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
         dialog.setContentView(dialogView);
-
-        ImageView postImage = dialogView.findViewById(R.id.ivCertificate);
+        final InstaTag postImage = dialogView.findViewById(R.id.post_image);
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
         TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
         tvCertiTitle.setText("Images");
 
-        Picasso.with(UserProfileActivity.this).load(feeds.feed.get(index))
-                .priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+        postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        postImage.setRootWidth(postImage.getMeasuredWidth());
+        postImage.setRootHeight(postImage.getMeasuredHeight());
 
-        /*Picasso.with(ArtistProfileActivity.this).load(certificate.certificateImage).
-                priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);*/
+        if (feeds.feed.get(index)!=null){
+            Glide.with(UserProfileActivity.this).load(feeds.feed.get(index)).placeholder(R.drawable.gallery_placeholder)
+                    .skipMemoryCache(false).into(postImage.getTagImageView());
+        }
+
+        postImage.setImageToBeTaggedEvent(taggedImageEvent);
+
+        ArrayList<TagToBeTagged>tags =  feeds.taggedImgMap.get(index);
+        if (tags!=null && tags.size()!=0){
+            postImage.addTagViewFromTagsToBeTagged(tags,false);
+            postImage.hideTags();
+        }
+
+        //   Picasso.with(mContext).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.cancel();
             }
         });
+
+        longPressListner = new ViewPagerAdapter.LongPressListner() {
+            @Override
+            public void onLongPress() {
+                if (!isShow) {
+                    isShow = true;
+                    postImage.showTags();
+                }
+                else {
+                    isShow = false;
+                    postImage.hideTags();
+                }
+
+            }
+        };
 
         dialog.show();
     }
@@ -977,4 +1029,102 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             finish();
         }
     }
+
+    @Override
+    public void OnClick(int pos) {
+        apifortokenUpdate();
+    }
+
+
+    private void apiForGetFollowUnFollow(){
+        Session session = Mualab.getInstance().getSessionManager();
+        final User user = session.getUser();
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(UserProfileActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                        apiForGetFollowUnFollow();
+                    }
+                }
+            }).show();
+        }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", String.valueOf(user.id));
+        //  params.put("followerId", String.valueOf(user.id));
+        params.put("followerId", userId);
+        // params.put("loginUserId", String.valueOf(user.id));
+
+        HttpTask task = new HttpTask(new HttpTask.Builder(UserProfileActivity.this, "followFollowing", new HttpResponceListner.Listener() {
+            @Override
+            public void onResponse(String response, String apiName) {
+                try {
+                    JSONObject js = new JSONObject(response);
+                    String status = js.getString("status");
+                    String message = js.getString("message");
+
+                    if (status.equalsIgnoreCase("success")) {
+
+                    }else {
+                        MyToast.getInstance(UserProfileActivity.this).showDasuAlert(message);
+                    }
+                    //  showToast(message);
+                } catch (Exception e) {
+                    Progress.hide(UserProfileActivity.this);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    if (helper.error_Messages(error).contains("Session")){
+                        Mualab.getInstance().getSessionManager().logout();
+                        // MyToast.getInstance(BookingActivity.this).showDasuAlert(helper.error_Messages(error));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }})
+                .setAuthToken(user.authToken)
+                .setProgress(false)
+                .setBody(params, HttpTask.ContentType.APPLICATION_JSON));
+        //.setBody(params, "application/x-www-form-urlencoded"));
+
+        task.execute(this.getClass().getName());
+    }
+
+    private InstaTag.TaggedImageEvent taggedImageEvent = new InstaTag.TaggedImageEvent() {
+        @Override
+        public void singleTapConfirmedAndRootIsInTouch(int x, int y) {
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (longPressListner != null)
+                longPressListner.onLongPress();
+        }
+
+        @Override
+        public void onSinglePress(MotionEvent e) {
+        }
+    };
+
+
 }

@@ -13,7 +13,7 @@
     <RelativeLayout
         android:id="@+id/rl_imageView"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="250dp"
         android:layout_marginBottom="1dp"
         android:layout_marginTop="1dp">
 

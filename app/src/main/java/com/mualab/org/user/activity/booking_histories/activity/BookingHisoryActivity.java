@@ -19,6 +19,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking_histories.adapter.FutureBookingAdapter;
 import com.mualab.org.user.activity.booking_histories.adapter.PastBookingAdapter;
 import com.mualab.org.user.activity.booking_histories.model.BookingHistory;
+import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.User;
@@ -53,6 +54,7 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
     private PastBookingAdapter pastBookingAdapter;
     private List<BookingHistory> futureBookings;
     private List<BookingHistory> pastBookings;
+    private String key="";
     private String sBookingTYpe = "past";
     private int clickId = 1;
 
@@ -68,6 +70,11 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
     }
 
     private void init(){
+        Intent intent=getIntent();
+        if (intent!=null){
+            if (intent.hasExtra("key"))
+                key =  intent.getStringExtra("key");
+        }
         futureBookings = new ArrayList<>();
         pastBookings = new ArrayList<>();
         futureBookingAdapter = new FutureBookingAdapter(BookingHisoryActivity.this,futureBookings);
@@ -138,7 +145,7 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
         tabFuture.setOnClickListener(this);
     }
 
-    private void apiForGetBooking(final int page,final boolean isEnableProgress){
+    private void apiForGetBooking(final int page, final boolean isEnableProgress){
         Session session = Mualab.getInstance().getSessionManager();
         User user = session.getUser();
 
@@ -318,7 +325,14 @@ public class BookingHisoryActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (!key.equals("") && key.equals("main")){
+            Intent intent=new Intent(BookingHisoryActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }else
+            super.onBackPressed();
+
         KeyboardUtil.hideKeyboard(Objects.requireNonNull(this.getCurrentFocus()),this);
         finish();
     }

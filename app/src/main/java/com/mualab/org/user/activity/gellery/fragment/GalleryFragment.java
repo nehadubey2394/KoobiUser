@@ -18,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
@@ -32,16 +33,14 @@ import com.image.nocropper.CropperCallback;
 import com.image.nocropper.CropperView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.FeedPostActivity;
-import com.mualab.org.user.activity.gellery.BaseGalleryFragment;
-import com.mualab.org.user.activity.gellery.Gallery2Activity;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.gellery.adapter.GalleryAdapter;
 import com.mualab.org.user.activity.gellery.model.Media;
 import com.mualab.org.user.activity.gellery.model.PhotoLoader;
-import com.mualab.org.user.utils.constants.Constant;
+import com.mualab.org.user.data.model.MediaUri;
 import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.listner.GalleryOnClickListener;
-import com.mualab.org.user.data.model.MediaUri;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.zhihu.matisse.internal.loader.AlbumLoader;
 
@@ -51,19 +50,17 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 
-public class GalleryFragment extends BaseGalleryFragment implements View.OnClickListener{
+public class GalleryFragment extends Fragment implements View.OnClickListener{
 
     private RecyclerView recyclerView;
     private GalleryAdapter galleryAdapter;
-    CollapsingToolbarLayout collapsing_toolbar;
+    private CollapsingToolbarLayout collapsing_toolbar;
     int numberOfColumns = 4;
-    private View view;
     private Bitmap thumbImage = null;
-
+    private Context context;
     private CropperView showImage;
     private ImageView snap_button;
     //private ImageView rotateImage;
@@ -82,7 +79,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         // Required empty public constructor
     }
 
-
     public static GalleryFragment newInstance() {
         GalleryFragment fragment = new GalleryFragment();
         Bundle args = new Bundle();
@@ -98,22 +94,27 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
-        initView(view);
-        return view;
+        return inflater.inflate(R.layout.fragment_gallery, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initView(view);
+
         if (Build.VERSION.SDK_INT >= 23) {
             if (context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            }else {
+                albumList = getAlbums();
+                setImageList();
             }
+        }else {
+            albumList = getAlbums();
+            setImageList();
         }
-
 
         // Disable "Drag" for AppBarLayout (i.e. User can't scroll appBarLayout by directly touching appBarLayout - User can only scroll appBarLayout by only using scrollContent)
         if (appbar.getLayoutParams() != null) {
@@ -127,7 +128,22 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
             });
             layoutParams.setBehavior(appBarLayoutBehaviour);
         }
+        // setImageList();
+    }
 
+    private void setImageList(){
+        if(albumList!=null && albumList.size()>0){
+            Media media = albumList.get(0);
+            lastSelectedUri = media.uri;
+            mSelected.put(media.uri.toString(), media.uri);
+            refreshUi(lastSelectedUri);
+            //showImage.setUri(media.uri);
+            try {
+                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         galleryAdapter = new GalleryAdapter(albumList, context, new GalleryOnClickListener() {
             @Override
@@ -176,6 +192,7 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
                 refreshUi(lastSelectedUri);
 
                 galleryAdapter.notifyItemChanged(index);
+
                 if(mSelected.size()<=2)
                     recyclerView.smoothScrollToPosition(index);
                 expandToolbar();
@@ -201,22 +218,7 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         snap_button.setOnClickListener(this);
         // rotateImage.setOnClickListener(this);
         ivMultiSelection.setOnClickListener(this);
-        albumList = getAlbums();
-
-        if(albumList!=null && albumList.size()>0){
-            Media media = albumList.get(0);
-            lastSelectedUri = media.uri;
-            mSelected.put(media.uri.toString(), media.uri);
-            refreshUi(lastSelectedUri);
-            //showImage.setUri(media.uri);
-            try {
-                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
-
 
     private void refreshUi(Uri uri){
 
@@ -237,7 +239,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         }
     }
 
-
     public void expandToolbar(){
         appbar.setExpanded(true, true);
     }
@@ -247,7 +248,7 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         switch (view.getId()) {
 
             case R.id.tvClose:
-                ((Gallery2Activity)context).onBackPressed();
+                ((GalleryActivity)context).onBackPressed();
                 break;
 
             case R.id.snap_button:
@@ -355,13 +356,12 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         }
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-            Objects.requireNonNull(getActivity()).finish();
+            ((GalleryActivity)context).finish();
         }
     }
 
@@ -369,10 +369,16 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE){
-            galleryAdapter.notifyDataSetChanged();
+            albumList = getAlbums();
+            setImageList();
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     private void cropImageAsync() {
         showImage.getCroppedBitmapAsync(new CropperCallback() {
@@ -429,13 +435,6 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         });
     }
 
-    private static File getTemporalFile(Context context) {
-        File myFile = new File(context.getExternalCacheDir(), "tempImage.jpg");
-        if(myFile.exists())
-            myFile.delete();
-        return myFile;
-    }
-
     private void snapImage() {
         if (isSnappedToCenter) {
             showImage.cropToCenter();
@@ -450,33 +449,24 @@ public class GalleryFragment extends BaseGalleryFragment implements View.OnClick
         ArrayList<Media> photos = new ArrayList<>();
         try {
             Cursor albumCursor = albumLoader.loadInBackground();
-            if (albumCursor.moveToFirst()) {
+            if (albumCursor != null && albumCursor.moveToFirst()) {
 
                 do {
                     PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
                     Cursor photoCursor = photoLoader.loadInBackground();
 
-                    if (photoCursor.moveToFirst()) {
+                    if (photoCursor != null && photoCursor.moveToFirst()) {
                         do {
                             Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
                             Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                             Media media = new Media();
-                            media.uri= uri;
-                            /*Photo photo = new Photo();
-                            photo.id = id;
-                            photo.uri = uri;
-                            photo.isSelected = photos.isEmpty();
-                            photos.add(photo);*/
+                            media.uri = uri;
+
                             photos.add(media);
                         } while (photoCursor.moveToNext() /*&& photos.size() < 40*/);
                     }
                     photoCursor.close();
-                    /*Album album = new Album();
-                    album.bucketId = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID));
-                    album.name = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
-                    album.photos = photos;
-                    album.isSelected = albums.isEmpty();
-                    albums.add(album);*/
+
                 } while (albumCursor.moveToNext() /*&& albums.size() < 10*/);
             }
             albumCursor.close();
