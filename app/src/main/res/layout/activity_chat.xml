@@ -92,7 +92,7 @@
         android:fontFamily="@font/roboto_regular"
         android:text="@string/no_data_found"
         android:textColor="@color/gray"
-        android:textSize="@dimen/_12ssp" />
+        android:textSize="12sp" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
