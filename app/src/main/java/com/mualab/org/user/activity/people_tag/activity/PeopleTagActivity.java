@@ -478,7 +478,6 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
                     placeholder(R.drawable.gallery_placeholder).into(mInstaTag.getTagImageView());
 
 
-
             if (taggedImgMap.size()!=0){
                 if (taggedImgMap.containsKey(position)){
                     ArrayList<TagToBeTagged>tags = taggedImgMap.get(position);;

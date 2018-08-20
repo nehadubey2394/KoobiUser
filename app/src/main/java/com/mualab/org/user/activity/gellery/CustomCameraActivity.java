@@ -29,6 +29,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 import android.widget.VideoView;
 import android.widget.ViewSwitcher;
 
@@ -280,6 +281,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
                     animateShutter();
 
                 }else if(currentState == STATE_TAKE_VIDEO){
+
                     if(isStartRecord){
                         btnTakePhoto.setBackgroundResource(R.drawable.btn_capture_video);
                         if(countDownTimer!=null) countDownTimer.onFinish();
@@ -303,6 +305,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
                     mediaUri.addUri(String.valueOf(captureMediaUri));
                     mediaUri.mediaType = Constant.VIDEO_STATE;
                     ivTakenPhoto.setDrawingCacheEnabled(true);
+
                     thumbImage = ivTakenPhoto.getDrawingCache();
                     String path = MediaStore.Images.Media.insertImage(CustomCameraActivity.this.
                             getContentResolver(), thumbImage, "Title", null);
@@ -455,7 +458,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
         if(cameraView.getSessionType()!=SessionType.PICTURE){
             try {
                 File file = getExternalCacheDir();
-               // File file = new File(getExternalCacheDir(), UUID.randomUUID() + ".mp4");
+                // File file = new File(getExternalCacheDir(), UUID.randomUUID() + ".mp4");
                 if (file != null) {
                     isStartRecord = true;
                     switchCamera.setVisibility(View.GONE);
@@ -465,6 +468,7 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
                     cameraView.startCapturingVideo(photoPath);
                     //mChronometer.start();
                     showToast("Start Recording...");
+                    Toast.makeText(CustomCameraActivity.this,"Need to record at least 10 sec of video",Toast.LENGTH_LONG).show();
                 }
 
             } catch (Exception e) {
@@ -563,6 +567,8 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
     }
 
     private CountDownTimer countDownTimer;
+    private long tempMillisUntilFinished;
+
     private void startTimear(){
         if(countDownTimer!=null)
             countDownTimer.cancel();
@@ -573,8 +579,15 @@ public class CustomCameraActivity extends AppCompatActivity implements View.OnCl
             public void onTick(long millisUntilFinished) {
                 btnTakePhoto.setText(String.valueOf(millisUntilFinished / 1000));
 
-                if(55000<millisUntilFinished)
+                tempMillisUntilFinished = millisUntilFinished;
+
+                if(millisUntilFinished<50000) {
                     btnTakePhoto.setEnabled(true);
+                }
+                else {
+                    btnTakePhoto.setEnabled(false);
+                   // showToast("Need to record at least 10 sec of video");
+                }
             }
 
             public void onFinish() {

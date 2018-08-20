@@ -84,22 +84,88 @@
 
     </android.support.v7.widget.CardView>
 
+    <TextView
+        android:id="@+id/tv_for_noChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/no_data_found"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/_12ssp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/colorPrimaryDark"/>
+
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/lyHeader"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/relative_create_group"
-        android:layout_below="@+id/lyHeader"
-        android:id="@+id/recycler_chat"
-        >
-    </android.support.v7.widget.RecyclerView>
+        android:layout_above="@+id/sendlayout"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
 
     <RelativeLayout
+        android:id="@+id/sendlayout"
         android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:id="@+id/relative_create_group"
-        android:background="@color/white"
-        android:layout_height="80dp">
+        android:background="@color/bg_chat">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/iv_for_pickImage"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:padding="5dp"
+                android:src="@drawable/gallery_placeholder" />
+
+            <EditText
+                android:id="@+id/et_for_sendTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/iv_for_pickImage"
+                android:background="@null"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="@string/write_a_message"
+                android:maxHeight="160dp"
+                android:padding="6dp"
+                android:ems="19"
+                android:textColor="@color/text_color"
+                android:textSize="13sp"
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/iv_for_send"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="6dp"
+                android:layout_marginRight="6dp"
+                android:textSize="16sp"
+                android:padding="5dp"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/colorAccent"
+                android:text="@string/send"
+              />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

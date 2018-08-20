@@ -914,11 +914,13 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         /*/storage/emulated/0/DCIM/Camera/20180808_113328.mp4*/
         Map<String, String> map = prepareCommonPostData();
         String uri = mediaUri.uri;
-        //  String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
-        //tempFile = new File(path);
 
         if (mediaUri.videoFile!=null)
             tempFile = mediaUri.videoFile;
+        else{
+            String path = ImageVideoUtil.generatePath(Uri.parse(uri), this);
+            tempFile = new File(path);
+        }
 
 
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
@@ -933,7 +935,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     String message = js.getString("message");
                     if (status.equalsIgnoreCase("success")) {
                         resetView();
-                      //  setResult(Activity.RESULT_OK);
+                        //  setResult(Activity.RESULT_OK);
                         Intent i = new Intent(FeedPostActivity.this, MainActivity.class);
                         i.putExtra("FeedPostActivity","FeedPostActivity");
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -43,6 +43,7 @@
     <color name="yellow">#ffff00</color>
     <color name="dark_yellow">#fdc301</color>
     <color name="btn_active">#C65E97</color>
+    <color name="bg_chat">#ECECEC</color>
 
     <color name="picker_background">#3F51B5</color>
     <color name="picker_button_background_selected">#3F51B5</color>

@@ -6,59 +6,71 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/header_tag_photo"
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        android:orientation="horizontal">
-
-        <com.mualab.org.user.activity.people_tag.instatag.TagImageView
-            android:id="@+id/get_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:tint="@color/black"
-            android:layout_centerVertical="true"
-            android:src="@drawable/white_back_ico" />
-
-        <TextView
-            android:id="@+id/tag_photo"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="3dp"
+        app:cardUseCompatPadding="true"
+        android:id="@+id/topLayout"
+        >
+        <RelativeLayout
+            android:id="@+id/header_tag_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/tag_people"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_centerInParent="true"
-            android:textColor="@color/text_color"
-            android:textSize="20sp" />
+            android:background="@color/white"
+            android:orientation="horizontal">
 
-        <com.mualab.org.user.activity.people_tag.instatag.TagImageView
-            android:id="@+id/done"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:visibility="gone"
-            android:src="@drawable/right_icon" />
+            <com.mualab.org.user.activity.people_tag.instatag.TagImageView
+                android:id="@+id/get_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:tint="@color/black"
+                android:layout_centerVertical="true"
+                android:src="@drawable/white_back_ico" />
 
-        <TextView
-            android:id="@+id/tvDone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/done"
-            android:textColor="@color/text_color"
-            android:fontFamily="@font/roboto_medium"
-            android:layout_marginRight="6dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="5dp"
-            android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/tag_photo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/tag_people"
+                android:fontFamily="@font/roboto_medium"
+                android:layout_centerInParent="true"
+                android:textColor="@color/text_color"
+                android:textSize="20sp" />
 
-    </RelativeLayout>
+            <com.mualab.org.user.activity.people_tag.instatag.TagImageView
+                android:id="@+id/done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                android:src="@drawable/right_icon" />
+
+            <TextView
+                android:id="@+id/tvDone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/done"
+                android:textColor="@color/text_color"
+                android:fontFamily="@font/roboto_medium"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:textSize="18sp"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
 
     <LinearLayout
         android:layout_width="match_parent"
