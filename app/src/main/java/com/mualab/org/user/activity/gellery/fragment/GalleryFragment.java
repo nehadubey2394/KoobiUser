@@ -91,6 +91,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         albumList = new ArrayList<>();
         mSelected = new LinkedHashMap<>();
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -225,14 +226,29 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         if(isSupportMultipal){
             ivImage.setVisibility(View.VISIBLE);
             showImage.setVisibility(View.GONE);
-            ivImage.setImageURI(uri);
+
+            Bitmap ThumbImage = ThumbnailUtils
+                    .extractThumbnail(BitmapFactory.decodeFile(
+                            ImageVideoUtil.generatePath(uri, context)), 250, 250);
+            if (ThumbImage != null)
+                //showImage.setImageBitmap(ImageVideoUtil.getCompressBitmap(ThumbImage));
+                ivImage.setImageBitmap(ThumbImage);
+          //  ivImage.setImageURI(uri);
+
 
         } else {
             showImage.setVisibility(View.VISIBLE);
             ivImage.setVisibility(View.GONE);
             //showImage.setUri(uri);
             try {
-                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,uri));
+               // showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,uri));3
+                Bitmap ThumbImage = ThumbnailUtils
+                        .extractThumbnail(BitmapFactory.decodeFile(
+                                ImageVideoUtil.generatePath(uri, context)), 250, 250);
+                if (ThumbImage != null)
+                    //showImage.setImageBitmap(ImageVideoUtil.getCompressBitmap(ThumbImage));
+                    showImage.setImageBitmap(ThumbImage);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

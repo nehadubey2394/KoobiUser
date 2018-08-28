@@ -1,6 +1,10 @@
 package com.mualab.org.user.activity.feeds.fragment;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -14,6 +18,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -40,8 +46,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -63,6 +71,8 @@ import com.mualab.org.user.activity.feeds.adapter.HashtagAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
+import com.mualab.org.user.activity.gellery.GalleryActivity;
+import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
@@ -136,6 +146,8 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     /*Adapters*/
     private LiveUserAdapter liveUserAdapter;
     private ArrayList<LiveUserInfo> liveUserList;
+    private Animator mCurrentAnimator;
+    private int mShortAnimationDuration;
 
     private RecyclerView rvMyStory;
     private FeedAdapter feedAdapter;
@@ -331,17 +343,18 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
             }});
 
-        edCaption.setHashtagTextChangedListener(new Function2<SocialView, CharSequence, Unit>() {
-            @Override
-            public Unit invoke(SocialView socialView, CharSequence s) {
-                Log.d("editing", s.toString());
-                lastTxt = s.toString();
-                getDropDown(lastTxt, "");
+        edCaption.setHashtagTextChangedListener(
+                new Function2<SocialView, CharSequence, Unit>() {
+                    @Override
+                    public Unit invoke(SocialView socialView, CharSequence s) {
+                        Log.d("editing", s.toString());
+                        lastTxt = s.toString();
+                        getDropDown(lastTxt, "");
                /* if (lastTxt.length() > 1)
                     getDropDown(lastTxt, "");*/
-                return null;
-            }
-        });
+                        return null;
+                    }
+                });
 
         edCaption.setMentionTextChangedListener(new Function2<SocialView, CharSequence, Unit>() {
             @Override
@@ -409,12 +422,19 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
 
             case R.id.iv_video_popup:
                 permissionType = PermissionType.VIDEO;
-                checkPermissionAndPicImageOrVideo("Select Video");
+
+                Intent in = new Intent(mContext, GalleryActivity.class);
+                startActivityForResult(in,734);
+
+                // checkPermissionAndPicImageOrVideo("Select Video");
                 break;
 
             case R.id.iv_get_img:
                 permissionType = PermissionType.IMAGE;
-                checkPermissionAndPicImageOrVideo("Select Image");
+                Intent in_gallery = new Intent(mContext, GalleryActivity.class);
+                startActivityForResult(in_gallery,734);
+
+                //checkPermissionAndPicImageOrVideo("Select Image");
                 break;
         }
     }
@@ -1059,6 +1079,8 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                     liveUserList.add(me);
                     getStoryList();
                     break;
+
+
             }
 
         } else {
@@ -1069,8 +1091,21 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 case Constant.REQUEST_VIDEO_CAPTURE:
                 case Constant.GALLERY_INTENT_CALLED:
                 case Constant.GALLERY_KITKAT_INTENT_CALLED:
+
                     resetView();
                     break;
+
+                case Constant.ADD_STORY:
+                    liveUserList.clear();
+                    LiveUserInfo me = new LiveUserInfo();
+                    me.id = Mualab.currentUser.id;
+                    me.userName = "My Story";
+                    me.profileImage = Mualab.currentUser.profileImage;
+                    me.storyCount = 0;
+                    liveUserList.add(me);
+                    getStoryList();
+                    break;
+
 
                 case Constant.POST_FEED_DATA:
                 case Constant.ACTIVITY_COMMENT:
@@ -1134,7 +1169,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
             args.putSerializable("ARRAYLIST", liveUserList);
             args.putInt("position", position);
             intent.putExtra("BUNDLE", args);
-            startActivity(intent);
+            startActivityForResult(intent,Constant.ADD_STORY);
         }
     }
 
@@ -1150,6 +1185,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
         TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
         tvCertiTitle.setText("Images");
+
 
         postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         postImage.setRootWidth(postImage.getMeasuredWidth());

@@ -70,7 +70,6 @@ public class ExplorSearchActivity extends AppCompatActivity  {
         views.add(new MyViews("Service Tag",ExploreTopFragment.newInstance("serviceTag")));
         views.add(new MyViews("Location",ExploreTopFragment.newInstance("place")));
 
-
         KeyboardUtil.hideKeyboard(searchview, this);
         //searchview.requestFocus();
 

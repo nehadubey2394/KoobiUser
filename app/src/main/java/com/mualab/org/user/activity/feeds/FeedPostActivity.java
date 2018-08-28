@@ -922,7 +922,6 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             tempFile = new File(path);
         }
 
-
         new HttpTask(new HttpTask.Builder(this, "addFeed", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {

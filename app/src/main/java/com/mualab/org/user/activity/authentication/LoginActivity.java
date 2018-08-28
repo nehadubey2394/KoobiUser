@@ -15,9 +15,13 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.ForgotPassword;
@@ -231,12 +235,13 @@ public class LoginActivity extends AppCompatActivity {
                                 session.createSession(user);
                                 session.setPassword(user.password);
                                 checkUserRember(user);
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                writeNewUser(user);
+                                /*Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.putExtra("user", user);
                                 startActivity(intent);
                                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                finish();
+                                finish();*/
                             }
                         }else
                             showToast(message);
@@ -297,6 +302,24 @@ public class LoginActivity extends AppCompatActivity {
             sp.setParam(Constant.USER_ID, "");
             sp.setParam( Constant.USER_PASSWORD, "");
         }
+    }
+
+    private void writeNewUser(User user) {
+        DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser firebaseUser = new FirebaseUser();
+        firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();;
+        firebaseUser.isOnline = 1;
+        firebaseUser.lastActivity = ServerValue.TIMESTAMP;
+        firebaseUser.profilePic = user.profileImage;
+        firebaseUser.userName = user.userName;
+        firebaseUser.uId = user.id;
+        mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("user", user);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 
     private boolean validateName() {

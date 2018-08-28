@@ -39,6 +39,11 @@
     <color name="light_gray">#ffefefef</color>
 
 
+    <color name="chatbox_gray">#eeeeee</color>
+    <color name="chatbox_blue">#1bd3c9</color>
+    <color name="chatting_time_gray">#a1a1a1</color>
+
+
     <color name="light_blue">#ff0d8cd1</color>
     <color name="yellow">#ffff00</color>
     <color name="dark_yellow">#fdc301</color>

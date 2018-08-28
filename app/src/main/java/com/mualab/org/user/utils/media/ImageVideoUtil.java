@@ -59,6 +59,13 @@ public class ImageVideoUtil {
         return BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
     }
 
+    public static Bitmap getCompressBitmapTill70(Bitmap original) {
+        //Bitmap original = BitmapFactory.decodeStream(getAssets().open("1024x768.jpg"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        original.compress(Bitmap.CompressFormat.PNG, 70, out);
+        return BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
+    }
+
     public static Bitmap getVideoToThumbnil(Uri uri, Context mContext) {
         return getVideoToThumbnil(uri,mContext, MediaStore.Video.Thumbnails.MICRO_KIND);
     }

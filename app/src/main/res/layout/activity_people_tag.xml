@@ -11,16 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="3dp"
-        app:cardUseCompatPadding="true"
-        android:id="@+id/topLayout"
+        android:id="@+id/header_tag_photo"
         >
         <RelativeLayout
-            android:id="@+id/header_tag_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
             android:orientation="horizontal">
 
             <com.mualab.org.user.activity.people_tag.instatag.TagImageView
@@ -29,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="5dp"
-                android:tint="@color/black"
+                android:tint="@color/text_color"
                 android:layout_centerVertical="true"
                 android:src="@drawable/white_back_ico" />
 
@@ -38,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+
                 android:text="@string/tag_people"
                 android:fontFamily="@font/roboto_medium"
                 android:layout_centerInParent="true"

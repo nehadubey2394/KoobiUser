@@ -26,12 +26,16 @@ import android.widget.ViewSwitcher;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.image.cropper.CropImage;
 import com.image.cropper.CropImageView;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.DateDialogFragment;
@@ -281,13 +285,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                                 session.createSession(user);
                                 session.setPassword(user.password);
                                 checkUserRember(user);
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.putExtra("user", user);
-                                startActivity(intent);
-                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                finish();
+                                writeNewUser(user);
                             }else {
                                 showToast(message);
                                 findViewById(R.id.btnContinue2).setEnabled(true);
@@ -311,6 +309,24 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
     }
 
+    private void writeNewUser(User user) {
+        DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser firebaseUser = new FirebaseUser();
+        firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();;
+        firebaseUser.isOnline = 1;
+        firebaseUser.lastActivity = ServerValue.TIMESTAMP;
+        firebaseUser.profilePic = user.profileImage;
+        firebaseUser.userName = user.userName;
+        firebaseUser.uId = user.id;
+        mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("user", user);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
+    }
 
     // check permission or Get image from camera or gallery
     public void getPermissionAndPicImage() {

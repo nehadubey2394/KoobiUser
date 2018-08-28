@@ -423,5 +423,6 @@
     <string name="search_for_some_one">Search for someone</string>
     <string name="tap_photo_tag_someone_drag_to_move_or_tap_to_delete">Tap photo to tag someone.\nDrag to move, or tap to delete.</string>
     <string name="send">Send</string>
-
+    <string name="enter_text">Please enter text</string>
+    <string name="write_message">Write a message</string>
 </resources>

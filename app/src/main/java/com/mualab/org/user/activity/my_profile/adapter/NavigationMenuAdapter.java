@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.booking_histories.activity.BookingHisoryActivity;
+import com.mualab.org.user.activity.chat.ChatHistoryActivity;
 import com.mualab.org.user.activity.my_profile.model.NavigationItem;
 import com.mualab.org.user.activity.payment.activity.PaymentHistoryActivity;
 import com.mualab.org.user.activity.payment.modle.PaymentHistory;
@@ -110,6 +111,7 @@ class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
 
             case 1:
                 sSelect = item.itemName;
+                context.startActivity(new Intent(context,ChatHistoryActivity.class));
                 MyToast.getInstance(context).showDasuAlert("Under development");
                 break;
 
@@ -142,7 +144,6 @@ class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
                 Session session = new Session(context);
                 sSelect = item.itemName;
                 SearchBoardFragment.isFavClick = false;
-
                 listener.OnClick(getAdapterPosition());
 
                 break;

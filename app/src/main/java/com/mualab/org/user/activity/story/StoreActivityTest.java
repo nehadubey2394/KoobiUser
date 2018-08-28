@@ -16,6 +16,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -27,17 +29,16 @@ import android.widget.VideoView;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.camera.CameraActivity;
-import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.utils.ConnectionDetector;
-import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.data.model.feeds.LiveUserInfo;
 import com.mualab.org.user.data.model.feeds.Story;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
+import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.constants.Constant;
+import com.mualab.org.user.utils.transformers.SimpleGestureFilter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -55,39 +56,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import views.statusstories.StoryStatusView;
 import views.swipback.SwipeBackActivity;
 import views.swipback.SwipeBackLayout;
 
 
-public class StoreActivityTest extends SwipeBackActivity implements StoryStatusView.UserInteractionListener{
-
+public class StoreActivityTest extends SwipeBackActivity implements StoryStatusView.UserInteractionListener, SimpleGestureFilter.SimpleGestureListener {
     private StoryStatusView storyStatusView;
     private ImageView ivPhoto, ivUserImg;
     private ProgressBar progress_bar;
     private RelativeLayout addMoreStory;
-
     private TextView tvUserName;
     private VideoView videoView;
     private RelativeLayout lyVideoView;
-
     private MediaPlayer mediaPlayer;
     private File fileStorage;
     private File outputFile;
-
     private LiveUserInfo userInfo;
     private List<LiveUserInfo> liveUserList;
     private List<Story> storyList = new ArrayList<>();
     private int currentIndex;
     private long statusDuration = 3000L;
     private int counter = 0;
-
     private boolean isRunningStory;
     private ImageButton img_btn;
     private boolean isFirstTime = true;
     private boolean isStoryTypeVideo;
+    private FrameLayout parent;
     private long pressTime = 0L;
+    private SimpleGestureFilter detector;
 
     private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
         @SuppressLint("ClickableViewAccessibility")
@@ -98,10 +95,10 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                     pressTime = System.currentTimeMillis();
                     storyStatusView.pause();
 
-                    if(isStoryTypeVideo && mediaPlayer!=null){
-                        try{
+                    if (isStoryTypeVideo && mediaPlayer != null) {
+                        try {
                             videoView.pause();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -110,10 +107,10 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                 case MotionEvent.ACTION_UP:
                     long now = System.currentTimeMillis();
                     storyStatusView.resume();
-                    if(isStoryTypeVideo && mediaPlayer!=null){
-                        try{
+                    if (isStoryTypeVideo && mediaPlayer != null) {
+                        try {
                             videoView.start();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -123,10 +120,10 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                 case MotionEvent.ACTION_SCROLL:
                     long now1 = System.currentTimeMillis();
                     storyStatusView.resume();
-                    if(isStoryTypeVideo && mediaPlayer!=null){
-                        try{
+                    if (isStoryTypeVideo && mediaPlayer != null) {
+                        try {
                             videoView.start();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -145,17 +142,22 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
         setDragEdge(SwipeBackLayout.DragEdge.TOP);
         Bundle args = getIntent().getBundleExtra("BUNDLE");
+
         if (args != null) {
             liveUserList = (ArrayList<LiveUserInfo>) args.getSerializable("ARRAYLIST");
             currentIndex = args.getInt("position");
+            detector = new SimpleGestureFilter(this, this);
+
         } else finish();
 
+
         ivPhoto = findViewById(R.id.ivPhoto);
+        parent = findViewById(R.id.parent);
         img_btn = findViewById(R.id.img_btn);
         progress_bar = findViewById(R.id.imageProgressBar);
         ivUserImg = findViewById(R.id.iv_user_image);
-        tvUserName =  findViewById(R.id.tv_user_name);
-        addMoreStory =  findViewById(R.id.addMoreStory);
+        tvUserName = findViewById(R.id.tv_user_name);
+        addMoreStory = findViewById(R.id.addMoreStory);
         storyStatusView = findViewById(R.id.storiesStatus);
         lyVideoView = findViewById(R.id.lyVideoView);
         videoView = findViewById(R.id.videoView);
@@ -174,7 +176,6 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
             }
         });
-
 
 
         ivPhoto.setOnClickListener(new View.OnClickListener() {
@@ -211,7 +212,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
 
-                    if(isRunningStory)
+                    if (isRunningStory)
                         storyStatusView.pause();
                 } else {
                     storyStatusView.resume();
@@ -226,28 +227,14 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
     @Override
     public void onPrev() {
-       /* if (counter - 1 < 0 && currentIndex==0){
-            return;
-        }else if (counter - 1 < 0 && currentIndex>0){
-            currentIndex--;
-            storyStatusView.destroy();
-            updateUI();
-            getStories();
-
-        }else {
-            --counter;
-            storyStatusView.pause();
-            loadMediaFile();
-        }*/
-
         if (counter - 1 >= 0 || currentIndex != 0) {
-            if (counter - 1 < 0 && currentIndex>0){
+            if (counter - 1 < 0 && currentIndex > 0) {
                 currentIndex--;
                 storyStatusView.destroy();
                 updateUI();
                 getStories();
 
-            }else {
+            } else {
                 --counter;
                 storyStatusView.pause();
                 loadMediaFile();
@@ -255,10 +242,12 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
         }
     }
 
+
+
     @Override
     public void onNext() {
         ++counter;
-        if(counter<storyList.size()){
+        if (counter < storyList.size()) {
             storyStatusView.pause();
             loadMediaFile();
         }
@@ -268,7 +257,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     public void onComplete() {
         currentIndex++;
         isRunningStory = false;
-        if(currentIndex<liveUserList.size()){
+        if (currentIndex < liveUserList.size()) {
             storyStatusView.destroy();
             updateUI();
             getStories();
@@ -287,8 +276,9 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
         }*/
         //  if(!isFirstTime) storyStatusView.pause();
 
-        if(story.storyType.equals("image")){
+        if (story.storyType.equals("image")) {
             isStoryTypeVideo = false;
+            ivPhoto.setVisibility(View.VISIBLE);
             videoView.setVisibility(View.GONE);
             lyVideoView.setVisibility(View.GONE);
             storyStatusView.setDynamicStoryDuration(statusDuration);
@@ -301,7 +291,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                             //storyStatusView.setStoryDuration(statusDuration);
                             ivPhoto.setVisibility(View.VISIBLE);
                             progress_bar.setVisibility(View.GONE);
-                            if(isFirstTime){
+                            if (isFirstTime) {
                                 isFirstTime = false;
                                 storyStatusView.startStories();
                             } else storyStatusView.resume();
@@ -313,7 +303,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                             progress_bar.setVisibility(View.GONE);
                         }
                     });
-        }else if(story.storyType.equals("video")){
+        } else if (story.storyType.equals("video")) {
             Log.d("video", "inProgress");
             isStoryTypeVideo = true;
             Picasso.with(ivPhoto.getContext())
@@ -329,8 +319,12 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                         public void onError() {
                         }
                     });
+            if (videoView.getVisibility() == View.GONE) {
+                videoView.setVisibility(View.VISIBLE);
+                lyVideoView.setVisibility(View.VISIBLE);
+            }
 
-            videoView.setVisibility(View.VISIBLE);
+
             lyVideoView.setVisibility(View.VISIBLE);
             ivPhoto.setVisibility(View.GONE);
             videoView.setVideoURI(checkVideoCache(story.myStory));
@@ -341,7 +335,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                     progress_bar.setVisibility(View.GONE);
                     storyStatusView.setDynamicStoryDuration(mediaPlayer.getDuration());
                     mediaPlayer.start();
-                    if(isFirstTime){
+                    if (isFirstTime) {
                         isFirstTime = false;
                         storyStatusView.startStories();
                     } else storyStatusView.resume();
@@ -387,34 +381,35 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     }
 
 
-    private void updateUI(){
+    private void updateUI() {
         counter = 0;
-        if (liveUserList.size()>0){
+        if (liveUserList.size() > 0) {
             userInfo = liveUserList.get(currentIndex);
-            addMoreStory.setVisibility(userInfo.id == Mualab.currentUser.id?View.VISIBLE:View.GONE);
-            img_btn.setVisibility(userInfo.id == Mualab.currentUser.id?View.GONE:View.VISIBLE);
+            addMoreStory.setVisibility(userInfo.id == Mualab.currentUser.id ? View.VISIBLE : View.GONE);
+            img_btn.setVisibility(userInfo.id == Mualab.currentUser.id ? View.GONE : View.VISIBLE);
 
             tvUserName.setText(String.format("%s", userInfo.userName));
-            if(TextUtils.isEmpty(userInfo.profileImage)){
+            if (TextUtils.isEmpty(userInfo.profileImage)) {
                 Picasso.with(this).load(R.drawable.defoult_user_img).fit().into(ivUserImg);
-            }else Picasso.with(this).load(userInfo.profileImage).fit().into(ivUserImg);
+            } else Picasso.with(this).load(userInfo.profileImage).fit().into(ivUserImg);
         }
     }
 
 
-    private void resetViews(){
+    private void resetViews() {
         isRunningStory = false;
         isFirstTime = true;
+        storyStatusView.destroy();
         storyStatusView.setStoriesCount(storyList.size());
         storyStatusView.setStoryDuration(statusDuration);
+
         storyStatusView.setStoriesListener(this);
     }
-
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (hasFocus) {
                 getWindow().getDecorView()
                         .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -426,14 +421,13 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     }
 
 
-
     private void getStories() {
 
         if (!ConnectionDetector.isConnected()) {
             new NoConnectionDialog(StoreActivityTest.this, new NoConnectionDialog.Listner() {
                 @Override
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                    if(isConnected){
+                    if (isConnected) {
                         dialog.dismiss();
                         getStories();
                     }
@@ -441,7 +435,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             }).show();
         }
         Map<String, String> map = new HashMap<>();
-        map.put("userId", ""+userInfo.id);
+        map.put("userId", "" + userInfo.id);
         new HttpTask(new HttpTask.Builder(this, "myStory", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -449,15 +443,15 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
-                    if (message.equals("No record found")){
+                    if (message.equals("No record found")) {
                         onBackPressed();
                     }
                     storyList.clear();
-                    liveUserList.clear();
+                    //liveUserList.clear();
 
                     if (status.equalsIgnoreCase("success") && !message.equalsIgnoreCase("No results found right now")) {
                         JSONArray array = js.getJSONArray("allMyStory");
-                        counter=0;
+                        counter = 0;
                         Gson gson = new Gson();
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject jsonObject = array.getJSONObject(i);
@@ -465,11 +459,11 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                             storyList.add(story);
                         }
 
-                        if(storyList.size()==0){
+                        if (storyList.size() == 0) {
                             finish();
                         }
 
-                        if(!isRunningStory){
+                        if (!isRunningStory) {
                             resetViews();
                             loadMediaFile();
                         }
@@ -483,12 +477,12 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             @Override
             public void ErrorListener(VolleyError error) {
 
-            }})
+            }
+        })
                 .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
-                .setBody(map , HttpTask.ContentType.APPLICATION_JSON))
+                .setBody(map, HttpTask.ContentType.APPLICATION_JSON))
                 .execute("StoryAPI");
     }
-
 
 
     // Lifecycle events
@@ -526,7 +520,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     protected void onDestroy() {
         super.onDestroy();
 
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
@@ -534,7 +528,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
     }
 
 
-    private Uri checkVideoCache(String url){
+    private Uri checkVideoCache(String url) {
         String downloadFileName = url.substring(url.lastIndexOf('/'), url.length());//Create file name by picking download file name from URL
 
         //Get File if SD card is present
@@ -547,7 +541,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
         //If File is not present create directory
         if (!fileStorage.exists()) bool = fileStorage.mkdir();
 
-        if(bool){
+        if (bool) {
             outputFile = new File(fileStorage, downloadFileName);//Create Output file in Main File
 
             //Create New File if not present
@@ -558,7 +552,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else {
+            } else {
                 return Uri.fromFile(outputFile);
             }
         }
@@ -576,14 +570,14 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
         if (Build.VERSION.SDK_INT >= 23) {
 
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE}, Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
-                if (liveUserList.size()!=0){
+                if (liveUserList.size() != 0) {
                     getStories();
                 }
             }
         } else {
-            if (liveUserList.size()!=0){
+            if (liveUserList.size() != 0) {
                 getStories();
             }
         }
@@ -596,7 +590,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
 
             case Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (liveUserList.size()!=0){
+                    if (liveUserList.size() != 0) {
                         getStories();
                     }
                 } else {
@@ -607,6 +601,93 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
             break;
         }
     }
+
+    @SuppressLint("ResourceType")
+    @Override
+    public void onSwipe(int direction) {
+        String str = "";
+        int size = liveUserList.size();
+        boolean isUpdate = false;
+//Todo check
+        switch (direction) {
+            case SimpleGestureFilter.SWIPE_RIGHT:
+                currentIndex -= 1;
+                if (0 < currentIndex) {
+                    Log.e("what is data = ", "" + size + " = " + currentIndex);
+                    updateUI();
+                    getPermissionAndPicImage();
+
+                    parent.startAnimation(AnimationUtils.loadAnimation(
+                            StoreActivityTest.this, R.anim.slide_in_from_right
+                    ));
+
+                    setDragEdge(SwipeBackLayout.DragEdge.RIGHT);
+                    videoView.setVisibility(View.GONE);
+                    ivPhoto.setVisibility(View.GONE);
+                    resetViews();
+
+
+                } else if (currentIndex == 0) {
+                    finish();
+                } else currentIndex += 1;
+
+
+                break;
+            case SimpleGestureFilter.SWIPE_LEFT:
+                currentIndex += 1;
+                if (size > currentIndex) {
+                    Log.e("what is data = ", "" + size + " = " + currentIndex);
+                    updateUI();
+                    getPermissionAndPicImage();
+                 /*   Animator anim =  AnimatorInflater.loadAnimator(this, R.animator.cube_left_out);
+                    anim.setTarget(parent);
+                    anim.setDuration(1000);
+                    anim.start();*/
+                    parent.startAnimation(AnimationUtils.loadAnimation(
+                            StoreActivityTest.this, R.anim.slide_in_from_left
+                    ));
+                    setDragEdge(SwipeBackLayout.DragEdge.LEFT);
+                    videoView.setVisibility(View.GONE);
+                    ivPhoto.setVisibility(View.GONE);
+                    resetViews();
+
+
+                } else if (!(size > currentIndex)) {
+                    finish();
+                } else currentIndex -= 1;
+
+                break;
+            case SimpleGestureFilter.SWIPE_DOWN:
+
+                break;
+            case SimpleGestureFilter.SWIPE_UP:
+
+                break;
+
+        }
+
+    }
+
+
+
+
+
+
+    @Override
+    public void onDoubleTap() {
+
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent me) {
+        // Call onTouchEvent of SimpleGestureFilter class
+        this.detector.onTouchEvent(me);
+        return super.dispatchTouchEvent(me);
+    }
+
+
+
+
 
 
     @SuppressLint("StaticFieldLeak")
@@ -640,7 +721,7 @@ public class StoreActivityTest extends SwipeBackActivity implements StoryStatusV
                 }
                 boolean bool = outputFile.createNewFile();
 
-                if(bool){
+                if (bool) {
                     FileOutputStream fos = new FileOutputStream(outputFile);//Get OutputStream for NewFile Location
                     InputStream is = c.getInputStream();//Get InputStream for connection
 

@@ -12,6 +12,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.data.model.feeds.LiveUserInfo;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by mindiii on 9/8/17.
@@ -45,7 +46,12 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
 
         LiveUserInfo userInfo = liveUserList.get(position);
         holder.tvUserName.setText(String.format("%s", userInfo.userName));
-        holder.ivAddLive.setVisibility(position==0?View.VISIBLE:View.GONE);
+        if(Objects.equals(userInfo.fullName, null)&&position==0){
+            holder.ivAddLive.setVisibility(View.VISIBLE);
+        }else {
+            holder.ivAddLive.setVisibility(View.GONE);
+        }
+        //holder.ivAddLive.setVisibility(position==0?View.VISIBLE:View.GONE);
         if (!TextUtils.isEmpty(userInfo.profileImage))
             Picasso.with(mContext)
                     .load(userInfo.profileImage).placeholder(R.drawable.defoult_user_img)

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/linear"
+        android:gravity="center_horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            app:civ_border_width="1.6dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/defoult_user_img"
+            android:background="@drawable/gradient_circle_img"
+            app:civ_border_color="@color/transparent"
+            android:layout_marginLeft="5dp"
+            />
+
+        <LinearLayout
+            android:layout_toRightOf="@+id/ivProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:padding="1dp"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvUname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="neha"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/dark_grey"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="16sp"
+                />
+
+
+            <TextView
+                android:id="@+id/tvMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="message"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/dark_grey"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="13sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvTimeElapsed"
+                android:padding="2dp"
+                android:gravity="right"
+                android:textSize="13sp"
+                android:textColor="@color/gray"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:orientation="vertical"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="2dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:text="time"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="12sp"
+                android:textColor="@color/gray"
+                />
+
+
+            <RelativeLayout
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:padding="4dp"
+                android:background="@drawable/bg_blue_circle"
+                >
+
+                <TextView
+                    android:id="@+id/ivDropDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/white"
+                    android:padding="2dp"
+                    android:text="0"
+                    />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="12sp"
+                android:textColor="@color/chatbox_gray"
+                android:layout_marginTop="4dp"
+                />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
