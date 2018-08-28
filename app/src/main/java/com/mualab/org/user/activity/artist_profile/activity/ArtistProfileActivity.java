@@ -37,6 +37,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.Followers;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
+import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
 import com.mualab.org.user.activity.make_booking.BookingActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
@@ -376,7 +377,11 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
                 break;
 
             case R.id.ivChat:
-                MyToast.getInstance(ArtistProfileActivity.this).showDasuAlert("Under development");
+                if (profileData!=null){
+                    Intent chat_intent = new Intent(ArtistProfileActivity.this, ChatActivity.class);
+                    chat_intent.putExtra("userId",profileData._id);
+                    startActivity(chat_intent);
+                }
                 break;
 
             case R.id.llCertificate:
@@ -1157,7 +1162,6 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         public void onSinglePress(MotionEvent e) {
         }
     };
-
 
     public void hideQuickView(){
         if(builder != null) builder.dismiss();

@@ -7,12 +7,15 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -24,11 +27,18 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.VideoView;
 import android.widget.ViewSwitcher;
 
 import com.android.volley.VolleyError;
+import com.image.cropper.CropImage;
+import com.image.cropper.CropImageView;
+import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.authentication.Registration2Activity;
+import com.mualab.org.user.activity.gellery.CustomCameraActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
@@ -53,6 +63,7 @@ import com.otaliastudios.cameraview.SizeSelectors;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +88,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private VideoView videoView;
     private boolean isCameraSession;
     private boolean isStartRecord;
+    private Bitmap profileImageBitmap;
 
     private Button btnTakePhoto;
     private ImageButton btnCameraMode, btnFlashLight;
@@ -85,6 +97,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private int currentState;
     private File photoPath;
     private Uri captureMediaUri;
+    private ImageView img_gallery;
     private boolean isVideoUri;
 
     @Override
@@ -221,13 +234,17 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private void initView(){
         //vTakePhotoRoot = findViewById(R.id.vPhotoRoot);
         vShutter = findViewById(R.id.vShutter);
+        btnFlashLight = findViewById(R.id.btnFlashLight);
         ivTakenPhoto = findViewById(R.id.ivTakenPhoto);
         vUpperPanel = findViewById(R.id.vUpperPanel);
         vLowerPanel = findViewById(R.id.vLowerPanel);
+        ImageView img_cancle = findViewById(R.id.img_cancle);
+
         //rvFilters = findViewById(R.id.rvFilters);
         btnTakePhoto = findViewById(R.id.btnTakePhoto);
         btnCameraMode = findViewById(R.id.btnCameraMode);
-        btnFlashLight = findViewById(R.id.btnFlashLight);
+        btnCameraMode = findViewById(R.id.btnCameraMode);
+        img_gallery = findViewById(R.id.img_gallery);
         //ivBack = findViewById(R.id.ivBack);
 
         cameraView = findViewById(R.id.camera);
@@ -235,7 +252,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         //mChronometer = findViewById(R.id.tvVideoTimer);
 
         btnTakePhoto.setOnClickListener(this);
+        img_gallery.setOnClickListener(this);
+        img_gallery.setVisibility(View.VISIBLE);
         btnFlashLight.setOnClickListener(this);
+        img_cancle.setOnClickListener(this);
         // findViewById(R.id.btnAccept).setOnClickListener(this);
         findViewById(R.id.retry).setOnClickListener(this);
         findViewById(R.id.btnBack).setOnClickListener(this);
@@ -282,17 +302,22 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     animateShutter();
 
                 }else if(currentState == STATE_TAKE_VIDEO){
+                    img_gallery.setVisibility(View.GONE);
                     if(isStartRecord){
                         btnTakePhoto.setBackgroundResource(R.drawable.btn_capture_video);
                         if(countDownTimer!=null) countDownTimer.onFinish();
-                        // stopRecording();
                     }else {
                         btnTakePhoto.setBackgroundResource(R.drawable.btn_capture_video_active);
                         btnTakePhoto.setEnabled(false);
-                        //startRecording();
+                        cameraView.setSessionType(SessionType.VIDEO);
                         startTimear();
                     }
                 }
+                break;
+
+
+            case R.id.img_gallery:
+                getPermissionAndPicImage();
                 break;
 
             case R.id.btnAccept:
@@ -323,6 +348,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
 
             case R.id.add_to_story:
+
                 addMyStory();
                 break;
 
@@ -330,6 +356,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.retry:
             case R.id.btnBack:
                 onBackPressed();
+                img_gallery.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.switchCamera:
@@ -346,6 +373,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 if(flashMode ==null){
                     flashMode = Flash.OFF;
                 }
+
+
+
 
                 if(isCameraSession){
 
@@ -382,6 +412,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btnCameraMode:
                 changeCameraSessionMode();
                 break;
+
+
+            case R.id.img_cancle:
+                finish();
+                break;
         }
     }
 
@@ -416,6 +451,34 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         if(resultCode == Activity.RESULT_OK && requestCode == Constant.POST_FEED_DATA){
             finish();
+            img_gallery.setVisibility(View.VISIBLE);
+        } else if (resultCode == RESULT_OK) {
+
+            if (requestCode == 234) {
+                //Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
+                Uri imageUri = ImagePicker.getImageURIFromResult(this, requestCode, resultCode, data);
+                if (imageUri != null) {
+                    CropImage.activity(imageUri).setCropShape(CropImageView.CropShape.RECTANGLE).setAspectRatio(400, 400).start(this);
+                } else {
+                    showToast(getString(R.string.msg_some_thing_went_wrong));
+                }
+
+            } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                try {
+                    if (result != null)
+                        profileImageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), result.getUri());
+
+                    if (profileImageBitmap != null) {
+                        showTakenPicture(profileImageBitmap);
+
+                        img_gallery.setVisibility(View.GONE);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
     }
 
@@ -444,14 +507,18 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private void startRecording(){
         if(cameraView.getSessionType()!=SessionType.PICTURE){
             try {
-                File file = CameraActivity.this.getExternalCacheDir();
+                File file = getExternalCacheDir();
+                // File file = new File(getExternalCacheDir(), UUID.randomUUID() + ".mp4");
                 if (file != null) {
                     isStartRecord = true;
+                    // btnCameraMode.setVisibility(View.GONE);
+                    btnCameraMode.setVisibility(View.GONE);
                     //mChronometer.setBase(SystemClock.elapsedRealtime());
                     photoPath = new File(file.getPath(), "tmp.mp4");
                     cameraView.startCapturingVideo(photoPath);
                     //mChronometer.start();
                     showToast("Start Recording...");
+                    Toast.makeText(CameraActivity.this,"Need to record at least 10 sec of video",Toast.LENGTH_LONG).show();
                 }
 
             } catch (Exception e) {
@@ -462,6 +529,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         else btnTakePhoto.setEnabled(true);
     }
 
+
     @Override
     public void onBackPressed() {
         if (currentState == STATE_SETUP_PHOTO) {
@@ -470,6 +538,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             vLowerPanel.showNext();
             updateState(STATE_TAKE_PHOTO);
             cameraView.start();
+            img_gallery.setVisibility(View.VISIBLE);
         } else if (currentState == STATE_SETUP_VIDEO) {
             vUpperPanel.showNext();
             vLowerPanel.showNext();
@@ -485,6 +554,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             }
         }else  {
             super.onBackPressed();
+            img_gallery.setVisibility(View.VISIBLE);
         }
     }
 
@@ -494,6 +564,21 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         vLowerPanel.showNext();
         ivTakenPhoto.setImage(ImageSource.bitmap(bitmap));
         updateState(STATE_SETUP_PHOTO);
+    }
+
+
+    public void getPermissionAndPicImage() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY);
+            } else {
+                ImagePicker.pickImage(this);
+            }
+        } else {
+            ImagePicker.pickImage(this);
+        }
     }
 
 
@@ -624,14 +709,15 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private CountDownTimer countDownTimer;
     private boolean timerIsRunning;
-    private void startTimear(){
-        if(countDownTimer!=null)
+    private void startTimear() {
+        if (countDownTimer != null)
             countDownTimer.cancel();
         timerIsRunning = true;
         countDownTimer = new CountDownTimer(60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 btnTakePhoto.setText(String.valueOf(millisUntilFinished / 1000));
-                if(57000<millisUntilFinished)
+                Log.e("Count", "count" + millisUntilFinished);
+                if (57962 > millisUntilFinished)
                     btnTakePhoto.setEnabled(true);
             }
 
@@ -639,10 +725,23 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 timerIsRunning = false;
                 btnTakePhoto.setText("REC");
                 btnTakePhoto.setEnabled(true);
-                if(isStartRecord)
+                if (isStartRecord)
                     stopRecording();
             }
         }.start();
         startRecording();
+    }
+
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+
+            case Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    ImagePicker.pickImage(CameraActivity.this);
+                } else showToast("YOUR  PERMISSION DENIED");
+            }
+            break;
+        }
     }
 }

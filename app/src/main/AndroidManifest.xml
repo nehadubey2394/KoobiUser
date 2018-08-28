@@ -219,12 +219,20 @@
             android:name=".activity.people_tag.activity.PeopleTagActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack" />
-        <activity android:name=".activity.gellery.GalleryActivity" />
+        <activity
+            android:name=".activity.gellery.GalleryActivity"
+            android:theme="@style/StatusBarBlack" />
         <activity
             android:name=".activity.feeds.FeedSingleActivity"
             android:theme="@style/StatusBarBlack" />
         <activity android:name=".activity.gellery.CustomCameraActivity" />
-        <activity android:name=".activity.chat.ChatActivity"></activity>
+        <activity
+            android:name=".activity.chat.ChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="adjustResize">
+
+        </activity>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -237,6 +245,8 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
 
+        <activity android:name=".activity.chat.ChatHistoryActivity"
+            android:theme="@style/StatusBarBlack"></activity>
     </application>
 
 </manifest>

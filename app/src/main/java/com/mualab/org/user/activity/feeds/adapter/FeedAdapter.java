@@ -75,7 +75,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onCommentBtnClick(Feeds feed, int pos);
         void onLikeListClick(Feeds feed);
         void onFeedClick(Feeds feed, int index, View v);
-        void onClickProfileImage(Feeds feed,ImageView v);
+        void onClickProfileImage(Feeds feed, ImageView v);
     }
 
     public void clear(){
@@ -755,13 +755,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void followUnfollow(final Feeds feeds, final int position){
 
         if(feeds.followingStatus==1){
-            new UnfollowDialog(mContext, feeds, new UnfollowDialog.UnfollowListner() {
+          /*  new UnfollowDialog(mContext, feeds, new UnfollowDialog.UnfollowListner() {
                 @Override
                 public void onUnfollowClick(Dialog dialog) {
                     dialog.dismiss();
                     apiForFollowUnFollow(feeds, position);
                 }
-            });
+            });*/
+
+            apiForFollowUnFollow(feeds, position);
+
         }else apiForFollowUnFollow(feeds, position);
 
     }

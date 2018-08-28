@@ -389,7 +389,6 @@ public class HttpTask {
     }
 
 
-
     private void handleError(VolleyError error){
         if(progress)
             Progress.hide(context);
@@ -400,10 +399,19 @@ public class HttpTask {
                 MyToast.getInstance(context).showDasuAlert("Session Expired", "please login again.");
                 Mualab.getInstance().getSessionManager().logout();
 
-            }else if(error.getMessage().contains("java.net.ConnectException")){
+            }else if (error.networkResponse != null && error.networkResponse.statusCode == 301){
+                MyToast.getInstance(context).showDasuAlert("Inactive User", "Your account has been inactivated by admin, please contact to activate");
+                Mualab.getInstance().getSessionManager().logout();
+
+            }
+
+            else if(error.getMessage().contains("java.net.ConnectException")){
                 new ServerErrorDialog(context).show();
-            }else {
-                MyToast.getInstance(context).showDasuAlert("Server Error", "Looks like we are having some server issue.");
+            }
+
+
+            else {
+                //   MyToast.getInstance(context).showDasuAlert("Server Error", "Looks like we are having some server issue.");
             }
         }catch (Exception e){
             e.printStackTrace();

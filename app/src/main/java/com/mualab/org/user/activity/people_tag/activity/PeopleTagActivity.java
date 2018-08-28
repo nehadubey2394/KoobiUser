@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,6 +51,7 @@ import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.ScreenUtils;
+import com.mualab.org.user.utils.StatusBarUtil;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -65,7 +67,7 @@ import java.util.Map;
 public class PeopleTagActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView mRecyclerViewSomeOneToBeTagged;
     private LinearLayout mHeaderSearchSomeOne,llSearchPeople;
-    private RelativeLayout mHeaderSomeOneToBeTagged;
+   // private RelativeLayout mHeaderSomeOneToBeTagged;
     private int mAddTagInX, mAddTagInY;
     private PeopleAdapter mSomeOneAdapter;
     private List<String> images;
@@ -73,6 +75,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
     private LinearLayout ll_Dot;
     private ViewPager viewPager;
     private ViewPagerAdapterForTag viewPagerAdapter;
+    private CardView mHeaderSomeOneToBeTagged;
 
     private List<ExSearchTag> list;
     private LinearLayout ll_loadingBox;
@@ -88,6 +91,8 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      //  StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+
         setContentView(R.layout.activity_people_tag);
         list = new ArrayList<>();
 
@@ -105,6 +110,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         progress_bar = findViewById(R.id.progress_bar);
         tv_msg = findViewById(R.id.tv_msg);
         ll_Dot = findViewById(R.id.ll_Dot);
+      //  topLayout = findViewById(R.id.topLayout);
 
         TextView tvCancel = findViewById(R.id.tvCancel);
 
@@ -457,7 +463,6 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
             mInstaTag.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mInstaTag.setRootWidth(mInstaTag.getMeasuredWidth());
             mInstaTag.setRootHeight(mInstaTag.getMeasuredHeight());
-
             mInstaTag.setImageToBeTaggedEvent(taggedImageEvent);
 
             mInstaTag.setRemoveDuplicateTagListener(this);
@@ -505,7 +510,8 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onPeopleClicked(final ExSearchTag someOne, final int position) {
-
+           // mHeaderSomeOneToBeTagged.setVisibility(View.VISIBLE);
+//            topLayout.setVisibility(View.VISIBLE);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

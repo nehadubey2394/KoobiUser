@@ -398,7 +398,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     listAdapter.notifyDataSetChanged();
                     if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
-                        ll_loadingBox.setVisibility(View.VISIBLE);
+                        ll_loadingBox.setVisibility(View.GONE);
                         if(isPulltoRefrash){
                             isPulltoRefrash = false;
                             mRefreshLayout.stopRefresh(false, 500);
@@ -413,7 +413,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                     listAdapter.notifyDataSetChanged();
                     if (artistsList.size() == 0) {
                         tv_msg.setText(R.string.no_artist_found);
-                        ll_loadingBox.setVisibility(View.VISIBLE);
+                        ll_loadingBox.setVisibility(View.GONE);
                         if(isPulltoRefrash){
                             isPulltoRefrash = false;
                             mRefreshLayout.stopRefresh(false, 500);

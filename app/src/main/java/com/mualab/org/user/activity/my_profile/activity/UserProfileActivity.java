@@ -42,6 +42,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
+import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
@@ -131,6 +132,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
         ImageView btnBack = findViewById(R.id.btnBack);
         ImageView ivChat = findViewById(R.id.ivChat);
+        // ivChat.setVisibility(View.VISIBLE);
         ImageView ivUserProfile = findViewById(R.id.ivUserProfile);
         ImageView ivDrawer = findViewById(R.id.btnNevMenu);
         ivUserProfile.setVisibility(View.GONE);
@@ -805,7 +807,9 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                 break;
 
             case R.id.ivChat:
-                MyToast.getInstance(UserProfileActivity.this).showDasuAlert("Under development");
+             /*   Intent chat_intent = new Intent(UserProfileActivity.this, ChatActivity.class);
+                chat_intent.putExtra("userId",profileData._id);
+                startActivity(chat_intent);*/
                 break;
 
             case R.id.llFollowing:
@@ -1034,7 +1038,6 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     public void OnClick(int pos) {
         apifortokenUpdate();
     }
-
 
     private void apiForGetFollowUnFollow(){
         Session session = Mualab.getInstance().getSessionManager();

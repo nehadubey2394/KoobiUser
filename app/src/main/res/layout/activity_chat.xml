@@ -15,9 +15,10 @@
         app:cardCornerRadius="0dp"
         app:cardElevation="2dp"
         android:id="@+id/lyHeader"
+        android:layout_alignParentTop="true"
         >
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
@@ -32,7 +33,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/white_back_ico"
-                android:tint="@color/gray"
+                android:tint="@color/chatting_time_gray"
+                android:layout_centerVertical="true"
                 android:padding="5dp"
                 />
 
@@ -41,10 +43,12 @@
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 app:civ_border_width="2dp"
+                android:layout_centerVertical="true"
                 android:src="@drawable/defoult_user_img"
-                android:background="@drawable/gradient_circle_img"
+                android:background="@drawable/gradient_new_circle_img"
                 app:civ_border_color="@color/transparent"
                 android:tint="@color/black"
+                android:layout_toRightOf="@+id/btnBack"
                 />
 
             <LinearLayout
@@ -53,24 +57,27 @@
                 android:orientation="vertical"
                 android:layout_marginLeft="12dp"
                 android:padding="2dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/ivUserProfile"
                 android:layout_gravity="center_vertical">
 
                 <TextView
                     android:id="@+id/tvUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Isabella"
                     android:gravity="center"
                     android:textSize="16sp"
                     android:maxLines="1"
+                    android:maxWidth="250dp"
                     android:textColor="@color/text_color"
                     android:fontFamily="@font/roboto_medium"
                     />
+
                 <TextView
                     android:id="@+id/tvOnlineStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="online"
+                    android:text="Online"
                     android:gravity="center"
                     android:textSize="14sp"
                     android:maxLines="1"
@@ -80,26 +87,55 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/llDots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:padding="9dp"
+                android:layout_alignParentRight="true">
+
+                <TextView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/chat_options_circle"/>
+
+                <TextView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/chat_options_circle"/>
+
+                <TextView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/chat_options_circle"/>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 
     <TextView
-        android:id="@+id/tv_for_noChat"
+        android:id="@+id/tv_no_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:fontFamily="@font/roboto_regular"
         android:text="@string/no_data_found"
         android:textColor="@color/gray"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:visibility="gone"
         android:layout_centerInParent="true"
         android:indeterminateTint="@color/colorPrimaryDark"/>
 
@@ -111,61 +147,210 @@
         android:layout_above="@+id/sendlayout"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
-
     <RelativeLayout
         android:id="@+id/sendlayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="58dp"
         android:layout_alignParentBottom="true"
         android:background="@color/bg_chat">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_alignParentBottom="true"
+            android:layout_height="56dp"
+            android:layout_centerVertical="true"
             android:background="@color/white"
             android:orientation="horizontal">
 
             <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/iv_for_pickImage"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:id="@+id/iv_capture_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:padding="5dp"
-                android:src="@drawable/gallery_placeholder" />
+                android:layout_marginLeft="2dp"
+                android:layout_centerVertical="true"
+                android:tint="@color/chatbox_blue"
+                android:src="@drawable/comment_camera_ico" />
 
             <EditText
                 android:id="@+id/et_for_sendTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/iv_for_pickImage"
-                android:background="@null"
                 android:fontFamily="@font/roboto_regular"
-                android:hint="@string/write_a_message"
-                android:maxHeight="160dp"
-                android:padding="6dp"
-                android:ems="19"
+                android:hint="@string/write_message"
+                android:maxHeight="170dp"
+                android:minHeight="40dp"
+                android:ems="17"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_chat_circle"
+                android:layout_toEndOf="@+id/iv_capture_image"
+                android:layout_toStartOf="@+id/ll_send_msg"
+                android:padding="8dp"
                 android:textColor="@color/text_color"
                 android:textSize="13sp"
                 android:inputType="textMultiLine" />
 
-            <TextView
-                android:id="@+id/iv_for_send"
+            <LinearLayout
+                android:id="@+id/ll_send_msg"
                 android:layout_width="wrap_content"
-                android:layout_height="45dp"
-                android:gravity="center"
-                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginBottom="6dp"
-                android:layout_marginRight="6dp"
-                android:textSize="16sp"
-                android:padding="5dp"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/colorAccent"
-                android:text="@string/send"
-              />
+                android:layout_marginRight="4dp"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/iv_pickImage"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ico_chat_gallery" />
+
+                <TextView
+                    android:id="@+id/tv_for_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:padding="5dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/chatbox_blue"
+                    android:text="@string/send"
+                    />
+
+            </LinearLayout>
 
         </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlOptionMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lyHeader"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"
+        >
+
+        <android.support.v7.widget.CardView
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:id="@+id/card_group_filter"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="4dp"
+            android:shadowRadius="2"
+            app:cardUseCompatPadding="true"
+            tools:ignore="RtlHardcoded">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/shape_groupchat_popup"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Add To Favourite"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/light_gray_shadow" />
+
+                <TextView
+                    android:id="@+id/tvClearChat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Clear Chat"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/gray2" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Mute Chat"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/light_gray_shadow" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Block User"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    />
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/light_gray_shadow" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Report User"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_marginBottom="10dp"
+
+                    />
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/img0tooltip_filter"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ico_menu_bg_arrow" />
 
     </RelativeLayout>
 

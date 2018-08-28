@@ -200,8 +200,10 @@ public class CertificateActivity extends AppCompatActivity implements OnCertific
 
         ImageView ivCertificate = dialogView.findViewById(R.id.ivCertificate);
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
+
         Picasso.with(CertificateActivity.this).load(certificate.certificateImage).
                 priority(Picasso.Priority.HIGH).noPlaceholder().into(ivCertificate);
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
