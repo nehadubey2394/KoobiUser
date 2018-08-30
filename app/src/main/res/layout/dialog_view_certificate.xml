@@ -38,22 +38,14 @@
 
     </RelativeLayout>
 
+    <views.zoomage.ZoomageView
+        android:id="@+id/post_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:transitionName="image"
+        tools:ignore="UnusedAttribute"/>
 
-        <com.mualab.org.user.activity.people_tag.instatag.InstaTag
-            android:id="@+id/post_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:canWeAddTags="false"
-            android:transitionName="image"
-            tools:ignore="UnusedAttribute"
-            app:carrotBottomColor="@color/dark_grey"
-            app:carrotLeftColor="@color/dark_grey"
-            app:carrotRightColor="@color/dark_grey"
-            app:carrotTopColor="@color/dark_grey"
-            app:hideAnimation="@anim/bounce_up"
-            app:showAllCarrots="false"
-            app:showAnimation="@anim/bounce_down"
-            app:instaTextColor="@android:color/white" />
 
 
 </RelativeLayout>

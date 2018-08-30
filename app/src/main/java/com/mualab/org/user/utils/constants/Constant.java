@@ -45,7 +45,8 @@ public class Constant {
     public static final int BUSINESS = 0;
     public static final int INDEPENDENT = 1;
     public static final int TEXT_STATE = 0, IMAGE_STATE = 1, VIDEO_STATE = 2, FEED_STATE = 3;
-
+    public static final String IS_TYPING = "isTyping";
+    public static final int FEED_FRAGMENT = 1038;
     /*Geo coder */
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;

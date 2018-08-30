@@ -1,6 +1,8 @@
 package com.mualab.org.user.activity.story;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -10,15 +12,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,12 +29,16 @@ import android.widget.VideoView;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.camera.CameraActivity;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.data.model.feeds.LiveUserInfo;
 import com.mualab.org.user.data.model.feeds.Story;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
+import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.constants.Constant;
+import com.mualab.org.user.utils.transformers.SimpleGestureFilter;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -51,238 +56,389 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import views.story.StoriesProgressView;
+import views.statusstories.StoryStatusView;
+import views.swipback.SwipeBackActivity;
+import views.swipback.SwipeBackLayout;
 
 
-public class StoriesActivity extends AppCompatActivity implements StoriesProgressView.StoriesListener,View.OnClickListener {
-
-    ImageView iv_myStory,ivUserImg;
-
-    private LiveUserInfo currentUser;
-    int position,counter=0;
-
-    private StoriesProgressView storiesProgressView;
-    private ProgressBar progress_bar; // mProgressBar;
-
+public class StoriesActivity extends SwipeBackActivity implements StoryStatusView.UserInteractionListener, SimpleGestureFilter.SimpleGestureListener {
+    private StoryStatusView storyStatusView;
+    private ImageView ivPhoto, ivUserImg;
+    private ProgressBar progress_bar;
+    private RelativeLayout addMoreStory;
     private TextView tvUserName;
     private VideoView videoView;
     private RelativeLayout lyVideoView;
-    private MediaController vidControl;
-    long pressTime = 0L, limit = 500L;
-    private File fileStorage = null,outputFile = null;
-    private String sType;
-    private MediaPlayer mp;
-    private LinearLayout linearLy;
-    private GestureDetector mDetector;
-    private  final int SWIPE_MIN_DISTANCE = 120;
-    private  final int SWIPE_MAX_OFF_PATH = 250;
-    private  final int SWIPE_THRESHOLD_VELOCITY = 200;
-
-    private List<Story> storyArrayList;
+    private MediaPlayer mediaPlayer;
+    private File fileStorage;
+    private File outputFile;
+    private LiveUserInfo userInfo;
     private List<LiveUserInfo> liveUserList;
+    private List<Story> storyList = new ArrayList<>();
+    private int currentIndex;
+    private long statusDuration = 3000L;
+    private int counter = 0;
+    private boolean isRunningStory;
+    private ImageButton img_btn;
+    private boolean isFirstTime = true;
+    private boolean isStoryTypeVideo;
+    private FrameLayout parent;
+    private long pressTime = 0L;
+    private SimpleGestureFilter detector;
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    pressTime = System.currentTimeMillis();
+                    storyStatusView.pause();
+
+                    if (isStoryTypeVideo && mediaPlayer != null) {
+                        try {
+                            videoView.pause();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    long now = System.currentTimeMillis();
+                    storyStatusView.resume();
+                    if (isStoryTypeVideo && mediaPlayer != null) {
+                        try {
+                            videoView.start();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    long limit = 500L;
+                    return limit < now - pressTime;
+
+                case MotionEvent.ACTION_SCROLL:
+                    long now1 = System.currentTimeMillis();
+                    storyStatusView.resume();
+                    if (isStoryTypeVideo && mediaPlayer != null) {
+                        try {
+                            videoView.start();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    long limit1 = 500L;
+                    return limit1 < now1 - pressTime;
+            }
+            return false;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_story_view);
+        setContentView(R.layout.activity_story);
 
-        Intent intent = getIntent();
-        Bundle args = intent.getBundleExtra("BUNDLE");
 
-        storyArrayList = new ArrayList<>();
-
-        // get the gesture detector
-        mDetector = new GestureDetector(this, new MyGestureListener());
+        Bundle args = getIntent().getBundleExtra("BUNDLE");
 
         if (args != null) {
             liveUserList = (ArrayList<LiveUserInfo>) args.getSerializable("ARRAYLIST");
-            position = args.getInt("position");
+            currentIndex = args.getInt("position");
+            detector = new SimpleGestureFilter(this, this);
+
         } else finish();
 
 
-        initView();
-        updateCurrentUser();
-        getPermissionAndPicImage();
+        ivPhoto = findViewById(R.id.ivPhoto);
+        parent = findViewById(R.id.parent);
+        img_btn = findViewById(R.id.img_btn);
+        progress_bar = findViewById(R.id.imageProgressBar);
+        ivUserImg = findViewById(R.id.iv_user_image);
+        tvUserName = findViewById(R.id.tv_user_name);
+        addMoreStory = findViewById(R.id.addMoreStory);
+        storyStatusView = findViewById(R.id.storiesStatus);
+        lyVideoView = findViewById(R.id.lyVideoView);
+        videoView = findViewById(R.id.videoView);
 
-        storiesProgressView.setStoriesListener(this);
+        setDragEdge(SwipeBackLayout.DragEdge.TOP);
+
+        addMoreStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(StoriesActivity.this, CameraActivity.class));
+                finish();
+            }
+        });
+
+        img_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+
+            }
+        });
+
+
+        ivPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                storyStatusView.skip();
+            }
+        });
+
 
         // bind reverse view
         View reverse = findViewById(R.id.reverse);
+        reverse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                storyStatusView.reverse();
+            }
+        });
+        reverse.setOnTouchListener(onTouchListener);
+
         // bind skip view
         View skip = findViewById(R.id.skip);
-
-
-        skip.setOnClickListener(this);
-        reverse.setOnClickListener(this);
-
-        //  reverse.setOnTouchListener(onTouchListener);
-        //  skip.setOnTouchListener(onTouchListener);
-
-        // skip.setOnTouchListener(gestureListener);
-        //reverse.setOnTouchListener(gestureListener);
-        linearLy.setOnTouchListener(touchListener);
-    }
-
-    private void initView(){
-        iv_myStory = findViewById(R.id.iv_myStory);
-        progress_bar = findViewById(R.id.progress_bar);
-        storiesProgressView = findViewById(R.id.stories);
-        videoView = findViewById(R.id.videoView);
-        ivUserImg = findViewById(R.id.iv_user_image);
-        tvUserName =  findViewById(R.id.tv_user_name);
-        lyVideoView = findViewById(R.id.lyVideoView);
-        linearLy = findViewById(R.id.linearLy);
-
-        vidControl = new MediaController(this);
-        vidControl.setAnchorView(videoView);
-        videoView.setMediaController(vidControl);
-    }
-
-    private void updateCurrentUser(){
-        currentUser = liveUserList.get(position);
-
-        if(!TextUtils.isEmpty(currentUser.profileImage)){
-            Picasso.with(this).load(currentUser.profileImage)
-                    .fit()
-                    .placeholder(R.drawable.defoult_user_img)
-                    .into(ivUserImg);
-        }else  Picasso.with(this).load(R.drawable.defoult_user_img).into(ivUserImg);
-    }
-
-    View.OnTouchListener touchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            // pass the events to the gesture detector
-            // a return value of true means the detector is handling it
-            // a return value of false means the detector didn't
-            // recognize the event
-            return mDetector.onTouchEvent(event);
-
-        }
-    };
-
-    @Override
-    public void onNext() {
-        // progress_bar.setVisibility(View.VISIBLE);
-
-        if (counter< storyArrayList.size()){
-
-            Story story = storyArrayList.get(++counter);
-
-            if (story.storyType.equals("image")){
-                lyVideoView.setVisibility(View.GONE);
-                videoView.setVisibility(View.GONE);
-                iv_myStory.setVisibility(View.VISIBLE);
-                Picasso.with(StoriesActivity.this).load(story.myStory).
-                        placeholder(R.color.dark_transperant)
-                        .into(iv_myStory, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                progress_bar.setVisibility(View.GONE);
-                                storiesProgressView.setStoryDuration(3000L);
-                            }
-
-                            @Override
-                            public void onError() {
-
-                            }
-                        });
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                storyStatusView.skip();
             }
-            else if (story.storyType.equals("video")){
-                sType = "video";
-                videoView.setVisibility(View.VISIBLE);
-                lyVideoView.setVisibility(View.VISIBLE);
-                iv_myStory.setVisibility(View.GONE);
-                videoView.setVideoURI(checkVideoCache(story.myStory));
+        });
+        skip.setOnTouchListener(onTouchListener);
 
-                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(final MediaPlayer mediaPlayer) {
-                        progress_bar.setVisibility(View.GONE);
-                        mp = mediaPlayer;
-                        storiesProgressView.setStoryDuration(mediaPlayer.getDuration());
-                        mp.start();
+        findViewById(R.id.actions).setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
 
-                    }
-                });
+                    if (isRunningStory)
+                        storyStatusView.pause();
+                } else {
+                    storyStatusView.resume();
+                }
+                return true;
             }
+        });
 
-        }
-        //image.setImageResource(resources[++counter]);
+
     }
+
 
     @Override
     public void onPrev() {
-        if ((counter - 1) < 0) return;
-//        progress_bar.setVisibility(View.VISIBLE);
+        if (counter - 1 >= 0 || currentIndex != 0) {
+            if (counter - 1 < 0 && currentIndex > 0) {
+                currentIndex--;
+                storyStatusView.destroy();
+                updateUI();
+                getStories();
 
-        Story story = storyArrayList.get(--counter);
-
-        if (story.storyType.equals("image")){
-            lyVideoView.setVisibility(View.GONE);
-            videoView.setVisibility(View.GONE);
-            iv_myStory.setVisibility(View.VISIBLE);
-            Picasso.with(StoriesActivity.this).load(story.myStory).
-                    placeholder(R.color.dark_transperant)
-                    .into(iv_myStory, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            progress_bar.setVisibility(View.GONE);
-                            storiesProgressView.setStoryDuration(3000L);
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
+            } else {
+                --counter;
+                storyStatusView.pause();
+                loadMediaFile();
+            }
         }
-        else if (story.storyType.equals("video")){
-            sType = "video";
-            videoView.setVisibility(View.VISIBLE);
-            lyVideoView.setVisibility(View.VISIBLE);
-            iv_myStory.setVisibility(View.GONE);
+    }
 
-            videoView.setVideoURI(checkVideoCache(story.myStory));
-
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(final MediaPlayer mediaPlayer) {
-                    progress_bar.setVisibility(View.GONE);
-                    mp = mediaPlayer;
-                    storiesProgressView.setStoryDuration(mediaPlayer.getDuration());
-                    mp.start();
-                }
-            });
-
+    @Override
+    public void onNext() {
+        ++counter;
+        if (counter < storyList.size()) {
+            storyStatusView.pause();
+            loadMediaFile();
         }
     }
 
     @Override
     public void onComplete() {
-        position++;
-        if (position==liveUserList.size()){
+        currentIndex++;
+        isRunningStory = false;
+        if (currentIndex < liveUserList.size()) {
+            storyStatusView.destroy();
+            updateUI();
+            getStories();
+        } else {
             finish();
-        }else {
-            storiesProgressView.destroy();
-            storiesProgressView.setStoriesListener(this);
-            apiForMyStory();
         }
+    }
 
+
+    private void loadMediaFile() {
+
+        final Story story = storyList.get(counter);
+        progress_bar.setVisibility(View.VISIBLE);
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            progress_bar.setProgress(65, true);
+        }*/
+        //  if(!isFirstTime) storyStatusView.pause();
+
+        if (story.storyType.equals("image")) {
+            isStoryTypeVideo = false;
+            ivPhoto.setVisibility(View.VISIBLE);
+            videoView.setVisibility(View.GONE);
+            lyVideoView.setVisibility(View.GONE);
+            storyStatusView.setDynamicStoryDuration(statusDuration);
+            Picasso.with(ivPhoto.getContext())
+                    .load(story.myStory)
+                    .centerCrop()
+                    .fit()
+                    .error(R.drawable.bg_splash)
+                    .into(ivPhoto, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            //storyStatusView.setStoryDuration(statusDuration);
+                            ivPhoto.setVisibility(View.VISIBLE);
+                            progress_bar.setVisibility(View.GONE);
+                            if (isFirstTime) {
+                                isFirstTime = false;
+                                storyStatusView.startStories();
+                            } else storyStatusView.resume();
+                        }
+
+                        @Override
+                        public void onError() {
+                            storyStatusView.pause();
+                            progress_bar.setVisibility(View.GONE);
+                        }
+                    });
+        } else if (story.storyType.equals("video")) {
+            Log.d("video", "inProgress");
+            isStoryTypeVideo = true;
+            Picasso.with(ivPhoto.getContext())
+                    .load(story.videoThumb)
+                    .error(R.drawable.bg_splash)
+                    .into(ivPhoto, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            ivPhoto.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+                        }
+                    });
+            if (videoView.getVisibility() == View.GONE) {
+                videoView.setVisibility(View.VISIBLE);
+                lyVideoView.setVisibility(View.VISIBLE);
+            }
+
+
+            lyVideoView.setVisibility(View.VISIBLE);
+            ivPhoto.setVisibility(View.GONE);
+            videoView.setVideoURI(checkVideoCache(story.myStory));
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(final MediaPlayer mediaPlayer) {
+                    StoriesActivity.this.mediaPlayer = mediaPlayer;
+                    progress_bar.setVisibility(View.GONE);
+                    storyStatusView.setDynamicStoryDuration(mediaPlayer.getDuration());
+                    mediaPlayer.start();
+                    if (isFirstTime) {
+                        isFirstTime = false;
+                        storyStatusView.startStories();
+                    } else storyStatusView.resume();
+
+                    mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                        @Override
+                        public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
+                            mediaPlayer.start();
+                        }
+                    });
+                }
+            });
+
+
+            final MediaPlayer.OnInfoListener onInfoToPlayStateListener = new MediaPlayer.OnInfoListener() {
+                @Override
+                public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                    switch (what) {
+                        case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START: {
+                            progress_bar.setVisibility(View.GONE);
+                            storyStatusView.resume();
+                            return true;
+                        }
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_START: {
+                            progress_bar.setVisibility(View.VISIBLE);
+                            storyStatusView.pause();
+                            //mp.pause();
+                            return true;
+                        }
+                        case MediaPlayer.MEDIA_INFO_BUFFERING_END: {
+                            progress_bar.setVisibility(View.VISIBLE);
+                            //mp.pause();
+                            storyStatusView.pause();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            };
+
+            videoView.setOnInfoListener(onInfoToPlayStateListener);
+        }
+    }
+
+
+    private void updateUI() {
+        counter = 0;
+        if (liveUserList.size() > 0) {
+            userInfo = liveUserList.get(currentIndex);
+            addMoreStory.setVisibility(userInfo.id == Mualab.currentUser.id ? View.VISIBLE : View.GONE);
+            img_btn.setVisibility(userInfo.id == Mualab.currentUser.id ? View.GONE : View.VISIBLE);
+
+            tvUserName.setText(String.format("%s", userInfo.userName));
+            if (TextUtils.isEmpty(userInfo.profileImage)) {
+                Picasso.with(this).load(R.drawable.defoult_user_img).fit().into(ivUserImg);
+            } else Picasso.with(this).load(userInfo.profileImage).fit().into(ivUserImg);
+        }
+    }
+
+
+    private void resetViews() {
+        isRunningStory = false;
+        isFirstTime = true;
+        storyStatusView.destroy();
+        storyStatusView.setStoriesCount(storyList.size());
+        storyStatusView.setStoryDuration(statusDuration);
+
+        storyStatusView.setStoriesListener(this);
     }
 
     @Override
-    protected void onDestroy() {
-        // Very important !
-        storiesProgressView.destroy();
-        super.onDestroy();
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (hasFocus) {
+                getWindow().getDecorView()
+                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            }
+        }
     }
 
-    private void apiForMyStory() {
-        Map<String, String> map = new HashMap<>();
-        // map.put("userId", Mualab.getInstance().getSessionManager().getUser().id);
-        map.put("userId", ""+liveUserList.get(position).id);
 
+    private void getStories() {
+
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(StoriesActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if (isConnected) {
+                        dialog.dismiss();
+                        getStories();
+                    }
+                }
+            }).show();
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", "" + userInfo.id);
         new HttpTask(new HttpTask.Builder(this, "myStory", new HttpResponceListner.Listener() {
             @Override
             public void onResponse(String response, String apiName) {
@@ -290,29 +446,31 @@ public class StoriesActivity extends AppCompatActivity implements StoriesProgres
                     JSONObject js = new JSONObject(response);
                     String status = js.getString("status");
                     String message = js.getString("message");
-
-                    tvUserName.setText(liveUserList.get(position).fullName);
-
-                    updateCurrentUser();
-
-
-                    storyArrayList.clear();
+                    if (message.equals("No record found")) {
+                        onBackPressed();
+                    }
+                    storyList.clear();
+                    //liveUserList.clear();
 
                     if (status.equalsIgnoreCase("success") && !message.equalsIgnoreCase("No results found right now")) {
                         JSONArray array = js.getJSONArray("allMyStory");
-                        counter=0;
+                        counter = 0;
                         Gson gson = new Gson();
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject jsonObject = array.getJSONObject(i);
                             Story story = gson.fromJson(String.valueOf(jsonObject), Story.class);
-                            storyArrayList.add(story);
+                            storyList.add(story);
                         }
 
-                        Story story = storyArrayList.get(counter);
-                        loadStory(story);
+                        if (storyList.size() == 0) {
+                            finish();
+                        }
 
-                    }else {
-                        finish();
+                        if (!isRunningStory) {
+                            resetViews();
+                            loadMediaFile();
+                        }
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -322,88 +480,58 @@ public class StoriesActivity extends AppCompatActivity implements StoriesProgres
             @Override
             public void ErrorListener(VolleyError error) {
 
-            }})
+            }
+        })
                 .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
-                .setBody(map , HttpTask.ContentType.APPLICATION_JSON))
+                .setBody(map, HttpTask.ContentType.APPLICATION_JSON))
                 .execute("StoryAPI");
     }
 
+
+    // Lifecycle events
+
     @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.skip :
-                if (storyArrayList.size()!=0)
-                    storiesProgressView.skip();
-                break;
-
-            case R.id.reverse :
-                if (storyArrayList.size()!=0)
-                    storiesProgressView.reverse();
-                break;
-
-            case R.id.videoView :
-
-                break;
-        }
+    protected void onSaveInstanceState(Bundle outState) {
+        //mExoPlayerHelper.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
-    private void loadStory(Story story) {
-        if (story.storyType.equals("image")){
-            lyVideoView.setVisibility(View.GONE);
-            videoView.setVisibility(View.GONE);
-            iv_myStory.setVisibility(View.VISIBLE);
-            Picasso.with(StoriesActivity.this).load(story.myStory).
-                    placeholder(R.color.dark_transperant)
-                    .into(iv_myStory, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            progress_bar.setVisibility(View.GONE);
-                            storiesProgressView.setStoriesCount(storyArrayList.size());
-                            storiesProgressView.setStoryDuration(3000L);
-                            storiesProgressView.startStories();
-                        }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateUI();
+        getPermissionAndPicImage();
+        //getStories();
+    }
 
-                        @Override
-                        public void onError() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
-                        }
-                    });
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
-        else if (story.storyType.equals("video")){
-            videoView.setVisibility(View.VISIBLE);
-            lyVideoView.setVisibility(View.VISIBLE);
-            iv_myStory.setVisibility(View.GONE);
-
-            sType  ="video";
-            //   vidUri = Uri.parse(story.myStory);
-            videoView.setVideoURI(checkVideoCache(story.myStory));
-
-            //  videoView.setVideoPath(story.myStory);
-            storiesProgressView.setStoriesCount(storyArrayList.size());
-
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(final MediaPlayer mediaPlayer) {
-                    progress_bar.setVisibility(View.GONE);
-                    mp = mediaPlayer;
-                    storiesProgressView.setStoryDuration(mediaPlayer.getDuration());
-                    mp.start();
-                    //videoView.start();
-                    storiesProgressView.startStories();
-
-                }
-            });
-            // Toast.makeText(StoreViewActivity.this, "Video type of story is under development", Toast.LENGTH_SHORT).show();
-        }
-
+        storyStatusView.destroy();
     }
 
 
-    public boolean isExternalStoragePresent() {
-        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-    }
-
-    private Uri checkVideoCache(String url){
+    private Uri checkVideoCache(String url) {
         String downloadFileName = url.substring(url.lastIndexOf('/'), url.length());//Create file name by picking download file name from URL
 
         //Get File if SD card is present
@@ -412,46 +540,51 @@ public class StoriesActivity extends AppCompatActivity implements StoriesProgres
         } else
             Toast.makeText(StoriesActivity.this, "Oops!! There is no External storage in device.", Toast.LENGTH_SHORT).show();
 
+        boolean bool = false;
         //If File is not present create directory
-        if (!fileStorage.exists()) {
-            fileStorage.mkdir();
-        }
+        if (!fileStorage.exists()) bool = fileStorage.mkdir();
 
-        outputFile = new File(fileStorage, downloadFileName);//Create Output file in Main File
+        if (bool) {
+            outputFile = new File(fileStorage, downloadFileName);//Create Output file in Main File
 
-        //Create New File if not present
-        if (!outputFile.exists()) {
-            try {
-                new DownloadingTask().execute(url);
+            //Create New File if not present
+            if (!outputFile.exists()) {
+                try {
+                    new DownloadingTask().execute(url);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                return Uri.fromFile(outputFile);
             }
-        }else {
-            return Uri.fromFile(outputFile);
         }
-
         return Uri.parse(url);
     }
+
+
+    public boolean isExternalStoragePresent() {
+        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+    }
+
 
     public void getPermissionAndPicImage() {
 
         if (Build.VERSION.SDK_INT >= 23) {
 
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE}, Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
-                if (liveUserList.size()!=0){
-                    apiForMyStory();
+                if (liveUserList.size() != 0) {
+                    getStories();
                 }
             }
         } else {
-            if (liveUserList.size()!=0){
-                apiForMyStory();
+            if (liveUserList.size() != 0) {
+                getStories();
             }
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -460,8 +593,8 @@ public class StoriesActivity extends AppCompatActivity implements StoriesProgres
 
             case Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (liveUserList.size()!=0){
-                        apiForMyStory();
+                    if (liveUserList.size() != 0) {
+                        getStories();
                     }
                 } else {
                     Toast.makeText(StoriesActivity.this, "YOU DENIED PERMISSION CANNOT SELECT IMAGE", Toast.LENGTH_LONG).show();
@@ -469,12 +602,88 @@ public class StoriesActivity extends AppCompatActivity implements StoriesProgres
             }
 
             break;
-
         }
     }
 
-// String filePath = "mualab"+randomNo+"mp4";
+    @SuppressLint("ResourceType")
+    @Override
+    public void onSwipe(int direction) {
+        String str = "";
+        int size = liveUserList.size();
+        boolean isUpdate = false;
+//Todo check
+        switch (direction) {
+            case SimpleGestureFilter.SWIPE_RIGHT:
+                currentIndex -= 1;
+                if (0 < currentIndex) {
+                    Log.e("what is data = ", "" + size + " = " + currentIndex);
+                    updateUI();
+                    getPermissionAndPicImage();
 
+                    parent.startAnimation(AnimationUtils.loadAnimation(
+                            StoriesActivity.this, R.anim.slide_in_from_right
+                    ));
+
+                    setDragEdge(SwipeBackLayout.DragEdge.RIGHT);
+                    videoView.setVisibility(View.GONE);
+                    ivPhoto.setVisibility(View.GONE);
+                    resetViews();
+
+
+                } else if (currentIndex == 0) {
+                    finish();
+                } else currentIndex += 1;
+
+
+                break;
+            case SimpleGestureFilter.SWIPE_LEFT:
+                currentIndex += 1;
+                if (size > currentIndex) {
+                    Log.e("what is data = ", "" + size + " = " + currentIndex);
+                    updateUI();
+                    getPermissionAndPicImage();
+                 /*   Animator anim =  AnimatorInflater.loadAnimator(this, R.animator.cube_left_out);
+                    anim.setTarget(parent);
+                    anim.setDuration(1000);
+                    anim.start();*/
+                    parent.startAnimation(AnimationUtils.loadAnimation(
+                            StoriesActivity.this, R.anim.slide_in_from_left
+                    ));
+                    setDragEdge(SwipeBackLayout.DragEdge.LEFT);
+                    videoView.setVisibility(View.GONE);
+                    ivPhoto.setVisibility(View.GONE);
+                    resetViews();
+
+
+                } else if (!(size > currentIndex)) {
+                    finish();
+                } else currentIndex -= 1;
+
+                break;
+            case SimpleGestureFilter.SWIPE_DOWN:
+
+                break;
+            case SimpleGestureFilter.SWIPE_UP:
+
+                break;
+
+        }
+
+    }
+
+    @Override
+    public void onDoubleTap() {
+
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent me) {
+        // Call onTouchEvent of SimpleGestureFilter class
+        this.detector.onTouchEvent(me);
+        return super.dispatchTouchEvent(me);
+    }
+
+    @SuppressLint("StaticFieldLeak")
     private class DownloadingTask extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -486,11 +695,7 @@ public class StoriesActivity extends AppCompatActivity implements StoriesProgres
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (outputFile != null) {
-                //    progress_bar.setVisibility(View.GONE);
-                Toast.makeText(StoriesActivity.this, "Downloaded Successfully", Toast.LENGTH_SHORT).show();
-            } else {
-                //   progress_bar.setVisibility(View.GONE);
+            if (outputFile == null) {
                 Toast.makeText(StoriesActivity.this, "Failed Download", Toast.LENGTH_SHORT).show();
             }
         }
@@ -502,211 +707,34 @@ public class StoriesActivity extends AppCompatActivity implements StoriesProgres
                 HttpURLConnection c = (HttpURLConnection) url.openConnection();//Open Url Connection
                 c.setRequestMethod("GET");//Set Request Method to "GET" since we are grtting data
                 c.connect();//connect the URL Connection
-
                 //If Connection response is not OK then show Logs
                 if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    Log.e("StoreViewActivity", "Server returned HTTP " + c.getResponseCode() + " " + c.getResponseMessage());
+                    Log.e("MyStoreViewActivity", "Server returned HTTP " + c.getResponseCode() + " " + c.getResponseMessage());
 
                 }
+                boolean bool = outputFile.createNewFile();
 
-                outputFile.createNewFile();
+                if (bool) {
+                    FileOutputStream fos = new FileOutputStream(outputFile);//Get OutputStream for NewFile Location
+                    InputStream is = c.getInputStream();//Get InputStream for connection
 
-                FileOutputStream fos = new FileOutputStream(outputFile);//Get OutputStream for NewFile Location
-                InputStream is = c.getInputStream();//Get InputStream for connection
-
-                byte[] buffer = new byte[1024];//Set buffer type
-                int len1 = 0;//init length
-                while ((len1 = is.read(buffer)) != -1) {
-                    fos.write(buffer, 0, len1);//Write new file
+                    byte[] buffer = new byte[1024];//Set buffer type
+                    int len1;//init length
+                    while ((len1 = is.read(buffer)) != -1) {
+                        fos.write(buffer, 0, len1);//Write new file
+                    }
+                    //Close all connection after doing task
+                    fos.close();
+                    is.close();
                 }
-
-                //Close all connection after doing task
-                fos.close();
-                is.close();
 
             } catch (Exception e) {
-
                 //Read exception if something went wrong
                 e.printStackTrace();
                 outputFile = null;
-                Log.e("StoreViewActivity", "Download Error Exception " + e.getMessage());
             }
-
             return null;
         }
     }
-
-    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            //  Toast.makeText(StoriesActivity.this, "onDown", Toast.LENGTH_SHORT).show();
-            // don't return fa  lse here or else none of the other
-            // gestures will work
-
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            float x = e.getRawX();
-            if (x<=250){
-                if (storyArrayList.size()!=0)
-                    storiesProgressView.reverse();
-                // Toast.makeText(StoriesActivity.this, "onSingleTap left", Toast.LENGTH_SHORT).show();
-            }else if (x>=500){
-                if (storyArrayList.size()!=0)
-                    storiesProgressView.skip();
-                //    Toast.makeText(StoriesActivity.this, "onSingleTap right", Toast.LENGTH_SHORT).show();
-            }
-
-            return true;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-            if (e.getAction() == MotionEvent.ACTION_DOWN){
-                pressTime = System.currentTimeMillis();
-                storiesProgressView.pause();
-                /*if (sType.equals("video") && mp!=null){
-                        mp.start();
-                    }*/
-            }
-
-            if (e.getAction() == MotionEvent.ACTION_MOVE){
-                long now = System.currentTimeMillis();
-                storiesProgressView.resume();
-                // return limit < now - pressTime;
-                //lastDuration = System.currentTimeMillis() - lastDown;
-            }
-            //  Toast.makeText(StoriesActivity.this, "onLongPress", Toast.LENGTH_SHORT).show();*/
-
-        }
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            //  storiesProgressView.resume();
-            //  Toast.makeText(StoriesActivity.this, "onDoubleTap", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-          /*  if (e1.getX() < e2.getX()) {
-                Toast.makeText(StoriesActivity.this, "swipe right", Toast.LENGTH_SHORT).show();
-            }
-
-            if (e1.getX() > e2.getX()) {
-                Toast.makeText(StoriesActivity.this, "swipe left", Toast.LENGTH_SHORT).show();
-            }
-            if (e1.getY() < e2.getY()) {
-                Toast.makeText(StoriesActivity.this, "swipe down", Toast.LENGTH_SHORT).show();
-            }
-            if (e1.getY() > e2.getY()) {
-                Toast.makeText(StoriesActivity.this, "swipe up", Toast.LENGTH_SHORT).show();
-            }*/
-            return true;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2,
-                               float velocityX, float velocityY) {
-            float diffY = e2.getY() - e1.getY();
-            float diffX = e2.getX() - e1.getX();
-
-            try {
-
-                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
-                    return false;
-                }
-
-                if (Math.abs(diffX) > Math.abs(diffY)) {
-                    if (Math.abs(diffX) > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        if (diffX > 0) {
-                            position--;
-                            if (position==liveUserList.size()){
-                                finish();
-                            }else {
-                                storiesProgressView.destroy();
-                                storiesProgressView.setStoriesListener(StoriesActivity.this);
-                                apiForMyStory();
-                            }
-                            // Toast.makeText(StoriesActivity.this, "swipe right", Toast.LENGTH_SHORT).show();
-                        } else {
-                            position++;
-                            if (position==liveUserList.size()){
-                                finish();
-                            }else {
-                                storiesProgressView.destroy();
-                                storiesProgressView.setStoriesListener(StoriesActivity.this);
-                                apiForMyStory();
-                            }
-                            // Toast.makeText(StoriesActivity.this, "swipe left", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                } else {
-                    if (Math.abs(diffY) > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-                        if (diffY > 0) {
-                            finish();
-                            //  Toast.makeText(StoriesActivity.this, "swipe down", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Toast.makeText(StoriesActivity.this, "swipe up", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-
-
-        /*    try {
-                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
-                    return false;
-                }
-                // right to left swipe
-                if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
-                        && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    position++;
-                    if (position==liveUserList.size()){
-                        finish();
-                    }else {
-                        storiesProgressView.destroy();
-                        storiesProgressView.setStoriesListener(StoriesActivity.this);
-                        apiForMyStory();
-                    }
-                    // Toast.makeText(StoriesActivity.this, "swipe left", Toast.LENGTH_SHORT).show();
-                }
-                // left to right swipe
-                else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    position--;
-                    if (position==liveUserList.size()){
-                        finish();
-                    }else {
-                        storiesProgressView.destroy();
-                        storiesProgressView.setStoriesListener(StoriesActivity.this);
-                        apiForMyStory();
-                    }
-                    //Toast.makeText(StoriesActivity.this, "swipe right", Toast.LENGTH_SHORT).show();
-                }
-                else   if (Math.abs(diffY) > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-                    if (diffY > 0) {
-                        finish();
-                        //     Toast.makeText(StoriesActivity.this, "swipe down", Toast.LENGTH_SHORT).show();
-                    }else {
-                        //  Toast.makeText(StoriesActivity.this, "swipe up", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-            return false;
-        }
-    }
-
 }
+

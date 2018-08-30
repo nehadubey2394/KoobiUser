@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitXY" />
 
         <RelativeLayout
             android:id="@+id/lyVideoView"
@@ -108,11 +108,11 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-       <!-- <View
-            android:id="@+id/center"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="6" />-->
+        <!-- <View
+             android:id="@+id/center"
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight="6" />-->
 
         <View
             android:id="@+id/skip"

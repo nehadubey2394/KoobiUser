@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
+    android:id="@+id/rlMain"
     tools:context=".activity.chat.ChatActivity">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"

@@ -988,6 +988,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         intent.putExtra("feed_id", feed._id);
         intent.putExtra("feedPosition", pos);
         intent.putExtra("feed", feed);
+        intent.putExtra("commentCount", feed.commentCount);
         startActivityForResult(intent, Constant.ACTIVITY_COMMENT);
     }
 
@@ -1018,7 +1019,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
                 if(CURRENT_FEED_STATE == Constant.FEED_STATE){
                     int pos = data.getIntExtra("feedPosition",0);
                     Feeds feed = (Feeds) data.getSerializableExtra("feed");
-                    feeds.get(pos).commentCount = feed.commentCount;
+                    feeds.get(pos).commentCount =data.getIntExtra("commentCount",0);
                     feedAdapter.notifyItemChanged(pos);
                 }
             }

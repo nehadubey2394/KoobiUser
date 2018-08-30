@@ -34,6 +34,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -136,6 +137,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private  long mLastClickTime = 0;
     private String tagJson="",tagIdsArray="";
     private  List<ArrayList<TagToBeTagged>> listOfValues ;
+    private Button btn_post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -309,6 +311,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             iv_postimage.setImageBitmap(thumbImage);
 
         edCaption = findViewById(R.id.edCaption);
+        btn_post = findViewById(R.id.btn_post);
         tvMediaSize = findViewById(R.id.tvMediaSize);
         tvTagCount = findViewById(R.id.tvTagCount);
         // progressBar = findViewById(R.id.progress_bar);
@@ -319,6 +322,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.ll_tagPepole).setOnClickListener(this);
         findViewById(R.id.ll_tagService).setOnClickListener(this);
         findViewById(R.id.tv_post).setOnClickListener(this);
+        btn_post.setOnClickListener(this);
 
         //hashtagAdapter = new HashtagAdapter(this);
         edCaption.setThreshold(1);
@@ -477,6 +481,25 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     // TODO: Handle the error.
                 }
                 break;
+            case R.id.btn_post:
+                if (listOfValues.size()!=0){
+                    Gson gson = new GsonBuilder().create();
+                    ArrayList<String> tagIdsArrayList = new ArrayList<>();
+                    for (int i = 0; i<listOfValues.size();i++){
+                        for (TagToBeTagged tag : listOfValues.get(i)){
+                            HashMap<String,TagDetail> tagDetails = tag.getTagDetails();
+                            for(Map.Entry map  :  tagDetails.entrySet() ) {
+                                TagDetail tagDetail = tagDetails.get(map.getKey());
+                                tagIdsArrayList.add(tagDetail.tagId);
+                            }
+                        }
+                    }
+                    tagIdsArray = gson.toJson(tagIdsArrayList);
+                }
+                feedPostPrerareData();
+                break;
+
+
         }
     }
 
@@ -522,7 +545,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 //sendToBackGroundService();
             } else if (feedType == Constant.IMAGE_STATE) {
                 showProgressBar();
-                apiCallForUploadImages();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        apiCallForUploadImages();
+                    }
+                }).start();
             }
 
         } else {
@@ -741,17 +769,27 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 uris,
                 new UploadImage.Listner() {
                     @Override
-                    public void onResponce(String responce) {
-                        findViewById(R.id.tv_post).setEnabled(true);
-                        hideProgressBar();
-                        parseResponce(responce);
+                    public void onResponce(final String responce) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.tv_post).setEnabled(true);
+                                hideProgressBar();
+                                parseResponce(responce);
+                            }
+                        });
                     }
 
                     @Override
                     public void onError(String error) {
-                        findViewById(R.id.tv_post).setEnabled(true);
-                        hideProgressBar();
-                        MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.tv_post).setEnabled(true);
+                                hideProgressBar();
+                                MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
+                            }
+                        });
                     }
                 }).execute();
     }
@@ -1059,5 +1097,4 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         }
     }
-
 }

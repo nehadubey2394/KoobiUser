@@ -10,12 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.chat.model.Chat;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
+import com.mualab.org.user.application.Mualab;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -31,6 +33,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private Context context;
     private List<ChatHistory> chatHistories;
+    private boolean isTyping = false;
 
     public ChatHistoryAdapter(Context context, List<ChatHistory> chatHistories) {
         this.context = context;
@@ -80,6 +83,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public class SingleChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tvUname,tvMsg,tvChatType,tvUnReadCount,tvTime;
         CircleImageView ivProfile;
+        RelativeLayout rlChatHistory;
 
         SingleChatViewHolder(View itemView) {
             super(itemView);
@@ -88,7 +92,10 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ivProfile = itemView.findViewById(R.id.ivProfile);
             tvChatType = itemView.findViewById(R.id.tvChatType);
             tvUnReadCount = itemView.findViewById(R.id.tvUnReadCount);
+            rlChatHistory = itemView.findViewById(R.id.rlChatHistory);
             tvTime = itemView.findViewById(R.id.tvTime);
+
+            rlChatHistory.setOnClickListener(this);
 
         }
 
@@ -99,7 +106,13 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                // Glide.with(context).load(chat.imageUrl).apply(new RequestOptions().placeholder(R.drawable.placeholder_chat_image)).into(iv_for_sender);
             }else {*/
             tvUname.setText(chat.userName);
-            tvMsg.setText(chat.message);
+            if (isTyping){
+                tvMsg.setText("typing...");
+                tvMsg.setTextColor(context.getResources().getColor(R.color.chatbox_blue));
+            }else {
+                tvMsg.setText(chat.message);
+                tvMsg.setTextColor(context.getResources().getColor(R.color.grey));
+            }
             // }
 
             if (chat.profilePic !=null && !chat.profilePic.isEmpty()) {
@@ -120,10 +133,20 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Override
         public void onClick(View v) {
-            ChatHistory chatHistory = chatHistories.get(getAdapterPosition());
-            Intent chat_intent = new Intent(context, ChatActivity.class);
-            chat_intent.putExtra("userId",chatHistory.reciverId);
-            context.startActivity(chat_intent);
+            switch (v.getId()){
+                case R.id.rlChatHistory:
+                    ChatHistory chatHistory = chatHistories.get(getAdapterPosition());
+                    String otherId = "";
+                    if (!chatHistory.reciverId.equals(String.valueOf(Mualab.currentUser.id)))
+                        otherId = chatHistory.reciverId;
+                    else
+                        otherId = chatHistory.senderId;
+
+                    Intent chat_intent = new Intent(context, ChatActivity.class);
+                    chat_intent.putExtra("userId",otherId);
+                    context.startActivity(chat_intent);
+                    break;
+            }
         }
     }
 
@@ -149,8 +172,9 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 Glide.with(context).load(chat.imageUrl).apply(new RequestOptions().
                 placeholder(R.drawable.placeholder_chat_image)).into(iv_other_img);
             }else {*/
-            tvUname.setText(chat.message);
+            tvUname.setText(chat.userName);
             tvMsg.setText(chat.message);
+            tvChatType.setText(chat.type);
             // }
 
             SimpleDateFormat sd = new SimpleDateFormat("hh:mm a");
@@ -164,17 +188,8 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    /*public  String getDateCurrentTimeZone(long timestamp) {
-        try{
-            Calendar calendar = Calendar.getInstance();
-            TimeZone tz = TimeZone.getDefault();
-            calendar.setTimeInMillis(timestamp * 1000);
-            calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.getTimeInMillis()));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date currenTimeZone = (Date) calendar.getTime();
-            return sdf.format(currenTimeZone);
-        }catch (Exception e) {
-        }
-        return "";
-    }*/
+    public void setTyping(boolean isTyping,int position){
+        this.isTyping = isTyping;
+        notifyItemChanged(position);
+    }
 }

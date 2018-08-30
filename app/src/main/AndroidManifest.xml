@@ -104,10 +104,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Camera" />
         <activity
-            android:name=".activity.story.StoreActivityTest"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Camera" />
-        <activity
             android:name=".activity.feeds.FeedPostActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.story.camera.CaptureActivity" />
@@ -246,7 +242,9 @@
             android:resource="@color/colorPrimary" />
 
         <activity android:name=".activity.chat.ChatHistoryActivity"
-            android:theme="@style/StatusBarBlack"></activity>
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="stateHidden"></activity>
+
     </application>
 
 </manifest>

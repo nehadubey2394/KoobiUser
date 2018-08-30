@@ -61,6 +61,8 @@
         </LinearLayout>
 
 
+
+
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
@@ -70,6 +72,14 @@
             app:scrimVisibleHeightTrigger="0dp"
             app:layout_scrollFlags="scroll|enterAlways"
             app:expandedTitleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progrss"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"/>
 
             <com.image.nocropper.CropperView
                 android:background="#ff282828"
@@ -88,6 +98,10 @@
                 android:scaleType="centerCrop"
                 android:visibility="gone"
                 />
+
+
+
+
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

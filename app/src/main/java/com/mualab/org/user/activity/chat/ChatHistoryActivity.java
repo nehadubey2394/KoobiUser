@@ -1,7 +1,8 @@
 package com.mualab.org.user.activity.chat;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.View;
@@ -18,8 +19,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.adapter.ChatHistoryAdapter;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
+import com.mualab.org.user.activity.chat.model.Typing;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.utils.KeyboardUtil;
+import com.mualab.org.user.utils.constants.Constant;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,20 +35,25 @@ import java.util.Map;
 public class ChatHistoryActivity extends AppCompatActivity implements View.OnClickListener{
     private TextView tv_no_chat;
     private ProgressBar progress_bar;
-    private RecyclerView rvChatHistory;
     private ChatHistoryAdapter historyAdapter;
     private SearchView searchview;
     private List<ChatHistory> chatHistories;
     private List<ChatHistory> newList;
     private Map<String, ChatHistory> listmap;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference,isOppTypingRef;
+    private Thread thread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_history);
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("chat_history").
+
+        // final String myChild = Mualab.currentUser.id+"_"+myUid;
+
+        DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference = mFirebaseDatabaseReference.child("chat_history").
                 child(String.valueOf(Mualab.currentUser.id));
+        isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING);
 
         init();
     }
@@ -64,7 +72,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         ImageView ivChatReq = findViewById(R.id.ivChatReq);
         ic_add_chat.setVisibility(View.VISIBLE);
         ivChatReq.setVisibility(View.VISIBLE);
-        rvChatHistory = findViewById(R.id.rvChatHistory);
+        RecyclerView rvChatHistory = findViewById(R.id.rvChatHistory);
         rvChatHistory.setAdapter(historyAdapter);
         historyAdapter.notifyDataSetChanged();
 
@@ -75,6 +83,84 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
         getHistoryList();
 
+        thread = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                getTyppingUser();
+                //code to do the HTTP request
+            }
+        });
+        thread.start();
+
+    }
+
+    private void getTyppingUser(){
+        isOppTypingRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Typing typing = dataSnapshot.getValue(Typing.class);
+                String node = dataSnapshot.getKey();
+                //  thread.interrupt();
+                if (typing != null) {
+                    if (listmap.containsKey(typing.senderId) && chatHistories.size()!=0){
+                        for (int i=0;i<chatHistories.size();i++){
+                            if (chatHistories.get(i).senderId.equals(typing.senderId)||
+                                    chatHistories.get(i).senderId.equals(typing.reciverId)){
+                                historyAdapter.setTyping(true,i);
+                                break;
+                            }
+                        }
+                    }
+                    // String node = typing.reciverId+"_"+typing.senderId;
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Typing typing = dataSnapshot.getValue(Typing.class);
+                //   thread.interrupt();
+                if (typing!=null){
+                    String node = dataSnapshot.getKey();
+                    if (listmap.containsKey(typing.senderId) && chatHistories.size()!=0){
+                        for (int i=0;i<chatHistories.size();i++){
+                            if (chatHistories.get(i).senderId.equals(typing.senderId)||
+                                    chatHistories.get(i).senderId.equals(typing.reciverId)){
+                                historyAdapter.setTyping(true,i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+               // thread.interrupt();
+                Typing typing = dataSnapshot.getValue(Typing.class);
+                if (dataSnapshot.exists()){
+                    assert typing != null;
+                    if (listmap.containsKey(typing.senderId)&& chatHistories.size()!=0){
+                        for (int i=0;i<chatHistories.size();i++){
+                            if (chatHistories.get(i).senderId.equals(typing.senderId)||
+                                    chatHistories.get(i).senderId.equals(typing.reciverId)){
+                                historyAdapter.setTyping(false,i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void getHistoryList() {
@@ -124,13 +210,15 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 // map.put(dataSnapshot.getKey(),messageOutput);
 
                 if (messageOutput != null) {
-                    listmap.remove(dataSnapshot.getKey());
-                    Collection<ChatHistory> demoValues = listmap.values();
-                    newList.clear();
-                    chatHistories.clear();
-                    newList.addAll(demoValues);
-                    chatHistories.addAll(newList);
-                    shorting();
+                    if (messageOutput.type.equals("user")) {
+                        listmap.remove(dataSnapshot.getKey());
+                        Collection<ChatHistory> demoValues = listmap.values();
+                        newList.clear();
+                        chatHistories.clear();
+                        newList.addAll(demoValues);
+                        chatHistories.addAll(newList);
+                        shorting();
+                    }
                 }
             }
 
@@ -176,5 +264,17 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 onBackPressed();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        thread = null;
     }
 }

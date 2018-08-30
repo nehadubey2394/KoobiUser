@@ -4,10 +4,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
 
 
 /**
@@ -90,6 +95,14 @@ public class CropperView extends FrameLayout {
 
     public void setImageBitmap(Bitmap bm) {
         mImageView.setImageBitmap(bm);
+    }
+
+    public void setImageUri(Uri uri){
+        Glide.with(getContext()).load(uri)
+                .placeholder(0).fallback(0).centerCrop()
+                .skipMemoryCache(false)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(mImageView);
     }
 
     public void setMaxZoom(float zoom) {

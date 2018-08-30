@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
+    android:focusableInTouchMode="true"
     tools:context=".activity.chat.ChatHistoryActivity">
 
     <include

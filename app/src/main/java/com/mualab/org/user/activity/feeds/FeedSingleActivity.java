@@ -93,7 +93,7 @@ public class FeedSingleActivity extends AppCompatActivity implements View.OnClic
         RecyclerView rvFeed =findViewById(R.id.rvFeed);
         ll_progress = findViewById(R.id.ll_progress);
         ImageView btnBack = findViewById(R.id.btnBack);
-         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         tvHeaderTitle.setText(R.string.text_post);
         WrapContentLinearLayoutManager lm = new WrapContentLinearLayoutManager(FeedSingleActivity.this, LinearLayoutManager.VERTICAL, false);
         rvFeed.setItemAnimator(null);
@@ -235,7 +235,7 @@ public class FeedSingleActivity extends AppCompatActivity implements View.OnClic
                                 }
 
 
-                                    list.add(feed);
+                                list.add(feed);
 
                             }catch (JsonParseException e){
                                 e.printStackTrace();

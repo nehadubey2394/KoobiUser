@@ -660,6 +660,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         intent.putExtra("feed_id", feed._id);
         intent.putExtra("feedPosition", pos);
         intent.putExtra("feed", feed);
+        intent.putExtra("commentCount", feed.commentCount);
         startActivityForResult(intent, Constant.ACTIVITY_COMMENT);
     }
 
@@ -682,7 +683,6 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        feeds = new ArrayList<>();
         if (requestCode == 10) {
             apiForGetProfile();
             //apiForGetAllFeeds(0, 10, true);
@@ -692,6 +692,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                     int pos = data.getIntExtra("feedPosition",0);
                     Feeds feed =  data.getParcelableExtra("feed");
                     // feeds.get(pos).commentCount = feed.commentCount;
+                    feeds.get(pos).commentCount =data.getIntExtra("commentCount",0);
                     feedAdapter.notifyItemChanged(pos);
                 }
             }
