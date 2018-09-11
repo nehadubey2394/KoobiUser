@@ -22,6 +22,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
+import com.mualab.org.user.activity.chat.ChatHistoryActivity;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
@@ -385,11 +386,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.ivChat:
-                openNewStoryActivity();
-                //MyToast.getInstance(MainActivity.this).showSmallCustomToast("Under developement");
-
-             /*   Intent intent_chat=new Intent(MainActivity.this, ChatActivity.class);
-                startActivity(intent_chat);*/
+                Intent intent_chat=new Intent(MainActivity.this, ChatHistoryActivity.class);
+                startActivity(intent_chat);
                 break;
 
             case R.id.ivAppIcon:

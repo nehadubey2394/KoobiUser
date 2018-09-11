@@ -254,7 +254,6 @@ public class GalleryFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     public void expandToolbar() {
         appbar.setExpanded(true, true);
     }
@@ -462,29 +461,59 @@ public class GalleryFragment extends Fragment implements View.OnClickListener {
     }
 
     public ArrayList<Media> getAlbums() {
-        AlbumLoader albumLoader = new AlbumLoader(context);
-        ArrayList<Media> photos = new ArrayList<>();
+        final AlbumLoader albumLoader = new AlbumLoader(context);
+        final ArrayList<Media> photos = new ArrayList<>();
         try {
-            Cursor albumCursor = albumLoader.loadInBackground();
+            final Cursor albumCursor = albumLoader.loadInBackground();
             if (albumCursor != null && albumCursor.moveToFirst()) {
-
                 do {
                     PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
                     Cursor photoCursor = photoLoader.loadInBackground();
-
                     if (photoCursor != null && photoCursor.moveToFirst()) {
                         do {
                             Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
                             Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                             Media media = new Media();
                             media.uri = uri;
-
                             photos.add(media);
+
                         } while (photoCursor.moveToNext() /*&& photos.size() < 40*/);
                     }
                     photoCursor.close();
 
                 } while (albumCursor.moveToNext() /*&& albums.size() < 10*/);
+        /*        new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        do {
+                            PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
+                            Cursor photoCursor = photoLoader.loadInBackground();
+                            if (photoCursor != null && photoCursor.moveToFirst()) {
+                                do {
+                                    Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
+                                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                                    Media media = new Media();
+                                    media.uri = uri;
+
+                                    Bitmap bitmap= null;
+                                    try {
+                                        bitmap = (ImageVideoUtil.getBitmapFromUri(context,media.uri));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    if(bitmap.getHeight()>=2048||bitmap.getWidth()>=2048){
+                                        photos.add(media);
+                                    }
+                                    //photos.add(media);
+
+                                } while (photoCursor.moveToNext() *//*&& photos.size() < 40*//*);
+                            }
+                            photoCursor.close();
+
+                        } while (albumCursor.moveToNext() *//*&& albums.size() < 10*//*);
+                    }
+                },5000);
+*/
             }
             albumCursor.close();
             return photos;

@@ -88,6 +88,23 @@ public final class ImagePicker {
         }
     }
 
+    public static void pickImageFromCamera(Activity context) {
+
+        if (!appManifestContainsPermission(context, Manifest.permission.CAMERA) || hasCameraAccess(context)){
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra("return-data", true);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().
+                            getPackageName() + ".provider",
+                    getTemporalFile(context));
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+            context.startActivityForResult(intent, PICK_IMAGE_REQUEST_CODE);
+        }
+    }
+
     /**
      * Launch a dialog to pick an image from camera/gallery apps.
      *
@@ -321,7 +338,7 @@ public final class ImagePicker {
     }
 
 
-    private static File getTemporalFile(Context context) {
+    public static File getTemporalFile(Context context) {
         return new File(context.getExternalCacheDir(), TEMP_IMAGE_NAME);
     }
 

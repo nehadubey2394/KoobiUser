@@ -30,10 +30,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/nunito_regular"
             style="@style/TextView"
             android:textSize="16sp"
-
             android:textColor="@color/black"
             android:text="@string/are_you_want_to_block"/>
 
@@ -61,7 +60,7 @@
                 android:background="@drawable/bg_btn_green"
                 android:text="@string/yes"
                 android:id="@+id/btn_yes"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/nunito_regular"
                 android:textColor="@color/white"
                 android:layout_gravity="center_vertical"
                 android:layout_height="30dp" />
@@ -73,9 +72,8 @@
                 android:text="@string/no"
                 android:id="@+id/btn_no"
                 android:layout_marginStart="30dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/nunito_regular"
                 android:textColor="@color/white"
-
                 android:layout_gravity="center_vertical"
                 android:layout_height="30dp" />
 

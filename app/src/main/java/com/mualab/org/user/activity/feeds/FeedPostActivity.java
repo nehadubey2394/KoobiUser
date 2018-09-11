@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -60,23 +58,22 @@ import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.activity.main.MainActivity;
-import com.mualab.org.user.activity.people_tag.activity.DemoTagActivity;
 import com.mualab.org.user.activity.people_tag.activity.PeopleTagActivity;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.utils.constants.Constant;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.data.model.MediaUri;
 import com.mualab.org.user.data.model.booking.Address;
 import com.mualab.org.user.data.remote.GioAddressTask;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.data.remote.UploadImage;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.LocationDetector;
 import com.mualab.org.user.utils.LocationUtil;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.mualab.org.user.videocompressor.video.MediaController;
 
@@ -475,9 +472,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     findViewById(R.id.ly_location).setEnabled(false);
                     Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(FeedPostActivity.this);
                     startActivityForResult(intent, Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE);
-                } catch (GooglePlayServicesRepairableException e) {
-                    // TODO: Handle the error.
-                } catch (GooglePlayServicesNotAvailableException e) {
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
                 }
                 break;

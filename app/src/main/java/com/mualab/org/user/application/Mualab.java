@@ -18,6 +18,8 @@ import com.mualab.org.user.BuildConfig;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.Location;
 import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.utils.Util;
+import com.mualab.org.user.utils.constants.Constant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +28,11 @@ import java.util.Map;
  * Created by mindiii on 21/12/17.
  **/
 
-public class Mualab extends Application {
+public class Mualab extends Application implements LifeCycleDelegateListner {
 
     public static final String TAG = Mualab.class.getSimpleName();
     public static boolean IS_DEBUG_MODE = BuildConfig.DEBUG;
-
+    private Util utility;
     public static Mualab mInstance;
     public static User currentUser;
     public static Location currentLocation;
@@ -68,10 +70,15 @@ public class Mualab extends Application {
         session.setIsOutCallFilter(false);
        // ref = FirebaseDatabase.getInstance().getReference();
 
+        utility = new Util(getApplicationContext());
+
         AndroidNetworking.initialize(getApplicationContext());
         if (BuildConfig.DEBUG) {
             AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BODY);
         }
+
+        AppLifeCycle lifecycleHandler = new AppLifeCycle(this);
+        registerLifecycle(lifecycleHandler);
     }
 
     public Session getSessionManager() {
@@ -161,6 +168,21 @@ public class Mualab extends Application {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.clear();
         editor.apply();
+    }
+
+    @Override
+    public void onAppBackgrounded() {
+        utility.goToOnlineStatus(mInstance, Constant.offline);
+    }
+
+    @Override
+    public void onAppForegrounded() {
+        utility.goToOnlineStatus(mInstance, Constant.online);
+    }
+
+    private void registerLifecycle (AppLifeCycle lifecycleHandler){
+        registerActivityLifecycleCallbacks(lifecycleHandler);
+        registerComponentCallbacks(lifecycleHandler);
     }
 
     private enum Keys {

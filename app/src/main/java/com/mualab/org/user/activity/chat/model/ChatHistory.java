@@ -5,15 +5,18 @@ import java.io.Serializable;
 public class ChatHistory implements Serializable {
     public String message;
     public int messageType;
+    public int unreadMessage;
+    public int memberCount;
+    public int favourite;
     public String reciverId;
     public String senderId;
-    public int memberCount;
     public String profilePic;
-    public int unreadMessage;
+    public String memberType;
     public String userName;
-    public int favourite;
     public String type;//user,group,broadcast
     public Object timestamp;
+
+    public String banner_date;
 }
 
 /*favourite:

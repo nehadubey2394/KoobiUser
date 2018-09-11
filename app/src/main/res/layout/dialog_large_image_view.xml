@@ -45,6 +45,7 @@
             android:layout_height="wrap_content"
             app:canWeAddTags="false"
             android:transitionName="image"
+            android:layout_below="@+id/header"
             tools:ignore="UnusedAttribute"
             app:carrotBottomColor="@color/dark_grey"
             app:carrotLeftColor="@color/dark_grey"

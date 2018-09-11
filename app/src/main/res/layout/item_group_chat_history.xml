@@ -5,13 +5,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
-    android:layout_marginTop="2dp"
+    android:layout_marginTop="1dp"
     android:orientation="vertical"
     android:background="@color/white">
 
+    <View
+        android:id="@+id/viewTop"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:visibility="gone"
+        android:background="@color/light_gray_shadow"
+        />
+
+    <RelativeLayout
+        android:id="@+id/llHistoryDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:visibility="gone"
+        >
+
+        <View
+            android:id="@+id/v1"
+            android:layout_width="12dp"
+            android:layout_height="1dp"
+            android:background="@color/light_gray_shadow"
+            android:layout_centerVertical="true"
+            />
+
+        <TextView
+            android:id="@+id/tvHistoryTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/v1"
+            android:gravity="center"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textSize="12sp"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/nunito_regular"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/grey"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_toRightOf="@+id/tvHistoryTime"
+            android:background="@color/light_gray_shadow"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="87dp"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:id="@+id/rlChatHistory"
@@ -49,8 +101,9 @@
                 android:ellipsize="end"
                 android:gravity="left"
                 android:textColor="@color/text_color"
-                android:fontFamily="@font/roboto_regular"
-                android:textSize="16sp"
+                android:fontFamily="@font/nunito_regular"
+                android:textSize="17sp"
+                android:maxWidth="200dp"
                 />
 
 
@@ -65,7 +118,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="3dp"
                 android:textColor="@color/text_color"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/nunito_regular"
                 android:textSize="14sp"
                 />
 
@@ -90,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:layout_gravity="right"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/nunito_regular"
                 android:textSize="13sp"
                 android:textColor="@color/gray"
                 />
@@ -123,7 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/nunito_regular"
                 android:textSize="12sp"
                 android:textColor="@color/text_color"
                 android:layout_marginTop="4dp"
@@ -140,9 +193,8 @@
         android:layout_height="1dp"
         android:layout_marginRight="6dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="2dp"
+        android:visibility="gone"
         android:background="@color/light_gray_shadow"
-
         />
 
 </LinearLayout>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:cardCornerRadius="3dp"
+        android:layout_margin="20dp"
+        android:layout_centerInParent="true"
+        app:cardBackgroundColor="@color/white"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:id="@+id/iv_profileImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_info"
+
+                />
+
+
+            <TextView
+                android:id="@+id/tv_alert_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/nunito_regular"
+                style="@style/TextView"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/black"
+                android:text="Alert"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_height="?actionBarSize">
+
+
+                <Button
+                    android:layout_width="80dp"
+                    android:background="@drawable/bg_btn_green"
+                    android:text="@string/ok_label"
+                    android:id="@+id/btn_ok"
+                    android:textAllCaps="false"
+                    android:fontFamily="@font/nunito_regular"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="30dp" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>
+

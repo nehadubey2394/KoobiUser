@@ -15,7 +15,7 @@
         android:gravity="center_horizontal">
 
         <ImageView
-            android:id="@+id/iv_profileImage"
+            android:id="@+id/iv_alert"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
@@ -26,11 +26,10 @@
 
 
         <TextView
-            android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/nunito_bold"
             style="@style/TextView"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -39,10 +38,10 @@
             android:text="@string/delete_conversation"/>
 
         <TextView
-            android:id="@+id/tv_user_name_chat"
+            android:id="@+id/tv_delete_alert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/nunito_regular"
             style="@style/TextView"
             android:textSize="15sp"
             android:gravity="center"
@@ -63,7 +62,8 @@
                 android:background="@drawable/bg_btn_green"
                 android:text="@string/yes"
                 android:id="@+id/btn_yes"
-                android:fontFamily="@font/roboto_regular"
+                android:textAllCaps="false"
+                android:fontFamily="@font/nunito_regular"
                 android:textColor="@color/white"
                 android:layout_gravity="center_vertical"
                 android:layout_height="30dp" />
@@ -75,7 +75,8 @@
                 android:text="@string/no"
                 android:layout_marginStart="30dp"
                 android:id="@+id/btn_no"
-                android:fontFamily="@font/roboto_regular"
+                android:textAllCaps="false"
+                android:fontFamily="@font/nunito_regular"
                 android:textColor="@color/white"
                 android:layout_gravity="center_vertical"
                 android:layout_height="30dp" />

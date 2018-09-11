@@ -17,29 +17,39 @@
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:id="@+id/card_group_filter"
             app:cardCornerRadius="5dp"
             app:cardElevation="4dp"
             android:shadowRadius="2"
             app:cardUseCompatPadding="true"
+            app:cardBackgroundColor="@color/white"
             tools:ignore="RtlHardcoded">
 
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="wrap_content"
+                android:id="@+id/recycler_view"
+                android:scrollbars="none"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+
+<!--
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
+                android:visibility="gone"
                 android:background="@drawable/shape_groupchat_popup"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="36dp"
                     android:gravity="center_vertical"
                     android:layout_marginLeft="12dp"
                     android:fontFamily="@font/roboto_regular"
                     android:text="@string/add_to_favourite"
-                    android:layout_marginTop="5dp"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     />
@@ -53,7 +63,7 @@
                 <TextView
                     android:id="@+id/tvClearChat"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="36dp"
                     android:gravity="center_vertical"
                     android:layout_marginLeft="12dp"
                     android:fontFamily="@font/roboto_regular"
@@ -71,8 +81,9 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:gravity="center_vertical"                    android:layout_marginLeft="12dp"
+                    android:layout_height="36dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="12dp"
                     android:fontFamily="@font/roboto_regular"
                     android:text="@string/mute_chat"
                     android:textColor="@color/black"
@@ -89,7 +100,7 @@
                 <TextView
                     android:id="@+id/tvBlockUser"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="36dp"
                     android:gravity="center_vertical"
                     android:layout_marginLeft="12dp"
                     android:fontFamily="@font/roboto_regular"
@@ -108,28 +119,30 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="36dp"
                     android:gravity="center_vertical"                    android:layout_marginLeft="12dp"
                     android:fontFamily="@font/roboto_regular"
                     android:text="@string/report_user"
                     android:textColor="@color/black"
                     android:textSize="15sp"
+                    android:layout_marginBottom="1dp"
 
                     />
 
 
             </LinearLayout>
+-->
 
         </android.support.v7.widget.CardView>
 
         <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_alignParentEnd="true"
             android:id="@+id/img0tooltip_filter"
             android:layout_marginEnd="12dp"
             android:elevation="4dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="6dp"
             android:src="@drawable/ico_menu_bg_arrow" />
 
     </RelativeLayout>

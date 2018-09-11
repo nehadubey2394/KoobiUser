@@ -17,25 +17,26 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="56dp"
         android:id="@+id/rlFilter"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/chat_header"
         android:layout_marginRight="6dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="6dp"
         android:padding="2dp"
         >
         <android.support.v7.widget.CardView
             android:id="@+id/searchView"
             app:cardUseCompatPadding="true"
             app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="14dp"
+            app:cardCornerRadius="16dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
+            android:layout_centerInParent="true"
             android:background="@drawable/bg_chat_circle"
             android:layout_toLeftOf="@+id/ivFavChat"
             android:layout_marginRight="4dp">
@@ -44,7 +45,7 @@
                 android:id="@+id/searchview"
                 android:theme="@style/SearchboardSearchView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="54dp"
                 app:iconifiedByDefault="false"
                 app:searchIcon="@null"
                 android:background="@null"
@@ -52,10 +53,10 @@
                 android:lineSpacingExtra="0dp"
                 android:lineSpacingMultiplier="0"
                 android:textColor="@color/text_color"
-                android:fontFamily="@font/roboto_light"
-                android:textSize="12sp"
+                android:fontFamily="@font/nunito_regular"
+                android:textSize="18sp"
                 android:layout_gravity="center"
-                app:queryHint="Search...."/>
+                app:queryHint="Search..."/>
 
         </android.support.v7.widget.CardView>
 
@@ -91,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rlFilter"
         android:layout_marginTop="5dp"
+        android:layout_marginLeft="6dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         />
 
@@ -99,9 +101,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:fontFamily="@font/roboto_regular"
+        android:fontFamily="@font/nunito_regular"
         android:text="@string/no_data_found"
-        android:textColor="@color/gray"
+        android:textColor="@color/text_color"
+        android:visibility="gone"
         android:textSize="14sp" />
 
     <ProgressBar
@@ -109,9 +112,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_centerInParent="true"
-        android:indeterminateTint="@color/colorPrimaryDark"/>
+        android:indeterminateTint="@color/chatbox_blue"/>
 
 
 

@@ -71,19 +71,19 @@
                     android:maxLines="1"
                     android:maxWidth="250dp"
                     android:textColor="@color/text_color"
-                    android:fontFamily="@font/roboto_medium"
+                    android:fontFamily="@font/nunito_semibold"
                     />
 
                 <TextView
                     android:id="@+id/tvOnlineStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Online"
+                    android:text=""
                     android:gravity="center"
                     android:textSize="14sp"
                     android:maxLines="1"
-                    android:textColor="@color/dark_grey"
-                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/gray"
+                    android:fontFamily="@font/nunito_regular"
                     />
 
             </LinearLayout>
@@ -94,9 +94,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="8dp"
-                android:padding="9dp"
-                android:layout_alignParentRight="true">
+                android:layout_marginEnd="8dp"
+                android:padding="8dp"
+                android:layout_alignParentRight="true"
+                tools:ignore="RtlHardcoded">
 
                 <TextView
                     android:layout_width="6dp"
@@ -122,14 +123,16 @@
 
     </android.support.v7.widget.CardView>
 
+
     <TextView
         android:id="@+id/tv_no_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:fontFamily="@font/roboto_regular"
+        android:fontFamily="@font/nunito_regular"
         android:text="@string/no_data_found"
-        android:textColor="@color/gray"
+        android:textColor="@color/text_color"
+        android:visibility="gone"
         android:textSize="14sp" />
 
     <ProgressBar
@@ -138,15 +141,33 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_centerInParent="true"
-        android:indeterminateTint="@color/colorPrimaryDark"/>
+        android:indeterminateTint="@color/chatbox_blue"
+        tools:targetApi="lollipop" />
 
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/lyHeader"
         android:id="@+id/recycler_view"
+        android:layout_below="@+id/lyHeader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/sendlayout"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        />
+
+    <TextView
+        android:id="@+id/tv_chat_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/nunito_regular"
+        android:background="@drawable/bg_chat_date_banner"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:visibility="gone"
+        android:layout_below="@+id/lyHeader"
+        tools:ignore="SmallSp" />
 
     <RelativeLayout
         android:id="@+id/sendlayout"
@@ -176,7 +197,7 @@
                 android:id="@+id/et_for_sendTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/nunito_regular"
                 android:hint="@string/write_message"
                 android:maxHeight="170dp"
                 android:minHeight="40dp"
@@ -187,7 +208,7 @@
                 android:layout_toStartOf="@+id/ll_send_msg"
                 android:padding="8dp"
                 android:textColor="@color/text_color"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:inputType="textMultiLine" />
 
             <LinearLayout
@@ -213,9 +234,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:gravity="center"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:padding="5dp"
-                    android:fontFamily="@font/roboto_medium"
+                    android:fontFamily="@font/nunito_semibold"
                     android:textColor="@color/chatbox_blue"
                     android:text="@string/send"
                     />
@@ -258,7 +279,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/nunito_regular"
                     android:text="Add To Favourite"
                     android:layout_marginTop="10dp"
                     android:textColor="@color/black"
@@ -277,7 +298,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:layout_marginTop="10dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/nunito_regular"
                     android:text="Clear Chat"
                     android:textColor="@color/black"
                     android:textSize="15sp"
@@ -295,7 +316,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:layout_marginTop="10dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/nunito_regular"
                     android:text="Mute Chat"
                     android:textColor="@color/black"
                     android:textSize="15sp"
@@ -313,7 +334,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:layout_marginTop="10dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/nunito_regular"
                     android:text="Block User"
                     android:textColor="@color/black"
                     android:textSize="15sp"
@@ -332,7 +353,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:layout_marginTop="10dp"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/nunito_regular"
                     android:text="Report User"
                     android:textColor="@color/black"
                     android:textSize="15sp"

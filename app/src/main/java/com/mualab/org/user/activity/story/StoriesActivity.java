@@ -93,7 +93,7 @@ public class StoriesActivity extends SwipeBackActivity implements StoryStatusVie
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     pressTime = System.currentTimeMillis();
-                    storyStatusView.pause();
+                    // storyStatusView.pause();
 
                     if (isStoryTypeVideo && mediaPlayer != null) {
                         try {
@@ -462,9 +462,9 @@ public class StoriesActivity extends SwipeBackActivity implements StoryStatusVie
                             storyList.add(story);
                         }
 
-                        if (storyList.size() == 0) {
+                    /*    if (storyList.size() == 0) {
                             finish();
-                        }
+                        }*/
 
                         if (!isRunningStory) {
                             resetViews();

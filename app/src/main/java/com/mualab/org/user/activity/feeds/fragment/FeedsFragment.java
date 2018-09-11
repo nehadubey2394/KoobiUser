@@ -423,7 +423,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 Intent in_gallery = new Intent(mContext, GalleryActivity.class);
                 startActivityForResult(in_gallery,734);
 
-                //checkPermissionAndPicImageOrVideo("Select Image");
+                //  checkPermissionAndPicImageOrVideo("Select Image");
                 break;
         }
     }
@@ -1172,7 +1172,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
         dialog.setContentView(dialogView);
         final InstaTag postImage = dialogView.findViewById(R.id.post_image);
-        postImage.setTouchListnerDisable();
+        //. postImage.setTouchListnerDisable();
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
         TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
         tvCertiTitle.setText("Images");

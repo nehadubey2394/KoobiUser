@@ -35,6 +35,9 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -43,6 +46,7 @@ import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
 import com.mualab.org.user.activity.chat.ChatActivity;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
@@ -876,6 +880,23 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
                     if (status.equalsIgnoreCase("success")) {
 
+                        DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
+                        FirebaseUser firebaseUser = new FirebaseUser();
+                        firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();
+
+                        firebaseUser.isOnline = 0;
+
+                        firebaseUser.lastActivity = ServerValue.TIMESTAMP;
+                        if (user.profileImage.isEmpty())
+                            firebaseUser.profilePic = "http://koobi.co.uk:3000/uploads/default_user.png";
+                        else
+                            firebaseUser.profilePic = user.profileImage;
+
+                        firebaseUser.userName = user.userName;
+                        firebaseUser.uId = user.id;
+                        firebaseUser.authToken = user.authToken;
+                        firebaseUser.userType = user.userType;
+                        mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
 
                         NotificationManager notificationManager = (NotificationManager) UserProfileActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
                         assert notificationManager != null; notificationManager.cancelAll();
