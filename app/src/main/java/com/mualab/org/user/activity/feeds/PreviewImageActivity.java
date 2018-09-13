@@ -172,58 +172,5 @@ public class PreviewImageActivity extends AppCompatActivity {
             container.removeView((View) object);
         }
 
-
-      /*  private class ImageViewTarget implements Target {
-
-            private WeakReference<ScaleImageView> mImageViewReference;
-            private WeakReference<ProgressBar> mProgressBarReference;
-
-            public ImageViewTarget(ScaleImageView imageView, ProgressBar progressBar) {
-                this.mImageViewReference = new WeakReference<>(imageView);
-                this.mProgressBarReference = new WeakReference<>(progressBar);
-            }
-
-
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                //you can use this bitmap to load image in image view or save it in image file like the one in the above question.
-                ScaleImageView imageView = mImageViewReference.get();
-                if (imageView != null) {
-                    imageView.setImage(ImageSource.bitmap(bitmap));
-                }
-
-                ProgressBar progressBar = mProgressBarReference.get();
-                if (progressBar != null) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                ScaleImageView imageView = mImageViewReference.get();
-                if (imageView != null) {
-                    imageView.setImage(ImageSource.resource(R.drawable.logo_small));
-                }
-
-                ProgressBar progressBar = mProgressBarReference.get();
-                if (progressBar != null) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                ScaleImageView imageView = mImageViewReference.get();
-                if (imageView != null) {
-                    //imageView.setImage(null);
-                }
-
-                ProgressBar progressBar = mProgressBarReference.get();
-                if (progressBar != null) {
-                    progressBar.setVisibility(View.VISIBLE);
-                }
-            }
-        }*/
     }
 }

@@ -103,7 +103,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ChattingAdapter chattingAdapter;
     private List<Chat> chatList;
     private Map<String, Chat> map;
-    private String myUid,otherUserId,blockUserNode,blockedById="",onlineStatus="";
+    private String myUid,otherUserId,blockUserNode,blockedById="",onlineStatus="",
+            isFavourite="";
     private FirebaseUser otherUser;
     private LinearLayout llDots;
     private PopupWindow popupWindow;
@@ -113,10 +114,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Handler handler = new Handler();
     private Bitmap bmChatImg;
     private DatabaseReference mFirebaseDatabaseReference,chatRef,chatRef1,chatRef2,isOppTypingRef,
-            blockUsersRef;
+            blockUsersRef,myChatHistoryRef,otherChatHistoryRef;
     private Thread thread;
     private long mLastClickTime = 0;
     private LinearLayoutManager layoutManager;
+    private int unreadMsgCount = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,12 +127,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
         otherUserId = intent.getStringExtra("userId");
         myUid = String.valueOf(Mualab.currentUser.id);
+
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         chatRef = mFirebaseDatabaseReference.child("chat");
         blockUsersRef = mFirebaseDatabaseReference.child("block_users");
-        String myChild = myUid+"_"+otherUserId;
-        isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING).child(myChild);
 
+        String myChild = myUid+"_"+otherUserId;
+
+        isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING).child(myChild);
+        otherChatHistoryRef = mFirebaseDatabaseReference.child("chat_history").
+                child(otherUserId).child(myUid);
+
+        myChatHistoryRef = mFirebaseDatabaseReference.child("chat_history").
+                child(myUid).child(otherUserId);
         init();
         initKeyboard();
     }
@@ -152,6 +161,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     if (dataSnapshot.exists()){
                         tvOnlineStatus.setText("typing...");
                         tvOnlineStatus.setTextColor(getResources().getColor(R.color.chatbox_blue));
+                    }else {
+                        tvOnlineStatus.setTextColor(getResources().getColor(R.color.grey));
                     }
                 }
             }
@@ -245,7 +256,28 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
         thread.start();
 
+        otherChatHistoryRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                if (dataSnapshot.exists()){
+                    String key = dataSnapshot.getKey();
+                    if (!key.contains("group_")) {
+                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                        assert messageOutput != null;
+                        unreadMsgCount = messageOutput.unreadMessage+1;
+                        //chatHistory2.unreadMessage = messageOutput.unreadMessage+1;
+                        //  otherChatHistoryRef.child("unreadMessage").setValue(count);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progress_bar.setVisibility(View.GONE);
+                tv_no_chat.setVisibility(View.VISIBLE);
+            }
+        });
 
         iv_pickImage.setOnClickListener(this);
         iv_capture_image.setOnClickListener(this);
@@ -550,13 +582,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         chatHistory2.memberCount = 0;
                         chatHistory2.message = txt;
                         chatHistory2.messageType = 0;
-                        chatHistory2.profilePic = otherUser.profilePic;
+                        chatHistory2.profilePic = Mualab.currentUser.profileImage;
                         chatHistory2.reciverId = otherUserId;
                         chatHistory2.senderId = myUid;
                         chatHistory2.type = "user";
                         chatHistory2.userName = Mualab.currentUser.userName;
                         chatHistory2.timestamp = ServerValue.TIMESTAMP;
-                        chatHistory2.unreadMessage = 1;
+                        chatHistory2.unreadMessage = unreadMsgCount;
 
                         writeToDBProfiles(chatModel1,chatModel2,chatHistory,chatHistory2);
                         //  tv_no_chat.setVisibility(View.GONE);
@@ -569,15 +601,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void writeToDBProfiles(Chat chatModel1,Chat chatModel2,
-                                   ChatHistory chatHistory1,ChatHistory chatHistory2) {
-        mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
-                setValue(chatHistory1);
-        mFirebaseDatabaseReference.child("chat_history").child(otherUserId).child(myUid)
-                .setValue(chatHistory2);
+    private void writeToDBProfiles(Chat chatModel1, Chat chatModel2,
+                                   ChatHistory chatHistory1, final ChatHistory chatHistory2) {
 
         chatRef1.push().setValue(chatModel1);
         chatRef2.push().setValue(chatModel2);
+
+        mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
+                setValue(chatHistory1);
+        // mFirebaseDatabaseReference.child("chat_history").child(otherUserId).child(myUid).setValue(chatHistory2);
+
+        otherChatHistoryRef.setValue(chatHistory2);
+
         et_for_sendTxt.setText("");
         //    FirebaseDatabase.getInstance().getReference().child("history").child(session.getUser().id).child(uID).setValue(chatModel);
         //  FirebaseDatabase.getInstance().getReference().child("history").child(uID).child(session.getUser().id).setValue(chatModel2);
@@ -633,17 +668,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         case "Unblock User":
                         case "Block User":
                             popupWindow.dismiss();
-
                             if (blockedById==null || blockedById.equals("")){
+                                popupWindow.dismiss();
                                 showAlertBlock();
                             }else if (blockedById.equals(myUid)){
                                 popupWindow.dismiss();
                                 blockUsersRef.child(blockUserNode).setValue(null);
                             }else if (blockedById.equals(otherUserId)){
-                                popupWindow.dismiss();
+                                showAlertBlock();
+                                /*popupWindow.dismiss();
                                 BlockUser blockUser = new BlockUser();
                                 blockUser.blockedBy = "Both";
-                                blockUsersRef.child(blockUserNode).setValue(blockUser);
+                                blockUsersRef.child(blockUserNode).setValue(blockUser);*/
                             } else if (blockedById.equalsIgnoreCase("Both")){
                                 popupWindow.dismiss();
                                 BlockUser blockUser = new BlockUser();
@@ -755,12 +791,21 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         popupWindow.dismiss();
-                        BlockUser blockUser = new BlockUser();
-                        blockUser.blockedBy = myUid;
-                        blockedById = myUid;
-                        blockUsersRef.child(blockUserNode).setValue(blockUser);
-                        dialog.dismiss();
                         progress_bar.setVisibility(View.GONE);
+
+                        if (blockedById.equals(otherUserId)){
+                            BlockUser blockUser2 = new BlockUser();
+                            blockUser2.blockedBy = "Both";
+                            blockUsersRef.child(blockUserNode).setValue(blockUser2);
+                            dialog.dismiss();
+                        }else {
+                            BlockUser blockUser = new BlockUser();
+                            blockUser.blockedBy = myUid;
+                            blockedById = myUid;
+                            blockUsersRef.child(blockUserNode).setValue(blockUser);
+                            dialog.dismiss();
+                        }
+
                     }
                 },300);
             }
@@ -833,13 +878,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (blockedById.equals("")) {
+                    setIsTypingStatus();
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (blockedById.equals("")) {
-                    setIsTypingStatus();
-                }
             }
         });
     }
@@ -865,38 +910,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
         isTyping = true;
         handler.removeCallbacks(runnable);
-        handler.postDelayed(runnable, 4000);
+        handler.postDelayed(runnable, 3500);
 
-    }
-
-    private String getDateBanner(long timestamp){
-        String banner_date = "";
-        SimpleDateFormat df = new  SimpleDateFormat("dd MMMM yyyy",Locale.getDefault());
-        String checkDate = df.format(timestamp);
-
-        Date c = java.util.Calendar.getInstance().getTime();
-        String currentDate = df.format(c);
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-
-        cal.add(java.util.Calendar.DATE, -1);
-        java.sql.Date yesterday = new java.sql.Date(cal.getTimeInMillis());
-        String beforeOneDay = CommonUtils.formateDateFromstring("yyyy-MM-dd",
-                "dd MMMM yyyy",yesterday.toString());
-
-        if(currentDate.equals(checkDate)){
-            banner_date = "Today";
-        }else if(beforeOneDay.equals(checkDate)){
-            banner_date = "Yesterday";
-        }else banner_date = checkDate;
-
-
-        tv_chat_date.setVisibility(View.VISIBLE);
-        /*tv_chat_date.postDelayed(new Runnable() {
-            public void run() {
-                tv_chat_date.setVisibility(View.GONE);
-            }
-        }, 2000);*/
-        return  banner_date;
     }
 
     private void uploadImage(Uri imageUri) {
@@ -919,6 +934,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             //  progressDialog.dismiss();
                             Uri fireBaseUri = taskSnapshot.getDownloadUrl();
                             assert fireBaseUri != null;
+
                             Chat chatModel1 = new Chat();
                             chatModel1.message = fireBaseUri.toString();
                             chatModel1.timestamp = ServerValue.TIMESTAMP;
@@ -953,13 +969,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             chatHistory2.memberCount = 0;
                             chatHistory2.message = fireBaseUri.toString();
                             chatHistory2.messageType = 1;
-                            chatHistory2.profilePic = otherUser.profilePic;
+                            chatHistory2.profilePic = Mualab.currentUser.profileImage;
                             chatHistory2.reciverId = otherUserId;
                             chatHistory2.senderId = myUid;
                             chatHistory2.type = "user";
                             chatHistory2.userName = Mualab.currentUser.userName;
                             chatHistory2.timestamp = ServerValue.TIMESTAMP;
-                            chatHistory2.unreadMessage = 1;
+                            chatHistory2.unreadMessage = unreadMsgCount;
 
                             writeToDBProfiles(chatModel1,chatModel2,chatHistory,chatHistory2);
                             Progress.hide(ChatActivity.this);
@@ -1080,6 +1096,29 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
+
+        myChatHistoryRef.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()){
+                    String key = dataSnapshot.getKey();
+                    if (!key.contains("group_")) {
+                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                        assert messageOutput != null;
+                        myChatHistoryRef.child("unreadMessage").setValue(0);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progress_bar.setVisibility(View.GONE);
+                tv_no_chat.setVisibility(View.VISIBLE);
+            }
+        });
+
         super.onBackPressed();
         finish();
     }
@@ -1094,9 +1133,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     tv_chat_date.setVisibility(View.GONE);
                 }
-                int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+               /* int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
                 if (firstVisiblePosition==0 | firstVisiblePosition==-1)
-                    tv_chat_date.setVisibility(View.VISIBLE);
+                    chattingAdapter.setDateLableVisible(true);
+                else
+                    chattingAdapter.setDateLableVisible(false);
+                //tv_chat_date.setVisibility(View.VISIBLE);*/
             }
 
             @Override

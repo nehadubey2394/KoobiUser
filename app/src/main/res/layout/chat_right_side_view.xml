@@ -14,11 +14,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_chat_date_banner"
-        android:padding="5dp"
+        android:padding="4dp"
         android:layout_gravity="center"
         android:fontFamily="@font/nunito_regular"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="10sp"
         android:layout_marginBottom="10dp"
         android:visibility="gone" />
 

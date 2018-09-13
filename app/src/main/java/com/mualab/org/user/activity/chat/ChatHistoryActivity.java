@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -37,12 +35,10 @@ import com.mualab.org.user.utils.CommonUtils;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.constants.Constant;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -138,17 +134,16 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                     //  thread.interrupt();
                     if (typing != null) {
                         if (node.contains(myId)){
-                            if (listmap.containsKey(typing.senderId) && chatHistories.size()!=0){
+                            if (chatHistories.size()!=0 ){
                                 for (int i=0;i<chatHistories.size();i++){
-                                    if (chatHistories.get(i).senderId.equals(typing.senderId)||
-                                            chatHistories.get(i).reciverId.equals(typing.senderId)){
+                                    if (typing.senderId.equals(chatHistories.get(i).senderId)|typing.senderId.
+                                            equals(chatHistories.get(i).reciverId)){
                                         historyAdapter.setTyping(true,i);
                                         break;
                                     }
                                 }
                             }
                         }
-                        // String node = typing.reciverId+"_"+typing.senderId;
                     }
                 }
 

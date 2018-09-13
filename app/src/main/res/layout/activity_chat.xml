@@ -161,7 +161,7 @@
         android:background="@drawable/bg_chat_date_banner"
         android:padding="5dp"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="10sp"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
         android:layout_marginTop="5dp"

@@ -2,22 +2,18 @@ package com.mualab.org.user.activity.chat.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.ChatActivity;
-import com.mualab.org.user.activity.chat.model.Chat;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
 import com.mualab.org.user.application.Mualab;
 import com.squareup.picasso.Picasso;
@@ -91,7 +87,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public class SingleChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tvUname,tvMsg,tvChatType,tvUnReadCount,tvTime,tvHistoryTime;
         CircleImageView ivProfile;
-        RelativeLayout rlChatHistory,llHistoryDate;
+        RelativeLayout rlChatHistory,llHistoryDate,rlMsgCount;
         View vBottom,viewTop;
 
         SingleChatViewHolder(View itemView) {
@@ -107,18 +103,16 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvHistoryTime = itemView.findViewById(R.id.tvHistoryTime);
             vBottom = itemView.findViewById(R.id.vBottom);
             viewTop = itemView.findViewById(R.id.viewTop);
+            rlMsgCount = itemView.findViewById(R.id.rlMsgCount);
 
             rlChatHistory.setOnClickListener(this);
 
         }
 
         void myBindData(final ChatHistory chat,int position,int tempPos){
-           /* if(chat.messageType == 1){
-                ly_my_image_view.setVisibility(View.VISIBLE);
-                tv_sender_msg.setVisibility(View.GONE);
-               // Glide.with(context).load(chat.imageUrl).apply(new RequestOptions().placeholder(R.drawable.placeholder_chat_image)).into(iv_for_sender);
-            }else {*/
+
             tvUname.setText(chat.userName);
+
             if (isTyping){
                 tvMsg.setText("typing...");
                 tvMsg.setTextColor(context.getResources().getColor(R.color.chatbox_blue));
@@ -133,6 +127,14 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (chat.profilePic !=null && !chat.profilePic.isEmpty()) {
                 Picasso.with(context).load(chat.profilePic).placeholder(R.drawable.defoult_user_img).
                         fit().into(ivProfile);
+            }
+
+
+            if (chat.unreadMessage!=0){
+                rlMsgCount.setVisibility(View.VISIBLE);
+                tvUnReadCount.setText(""+chat.unreadMessage);
+            }else {
+                rlMsgCount.setVisibility(View.GONE);
             }
 
             if (!chat.banner_date.equals(chatHistories.get(tempPos).banner_date)) {
@@ -199,7 +201,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public class GroupChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tvUname,tvMsg,tvChatType,tvUnReadCount,tvTime,tvHistoryTime;
         CircleImageView ivProfile;
-        LinearLayout llHistoryDate;
+        RelativeLayout rlChatHistory,llHistoryDate,rlMsgCount;
         View vBottom,viewTop;
 
         GroupChatViewHolder(View itemView) {
@@ -214,10 +216,17 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvHistoryTime = itemView.findViewById(R.id.tvHistoryTime);
             vBottom = itemView.findViewById(R.id.vBottom);
             viewTop = itemView.findViewById(R.id.viewTop);
+            rlMsgCount = itemView.findViewById(R.id.rlMsgCount);
         }
 
         void otherBindData(final ChatHistory chat,int position,int tempPos){
             tvUname.setText(chat.userName);
+
+            if (chat.profilePic !=null && !chat.profilePic.isEmpty()) {
+                Picasso.with(context).load(chat.profilePic).placeholder(R.drawable.defoult_user_img).
+                        fit().into(ivProfile);
+            }
+
             if (isTyping){
                 tvMsg.setText("typing...");
                 tvMsg.setTextColor(context.getResources().getColor(R.color.chatbox_blue));
@@ -229,9 +238,11 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 tvMsg.setTextColor(context.getResources().getColor(R.color.grey));
             }
 
-            if (chat.profilePic !=null && !chat.profilePic.isEmpty()) {
-                Picasso.with(context).load(chat.profilePic).placeholder(R.drawable.defoult_user_img).
-                        fit().into(ivProfile);
+            if (chat.unreadMessage!=0){
+                rlMsgCount.setVisibility(View.VISIBLE);
+                tvUnReadCount.setText(""+chat.unreadMessage);
+            }else {
+                rlMsgCount.setVisibility(View.GONE);
             }
 
 
@@ -308,4 +319,5 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.chatHistories = filterdNames;
         notifyDataSetChanged();
     }
+
 }

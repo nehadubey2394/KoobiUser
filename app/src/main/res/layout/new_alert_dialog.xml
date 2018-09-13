@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:cardCornerRadius="3dp"
-        android:layout_margin="20dp"
+        android:layout_margin="18dp"
         android:layout_centerInParent="true"
         app:cardBackgroundColor="@color/white"
         >
@@ -51,6 +51,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 android:layout_height="?actionBarSize">
 
 

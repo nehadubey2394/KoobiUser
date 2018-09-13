@@ -1,12 +1,16 @@
 package com.mualab.org.user.activity.chat.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,6 +19,8 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.listner.DateTimeScrollListner;
 import com.mualab.org.user.activity.chat.model.Chat;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -23,17 +29,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private int VIEW_TYPE_ME  = 1;
     private int VIEW_TYPE_OTHER = 2;
-
     private Context context;
     private List<Chat> chatList;
     private String myUid ;
     private DateTimeScrollListner listener;
-    private String changedDate = "",dateText="";
+    private boolean isLableShow = false;
 
     public ChattingAdapter(Context context, List<Chat> chatList, String myId,DateTimeScrollListner listener) {
         this.context = context;
@@ -88,7 +94,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return chatList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tv_sender_msg,tv_send_time,tv_my_date_label;
         ImageView iv_for_sender,iv_msg_status;
         ProgressBar progress_bar;
@@ -101,6 +107,8 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tv_send_time = itemView.findViewById(R.id.tv_send_time);
             progress_bar = itemView.findViewById(R.id.progress_bar);
             tv_my_date_label = itemView.findViewById(R.id.tv_my_date_label);
+
+            iv_for_sender.setOnClickListener(this);
 
         }
 
@@ -138,11 +146,15 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 String date = sd.format(new Date((Long) chat.timestamp));
                 tv_send_time.setText(date);
 
+                tv_my_date_label.setText(chat.banner_date);
+
                 if (!chat.banner_date.equals(chatList.get(tempPos).banner_date)) {
-                    tv_my_date_label.setText(chat.banner_date);
                     tv_my_date_label.setVisibility(View.VISIBLE);
                 } else {
-                    tv_my_date_label.setVisibility(View.GONE);
+                    if (position==0)
+                        tv_my_date_label.setVisibility(View.VISIBLE);
+                    else
+                        tv_my_date_label.setVisibility(View.GONE);
                 }
 
                 /*String newDate = getDateBanner((Long) chat.timestamp);*/
@@ -154,9 +166,21 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 listener.onScrollChange(position,chat.timestamp);
 
         }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.iv_for_sender:
+                    Chat chat = chatList.get(getAdapterPosition());
+                    if(chat.messageType == 1) {
+                        showZoomImage(chat);
+                    }
+                    break;
+            }
+        }
     }
 
-    public class OtherViewHolder extends RecyclerView.ViewHolder{
+    public class OtherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tv_other_msg,tv_other_name,tv_other_msg_time,tv_my_date_label;
         ImageView iv_other_img,iv_othr_msg_status;
         ProgressBar progress_bar;
@@ -170,6 +194,8 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             iv_othr_msg_status = itemView.findViewById(R.id.iv_othr_msg_status);
             tv_my_date_label = itemView.findViewById(R.id.tv_my_date_label);
             progress_bar = itemView.findViewById(R.id.progress_bar);
+
+            iv_other_img.setOnClickListener(this);
         }
 
         void otherBindData(final Chat chat, int position,int tempPos){
@@ -210,12 +236,15 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 tv_other_msg_time.setText(date);
                 //   getDateBanner((Long) chat.timestamp,tv_my_date_label);
                 /* String newDate = getDateBanner((Long) chat.timestamp);*/
+                tv_my_date_label.setText(chat.banner_date);
 
                 if (!chat.banner_date.equals(chatList.get(tempPos).banner_date)) {
-                    tv_my_date_label.setText(chat.banner_date);
                     tv_my_date_label.setVisibility(View.VISIBLE);
                 } else {
-                    tv_my_date_label.setVisibility(View.GONE);
+                    if (position==0)
+                        tv_my_date_label.setVisibility(View.VISIBLE);
+                    else
+                        tv_my_date_label.setVisibility(View.GONE);
                 }
 
             } catch (Exception e) {
@@ -225,55 +254,72 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 listener.onScrollChange(position,chat.timestamp);
 
         }
-    }
 
-  /*  private String getDateBanner(long timestamp){
-        SimpleDateFormat df = new  SimpleDateFormat("dd MMMM yyyy",Locale.getDefault());
-        String newDate = df.format(timestamp);
-
-        Date c = Calendar.getInstance().getTime();
-        String currentDate = df.format(c);
-        Calendar cal = Calendar.getInstance();
-
-        cal.add(Calendar.DATE, -1);
-        java.sql.Date yesterday = new java.sql.Date(cal.getTimeInMillis());
-
-        String beforeOneDay = formateDateFromstring("yyyy-MM-dd", "dd MMMM yyyy",yesterday.toString());
-
-      *//*  if (changedDate.equals(checkDate)){
-            changedDate = checkDate;
-            tv_days_status.setVisibility(View.GONE);
-        }else {
-            changedDate = checkDate;
-            tv_days_status.setVisibility(View.VISIBLE);
-        }*//*
-
-        if(currentDate.equals(newDate)){
-            dateText = "Today";
-        }else if(beforeOneDay.equals(newDate)){
-            dateText = "Yesterday";
-        }else
-            dateText = newDate;
-
-        return newDate;
-    }
-
-    public String formateDateFromstring(String inputFormat, String outputFormat, String inputDate){
-
-        Date parsed = null;
-        String outputDate = "";
-
-        SimpleDateFormat df_input = new SimpleDateFormat(inputFormat, java.util.Locale.getDefault());
-        SimpleDateFormat df_output = new SimpleDateFormat(outputFormat, java.util.Locale.getDefault());
-
-        try {
-            parsed = df_input.parse(inputDate);
-            outputDate = df_output.format(parsed);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.iv_other_img:
+                    Chat chat = chatList.get(getAdapterPosition());
+                    if(chat.messageType == 1) {
+                        showZoomImage(chat);
+                    }
+                    break;
+            }
         }
-        return outputDate;
-    }*/
+    }
 
+    private void showZoomImage(final Chat chat){
+        View dialogView = View.inflate(context, R.layout.dialog_zoom_image, null);
+        final Dialog dialog = new Dialog(context,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
+        dialog.setContentView(dialogView);
+
+        final ProgressBar progress_bar = dialog.findViewById(R.id.progress_bar);
+        final ImageView photoView = dialog.findViewById(R.id.photo_view);
+        final ImageView btnBack = dialog.findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        Picasso.with(context).load(chat.message).memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.OFFLINE).into(photoView, new Callback() {
+            @Override
+            public void onSuccess() {
+                progress_bar.setVisibility(View.GONE);
+            }
+            @Override
+            public void onError() {
+                Picasso.with(context).load(chat.message)
+                        .fit().placeholder(R.drawable.gallery_placeholder)
+                        .error(R.drawable.gallery_placeholder).into(photoView);
+                progress_bar.setVisibility(View.GONE);
+            }
+        });
+/* List<String>urlList = new ArrayList<>();
+        urlList.add(chat.message);
+
+        ViewPager viewPager = dialog.findViewById(R.id.viewpager);
+        ViewPagerAdapterForfullScreen  viewPagerAdapter = new ViewPagerAdapterForfullScreen(context, urlList);
+        viewPager.setAdapter(viewPagerAdapter);
+
+        final ImageView btnBack = dialog.findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });*/
+        dialog.show();
+    }
+
+    public void setDateLableVisible(boolean isFirestPos){
+        this.isLableShow = isFirestPos;
+        notifyItemChanged(0);
+    }
 }

@@ -150,6 +150,7 @@
 
 
             <RelativeLayout
+                android:id="@+id/rlMsgCount"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
                 android:gravity="center"

@@ -18,7 +18,7 @@
             android:id="@+id/iv_profileImage"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="18dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_info"
 
@@ -43,7 +43,6 @@
             android:fontFamily="@font/roboto_regular"
             style="@style/TextView"
             android:textSize="16sp"
-
             android:textColor="@color/chatbox_blue"
             android:layout_marginTop="5dp"
            />
@@ -53,6 +52,7 @@
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
             android:gravity="center"
+            android:layout_marginBottom="5dp"
             android:layout_height="?actionBarSize">
 
             <Button
