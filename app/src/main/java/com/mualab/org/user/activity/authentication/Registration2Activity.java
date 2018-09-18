@@ -324,6 +324,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         firebaseUser.uId = user.id;
         firebaseUser.authToken = user.authToken;
         firebaseUser.userType = user.userType;
+        firebaseUser.banAdmin = 0;
 
         mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

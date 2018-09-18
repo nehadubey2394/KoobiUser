@@ -103,8 +103,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ChattingAdapter chattingAdapter;
     private List<Chat> chatList;
     private Map<String, Chat> map;
-    private String myUid,otherUserId,blockUserNode,blockedById="",onlineStatus="",
-            isFavourite="";
+    private boolean isFromGallery;
+    private String myUid,otherUserId,blockUserNode,blockedById="",onlineStatus="";
     private FirebaseUser otherUser;
     private LinearLayout llDots;
     private PopupWindow popupWindow;
@@ -115,10 +115,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Bitmap bmChatImg;
     private DatabaseReference mFirebaseDatabaseReference,chatRef,chatRef1,chatRef2,isOppTypingRef,
             blockUsersRef,myChatHistoryRef,otherChatHistoryRef;
-    private Thread thread;
+    private Thread thread1,thread2,thread3;
     private long mLastClickTime = 0;
     private LinearLayoutManager layoutManager;
-    private int unreadMsgCount = 1;
+    private int unreadMsgCount = 1,isMyFavourite = 0,isOtherFavourite = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +135,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         String myChild = myUid+"_"+otherUserId;
 
         isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING).child(myChild);
+
         otherChatHistoryRef = mFirebaseDatabaseReference.child("chat_history").
                 child(otherUserId).child(myUid);
 
@@ -226,16 +227,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recycler_view.setLayoutManager(layoutManager);
         recycler_view.setAdapter(chattingAdapter);
 
-        //getting user data from user table
-        thread = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                getOtherUserDetail();
-                //code to do the HTTP request
-            }
-        });
-        thread.start();
-
         chatRef1 = chatRef.child(myUid).child(otherUserId);
         chatRef2 = chatRef.child(otherUserId).child(myUid);
 
@@ -248,13 +239,54 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             blockUserNode = myUid+"_"+otherUserId;
         }
 
-        Thread thread = new Thread(new Runnable() {
+        //getting user data from user table
+        thread1 = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                getOtherUserDetail();
+                //code to do the HTTP request
+            }
+        });
+        thread1.start();
+
+        thread2 = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                myChatHistoryRef.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.exists()){
+                            String key = dataSnapshot.getKey();
+                            if (!key.contains("group_")) {
+                                ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                                assert messageOutput != null;
+                                myChatHistoryRef.child("unreadMessage").setValue(0);
+                                isMyFavourite = messageOutput.favourite;
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        progress_bar.setVisibility(View.GONE);
+                        tv_no_chat.setVisibility(View.VISIBLE);
+                    }
+                });
+                //code to do the HTTP request
+            }
+        });
+        thread2.start();
+
+
+        thread3 = new Thread(new Runnable() {
             @Override
             public void run() {
                 getBlockUser();
             }
         });
-        thread.start();
+        thread3.start();
 
         otherChatHistoryRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -266,6 +298,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
                         assert messageOutput != null;
                         unreadMsgCount = messageOutput.unreadMessage+1;
+                        isOtherFavourite = messageOutput.favourite;
                         //chatHistory2.unreadMessage = messageOutput.unreadMessage+1;
                         //  otherChatHistoryRef.child("unreadMessage").setValue(count);
                     }
@@ -503,6 +536,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.iv_capture_image:
+                KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
+                isFromGallery = true;
                 if (blockedById.equals(myUid)) {
                     showAlert("You have blocked this user, you can't send messages");
                     // Toast.makeText(ChatActivity.this,"You have blocked this user, you can't send messages",Toast.LENGTH_SHORT).show();
@@ -518,6 +553,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.iv_pickImage:
+                KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
+                isFromGallery = false;
                 if (blockedById.equals(myUid)) {
                     showAlert("You have blocked this user, you can't send messages");
                     //  MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
@@ -565,7 +602,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         chatModel2.readStatus = 2;
 
                         ChatHistory chatHistory = new ChatHistory();
-                        chatHistory.favourite = 0;
+                        chatHistory.favourite = isMyFavourite;
                         chatHistory.memberCount = 0;
                         chatHistory.message = txt;
                         chatHistory.messageType = 0;
@@ -578,7 +615,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         chatHistory.timestamp = ServerValue.TIMESTAMP;
 
                         ChatHistory chatHistory2 = new ChatHistory();
-                        chatHistory2.favourite = 0;
+                        chatHistory2.favourite = isOtherFavourite;
                         chatHistory2.memberCount = 0;
                         chatHistory2.message = txt;
                         chatHistory2.messageType = 0;
@@ -604,6 +641,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void writeToDBProfiles(Chat chatModel1, Chat chatModel2,
                                    ChatHistory chatHistory1, final ChatHistory chatHistory2) {
 
+
         chatRef1.push().setValue(chatModel1);
         chatRef2.push().setValue(chatModel2);
 
@@ -612,10 +650,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         // mFirebaseDatabaseReference.child("chat_history").child(otherUserId).child(myUid).setValue(chatHistory2);
 
         otherChatHistoryRef.setValue(chatHistory2);
-
-        et_for_sendTxt.setText("");
         //    FirebaseDatabase.getInstance().getReference().child("history").child(session.getUser().id).child(uID).setValue(chatModel);
         //  FirebaseDatabase.getInstance().getReference().child("history").child(uID).child(session.getUser().id).setValue(chatModel2);
+        et_for_sendTxt.setText("");
+        et_for_sendTxt.clearFocus();
+        isTyping = false;
+        handler.removeCallbacks(runnable);
+        isOppTypingRef.setValue(null);
 
     }
 
@@ -633,7 +674,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 popupWindow.setElevation(5);
             }
-            arrayList.add("Add To Favourite");
+
+            if (isMyFavourite==0)
+                arrayList.add("Add To Favourite");
+            else
+                arrayList.add("Unfavourite");
             arrayList.add("Clear Chat");
             arrayList.add("Mute Chat");
             arrayList.add("Block User");
@@ -655,7 +700,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     String data=arrayList.get(pos);
                     switch (data){
                         case "Add To Favourite":
+                        case "Unfavourite":
 
+                            if (isMyFavourite==0){
+                                myChatHistoryRef.child("favourite").setValue(1);
+                                isMyFavourite = 1;
+                            }else {
+                                myChatHistoryRef.child("favourite").setValue(0);
+                                isMyFavourite = 0;
+                            }
+                            popupWindow.dismiss();
                             break;
                         case "Mute Chat":
 
@@ -676,10 +730,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                 blockUsersRef.child(blockUserNode).setValue(null);
                             }else if (blockedById.equals(otherUserId)){
                                 showAlertBlock();
-                                /*popupWindow.dismiss();
-                                BlockUser blockUser = new BlockUser();
-                                blockUser.blockedBy = "Both";
-                                blockUsersRef.child(blockUserNode).setValue(blockUser);*/
                             } else if (blockedById.equalsIgnoreCase("Both")){
                                 popupWindow.dismiss();
                                 BlockUser blockUser = new BlockUser();
@@ -879,7 +929,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (blockedById.equals("")) {
-                    setIsTypingStatus();
+                    if (charSequence.length()!=0)
+                        setIsTypingStatus();
                 }
             }
 
@@ -899,6 +950,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void setIsTypingStatus() {
+        System.out.println("printing......."+isTyping);
         if (!isTyping){
             // Log.e("Chat","set is typing to fcm");
             Typing typing = new Typing();
@@ -910,7 +962,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
         isTyping = true;
         handler.removeCallbacks(runnable);
-        handler.postDelayed(runnable, 3500);
+        handler.postDelayed(runnable, 3000);
 
     }
 
@@ -952,7 +1004,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             chatModel2.readStatus = 2;
 
                             ChatHistory chatHistory = new ChatHistory();
-                            chatHistory.favourite = 0;
+                            chatHistory.favourite = isMyFavourite;
                             chatHistory.memberCount = 0;
                             chatHistory.message = fireBaseUri.toString();
                             chatHistory.messageType = 1;
@@ -965,7 +1017,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             chatHistory.timestamp = ServerValue.TIMESTAMP;
 
                             ChatHistory chatHistory2 = new ChatHistory();
-                            chatHistory2.favourite = 0;
+                            chatHistory2.favourite = isOtherFavourite;
                             chatHistory2.memberCount = 0;
                             chatHistory2.message = fireBaseUri.toString();
                             chatHistory2.messageType = 1;
@@ -1012,7 +1064,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void getPermissionAndPicImage(String pickFrom) {
-
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -1036,7 +1087,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             case Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    ImagePicker.pickImage(ChatActivity.this);
+                    if (isFromGallery)
+                        choosePhotoFromGallary();
+                    else
+                        takePhotoFromCamera();
                 } else
                     MyToast.getInstance(ChatActivity.this).showDasuAlert("YOUR  PERMISSION DENIED");
 
@@ -1088,7 +1142,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        thread = null;
+        thread1 = null;
+        thread2 = null;
+        thread3 = null;
         softKeyboard.unRegisterSoftKeyboardCallback();
         KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
     }
@@ -1096,6 +1152,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
+
+        isTyping = false;
+        handler.removeCallbacks(runnable);
+        isOppTypingRef.setValue(null);
 
         myChatHistoryRef.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

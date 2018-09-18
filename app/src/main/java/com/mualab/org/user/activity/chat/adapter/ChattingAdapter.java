@@ -2,8 +2,11 @@ package com.mualab.org.user.activity.chat.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,13 +21,17 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.listner.DateTimeScrollListner;
 import com.mualab.org.user.activity.chat.model.Chat;
+import com.mualab.org.user.activity.feeds.PreviewImageActivity;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -173,6 +180,12 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 case R.id.iv_for_sender:
                     Chat chat = chatList.get(getAdapterPosition());
                     if(chat.messageType == 1) {
+                       /* List<String>urlList = new ArrayList<>();
+                        urlList.add(chat.message);
+                        Intent intent = new Intent(context, PreviewImageActivity.class);
+                        intent.putExtra("imageArray", (Serializable) urlList);
+                        intent.putExtra("startIndex", 0);
+                        context.startActivity(intent);*/
                         showZoomImage(chat);
                     }
                     break;
@@ -286,8 +299,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         });
 
-        Picasso.with(context).load(chat.message).memoryPolicy(MemoryPolicy.NO_CACHE)
-                .networkPolicy(NetworkPolicy.OFFLINE).into(photoView, new Callback() {
+        Picasso.with(context).load(chat.message).resize(300, 300).into(photoView, new Callback() {
             @Override
             public void onSuccess() {
                 progress_bar.setVisibility(View.GONE);
@@ -296,25 +308,13 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             public void onError() {
                 Picasso.with(context).load(chat.message)
                         .fit().placeholder(R.drawable.gallery_placeholder)
-                        .error(R.drawable.gallery_placeholder).into(photoView);
+                        .error(R.drawable.gallery_placeholder).resize(300, 300).
+                        into(photoView);
                 progress_bar.setVisibility(View.GONE);
             }
         });
-/* List<String>urlList = new ArrayList<>();
-        urlList.add(chat.message);
 
-        ViewPager viewPager = dialog.findViewById(R.id.viewpager);
-        ViewPagerAdapterForfullScreen  viewPagerAdapter = new ViewPagerAdapterForfullScreen(context, urlList);
-        viewPager.setAdapter(viewPagerAdapter);
 
-        final ImageView btnBack = dialog.findViewById(R.id.btnBack);
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });*/
         dialog.show();
     }
 

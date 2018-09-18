@@ -30,7 +30,7 @@
 
         <View
             android:id="@+id/v1"
-            android:layout_width="12dp"
+            android:layout_width="5dp"
             android:layout_height="1dp"
             android:background="@color/light_gray_shadow"
             android:layout_centerVertical="true"
@@ -42,9 +42,9 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/v1"
             android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:textSize="12sp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:textSize="10sp"
             android:layout_centerVertical="true"
             android:text="Today"
             android:fontFamily="@font/nunito_regular"

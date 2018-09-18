@@ -18,11 +18,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
 import com.mualab.org.user.activity.chat.ChatHistoryActivity;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
@@ -32,6 +37,7 @@ import com.mualab.org.user.activity.notification.fragments.NotificationFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
 import com.mualab.org.user.activity.story.StoriesActivity;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.SearchBoard.RefineSearchBoard;
 import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.model.feeds.LiveUserInfo;
@@ -91,6 +97,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Mualab.feedBasicInfo.put("city", "indore");
         Mualab.feedBasicInfo.put("state", "MP");
         Mualab.feedBasicInfo.put("country", "India");
+
+        getUserDetail();
 
         final NoConnectionDialog network = new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
             @Override
@@ -281,6 +289,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initView() {
+
         liveUserList = new ArrayList<>();
         ibtnLeaderBoard = findViewById(R.id.ibtnLeaderBoard);
         ibtnFeed = findViewById(R.id.ibtnFeed);
@@ -553,6 +562,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void showToast(String str) {
         if (!TextUtils.isEmpty(str))
             MyToast.getInstance(this).showSmallCustomToast(str);
+    }
+
+    private void getUserDetail(){
+        final Session session = Mualab.getInstance().getSessionManager();
+        final User user = session.getUser();
+        String  myUid = String.valueOf(Mualab.currentUser.id);
+
+        FirebaseDatabase.getInstance().getReference().child("users").child(myUid).
+                addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            try {
+                                FirebaseUser firebaseUser = dataSnapshot.getValue(FirebaseUser.class);
+                                if (firebaseUser != null) {
+                                    if (!firebaseUser.authToken.equals(user.authToken)){
+                                        session.logout();
+                                    }
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

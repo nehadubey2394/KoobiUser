@@ -315,7 +315,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.isTyping = isTyping;
     }
 
-    public void filterList(ArrayList<ChatHistory> filterdNames) {
+    public void filterList(List<ChatHistory> filterdNames) {
         this.chatHistories = filterdNames;
         notifyDataSetChanged();
     }

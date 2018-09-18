@@ -17,6 +17,7 @@ public class ChatHistory implements Serializable {
     public Object timestamp;
 
     public String banner_date;
+
 }
 
 /*favourite:

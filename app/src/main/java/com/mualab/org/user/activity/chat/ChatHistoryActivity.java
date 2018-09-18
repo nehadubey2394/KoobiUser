@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.adapter.ChatHistoryAdapter;
 import com.mualab.org.user.activity.chat.adapter.MenuAdapter;
+import com.mualab.org.user.activity.chat.model.BlockUser;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
 import com.mualab.org.user.activity.chat.model.Typing;
 import com.mualab.org.user.application.Mualab;
@@ -51,12 +54,13 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
     private SearchView searchview;
     private List<ChatHistory> chatHistories,newList;
     private Map<String, ChatHistory> listmap;
-    private DatabaseReference databaseReference,isOppTypingRef;
-    private Thread thread;
+    private Map<String, BlockUser> blockUsersMap;
+    private DatabaseReference databaseReference,isOppTypingRef,blockUsersRef;
+    private Thread thread,blockThread;
     private String myId;
-    private ImageView ic_add_chat;
+    private ImageView ic_add_chat,ivFavChat;
     private long mLastClickTime = 0;
-
+    private boolean isFavFilter = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         databaseReference = mFirebaseDatabaseReference.child("chat_history").
                 child(String.valueOf(Mualab.currentUser.id));
         isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING);
+        blockUsersRef = mFirebaseDatabaseReference.child("block_users");
 
         init();
     }
@@ -77,12 +82,14 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         newList = new ArrayList<>();
         chatHistories = new ArrayList<>();
         listmap = new HashMap<>();
+        blockUsersMap = new HashMap<>();
 
         historyAdapter = new ChatHistoryAdapter(ChatHistoryActivity.this,chatHistories);
 
         tv_no_chat = findViewById(R.id.tv_no_chat);
         progress_bar = findViewById(R.id.progress_bar);
         ImageView btnBack = findViewById(R.id.btnBack);
+        ivFavChat = findViewById(R.id.ivFavChat);
         ic_add_chat = findViewById(R.id.ic_add_chat);
         ImageView ivChatReq = findViewById(R.id.ivChatReq);
         ic_add_chat.setVisibility(View.VISIBLE);
@@ -110,6 +117,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
         btnBack.setOnClickListener(this);
         ic_add_chat.setOnClickListener(this);
+        ivFavChat.setOnClickListener(this);
 
         getHistoryList();
 
@@ -122,53 +130,94 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         });
         thread.start();
 
+        blockThread = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                getBlockUser();
+            }
+        });
+        blockThread.start();
+
     }
 
     private void getTyppingUser(){
+
+        final String myChild = myId+"_";
+
         isOppTypingRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (!dataSnapshot.getKey().contains("broadcast_") | !dataSnapshot.getKey().contains("broadcast_group")){
-                    Typing typing = dataSnapshot.getValue(Typing.class);
-                    String node = dataSnapshot.getKey();
-                    //  thread.interrupt();
-                    if (typing != null) {
-                        if (node.contains(myId)){
-                            if (chatHistories.size()!=0 ){
-                                for (int i=0;i<chatHistories.size();i++){
-                                    if (typing.senderId.equals(chatHistories.get(i).senderId)|typing.senderId.
-                                            equals(chatHistories.get(i).reciverId)){
-                                        historyAdapter.setTyping(true,i);
-                                        break;
+                System.out.println("typping===");
+
+                if (!dataSnapshot.getKey().contains(myChild)){
+
+                    if (!dataSnapshot.getKey().contains("broadcast_") ||
+                            !dataSnapshot.getKey().contains("broadcast_group")){
+
+                        final Typing typing = dataSnapshot.getValue(Typing.class);
+                        String node = dataSnapshot.getKey();
+
+                        assert typing != null;
+                        String blockNode = typing.senderId+"_"+myId;
+                        if (!blockUsersMap.containsKey(blockNode)){
+                            if (node.contains(myId)){
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (chatHistories.size()!=0 ){
+                                            for (int i=0;i<chatHistories.size();i++){
+                                                ChatHistory chatHistory = chatHistories.get(i);
+                                                if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
+                                                        equals(chatHistory.reciverId)){
+                                                    historyAdapter.setTyping(true,i);
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     }
-                                }
+                                }, 400);
                             }
                         }
                     }
                 }
-
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Typing typing = dataSnapshot.getValue(Typing.class);
-                //   thread.interrupt();
 
-                if (typing != null) {
-                    String node = dataSnapshot.getKey();
-                    if (node.contains(myId)){
-                        if (chatHistories.size()!=0 ){
-                            for (int i=0;i<chatHistories.size();i++){
-                                if (typing.senderId.equals(chatHistories.get(i).senderId)|typing.senderId.
-                                        equals(chatHistories.get(i).reciverId)){
-                                    historyAdapter.setTyping(true,i);
-                                    break;
-                                }
+                if (!dataSnapshot.getKey().contains(myChild)){
+
+                    if (!dataSnapshot.getKey().contains("broadcast_") ||
+                            !dataSnapshot.getKey().contains("broadcast_group")){
+
+                        final Typing typing = dataSnapshot.getValue(Typing.class);
+                        String node = dataSnapshot.getKey();
+
+                        assert typing != null;
+                        String blockNode = typing.senderId+"_"+myId;
+
+                        if (!blockUsersMap.containsKey(blockNode)){
+                            if (node.contains(myId)){
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (chatHistories.size()!=0 ){
+                                            for (int i=0;i<chatHistories.size();i++){
+                                                ChatHistory chatHistory = chatHistories.get(i);
+                                                if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
+                                                        equals(chatHistory.reciverId)){
+                                                    historyAdapter.setTyping(true,i);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }, 400);
                             }
                         }
                     }
-                    // String node = typing.reciverId+"_"+typing.senderId;
                 }
+
             }
 
             @Override
@@ -179,8 +228,9 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                     assert typing != null;
                     if (listmap.containsKey(typing.senderId)&& chatHistories.size()!=0){
                         for (int i=0;i<chatHistories.size();i++){
-                            if (typing.senderId.equals(chatHistories.get(i).senderId)|typing.senderId.
-                                    equals(chatHistories.get(i).reciverId)){
+                            ChatHistory chatHistory = chatHistories.get(i);
+                            if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
+                                    equals(chatHistory.reciverId)){
                                 historyAdapter.setTyping(false,i);
                                 break;
                             }
@@ -307,6 +357,44 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    private void getBlockUser(){
+        blockUsersRef.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.exists()) {
+                    BlockUser blockUser = dataSnapshot.getValue(BlockUser.class);
+                    blockUsersMap.put(dataSnapshot.getKey(),blockUser);
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.exists()) {
+                    BlockUser blockUser = dataSnapshot.getValue(BlockUser.class);
+                    blockUsersMap.put(dataSnapshot.getKey(),blockUser);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    blockUsersMap.remove(dataSnapshot.getKey());
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getChatDataInMap(String key, ChatHistory messageOutput) {
         if (messageOutput != null) {
             if (messageOutput.type.equals("user")){
@@ -346,7 +434,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
     private void filter(String text) {
         //new array list that will hold the filtered data
-        ArrayList<ChatHistory> filterdNames = new ArrayList<>();
+        List<ChatHistory> filterdNames = new ArrayList<>();
 
         //looping through existing elements
         for (ChatHistory s : chatHistories) {
@@ -379,6 +467,10 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 onBackPressed();
                 break;
 
+            case R.id.ivFavChat:
+                favouriteFilter();
+                break;
+
             case R.id.ic_add_chat:
                 KeyboardUtil.hideKeyboard(searchview,ChatHistoryActivity.this);
                 //rlOptionMenu.setVisibility(View.VISIBLE);
@@ -399,6 +491,34 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 initiatePopupWindow(p);
 
                 break;
+        }
+    }
+
+    private void favouriteFilter(){
+        if (isFavFilter){
+            isFavFilter = false;
+            historyAdapter.filterList(chatHistories);
+            ivFavChat.setImageResource(R.drawable.star_ico);
+        }else {
+            isFavFilter = true;
+            List<ChatHistory> tempArrayList = new ArrayList<>();
+            ivFavChat.setImageResource(R.drawable.fill_star_ico);
+            ivFavChat.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary));
+
+
+            for (ChatHistory history : chatHistories) {
+                //if the existing elements contains the search input
+                if (history.favourite==1) {
+                    tempArrayList.add(history);
+                }
+            }
+
+            if (tempArrayList.size()==0)
+                tv_no_chat.setVisibility(View.VISIBLE);
+            else
+                tv_no_chat.setVisibility(View.GONE);
+            //calling a method of the adapter class and passing the filtered list
+            historyAdapter.filterList(tempArrayList);
         }
     }
 
@@ -453,6 +573,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onBackPressed() {
         KeyboardUtil.hideKeyboard(searchview,ChatHistoryActivity.this);
+        isOppTypingRef.setValue(null);
         super.onBackPressed();
         finish();
     }
@@ -462,5 +583,6 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
         KeyboardUtil.hideKeyboard(searchview,ChatHistoryActivity.this);
         thread = null;
+        blockThread = null;
     }
 }

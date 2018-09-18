@@ -13,8 +13,13 @@ import com.android.volley.toolbox.Volley;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.mualab.org.user.BuildConfig;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.Location;
 import com.mualab.org.user.data.model.User;
@@ -37,8 +42,8 @@ public class Mualab extends Application implements LifeCycleDelegateListner {
     public static User currentUser;
     public static Location currentLocation;
     public static Location currentLocationForBooking;
-   // public static DatabaseReference ref;
-   public static boolean isStoryUploaded;
+    // public static DatabaseReference ref;
+    public static boolean isStoryUploaded;
 
     private Session session;
     private RequestQueue mRequestQueue;
@@ -68,7 +73,7 @@ public class Mualab extends Application implements LifeCycleDelegateListner {
         currentLocationForBooking = new Location();
         FirebaseApp.initializeApp(this);
         session.setIsOutCallFilter(false);
-       // ref = FirebaseDatabase.getInstance().getReference();
+        // ref = FirebaseDatabase.getInstance().getReference();
 
         utility = new Util(getApplicationContext());
 
@@ -146,24 +151,6 @@ public class Mualab extends Application implements LifeCycleDelegateListner {
         }
     }
 
-
-/*    public ArrayList<TaggedPhoto> getTaggedPhotos() {
-        String json = getString(Keys.TAGGED_PHOTOS.getKeyName());
-        ArrayList<TaggedPhoto> taggedPhotoArrayList;
-        if (!json.equals("")) {
-            taggedPhotoArrayList =
-                    new Gson().fromJson(json, new TypeToken<ArrayList<TaggedPhoto>>() {
-                    }.getType());
-        } else {
-            taggedPhotoArrayList = new ArrayList<>();
-        }
-        return taggedPhotoArrayList;
-    }
-
-    public void setTaggedPhotos(ArrayList<TaggedPhoto> taggedPhotoArrayList) {
-        putString(Keys.TAGGED_PHOTOS.getKeyName(), toJson(taggedPhotoArrayList));
-    }*/
-
     public void clear() {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.clear();
@@ -183,30 +170,6 @@ public class Mualab extends Application implements LifeCycleDelegateListner {
     private void registerLifecycle (AppLifeCycle lifecycleHandler){
         registerActivityLifecycleCallbacks(lifecycleHandler);
         registerComponentCallbacks(lifecycleHandler);
-    }
-
-    private enum Keys {
-        TAGGED_PHOTOS("TAGGED_PHOTOS");
-        private final String keyName;
-
-        Keys(String label) {
-            this.keyName = label;
-        }
-
-        public String getKeyName() {
-            return keyName;
-        }
-    }
-
-
-    public static String toJson(Object object) {
-        try {
-            Gson gson = new Gson();
-            return gson.toJson(object);
-        } catch (Exception e) {
-            Log.e(SHARED_PREF_NAME, "Error In Converting ModelToJson", e);
-        }
-        return "";
     }
 
 }
