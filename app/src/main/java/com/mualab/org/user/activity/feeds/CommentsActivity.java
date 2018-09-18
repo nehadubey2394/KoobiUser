@@ -65,6 +65,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cz.msebera.android.httpclient.protocol.HTTP;
@@ -73,7 +74,7 @@ public class CommentsActivity extends AppCompatActivity {
     public static String TAG = CommentsActivity.class.getName();
 
     private TextView tv_no_comments;
-    private EditText ed_comments,ed_search;
+    private EditText ed_comments, ed_search;
     private LinearLayout ll_loadingBox;
     private ProgressBar progress_bar;
     private AppCompatButton btn_post_comments;
@@ -82,11 +83,13 @@ public class CommentsActivity extends AppCompatActivity {
     private Feeds feed;
     private int feedPosition;
     private boolean isDataUpdated;
+    private List<Feeds> feeds;
     private String searchFilter = "";
 
     private CommentAdapter commentAdapter;
     private ArrayList<Comment> commentList = new ArrayList<>();
     private EndlessRecyclerViewScrollListener scrollListener;
+    private int count;
 
 
     @Override
@@ -95,17 +98,22 @@ public class CommentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comments);
         setStatusbarColor();
         Intent intent = getIntent();
+        feeds = new ArrayList<>();
         if (intent != null) {
-            feedPosition = intent.getIntExtra("feedPosition",0);
+            feedPosition = intent.getIntExtra("feedPosition", 0);
             feed = (Feeds) intent.getSerializableExtra("feed");
+            feeds.add(feed);
+            String str = intent.getStringExtra("commentCount");
+            if (str!=null)
+                count = Integer.parseInt(str);
         }
 
-        ed_comments =  findViewById(R.id.ed_comments);
-        tv_no_comments =  findViewById(R.id.tv_msg);
-        recyclerView =  findViewById(R.id.recyclerView);
-        btn_post_comments =  findViewById(R.id.btn_post_comments);
-        ll_loadingBox =  findViewById(R.id.ll_loadingBox);
-        progress_bar =  findViewById(R.id.progress_bar);
+        ed_comments = findViewById(R.id.ed_comments);
+        tv_no_comments = findViewById(R.id.tv_msg);
+        recyclerView = findViewById(R.id.recyclerView);
+        btn_post_comments = findViewById(R.id.btn_post_comments);
+        ll_loadingBox = findViewById(R.id.ll_loadingBox);
+        progress_bar = findViewById(R.id.progress_bar);
         ed_search = findViewById(R.id.ed_search);
 
         ImageView ivCamera = findViewById(R.id.ivCamera);
@@ -141,8 +149,6 @@ public class CommentsActivity extends AppCompatActivity {
         recyclerView.setAdapter(commentAdapter);
 
 
-
-
         findViewById(R.id.iv_back_press).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,12 +160,12 @@ public class CommentsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String commnets = ed_comments.getText().toString().trim();
-                if (!TextUtils.isEmpty(commnets)){
+                if (!TextUtils.isEmpty(commnets)) {
                     btn_post_comments.setEnabled(false);
                     KeyboardUtil.hideKeyboard(btn_post_comments, CommentsActivity.this);
                     apiForAddComments(commnets, null);
                     //apiPostTextComment(commnets, null);
-                }else {
+                } else {
                     Animation shake = AnimationUtils.loadAnimation(CommentsActivity.this, R.anim.shake);
                     btn_post_comments.startAnimation(shake);
                 }
@@ -180,7 +186,7 @@ public class CommentsActivity extends AppCompatActivity {
                 commentList.clear();
                 scrollListener.resetState();
                 commentAdapter.notifyDataSetChanged();
-                getCommentList(0, TextUtils.isEmpty(quary)?"":quary);
+                getCommentList(0, TextUtils.isEmpty(quary) ? "" : quary);
             }
 
             @Override
@@ -242,7 +248,7 @@ public class CommentsActivity extends AppCompatActivity {
                     CropImage.activity(imageUri)
                             .setCropShape(CropImageView.CropShape.RECTANGLE)
                             .setAspectRatio(4, 3)
-                            .setMinCropResultSize(800,600)
+                            .setMinCropResultSize(800, 600)
                             //.setMaxCropResultSize(1200, 1000)
                             .start(this);
                 } else {
@@ -276,10 +282,12 @@ public class CommentsActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
-        if(isDataUpdated){
+        if (isDataUpdated) {
             Intent output = new Intent();
             output.putExtra("feed", feed);
             output.putExtra("feedPosition", feedPosition);
+            output.putExtra("commentCount",count);
+
             setResult(RESULT_OK, output);
         }
 
@@ -288,11 +296,11 @@ public class CommentsActivity extends AppCompatActivity {
 
     private void getCommentList(int pageNo, String search) {
         Map<String, String> map = new HashMap<>();
-        map.put("feedId", ""+feed._id);
-        map.put("userId",  ""+Mualab.currentUser.id);
-        map.put("page",  ""+pageNo);
+        map.put("feedId", "" + feed._id);
+        map.put("userId", "" + Mualab.currentUser.id);
+        map.put("page", "" + pageNo);
         map.put("search", search.toLowerCase());
-        map.put("limit",  "20");
+        map.put("limit", "20");
         map.put("age", "25");
         map.put("gender", "male");
         map.put("city", "indore");
@@ -310,7 +318,7 @@ public class CommentsActivity extends AppCompatActivity {
                     String status = js.getString("status");
                     String message = js.getString("message");
                     if (status.equalsIgnoreCase("success")) {
-                        String myString= null;
+                        String myString = null;
                         ll_loadingBox.setVisibility(View.GONE);
                         JSONArray array = js.getJSONArray("commentList");
                         Gson gson = new Gson();
@@ -318,7 +326,7 @@ public class CommentsActivity extends AppCompatActivity {
                             JSONObject jsonObject = array.getJSONObject(i);
                             Comment comment = gson.fromJson(String.valueOf(jsonObject), Comment.class);
                             try {
-                                myString= URLDecoder.decode(comment.comment, "UTF-8");
+                                myString = URLDecoder.decode(comment.comment, "UTF-8");
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             }
@@ -328,18 +336,18 @@ public class CommentsActivity extends AppCompatActivity {
                         //recyclerView.smoothScrollToPosition(0);
                         commentAdapter.notifyDataSetChanged();
                         recyclerView.scrollToPosition(0);
-                    }else {
+                    } else {
 
-                        if(commentList.size()==0) {
+                        if (commentList.size() == 0) {
                             tv_no_comments.setVisibility(View.VISIBLE);
                             tv_no_comments.setText(getString(R.string.text_empty_data));
-                        }else {
+                        } else {
                             ll_loadingBox.setVisibility(View.GONE);
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    if(commentList.size()==0) {
+                    if (commentList.size() == 0) {
                         tv_no_comments.setVisibility(View.VISIBLE);
                         tv_no_comments.setText(getString(R.string.text_empty_data));
                     }
@@ -349,7 +357,7 @@ public class CommentsActivity extends AppCompatActivity {
             @Override
             public void ErrorListener(VolleyError error) {
                 progress_bar.setVisibility(View.GONE);
-                if(commentList.size()==0) {
+                if (commentList.size() == 0) {
                     tv_no_comments.setVisibility(View.VISIBLE);
                     tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));
                 }
@@ -364,11 +372,11 @@ public class CommentsActivity extends AppCompatActivity {
 
         Map<String, String> map = new HashMap<>();
         map.putAll(Mualab.feedBasicInfo);
-        map.put("feedId", ""+feed._id);
-        map.put("postUserId", ""+feed.userId);
-        map.put("type", bitmap==null?"text":"image");
+        map.put("feedId", "" + feed._id);
+        map.put("postUserId", "" + feed.userId);
+        map.put("type", bitmap == null ? "text" : "image");
 
-        if (bitmap==null){
+        if (bitmap == null) {
             try {
                 enCodedStatusCode = URLEncoder.encode(comments,
                         HTTP.UTF_8);
@@ -377,7 +385,7 @@ public class CommentsActivity extends AppCompatActivity {
             }
         }
 
-        if(comments!=null)
+        if (comments != null)
             map.put("comment", enCodedStatusCode);
 
         new HttpTask(new HttpTask.Builder(this, "addComment", new HttpResponceListner.Listener() {
@@ -385,7 +393,7 @@ public class CommentsActivity extends AppCompatActivity {
             public void onResponse(String response, String apiName) {
                 Log.d("Responce", response);
                 btn_post_comments.setEnabled(true);
-                String status="";
+                String status = "";
                 try {
                     JSONObject js = new JSONObject(response);
                     status = js.getString("status");
@@ -395,13 +403,13 @@ public class CommentsActivity extends AppCompatActivity {
                         //  getCommentList(0, searchFilter = "");
                         isDataUpdated = true;
                         ed_comments.setText("");
-                        String myString= null;
+                        String myString = null;
                         JSONObject jsonObject = js.getJSONObject("commentData");
 
                         Gson gson = new Gson();
                         Comment comment = gson.fromJson(String.valueOf(jsonObject), Comment.class);
                         try {
-                            myString= URLDecoder.decode(comment.comment, "UTF-8");
+                            myString = URLDecoder.decode(comment.comment, "UTF-8");
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
@@ -414,7 +422,7 @@ public class CommentsActivity extends AppCompatActivity {
                         comment.commentById = jsonObject.getInt("commentById");
                         feed.commentCount = jsonObject.getInt("commentCount");*/
 
-                        if (bitmap==null) {
+                        if (bitmap == null) {
                             try {
                                 comment.comment = URLDecoder.decode(jsonObject.getString("comment"), "UTF-8");
                             } catch (UnsupportedEncodingException e) {
@@ -422,35 +430,38 @@ public class CommentsActivity extends AppCompatActivity {
                             }
                         }
 
+                        count = feed.commentCount + 1;
+                        feed.commentCount= count;
                         comment.firstName = Mualab.currentUser.firstName;
                         comment.firstName = Mualab.currentUser.lastName;
                         comment.userName = Mualab.currentUser.userName;
-                        comment.type = bitmap==null?"text":"image";
+                        comment.type = bitmap == null ? "text" : "image";
                         comment.profileImage = Mualab.currentUser.profileImage;
                         comment.timeElapsed = "1 second ago";
                         comment.commentLikeCount = 0;
                         comment.isLike = 0;
 
-                        commentList.add(0,comment);
+                        commentList.add(0, comment);
 
-                    }if (commentList.size() == 0) {
+                    }
+                    if (commentList.size() == 0) {
                         tv_no_comments.setVisibility(View.VISIBLE);
                     } else {
                         tv_no_comments.setVisibility(View.GONE);
                     }
 
                     commentAdapter.notifyDataSetChanged();
-                    recyclerView.smoothScrollToPosition(commentList.size()-1);
+                    recyclerView.smoothScrollToPosition(commentList.size() - 1);
 
 
                 } catch (JSONException e) {
                     e.printStackTrace();
 
-                    if(!TextUtils.isEmpty(status) && status.equals("success")){
+                    if (!TextUtils.isEmpty(status) && status.equals("success")) {
                         commentList.clear();
                         scrollListener.resetState();
                         getCommentList(0, searchFilter = "");
-                    } else if(commentList.size()==0) {
+                    } else if (commentList.size() == 0) {
                         tv_no_comments.setVisibility(View.VISIBLE);
                         tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));
                     }
@@ -460,16 +471,17 @@ public class CommentsActivity extends AppCompatActivity {
             @Override
             public void ErrorListener(VolleyError error) {
                 btn_post_comments.setEnabled(true);
-                if(commentList.size()==0) {
+                if (commentList.size() == 0) {
                     tv_no_comments.setVisibility(View.VISIBLE);
                     tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));
                 }
-            }})
+            }
+        })
                 .setProgress(true)
                 .setParam(map)).postImage("comment", bitmap);
     }
 
-    private void apiPostTextComment(final String comments, final Bitmap bitmap){
+    private void apiPostTextComment(final String comments, final Bitmap bitmap) {
         Session session = Mualab.getInstance().getSessionManager();
         final User user = session.getUser();
 
@@ -477,9 +489,9 @@ public class CommentsActivity extends AppCompatActivity {
             new NoConnectionDialog(CommentsActivity.this, new NoConnectionDialog.Listner() {
                 @Override
                 public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                    if(isConnected){
+                    if (isConnected) {
                         dialog.dismiss();
-                        apiPostTextComment(comments,bitmap);
+                        apiPostTextComment(comments, bitmap);
                     }
                 }
             }).show();
@@ -487,10 +499,10 @@ public class CommentsActivity extends AppCompatActivity {
 
         Map<String, String> params = new HashMap<>();
         params.putAll(Mualab.feedBasicInfo);
-        params.put("feedId", ""+feed._id);
-        params.put("postUserId", ""+feed.userId);
-        params.put("type", bitmap==null?"text":"image");
-        if(comments!=null)
+        params.put("feedId", "" + feed._id);
+        params.put("postUserId", "" + feed.userId);
+        params.put("type", bitmap == null ? "text" : "image");
+        if (comments != null)
             params.put("comment", comments);
 
         HttpTask task = new HttpTask(new HttpTask.Builder(CommentsActivity.this, "addComment", new HttpResponceListner.Listener() {
@@ -512,7 +524,7 @@ public class CommentsActivity extends AppCompatActivity {
                         comment.firstName = Mualab.currentUser.firstName;
                         comment.firstName = Mualab.currentUser.lastName;
                         comment.userName = Mualab.currentUser.userName;
-                        comment.type = bitmap==null?"text":"image";
+                        comment.type = bitmap == null ? "text" : "image";
                         comment.profileImage = Mualab.currentUser.profileImage;
                         comment.timeElapsed = "1 second ago";
                         comment.commentLikeCount = 0;
@@ -526,15 +538,15 @@ public class CommentsActivity extends AppCompatActivity {
                     }
 
                     commentAdapter.notifyDataSetChanged();
-                    recyclerView.smoothScrollToPosition(commentList.size()-1);
+                    recyclerView.smoothScrollToPosition(commentList.size() - 1);
 
                     //  showToast(message);
                 } catch (Exception e) {
-                    if(!TextUtils.isEmpty(status) && status.equals("success")){
+                    if (!TextUtils.isEmpty(status) && status.equals("success")) {
                         commentList.clear();
                         scrollListener.resetState();
                         getCommentList(0, searchFilter = "");
-                    } else if(commentList.size()==0) {
+                    } else if (commentList.size() == 0) {
                         tv_no_comments.setVisibility(View.VISIBLE);
                         tv_no_comments.setText(getString(R.string.msg_some_thing_went_wrong));
                     }
@@ -544,18 +556,19 @@ public class CommentsActivity extends AppCompatActivity {
 
             @Override
             public void ErrorListener(VolleyError error) {
-                try{
+                try {
                     Helper helper = new Helper();
-                    if (helper.error_Messages(error).contains("Session")){
+                    if (helper.error_Messages(error).contains("Session")) {
                         Mualab.getInstance().getSessionManager().logout();
                         // MyToast.getInstance(BookingActivity.this).showDasuAlert(helper.error_Messages(error));
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
 
-            }})
+            }
+        })
                 .setAuthToken(user.authToken)
                 .setProgress(true)
                 .setBodyContentType(HttpTask.ContentType.FORM_DATA)
@@ -565,7 +578,7 @@ public class CommentsActivity extends AppCompatActivity {
         task.execute(this.getClass().getName());
     }
 
-    protected void setStatusbarColor(){
+    protected void setStatusbarColor() {
         Window window = this.getWindow();
         // clear FLAG_TRANSLUCENT_STATUS flag:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

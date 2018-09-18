@@ -21,11 +21,10 @@ import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivit
 import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
-import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.activity.my_profile.activity.UserProfileActivity;
 import com.mualab.org.user.activity.notification.adapter.NotificationAdapter;
 import com.mualab.org.user.activity.notification.model.Notification;
-import com.mualab.org.user.activity.story.StoreActivityTest;
+import com.mualab.org.user.activity.story.StoriesActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.User;
@@ -277,7 +276,7 @@ public class NotificationFragment extends BaseFragment implements NotificationAd
                 me.profileImage = urlImageString;
                 me.storyCount = 0;
                 liveUserList.add(me);
-                Intent intent_story = new Intent(mContext, StoreActivityTest.class);
+                Intent intent_story = new Intent(mContext, StoriesActivity.class);
                 Bundle args = new Bundle();
                 args.putSerializable("ARRAYLIST", liveUserList);
                 args.putInt("position", 0);

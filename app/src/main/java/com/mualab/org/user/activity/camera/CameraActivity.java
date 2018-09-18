@@ -146,6 +146,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 CameraUtils.decodeBitmap(jpeg, 3000, 3000, new CameraUtils.BitmapCallback() {
                     @Override
                     public void onBitmapReady(Bitmap bitmap) {
+                        img_gallery.setVisibility(View.GONE);
                         cameraView.stop();
                         showTakenPicture(bitmap);
                         isVideoUri = false;
@@ -373,9 +374,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 if(flashMode ==null){
                     flashMode = Flash.OFF;
                 }
-
-
-
 
                 if(isCameraSession){
 
@@ -635,7 +633,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-
     private void addMyStory(){
 
         if(ConnectionDetector.isConnected()){
@@ -706,13 +703,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         }else showToast(getString(R.string.error_msg_network));
     }
 
-
     private CountDownTimer countDownTimer;
-    private boolean timerIsRunning;
+
     private void startTimear() {
         if (countDownTimer != null)
             countDownTimer.cancel();
-        timerIsRunning = true;
         countDownTimer = new CountDownTimer(60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 btnTakePhoto.setText(String.valueOf(millisUntilFinished / 1000));
@@ -722,7 +717,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             }
 
             public void onFinish() {
-                timerIsRunning = false;
                 btnTakePhoto.setText("REC");
                 btnTakePhoto.setEnabled(true);
                 if (isStartRecord)
@@ -731,7 +725,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         }.start();
         startRecording();
     }
-
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {

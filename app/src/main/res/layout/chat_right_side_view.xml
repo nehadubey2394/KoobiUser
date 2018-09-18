@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:layout_marginTop="8dp"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp">
 
+
+    <TextView
+        android:id="@+id/tv_my_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_chat_date_banner"
+        android:padding="4dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/nunito_regular"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone" />
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
         android:id="@+id/rl_sender"
-        android:layout_alignParentRight="true"
         >
 
         <FrameLayout
@@ -20,7 +35,7 @@
             android:layout_height="wrap_content"
             >
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_sender"
@@ -28,16 +43,25 @@
                 android:id="@+id/ll_chatbox"
                 android:layout_marginRight="11dp"
                 android:minWidth="100dp"
-                android:padding="12dp">
+                android:padding="10dp">
 
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/white"/>
 
                 <TextView
                     android:id="@+id/tv_sender_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
+                    android:fontFamily="@font/nunito_regular"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:text="" />
 
                 <ImageView
@@ -45,9 +69,10 @@
                     android:layout_width="180dp"
                     android:layout_height="180dp"
                     android:scaleType="fitXY"
+                    android:layout_centerInParent="true"
                     android:visibility="gone" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <ImageView
                 android:layout_width="12dp"
@@ -70,7 +95,7 @@
                 android:id="@+id/tv_send_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_light"
+                android:fontFamily="@font/nunito_regular"
                 android:textColor="@color/chatting_time_gray"
                 android:textSize="12sp" />
 
@@ -85,4 +110,4 @@
 
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

@@ -257,7 +257,7 @@ public class ExploreTopFragment extends BaseFragment implements SearchAdapter.Li
                     }
 
                     if(list.size()==0){
-                        tv_msg.setText(getString(R.string.no_data_found));
+                        tv_msg.setText(getString(R.string.no_res_found));
                     }else {
                         ll_loadingBox.setVisibility(View.GONE);
                     }

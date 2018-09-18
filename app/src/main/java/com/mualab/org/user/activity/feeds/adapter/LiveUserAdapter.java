@@ -1,6 +1,7 @@
 package com.mualab.org.user.activity.feeds.adapter;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
     private Context mContext;
     private List<LiveUserInfo> liveUserList;
     private Listner listner;
+    private  long mLastClickTime = 0;
 
     public interface Listner{
         void onClickedUserStory(LiveUserInfo storyUser, int position);
@@ -87,7 +89,7 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
         ImageView ivUserImg, ivAddLive;
         TextView tvUserName, tv_live;
 
-         ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             tv_live = itemView.findViewById(R.id.tv_live);
             ivUserImg =  itemView.findViewById(R.id.iv_user_image);
@@ -98,10 +100,14 @@ public class LiveUserAdapter extends RecyclerView.Adapter<LiveUserAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 600){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
 
-             int pos = getAdapterPosition();
-             LiveUserInfo userInfo = liveUserList.get(pos);
-             listner.onClickedUserStory(userInfo, pos);
+            int pos = getAdapterPosition();
+            LiveUserInfo userInfo = liveUserList.get(pos);
+            listner.onClickedUserStory(userInfo, pos);
 /*
              if(pos==0 && userInfo.storyCount==0){
                  mContext.startActivity(new Intent(mContext, CameraActivity.class));

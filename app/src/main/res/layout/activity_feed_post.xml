@@ -47,20 +47,9 @@
                 android:text="@string/new_post"
                 android:textSize="18sp" />
 
-           <!-- <ImageView
-                android:id="@+id/iv_feedPost"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:padding="5dp"
-                android:tint="@color/white"
-                android:src="@drawable/share_ico" />-->
-
         </RelativeLayout>
 
     </RelativeLayout>
-
 
 
     <ScrollView
@@ -113,20 +102,6 @@
 
                 </FrameLayout>
 
-
-
-                <!-- <EditText
-                     android:id="@+id/ed_caption"
-                     android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:layout_margin="5dp"
-                     android:background="@null"
-                     android:gravity="top"
-                     android:hint="Write a caption..."
-                     android:padding="5dp"
-                     android:textColor="@color/colorPrimary"
-                     android:textSize="16sp" />-->
-
                 <com.hendraanggrian.widget.SocialAutoCompleteTextView
                     android:id="@+id/edCaption"
                     android:layout_width="match_parent"
@@ -148,10 +123,6 @@
 
             </LinearLayout>
 
-            <!--<View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray2"/>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -331,18 +302,29 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_post"
-                    android:layout_width="80dp"
-                    android:layout_height="25dp"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_gravity="right"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/bg_selected"
-                    android:gravity="center"
-                    android:fontFamily="@font/roboto_medium"
-                    android:text="@string/text_post"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:padding="10dp"
+                    android:id="@+id/tv_post"
+
+                    android:layout_height="wrap_content"
+                    tools:ignore="RtlHardcoded">
+                    <Button
+                        android:layout_width="80dp"
+
+                        android:background="@drawable/bg_selected"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:text="@string/text_post"
+                        android:textAllCaps="false"
+                        android:id="@+id/btn_post"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_height="25dp" />
+
+
+                </RelativeLayout>
 
             </LinearLayout>
 

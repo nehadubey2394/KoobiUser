@@ -9,4 +9,5 @@ public class Chat implements Serializable {
     public String reciverId;
     public String senderId;
     public Object timestamp;
+    public String banner_date;
 }

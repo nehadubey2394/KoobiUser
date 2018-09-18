@@ -1,7 +1,10 @@
 package com.mualab.org.user.activity.explore.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -12,18 +15,25 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
+import com.mualab.org.user.activity.feeds.FeedSingleActivity;
 import com.mualab.org.user.activity.feeds.adapter.FeedAdapter;
+import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
 import com.mualab.org.user.activity.feeds.fragment.LikeFragment;
+import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
+import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.listner.FeedsListner;
@@ -60,6 +70,7 @@ public class FeedDetailFragment extends Fragment {
     private int index;
     private boolean isPulltoRefrash;
     private int CURRENT_FEED_STATE = 0;
+    private ViewPagerAdapter.LongPressListner longPressListner;
 
 
     public FeedDetailFragment() {
@@ -145,6 +156,7 @@ public class FeedDetailFragment extends Fragment {
                 intent.putExtra("feed_id", feed._id);
                 intent.putExtra("feedPosition", pos);
                 intent.putExtra("feed", feed);
+                intent.putExtra("commentCount", feed.commentCount);
                 startActivityForResult(intent, Constant.ACTIVITY_COMMENT);
             }
 
@@ -156,7 +168,7 @@ public class FeedDetailFragment extends Fragment {
 
             @Override
             public void onFeedClick(Feeds feed, int index, View v) {
-
+                showLargeImage(feed,index);
             }
 
             @Override
@@ -183,12 +195,18 @@ public class FeedDetailFragment extends Fragment {
         Feeds feed = (Feeds) data.getSerializableExtra("feed");
         list.get(pos).commentCount = feed.commentCount;
         adapter.notifyItemChanged(pos);*/
-                  //  if(CURRENT_FEED_STATE == Constant.FEED_STATE){
-                        int pos = data.getIntExtra("feedPosition",0);
-                        Feeds feed = (Feeds) data.getSerializableExtra("feed");
-                        list.get(pos).commentCount = feed.commentCount+1;
-                        adapter.notifyItemChanged(pos);
-                 //   }
+                    //  if(CURRENT_FEED_STATE == Constant.FEED_STATE){
+                /*    int pos = data.getIntExtra("feedPosition",0);
+                    Feeds feed = (Feeds) data.getSerializableExtra("feed");
+                    list.get(pos).commentCount = feed.commentCount+1;
+                    adapter.notifyItemChanged(pos);
+*/
+                    int pos = data.getIntExtra("feedPosition", 0);
+                    Feeds feed = (Feeds) data.getSerializableExtra("feed");
+                    list.get(pos).commentCount = data.getIntExtra("commentCount", 0);
+                    adapter.notifyItemChanged(pos);
+
+                    //   }
                     break;
             }
         }
@@ -197,7 +215,93 @@ public class FeedDetailFragment extends Fragment {
             Feeds feed = (Feeds) data.getParcelableExtra("feed");
             list.get(0).commentCount = feed.commentCount;
             adapter.notifyItemChanged(pos);*/
-}
+    }
+
+
+    boolean isShow = false;
+    private void showLargeImage(Feeds feeds, int index){
+        View dialogView = View.inflate(mContext, R.layout.dialog_large_image_view, null);
+        final Dialog dialog = new Dialog(mContext,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
+        dialog.setContentView(dialogView);
+        final InstaTag postImage = dialogView.findViewById(R.id.post_image);
+        //. postImage.setTouchListnerDisable();
+        ImageView btnBack = dialogView.findViewById(R.id.btnBack);
+        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
+        tvCertiTitle.setText("Images");
+
+
+        postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        postImage.setRootWidth(postImage.getMeasuredWidth());
+        postImage.setRootHeight(postImage.getMeasuredHeight());
+
+        Glide.with(mContext).load(feeds.feed.get(index)).placeholder(R.drawable.gallery_placeholder)
+                .into(postImage.getTagImageView());
+
+        postImage.setImageToBeTaggedEvent(taggedImageEvent);
+
+        ArrayList<TagToBeTagged>tags =  feeds.taggedImgMap.get(index);
+        if (tags!=null && tags.size()!=0){
+            postImage.addTagViewFromTagsToBeTagged(tags,false);
+            postImage.hideTags();
+        }
+
+        //   Picasso.with(mContext).load(feeds.feed.get(index)).priority(Picasso.Priority.HIGH).noPlaceholder().into(postImage);
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        longPressListner = new ViewPagerAdapter.LongPressListner() {
+            @Override
+            public void onLongPress() {
+                if (!isShow) {
+                    isShow = true;
+                    postImage.showTags();
+                }
+                else {
+                    isShow = false;
+                    postImage.hideTags();
+                }
+
+            }
+        };
+
+        dialog.show();
+    }
+
+    private InstaTag.TaggedImageEvent taggedImageEvent = new InstaTag.TaggedImageEvent() {
+        @Override
+        public void singleTapConfirmedAndRootIsInTouch(int x, int y) {
+
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (longPressListner != null)
+                longPressListner.onLongPress();
+        }
+
+        @Override
+        public void onSinglePress(MotionEvent e) {
+        }
+    };
+
 
     private void getUpdatedFeed(){
         Map<String, String> map = new HashMap<>();

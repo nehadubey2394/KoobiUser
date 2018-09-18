@@ -194,6 +194,11 @@
         <item name="android:fontFamily">@font/roboto_regular</item>
     </style>
 
+    <style name="AppCompatProgrssDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/text_color</item>
+        <item name="android:textColorPrimary">@color/text_color</item>
+        <item name="android:background">@color/chatbox_blue</item>
+    </style>
 
    <!-- &lt;!&ndash;Sweet aleat&ndash;&gt;
     <style name="alert_dialog" parent="android:Theme.Dialog">

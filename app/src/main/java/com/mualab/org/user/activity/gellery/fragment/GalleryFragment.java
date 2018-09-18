@@ -27,7 +27,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.image.nocropper.BitmapUtils;
 import com.image.nocropper.CropperCallback;
 import com.image.nocropper.CropperView;
@@ -53,12 +56,12 @@ import java.util.Map;
 import java.util.UUID;
 
 
-public class GalleryFragment extends Fragment implements View.OnClickListener{
+public class GalleryFragment extends Fragment implements View.OnClickListener {
 
+    int numberOfColumns = 4;
     private RecyclerView recyclerView;
     private GalleryAdapter galleryAdapter;
     private CollapsingToolbarLayout collapsing_toolbar;
-    int numberOfColumns = 4;
     private Bitmap thumbImage = null;
     private Context context;
     private CropperView showImage;
@@ -74,6 +77,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
     private Uri lastSelectedUri;
     private LinkedHashMap<String, Uri> mSelected;
     private List<Media> albumList;
+    private ProgressBar ll_progress;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -108,12 +112,14 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
             if (context.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-            }else {
+            } else {
                 albumList = getAlbums();
+                ll_progress.setVisibility(View.VISIBLE);
                 setImageList();
             }
-        }else {
+        } else {
             albumList = getAlbums();
+            ll_progress.setVisibility(View.VISIBLE);
             setImageList();
         }
 
@@ -132,15 +138,20 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         // setImageList();
     }
 
-    private void setImageList(){
-        if(albumList!=null && albumList.size()>0){
+    private void setImageList() {
+        if (albumList != null && albumList.size() > 0) {
             Media media = albumList.get(0);
             lastSelectedUri = media.uri;
             mSelected.put(media.uri.toString(), media.uri);
             refreshUi(lastSelectedUri);
             //showImage.setUri(media.uri);
             try {
-                showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
+
+                showImage.setImageUri(media.uri);
+
+                //showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,media.uri));
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -148,22 +159,22 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
 
         galleryAdapter = new GalleryAdapter(albumList, context, new GalleryOnClickListener() {
             @Override
-            public void OnClick(Media media , int index) {
+            public void OnClick(Media media, int index) {
 
-                if(isSupportMultipal){
+                if (isSupportMultipal) {
 
                     int size = mSelected.size();
-                    if(size<10){
+                    if (size < 10) {
 
-                        if(!media.isSelected){
+                        if (!media.isSelected) {
                             media.isSelected = !media.isSelected;
                             mSelected.put(media.uri.toString(), media.uri);
                             lastSelectedUri = media.uri;
                             lastindex = index;
 
-                        } else{
+                        } else {
 
-                            if(mSelected.size()>1){
+                            if (mSelected.size() > 1) {
                                 media.isSelected = !media.isSelected;
                                 mSelected.remove(media.uri.toString());
                                 Map.Entry<String, Uri> last = null;
@@ -171,7 +182,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
                                 lastSelectedUri = last.getValue();
                             }
                         }
-                    }else if(media.isSelected && size>1){
+                    } else if (media.isSelected && size > 1) {
                         media.isSelected = !media.isSelected;
                         mSelected.remove(media.uri.toString());
                         Map.Entry<String, Uri> last = null;
@@ -179,31 +190,33 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
                         if (last != null) {
                             lastSelectedUri = last.getValue();
                         }
-                    } else if(size>9){
-                        MySnackBar.showSnackbar(context,rootLayout,"You can select max 10 items");
+                    } else if (size > 9) {
+                        MySnackBar.showSnackbar(context, rootLayout, "You can select max 10 items");
                     }
 
-                }else {
+                } else {
                     lastindex = index;
                     lastSelectedUri = media.uri;
                     mSelected.clear();
                     mSelected.put(media.uri.toString(), media.uri);
+                    ll_progress.setVisibility(View.VISIBLE);
                 }
-
+                ll_progress.setVisibility(View.VISIBLE);
                 refreshUi(lastSelectedUri);
 
                 galleryAdapter.notifyItemChanged(index);
 
-                if(mSelected.size()<=2)
-                    recyclerView.smoothScrollToPosition(index);
-                expandToolbar();
+                if (mSelected.size() <= 2)
+                    // recyclerView.smoothScrollToPosition(index);
+                    expandToolbar();
             }
         });
         recyclerView.setAdapter(galleryAdapter);
     }
 
-    private void initView(View view){
+    private void initView(View view) {
         showImage = view.findViewById(R.id.showImage);
+        ll_progress = view.findViewById(R.id.progrss);
         snap_button = view.findViewById(R.id.snap_button);
         ivImage = view.findViewById(R.id.ivImage);
         // rotateImage = view.findViewById(R.id.rotateImage);
@@ -221,41 +234,27 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         ivMultiSelection.setOnClickListener(this);
     }
 
-    private void refreshUi(Uri uri){
+    private void refreshUi(Uri uri) {
 
-        if(isSupportMultipal){
+        if (isSupportMultipal) {
             ivImage.setVisibility(View.VISIBLE);
             showImage.setVisibility(View.GONE);
+            // ivImage.setImageURI(uri);
 
-            Bitmap ThumbImage = ThumbnailUtils
-                    .extractThumbnail(BitmapFactory.decodeFile(
-                            ImageVideoUtil.generatePath(uri, context)), 250, 250);
-            if (ThumbImage != null)
-                //showImage.setImageBitmap(ImageVideoUtil.getCompressBitmap(ThumbImage));
-                ivImage.setImageBitmap(ThumbImage);
-          //  ivImage.setImageURI(uri);
-
+            Glide.with(context).load(uri)
+                    .placeholder(0).fallback(0).centerCrop()
+                    .skipMemoryCache(false)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivImage);
 
         } else {
             showImage.setVisibility(View.VISIBLE);
             ivImage.setVisibility(View.GONE);
-            //showImage.setUri(uri);
-            try {
-               // showImage.setImageBitmap(ImageVideoUtil.getBitmapFromUri(context,uri));3
-                Bitmap ThumbImage = ThumbnailUtils
-                        .extractThumbnail(BitmapFactory.decodeFile(
-                                ImageVideoUtil.generatePath(uri, context)), 250, 250);
-                if (ThumbImage != null)
-                    //showImage.setImageBitmap(ImageVideoUtil.getCompressBitmap(ThumbImage));
-                    showImage.setImageBitmap(ThumbImage);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            showImage.setImageUri(uri);
         }
     }
 
-    public void expandToolbar(){
+    public void expandToolbar() {
         appbar.setExpanded(true, true);
     }
 
@@ -264,7 +263,7 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()) {
 
             case R.id.tvClose:
-                ((GalleryActivity)context).onBackPressed();
+                ((GalleryActivity) context).onBackPressed();
                 break;
 
             case R.id.snap_button:
@@ -279,64 +278,35 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
                 isSupportMultipal = !isSupportMultipal;
 
                 mSelected.clear();
-                if(lastSelectedUri!=null) mSelected.put(lastSelectedUri.toString(), lastSelectedUri);
+                if (lastSelectedUri != null)
+                    mSelected.put(lastSelectedUri.toString(), lastSelectedUri);
 
-                if(isSupportMultipal){
-                    for (Media tmp:albumList) tmp.isSelected = false;
-                    ivMultiSelection.setBackground(ContextCompat.getDrawable(context,R.drawable.circle_selected_bg));
+                if (isSupportMultipal) {
+                    for (Media tmp : albumList) tmp.isSelected = false;
+                    ivMultiSelection.setBackground(ContextCompat.getDrawable(context, R.drawable.circle_selected_bg));
                     snap_button.setVisibility(View.GONE);
                     //rotateImage.setVisibility(View.GONE);
-                }else {
+                } else {
                     snap_button.setVisibility(View.VISIBLE);
                     // rotateImage.setVisibility(View.VISIBLE);
-                    ivMultiSelection.setBackground(ContextCompat.getDrawable(context,R.drawable.selector_rounded_background));
+                    ivMultiSelection.setBackground(ContextCompat.getDrawable(context, R.drawable.selector_rounded_background));
                 }
 
                 albumList.get(lastindex).isSelected = true;
                 galleryAdapter.setEnableMultipal(isSupportMultipal);
 
                 galleryAdapter.notifyItemChanged(lastindex);
-                recyclerView.smoothScrollToPosition(lastindex);
+                // recyclerView.smoothScrollToPosition(lastindex);
+
                 refreshUi(lastSelectedUri);
 
                 // showImage.setImageUriAsync(media.uri);
                 break;
 
             case R.id.tvNext:
-                if(!isSupportMultipal){
-                    cropImageAsync();
-                }else {
+                if (!isSupportMultipal) {
+                    // cropImageAsync();
 
-                 /*   Intent intent = null;
-                    if (mSelected != null && mSelected.size() > 0) {
-                        MediaUri mediaUri = new MediaUri();
-                        mediaUri.mediaType = Constant.IMAGE_STATE;
-                        mediaUri.isFromGallery = true;
-                        mediaUri.addAll(mSelected);
-                        //    mediaUri.addUri(String.valueOf(lastSelectedUri));
-
-                        intent = new Intent(context, FeedPostActivity.class);
-
-                        intent.putExtra("caption", "");
-                        intent.putExtra("mediaUri", mediaUri);
-                        intent.putExtra("feedType", Constant.IMAGE_STATE);
-                        intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-
-                    } *//*else if(videoUri!=null){
-                    intent = new Intent(mContext, FeedPostActivity.class);
-                    intent.putExtra("caption", "");
-                    intent.putExtra("feedType", Constant.VIDEO_STATE);
-                    intent.putExtra("videoUri", videoUri.toString());
-                    intent.putExtra("fromGallery", false);
-                    intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                }*//*
-
-                    if (intent != null) {
-                        // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivityForResult(intent, Constant.POST_FEED_DATA);
-                    }*/
 
                     Intent intent = new Intent(context, FeedPostActivity.class);
                     if (mSelected != null && mSelected.size() > 0) {
@@ -355,7 +325,37 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
                         intent.putExtra("thumbImage", thumbImage);
                         intent.putExtra("feedType", Constant.IMAGE_STATE);
                         intent.putExtra("requestCode", Constant.POST_FEED_DATA);
-                    }else {
+                    } else {
+                        intent = new Intent(context, FeedPostActivity.class);
+                        intent.putExtra("caption", "");
+                        intent.putExtra("feedType", Constant.TEXT_STATE);
+                        intent.putExtra("requestCode", Constant.POST_FEED_DATA);
+                    }
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivityForResult(intent, Constant.POST_FEED_DATA);
+                    // else startActivityForResult(intent, Constant.POST_FEED_DATA);
+
+                } else {
+                    Intent intent = new Intent(context, FeedPostActivity.class);
+                    if (mSelected != null && mSelected.size() > 0) {
+                        MediaUri mediaUri = new MediaUri();
+                        mediaUri.mediaType = Constant.IMAGE_STATE;
+                        mediaUri.isFromGallery = true;
+                        mediaUri.addAll(mSelected);
+
+                        thumbImage = ThumbnailUtils
+                                .extractThumbnail(BitmapFactory.decodeFile(
+                                        ImageVideoUtil.generatePath(Uri.parse(mediaUri.uriList.get(0)), context)), 100, 100);
+
+
+                        intent.putExtra("caption", "");
+                        intent.putExtra("mediaUri", mediaUri);
+                        intent.putExtra("thumbImage", thumbImage);
+                        intent.putExtra("feedType", Constant.IMAGE_STATE);
+                        intent.putExtra("requestCode", Constant.POST_FEED_DATA);
+                    } else {
                         intent = new Intent(context, FeedPostActivity.class);
                         intent.putExtra("caption", "");
                         intent.putExtra("feedType", Constant.TEXT_STATE);
@@ -376,15 +376,15 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode== Activity.RESULT_OK && requestCode== Constant.POST_FEED_DATA){
-            ((GalleryActivity)context).finish();
+        if (resultCode == Activity.RESULT_OK && requestCode == Constant.POST_FEED_DATA) {
+            ((GalleryActivity) context).finish();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE){
+        if (requestCode == Constant.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
             albumList = getAlbums();
             setImageList();
         }
@@ -461,29 +461,59 @@ public class GalleryFragment extends Fragment implements View.OnClickListener{
     }
 
     public ArrayList<Media> getAlbums() {
-        AlbumLoader albumLoader = new AlbumLoader(context);
-        ArrayList<Media> photos = new ArrayList<>();
+        final AlbumLoader albumLoader = new AlbumLoader(context);
+        final ArrayList<Media> photos = new ArrayList<>();
         try {
-            Cursor albumCursor = albumLoader.loadInBackground();
+            final Cursor albumCursor = albumLoader.loadInBackground();
             if (albumCursor != null && albumCursor.moveToFirst()) {
-
                 do {
                     PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
                     Cursor photoCursor = photoLoader.loadInBackground();
-
                     if (photoCursor != null && photoCursor.moveToFirst()) {
                         do {
                             Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
                             Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                             Media media = new Media();
                             media.uri = uri;
-
                             photos.add(media);
+
                         } while (photoCursor.moveToNext() /*&& photos.size() < 40*/);
                     }
                     photoCursor.close();
 
                 } while (albumCursor.moveToNext() /*&& albums.size() < 10*/);
+        /*        new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        do {
+                            PhotoLoader photoLoader = new PhotoLoader(albumLoader.getContext(), new String[]{albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID))});
+                            Cursor photoCursor = photoLoader.loadInBackground();
+                            if (photoCursor != null && photoCursor.moveToFirst()) {
+                                do {
+                                    Long id = photoCursor.getLong(photoCursor.getColumnIndex(MediaStore.Images.Media._ID));
+                                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                                    Media media = new Media();
+                                    media.uri = uri;
+
+                                    Bitmap bitmap= null;
+                                    try {
+                                        bitmap = (ImageVideoUtil.getBitmapFromUri(context,media.uri));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    if(bitmap.getHeight()>=2048||bitmap.getWidth()>=2048){
+                                        photos.add(media);
+                                    }
+                                    //photos.add(media);
+
+                                } while (photoCursor.moveToNext() *//*&& photos.size() < 40*//*);
+                            }
+                            photoCursor.close();
+
+                        } while (albumCursor.moveToNext() *//*&& albums.size() < 10*//*);
+                    }
+                },5000);
+*/
             }
             albumCursor.close();
             return photos;

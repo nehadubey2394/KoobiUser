@@ -14,6 +14,7 @@ import com.mualab.org.user.utils.constants.AppConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -61,5 +62,46 @@ public final class CommonUtils {
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         return progressDialog;
+    }
+
+    public static String formateDateFromstring(String inputFormat, String outputFormat, String inputDate){
+
+        Date parsed = null;
+        String outputDate = "";
+
+        SimpleDateFormat df_input = new SimpleDateFormat(inputFormat, java.util.Locale.getDefault());
+        SimpleDateFormat df_output = new SimpleDateFormat(outputFormat, java.util.Locale.getDefault());
+
+        try {
+            parsed = df_input.parse(inputDate);
+            outputDate = df_output.format(parsed);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return outputDate;
+    }
+
+    public static String getDateBanner(long timestamp){
+        String banner_date = "";
+        SimpleDateFormat df = new  SimpleDateFormat("dd MMMM yyyy",Locale.getDefault());
+        String checkDate = df.format(timestamp);
+
+        Date c = java.util.Calendar.getInstance().getTime();
+        String currentDate = df.format(c);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+
+        cal.add(java.util.Calendar.DATE, -1);
+        java.sql.Date yesterday = new java.sql.Date(cal.getTimeInMillis());
+        String beforeOneDay = CommonUtils.formateDateFromstring("yyyy-MM-dd",
+                "dd MMMM yyyy",yesterday.toString());
+
+        if(currentDate.equals(checkDate)){
+            banner_date = "Today";
+        }else if(beforeOneDay.equals(checkDate)){
+            banner_date = "Yesterday";
+        }else banner_date = checkDate;
+
+        return  banner_date;
     }
 }

@@ -224,7 +224,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             time = refineSearchBoard.time;
             date_time = refineSearchBoard.date;
             location = refineSearchBoard.location;
-            isFavClick = refineSearchBoard.isFavClick;
+            isFavClick = isFavClick;
             dayId = Integer.parseInt(refineSearchBoard.day);
 
             if (!date_time.equals(""))

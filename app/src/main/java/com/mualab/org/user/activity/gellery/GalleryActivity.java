@@ -1,17 +1,15 @@
 package com.mualab.org.user.activity.gellery;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.camera.CameraActivity;
-import com.mualab.org.user.activity.gellery.fragment.CameraFragmentNew;
 import com.mualab.org.user.activity.gellery.fragment.GalleryFragment;
 import com.mualab.org.user.activity.gellery.fragment.VideoGalleryFragment;
 import com.mualab.org.user.activity.main.MainActivity;

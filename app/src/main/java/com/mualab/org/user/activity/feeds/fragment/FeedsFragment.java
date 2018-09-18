@@ -2,9 +2,6 @@ package com.mualab.org.user.activity.feeds.fragment;
 
 import android.Manifest;
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -18,8 +15,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -46,10 +41,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -71,32 +64,30 @@ import com.mualab.org.user.activity.feeds.adapter.HashtagAdapter;
 import com.mualab.org.user.activity.feeds.adapter.LiveUserAdapter;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
+import com.mualab.org.user.activity.feeds.enums.PermissionType;
 import com.mualab.org.user.activity.gellery.GalleryActivity;
-import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.activity.people_tag.instatag.InstaTag;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
-import com.mualab.org.user.activity.story.StoreActivityTest;
+import com.mualab.org.user.activity.story.StoriesActivity;
 import com.mualab.org.user.activity.story.camera.util.ImageUtil;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.utils.constants.Constant;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.dialogs.Progress;
-import com.mualab.org.user.dialogs.MyToast;
-import com.mualab.org.user.dialogs.SelectableDialog;
-import com.mualab.org.user.activity.feeds.enums.PermissionType;
-import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.data.model.MediaUri;
 import com.mualab.org.user.data.model.feeds.Feeds;
 import com.mualab.org.user.data.model.feeds.LiveUserInfo;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
+import com.mualab.org.user.dialogs.Progress;
+import com.mualab.org.user.dialogs.SelectableDialog;
+import com.mualab.org.user.listner.RecyclerViewScrollListener;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.WrapContentLinearLayoutManager;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.mualab.org.user.utils.media.PathUtil;
-import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -146,8 +137,6 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     /*Adapters*/
     private LiveUserAdapter liveUserAdapter;
     private ArrayList<LiveUserInfo> liveUserList;
-    private Animator mCurrentAnimator;
-    private int mShortAnimationDuration;
 
     private RecyclerView rvMyStory;
     private FeedAdapter feedAdapter;
@@ -434,7 +423,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                 Intent in_gallery = new Intent(mContext, GalleryActivity.class);
                 startActivityForResult(in_gallery,734);
 
-                //checkPermissionAndPicImageOrVideo("Select Image");
+                //  checkPermissionAndPicImageOrVideo("Select Image");
                 break;
         }
     }
@@ -762,6 +751,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         intent.putExtra("feed_id", feed._id);
         intent.putExtra("feedPosition", pos);
         intent.putExtra("feed", feed);
+        intent.putExtra("commentCount", feed.commentCount);
         startActivityForResult(intent, Constant.ACTIVITY_COMMENT);
     }
 
@@ -1064,7 +1054,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
                     if(CURRENT_FEED_STATE == Constant.FEED_STATE){
                         int pos = data.getIntExtra("feedPosition",0);
                         Feeds feed = (Feeds) data.getSerializableExtra("feed");
-                        feeds.get(pos).commentCount = feed.commentCount+1;
+                        feeds.get(pos).commentCount =data.getIntExtra("commentCount",0);
                         feedAdapter.notifyItemChanged(pos);
                     }
                     break;
@@ -1153,7 +1143,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         if(storyUser.id==Mualab.currentUser.id && storyUser.storyCount==0){
 
             if(Mualab.isStoryUploaded){
-                Intent intent = new Intent(mContext, StoreActivityTest.class);
+                Intent intent = new Intent(mContext, StoriesActivity.class);
                 Bundle args = new Bundle();
                 args.putSerializable("ARRAYLIST", liveUserList);
                 args.putInt("position", position);
@@ -1164,7 +1154,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
             }
 
         }else {
-            Intent intent = new Intent(mContext, StoreActivityTest.class);
+            Intent intent = new Intent(mContext, StoriesActivity.class);
             Bundle args = new Bundle();
             args.putSerializable("ARRAYLIST", liveUserList);
             args.putInt("position", position);
@@ -1182,6 +1172,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
         dialog.setContentView(dialogView);
         final InstaTag postImage = dialogView.findViewById(R.id.post_image);
+        //. postImage.setTouchListnerDisable();
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
         TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
         tvCertiTitle.setText("Images");

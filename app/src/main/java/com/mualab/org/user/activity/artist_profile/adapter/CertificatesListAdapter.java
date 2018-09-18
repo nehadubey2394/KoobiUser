@@ -53,7 +53,7 @@ public class CertificatesListAdapter extends RecyclerView.Adapter<CertificatesLi
             holder.tvStatus.setTextColor(context.getResources().getColor(R.color.text_color_yellow));
         }
         else {
-            holder.tvStatus.setText("Varified");
+            holder.tvStatus.setText("Verified");
             holder.tvStatus.setTextColor(context.getResources().getColor(R.color.text_color_green));
 
         }

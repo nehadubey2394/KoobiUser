@@ -315,9 +315,17 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();;
         firebaseUser.isOnline = 1;
         firebaseUser.lastActivity = ServerValue.TIMESTAMP;
-        firebaseUser.profilePic = user.profileImage;
+        if (user.profileImage.isEmpty())
+            firebaseUser.profilePic = "http://koobi.co.uk:3000/uploads/default_user.png";
+        else
+            firebaseUser.profilePic = user.profileImage;
+
         firebaseUser.userName = user.userName;
         firebaseUser.uId = user.id;
+        firebaseUser.authToken = user.authToken;
+        firebaseUser.userType = user.userType;
+        firebaseUser.banAdmin = 0;
+
         mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);

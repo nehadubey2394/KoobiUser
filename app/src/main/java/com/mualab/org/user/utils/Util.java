@@ -18,6 +18,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
+import com.mualab.org.user.data.local.prefs.Session;
+import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.utils.constants.Constant;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -162,5 +171,43 @@ public class Util {
             e.printStackTrace();
         }
         return date;
+    }
+
+    public  void goToOnlineStatus(Context context,String status) {
+        Session session = new Session(context);
+        User user = session.getUser();
+
+        if(session.getUser() != null){
+
+            DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
+            FirebaseUser firebaseUser = new FirebaseUser();
+            firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();
+            if (status.equals("online"))
+                firebaseUser.isOnline = 1;
+            else
+                firebaseUser.isOnline = 0;
+
+            firebaseUser.lastActivity = ServerValue.TIMESTAMP;
+            if (user.profileImage.isEmpty())
+                firebaseUser.profilePic = "http://koobi.co.uk:3000/uploads/default_user.png";
+            else
+                firebaseUser.profilePic = user.profileImage;
+
+            firebaseUser.userName = user.userName;
+            firebaseUser.uId = user.id;
+            firebaseUser.authToken = user.authToken;
+            firebaseUser.userType = user.userType;
+            mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
+
+          /*  //  if(!user.id.equals("")){
+            OnlineInfo onlineInfo = new OnlineInfo();
+            onlineInfo.lastOnline = status;
+            onlineInfo.email = session.getUser().email;
+
+            database.child(Constant.online)
+                    .child(String.valueOf(session.getUser().id)).setValue(onlineInfo);
+            //}*/
+        }
+
     }
 }

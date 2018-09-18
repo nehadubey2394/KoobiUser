@@ -47,6 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import views.zoomage.ZoomageView;
+
 public class CertificateActivity extends AppCompatActivity implements OnCertificateClickListener{
     private List<Certificate> certificates;
     private CertificatesListAdapter certificatesListAdapter;
@@ -191,14 +193,14 @@ public class CertificateActivity extends AppCompatActivity implements OnCertific
     }
 
     private void showLargeImage(Certificate certificate){
-        View dialogView = View.inflate(CertificateActivity.this, R.layout.dialog_large_image_view, null);
+        View dialogView = View.inflate(CertificateActivity.this, R.layout.dialog_view_certificate, null);
         final Dialog dialog = new Dialog(CertificateActivity.this,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
         //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
         dialog.setContentView(dialogView);
 
-        ImageView ivCertificate = dialogView.findViewById(R.id.ivCertificate);
+        ZoomageView ivCertificate = dialogView.findViewById(R.id.post_image);
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
 
         Picasso.with(CertificateActivity.this).load(certificate.certificateImage).

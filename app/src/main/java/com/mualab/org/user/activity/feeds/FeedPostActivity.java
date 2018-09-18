@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -34,6 +32,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -59,23 +58,22 @@ import com.hendraanggrian.widget.SocialAutoCompleteTextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.feeds.adapter.UserSuggessionAdapter;
 import com.mualab.org.user.activity.main.MainActivity;
-import com.mualab.org.user.activity.people_tag.activity.DemoTagActivity;
 import com.mualab.org.user.activity.people_tag.activity.PeopleTagActivity;
 import com.mualab.org.user.activity.people_tag.instatag.TagToBeTagged;
 import com.mualab.org.user.activity.people_tag.models.TagDetail;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.utils.constants.Constant;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.data.model.MediaUri;
 import com.mualab.org.user.data.model.booking.Address;
 import com.mualab.org.user.data.remote.GioAddressTask;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.data.remote.UploadImage;
+import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.LocationDetector;
 import com.mualab.org.user.utils.LocationUtil;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.utils.media.ImageVideoUtil;
 import com.mualab.org.user.videocompressor.video.MediaController;
 
@@ -136,6 +134,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     private  long mLastClickTime = 0;
     private String tagJson="",tagIdsArray="";
     private  List<ArrayList<TagToBeTagged>> listOfValues ;
+    private Button btn_post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -309,6 +308,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             iv_postimage.setImageBitmap(thumbImage);
 
         edCaption = findViewById(R.id.edCaption);
+        btn_post = findViewById(R.id.btn_post);
         tvMediaSize = findViewById(R.id.tvMediaSize);
         tvTagCount = findViewById(R.id.tvTagCount);
         // progressBar = findViewById(R.id.progress_bar);
@@ -319,6 +319,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.ll_tagPepole).setOnClickListener(this);
         findViewById(R.id.ll_tagService).setOnClickListener(this);
         findViewById(R.id.tv_post).setOnClickListener(this);
+        btn_post.setOnClickListener(this);
 
         //hashtagAdapter = new HashtagAdapter(this);
         edCaption.setThreshold(1);
@@ -471,12 +472,29 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                     findViewById(R.id.ly_location).setEnabled(false);
                     Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(FeedPostActivity.this);
                     startActivityForResult(intent, Constant.PLACE_AUTOCOMPLETE_REQUEST_CODE);
-                } catch (GooglePlayServicesRepairableException e) {
-                    // TODO: Handle the error.
-                } catch (GooglePlayServicesNotAvailableException e) {
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
                 }
                 break;
+            case R.id.btn_post:
+                if (listOfValues.size()!=0){
+                    Gson gson = new GsonBuilder().create();
+                    ArrayList<String> tagIdsArrayList = new ArrayList<>();
+                    for (int i = 0; i<listOfValues.size();i++){
+                        for (TagToBeTagged tag : listOfValues.get(i)){
+                            HashMap<String,TagDetail> tagDetails = tag.getTagDetails();
+                            for(Map.Entry map  :  tagDetails.entrySet() ) {
+                                TagDetail tagDetail = tagDetails.get(map.getKey());
+                                tagIdsArrayList.add(tagDetail.tagId);
+                            }
+                        }
+                    }
+                    tagIdsArray = gson.toJson(tagIdsArrayList);
+                }
+                feedPostPrerareData();
+                break;
+
+
         }
     }
 
@@ -522,7 +540,12 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 //sendToBackGroundService();
             } else if (feedType == Constant.IMAGE_STATE) {
                 showProgressBar();
-                apiCallForUploadImages();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        apiCallForUploadImages();
+                    }
+                }).start();
             }
 
         } else {
@@ -741,17 +764,27 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 uris,
                 new UploadImage.Listner() {
                     @Override
-                    public void onResponce(String responce) {
-                        findViewById(R.id.tv_post).setEnabled(true);
-                        hideProgressBar();
-                        parseResponce(responce);
+                    public void onResponce(final String responce) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.tv_post).setEnabled(true);
+                                hideProgressBar();
+                                parseResponce(responce);
+                            }
+                        });
                     }
 
                     @Override
                     public void onError(String error) {
-                        findViewById(R.id.tv_post).setEnabled(true);
-                        hideProgressBar();
-                        MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.tv_post).setEnabled(true);
+                                hideProgressBar();
+                                MyToast.getInstance(FeedPostActivity.this).showSmallMessage(getString(R.string.msg_some_thing_went_wrong));
+                            }
+                        });
                     }
                 }).execute();
     }
@@ -1059,5 +1092,4 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
         }
     }
-
 }

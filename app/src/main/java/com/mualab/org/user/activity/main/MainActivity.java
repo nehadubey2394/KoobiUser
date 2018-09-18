@@ -18,11 +18,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
-import com.mualab.org.user.activity.booking_histories.activity.BookingHisoryActivity;
+import com.mualab.org.user.activity.chat.ChatHistoryActivity;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
 import com.mualab.org.user.activity.feeds.fragment.FeedsFragment;
@@ -30,8 +35,9 @@ import com.mualab.org.user.activity.gellery.GalleryActivity;
 import com.mualab.org.user.activity.my_profile.activity.UserProfileActivity;
 import com.mualab.org.user.activity.notification.fragments.NotificationFragment;
 import com.mualab.org.user.activity.searchBoard.fragment.SearchBoardFragment;
-import com.mualab.org.user.activity.story.StoreActivityTest;
+import com.mualab.org.user.activity.story.StoriesActivity;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.SearchBoard.RefineSearchBoard;
 import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.model.feeds.LiveUserInfo;
@@ -41,6 +47,7 @@ import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.utils.network.NetworkChangeReceiver;
 import com.squareup.picasso.Picasso;
 
@@ -53,21 +60,23 @@ import java.util.Map;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private ImageButton ibtnLeaderBoard,ibtnFeed,ibtnAddFeed,ibtnSearch,ibtnNotification;
-    private int clickedId = 0;
-    public ImageView ivHeaderBack,ivHeaderUser,ivAppIcon,ibtnChat;
+    private static final int REQUEST_ADD_NEW_STORY = 8719;
+    public ImageView ivHeaderBack, ivHeaderUser, ivAppIcon, ibtnChat;
     public TextView tvHeaderTitle;
     public RelativeLayout rootLayout;
     public CardView rlHeader1;
-    private static final int REQUEST_ADD_NEW_STORY = 8719;
     public RefineSearchBoard item;
-    private  long mLastClickTime = 0;
+    private ImageButton ibtnLeaderBoard, ibtnFeed, ibtnAddFeed, ibtnSearch, ibtnNotification;
+    private int clickedId = 0;
+    private long mLastClickTime = 0;
     private ArrayList<LiveUserInfo> liveUserList;
+    private boolean doubleBackToExitPressedOnce;
+    private Runnable runnable;
 
-    public void setBgColor(int color){
-        if(rlHeader1!=null)
+    public void setBgColor(int color) {
+        if (rlHeader1 != null)
             rlHeader1.setBackgroundColor(getResources().getColor(color));
-        if(rootLayout!=null){
+        if (rootLayout != null) {
             rootLayout.setBackgroundColor(getResources().getColor(color));
         }
     }
@@ -82,17 +91,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         // FirebaseCrash.report(new Throwable("Build Date: 16/04/2018"));
 
         Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
-        Mualab.feedBasicInfo.put("userId", ""+ Mualab.currentUser.id);
+        Mualab.feedBasicInfo.put("userId", "" + Mualab.currentUser.id);
         Mualab.feedBasicInfo.put("age", "25");
         Mualab.feedBasicInfo.put("gender", "male");
         Mualab.feedBasicInfo.put("city", "indore");
         Mualab.feedBasicInfo.put("state", "MP");
         Mualab.feedBasicInfo.put("country", "India");
 
-        final NoConnectionDialog network =  new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
+        getUserDetail();
+
+        final NoConnectionDialog network = new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
             @Override
             public void onNetworkChange(Dialog dialog, boolean isConnected) {
-                if(isConnected){
+                if (isConnected) {
                     dialog.dismiss();
                 }
             }
@@ -102,22 +113,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         networkChangeReceiver.setListner(new NetworkChangeReceiver.Listner() {
             @Override
             public void onNetworkChange(boolean isConnected) {
-                if(isConnected){
+                if (isConnected) {
                     network.dismiss();
-                }else network.show();
+                } else network.show();
             }
         });
 
         Bundle bundle = getIntent().getExtras();
-        if (bundle!=null){
+        if (bundle != null) {
             item = (RefineSearchBoard) bundle.getSerializable("refineSearchBoard");
         }
 
         initView();
+        addFragment(SearchBoardFragment.newInstance(item, ""), false);
 
         /*Manage Notification*/
         Intent intent = getIntent();
-        if (intent!=null){
+        if (intent != null) {
             if (intent.getStringExtra("notifyId") != null) {
                 String type = intent.getStringExtra("type");
                 String notifyId = intent.getStringExtra("notifyId");
@@ -128,70 +140,76 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 switch (notifincationType) {
                     case "13":
                         ibtnFeed.callOnClick();
+                        replaceFragment(FeedsFragment.newInstance(1), false);
                         LiveUserInfo me = new LiveUserInfo();
                         me.id = Integer.parseInt(notifyId);
                         me.userName = userName;
                         me.profileImage = urlImageString;
                         me.storyCount = 0;
                         liveUserList.add(me);
-                        Intent intent_story = new Intent(MainActivity.this, StoreActivityTest.class);
+                        Intent intent_story = new Intent(MainActivity.this, StoriesActivity.class);
                         Bundle args = new Bundle();
                         args.putSerializable("ARRAYLIST", liveUserList);
-                        args.putInt("position",0);
+                        args.putInt("position", 0);
                         intent_story.putExtra("BUNDLE", args);
-                        startActivity(intent_story);
+                        startActivityForResult(intent_story, Constant.FEED_FRAGMENT);
                         break;
 
                     case "7":
                         ibtnFeed.callOnClick();
-                        Intent intent1=new Intent(MainActivity.this, FeedSingleActivity.class);
-                        intent1.putExtra("feedId",notifyId);
-                        startActivity(intent1);
+                        replaceFragment(FeedsFragment.newInstance(1), false);
+                        Intent intent1 = new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent1.putExtra("feedId", notifyId);
+                        startActivityForResult(intent1, Constant.FEED_FRAGMENT);
 
                         break;
 
                     case "11":
                         ibtnFeed.callOnClick();
-                        Intent intent_like_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
-                        intent_like_comment.putExtra("feedId",notifyId);
-                        startActivity(intent_like_comment);
+                        replaceFragment(FeedsFragment.newInstance(1), false);
+                        Intent intent_like_comment = new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_like_comment.putExtra("feedId", notifyId);
+                        startActivityForResult(intent_like_comment, Constant.FEED_FRAGMENT);
 
                         break;
 
                     case "9":
                         ibtnFeed.callOnClick();
-                        Intent intent_comment=new Intent(MainActivity.this, FeedSingleActivity.class);
-                        intent_comment.putExtra("feedId",notifyId);
-                        startActivity(intent_comment);
+                        replaceFragment(FeedsFragment.newInstance(1), false);
+                        Intent intent_comment = new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_comment.putExtra("feedId", notifyId);
+                        startActivityForResult(intent_comment, Constant.FEED_FRAGMENT);
                         break;
 
                     case "10":
                         ibtnFeed.callOnClick();
-                        Intent intent_like_post=new Intent(MainActivity.this, FeedSingleActivity.class);
-                        intent_like_post.putExtra("feedId",notifyId);
-                        startActivity(intent_like_post);
+                        replaceFragment(FeedsFragment.newInstance(1), false);
+                        Intent intent_like_post = new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_like_post.putExtra("feedId", notifyId);
+                        startActivityForResult(intent_like_post, Constant.FEED_FRAGMENT);
 
                         break;
 
                     case "12":
                         ibtnFeed.callOnClick();
+                        replaceFragment(FeedsFragment.newInstance(1), false);
                         if (userType.equals("user")) {
                             Intent intent_user_profile = new Intent(MainActivity.this, UserProfileActivity.class);
                             intent_user_profile.putExtra("userId", notifyId);
-                            startActivity(intent_user_profile);
+                            startActivityForResult(intent_user_profile, Constant.FEED_FRAGMENT);
 
                         } else {
                             Intent intent_user_profile = new Intent(MainActivity.this, ArtistProfileActivity.class);
                             intent_user_profile.putExtra("feedId", notifyId);
-                            startActivity(intent_user_profile);
+                            startActivityForResult(intent_user_profile, Constant.FEED_FRAGMENT);
                         }
 
                         break;
                     case "16":
                         ibtnFeed.callOnClick();
-                        Intent intent_taged =new Intent(MainActivity.this, FeedSingleActivity.class);
-                        intent_taged.putExtra("feedId",notifyId);
-                        startActivity(intent_taged);
+                        Intent intent_taged = new Intent(MainActivity.this, FeedSingleActivity.class);
+                        intent_taged.putExtra("feedId", notifyId);
+                        startActivityForResult(intent_taged, Constant.FEED_FRAGMENT);
 
                         break;
 
@@ -200,7 +218,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         booking1.putExtra("bookingId", notifyId);
                         booking1.putExtra("artistName", userName);
                         booking1.putExtra("artistProfile", urlImageString);
-                        booking1.putExtra("key","main");
+                        booking1.putExtra("key", "main");
                         startActivity(booking1);
                         break;
 
@@ -209,7 +227,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         booking2.putExtra("bookingId", notifyId);
                         booking2.putExtra("artistName", userName);
                         booking2.putExtra("artistProfile", urlImageString);
-                        booking2.putExtra("key","main");
+                        booking2.putExtra("key", "main");
                         startActivity(booking2);
                         break;
 
@@ -218,7 +236,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         booking3.putExtra("bookingId", notifyId);
                         booking3.putExtra("artistName", userName);
                         booking3.putExtra("artistProfile", urlImageString);
-                        booking3.putExtra("key","main");
+                        booking3.putExtra("key", "main");
 
                         startActivity(booking3);
                         break;
@@ -228,7 +246,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         booking4.putExtra("bookingId", notifyId);
                         booking4.putExtra("artistName", userName);
                         booking4.putExtra("artistProfile", urlImageString);
-                        booking4.putExtra("key","main");
+                        booking4.putExtra("key", "main");
                         startActivity(booking4);
                         break;
 
@@ -236,8 +254,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         Intent booking5 = new Intent(MainActivity.this, BookingDetailActivity.class);
                         booking5.putExtra("bookingId", notifyId);
                         booking5.putExtra("artistName", userName);
-                        booking5.putExtra("notification_list","list");
-                        booking5.putExtra("key","main");
+                        booking5.putExtra("notification_list", "list");
+                        booking5.putExtra("key", "main");
                         booking5.putExtra("artistProfile", urlImageString);
                         startActivity(booking5);
                         break;
@@ -247,14 +265,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         booking6.putExtra("bookingId", notifyId);
                         booking6.putExtra("artistName", userName);
                         booking6.putExtra("artistProfile", urlImageString);
-                        booking6.putExtra("key","main");
+                        booking6.putExtra("key", "main");
 
                         startActivity(booking6);
                         break;
                 }
             }
 
-            if (intent.hasExtra("FeedPostActivity")){
+            if (intent.hasExtra("FeedPostActivity")) {
                 setInactiveTab();
                 clickedId = 2;
                 tvHeaderTitle.setText(getString(R.string.app_name));
@@ -265,12 +283,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 ivAppIcon.setVisibility(View.VISIBLE);
                 ivHeaderBack.setVisibility(View.GONE);
                 replaceFragment(FeedsFragment.newInstance(1), false);
-            }else
-                addFragment(SearchBoardFragment.newInstance(item,""), false);
+            }
+
         }
     }
 
     private void initView() {
+
         liveUserList = new ArrayList<>();
         ibtnLeaderBoard = findViewById(R.id.ibtnLeaderBoard);
         ibtnFeed = findViewById(R.id.ibtnFeed);
@@ -285,7 +304,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderUser.setVisibility(View.VISIBLE);
         User user = Mualab.getInstance().getSessionManager().getUser();
 
-        if (!user.profileImage.isEmpty()){
+        if (!user.profileImage.isEmpty()) {
             Picasso.with(MainActivity.this).load(user.profileImage).placeholder(R.drawable.defoult_user_img).
                     fit().into(ivHeaderUser);
         }
@@ -308,19 +327,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ivHeaderBack.setVisibility(View.GONE);
     }
 
-    public void openNewStoryActivity(){
+    public void openNewStoryActivity() {
         showToast(getString(R.string.under_development));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Constant.FEED_FRAGMENT:
+                setInactiveTab();
+                clickedId = 2;
+                tvHeaderTitle.setText(getString(R.string.app_name));
+                ibtnFeed.setImageResource(R.drawable.active_feeds_ico);
+                ivHeaderUser.setVisibility(View.VISIBLE);
+                ibtnChat.setVisibility(View.VISIBLE);
+                tvHeaderTitle.setVisibility(View.GONE);
+                ivAppIcon.setVisibility(View.VISIBLE);
+                ivHeaderBack.setVisibility(View.GONE);
+                replaceFragment(FeedsFragment.newInstance(1), false);
+                break;
 
-        if(requestCode == RESULT_OK && requestCode == 734){
-            ibtnFeed.callOnClick();
+            case 734:
+                setInactiveTab();
+                clickedId = 2;
+                tvHeaderTitle.setText(getString(R.string.app_name));
+                ibtnFeed.setImageResource(R.drawable.active_feeds_ico);
+                ivHeaderUser.setVisibility(View.VISIBLE);
+                ibtnChat.setVisibility(View.VISIBLE);
+                tvHeaderTitle.setVisibility(View.GONE);
+                ivAppIcon.setVisibility(View.VISIBLE);
+                ivHeaderBack.setVisibility(View.GONE);
+                replaceFragment(FeedsFragment.newInstance(1), false);
+                break;
+
+
+
         }
-
-        if(resultCode == RESULT_OK && requestCode==REQUEST_ADD_NEW_STORY){
 
             /*if(resultCode == 7891){
 
@@ -335,39 +378,39 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
             }*/
-        }
+
     }
 
     @Override
     public void onClick(View view) {
-        if (SystemClock.elapsedRealtime() - mLastClickTime < 700){
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 700) {
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
 
-        switch (view.getId()){
+        switch (view.getId()) {
 
-            case R.id.ivHeaderBack :
+            case R.id.ivHeaderBack:
                 onBackPressed();
                 break;
 
-            case R.id.ivChat :
-                openNewStoryActivity();
-                //MyToast.getInstance(MainActivity.this).showSmallCustomToast("Under developement");
+            case R.id.ivChat:
+                Intent intent_chat=new Intent(MainActivity.this, ChatHistoryActivity.class);
+                startActivity(intent_chat);
                 break;
 
-            case R.id.ivAppIcon :
+            case R.id.ivAppIcon:
                 break;
 
-            case R.id.ivUserProfile :
-                User user = Mualab.getInstance ().getSessionManager().getUser();
+            case R.id.ivUserProfile:
+                User user = Mualab.getInstance().getSessionManager().getUser();
                 Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
-                intent.putExtra("userId",String.valueOf(user.id));
+                intent.putExtra("userId", String.valueOf(user.id));
                 startActivity(intent);
                 break;
 
-            case R.id.ibtnLeaderBoard :
-                if (clickedId!=1){
+            case R.id.ibtnLeaderBoard:
+                if (clickedId != 1) {
                     setInactiveTab();
                     clickedId = 1;
                     tvHeaderTitle.setText(getString(R.string.title_searchboard));
@@ -381,8 +424,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
 
-            case R.id.ibtnFeed :
-                if (clickedId!=2) {
+            case R.id.ibtnFeed:
+                if (clickedId != 2) {
                     setInactiveTab();
                     clickedId = 2;
                     tvHeaderTitle.setText(getString(R.string.app_name));
@@ -396,7 +439,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
 
-            case R.id.ibtnAddFeed :
+            case R.id.ibtnAddFeed:
                 // if (clickedId!=6) {
                 // setInactiveTab();
                 //    clickedId = 6;
@@ -408,15 +451,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     ivAppIcon.setVisibility(View.GONE);*/
 
                 Intent in = new Intent(MainActivity.this, GalleryActivity.class);
-                startActivityForResult(in,734);
+                startActivityForResult(in, 734);
 
 
                 //    }
 
                 break;
 
-            case R.id.ibtnSearch :
-                if (clickedId!=4) {
+            case R.id.ibtnSearch:
+                if (clickedId != 4) {
                     setInactiveTab();
                     clickedId = 4;
                     tvHeaderTitle.setText(R.string.title_explore);
@@ -429,8 +472,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
 
-            case R.id.ibtnNotification :
-                if (clickedId!=5) {
+            case R.id.ibtnNotification:
+                if (clickedId != 5) {
                     setInactiveTab();
                     clickedId = 5;
                     tvHeaderTitle.setText(getString(R.string.title_searchboard));
@@ -446,7 +489,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private void setInactiveTab(){
+    private void setInactiveTab() {
         rlHeader1.setVisibility(View.VISIBLE);
         ibtnLeaderBoard.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.inactive_leaderboard_ico));
         ibtnFeed.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.inactive_feeds_ico));
@@ -456,8 +499,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-    private boolean doubleBackToExitPressedOnce;
-    private Runnable runnable;
     @Override
     public void onBackPressed() {
         /* Handle double click to finish activity*/
@@ -484,10 +525,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private void addMyStory( Bitmap bitmap){
+    private void addMyStory(Bitmap bitmap) {
 
-        if(ConnectionDetector.isConnected()){
-            Map<String,String> map = new HashMap<>();
+        if (ConnectionDetector.isConnected()) {
+            Map<String, String> map = new HashMap<>();
             map.put("type", "image");
 
             HttpTask task = new HttpTask(new HttpTask.Builder(this, "addMyStory", new HttpResponceListner.Listener() {
@@ -500,8 +541,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         if (status.equalsIgnoreCase("success")) {
                             showToast(message);
                             finish();
-                        }
-                        else showToast(message);
+                        } else showToast(message);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -509,18 +549,50 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 @Override
                 public void ErrorListener(VolleyError error) {
-                    Log.d("res:", ""+error.getLocalizedMessage());
-                }})
+                    Log.d("res:", "" + error.getLocalizedMessage());
+                }
+            })
                     .setParam(map)
                     .setAuthToken(Mualab.getInstance().getSessionManager().getUser().authToken)
                     .setProgress(true));
             task.postImage("myStory", bitmap);
-        }else showToast(getString(R.string.error_msg_network));
+        } else showToast(getString(R.string.error_msg_network));
     }
 
-    private void showToast(String str){
-        if(!TextUtils.isEmpty(str))
+    private void showToast(String str) {
+        if (!TextUtils.isEmpty(str))
             MyToast.getInstance(this).showSmallCustomToast(str);
+    }
+
+    private void getUserDetail(){
+        final Session session = Mualab.getInstance().getSessionManager();
+        final User user = session.getUser();
+        String  myUid = String.valueOf(Mualab.currentUser.id);
+
+        FirebaseDatabase.getInstance().getReference().child("users").child(myUid).
+                addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            try {
+                                FirebaseUser firebaseUser = dataSnapshot.getValue(FirebaseUser.class);
+                                if (firebaseUser != null) {
+                                    if (!firebaseUser.authToken.equals(user.authToken)){
+                                        session.logout();
+                                    }
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

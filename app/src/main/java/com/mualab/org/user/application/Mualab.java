@@ -13,11 +13,18 @@ import com.android.volley.toolbox.Volley;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.mualab.org.user.BuildConfig;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.model.Location;
 import com.mualab.org.user.data.model.User;
+import com.mualab.org.user.utils.Util;
+import com.mualab.org.user.utils.constants.Constant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,17 +33,17 @@ import java.util.Map;
  * Created by mindiii on 21/12/17.
  **/
 
-public class Mualab extends Application {
+public class Mualab extends Application implements LifeCycleDelegateListner {
 
     public static final String TAG = Mualab.class.getSimpleName();
     public static boolean IS_DEBUG_MODE = BuildConfig.DEBUG;
-
+    private Util utility;
     public static Mualab mInstance;
     public static User currentUser;
     public static Location currentLocation;
     public static Location currentLocationForBooking;
-   // public static DatabaseReference ref;
-   public static boolean isStoryUploaded;
+    // public static DatabaseReference ref;
+    public static boolean isStoryUploaded;
 
     private Session session;
     private RequestQueue mRequestQueue;
@@ -66,12 +73,17 @@ public class Mualab extends Application {
         currentLocationForBooking = new Location();
         FirebaseApp.initializeApp(this);
         session.setIsOutCallFilter(false);
-       // ref = FirebaseDatabase.getInstance().getReference();
+        // ref = FirebaseDatabase.getInstance().getReference();
+
+        utility = new Util(getApplicationContext());
 
         AndroidNetworking.initialize(getApplicationContext());
         if (BuildConfig.DEBUG) {
             AndroidNetworking.enableLogging(HttpLoggingInterceptor.Level.BODY);
         }
+
+        AppLifeCycle lifecycleHandler = new AppLifeCycle(this);
+        registerLifecycle(lifecycleHandler);
     }
 
     public Session getSessionManager() {
@@ -139,52 +151,25 @@ public class Mualab extends Application {
         }
     }
 
-
-/*    public ArrayList<TaggedPhoto> getTaggedPhotos() {
-        String json = getString(Keys.TAGGED_PHOTOS.getKeyName());
-        ArrayList<TaggedPhoto> taggedPhotoArrayList;
-        if (!json.equals("")) {
-            taggedPhotoArrayList =
-                    new Gson().fromJson(json, new TypeToken<ArrayList<TaggedPhoto>>() {
-                    }.getType());
-        } else {
-            taggedPhotoArrayList = new ArrayList<>();
-        }
-        return taggedPhotoArrayList;
-    }
-
-    public void setTaggedPhotos(ArrayList<TaggedPhoto> taggedPhotoArrayList) {
-        putString(Keys.TAGGED_PHOTOS.getKeyName(), toJson(taggedPhotoArrayList));
-    }*/
-
     public void clear() {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.clear();
         editor.apply();
     }
 
-    private enum Keys {
-        TAGGED_PHOTOS("TAGGED_PHOTOS");
-        private final String keyName;
-
-        Keys(String label) {
-            this.keyName = label;
-        }
-
-        public String getKeyName() {
-            return keyName;
-        }
+    @Override
+    public void onAppBackgrounded() {
+        utility.goToOnlineStatus(mInstance, Constant.offline);
     }
 
+    @Override
+    public void onAppForegrounded() {
+        utility.goToOnlineStatus(mInstance, Constant.online);
+    }
 
-    public static String toJson(Object object) {
-        try {
-            Gson gson = new Gson();
-            return gson.toJson(object);
-        } catch (Exception e) {
-            Log.e(SHARED_PREF_NAME, "Error In Converting ModelToJson", e);
-        }
-        return "";
+    private void registerLifecycle (AppLifeCycle lifecycleHandler){
+        registerActivityLifecycleCallbacks(lifecycleHandler);
+        registerComponentCallbacks(lifecycleHandler);
     }
 
 }

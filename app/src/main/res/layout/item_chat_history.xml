@@ -1,16 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginRight="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="1dp"
+    android:orientation="vertical"
     android:background="@color/white">
+
+    <View
+        android:id="@+id/viewTop"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:visibility="gone"
+        android:background="@color/light_gray_shadow"
+        />
+
+    <RelativeLayout
+        android:id="@+id/llHistoryDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:visibility="gone"
+       >
+
+        <View
+            android:id="@+id/v1"
+            android:layout_width="5dp"
+            android:layout_height="1dp"
+            android:background="@color/light_gray_shadow"
+            android:layout_centerVertical="true"
+            />
+
+        <TextView
+            android:id="@+id/tvHistoryTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/v1"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:textSize="10sp"
+            android:layout_centerVertical="true"
+            android:text="Today"
+            android:fontFamily="@font/nunito_regular"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/grey"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_toRightOf="@+id/tvHistoryTime"
+            android:background="@color/light_gray_shadow"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="86dp"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/linear"
+        android:id="@+id/rlChatHistory"
         android:gravity="center_horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -20,18 +77,20 @@
             app:civ_border_width="1.6dp"
             android:layout_centerVertical="true"
             android:src="@drawable/defoult_user_img"
-            android:background="@drawable/gradient_new_circle_img"
+            android:background="@drawable/chat_history_circle_border"
             app:civ_border_color="@color/transparent"
             android:layout_marginLeft="5dp"
             />
 
         <LinearLayout
+            android:id="@+id/llMsg"
             android:layout_toRightOf="@+id/ivProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
+            android:layout_marginLeft="8dp"
             android:padding="1dp"
-            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/llCount"
+            android:layout_marginTop="18dp"
             android:orientation="vertical">
 
             <TextView
@@ -39,13 +98,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="neha"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:ellipsize="end"
                 android:gravity="left"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/dark_grey"
-                android:fontFamily="@font/roboto_regular"
-                android:textSize="16sp"
+                android:maxWidth="200dp"
+                android:textColor="@color/text_color"
+                android:fontFamily="@font/nunito_regular"
+                android:textSize="17sp"
                 />
 
 
@@ -58,10 +117,10 @@
                 android:ellipsize="end"
                 android:gravity="left"
                 android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/gray"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/chatting_time_gray"
                 android:fontFamily="@font/roboto_regular"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 />
 
 
@@ -69,13 +128,14 @@
 
 
         <LinearLayout
+            android:id="@+id/llCount"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:padding="4dp"
             android:orientation="vertical"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="2dp"
+            android:layout_marginRight="4dp"
             >
 
             <TextView
@@ -84,19 +144,19 @@
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:layout_gravity="right"
-                android:fontFamily="@font/roboto_regular"
-                android:textSize="12sp"
+                android:fontFamily="@font/nunito_regular"
+                android:textSize="13sp"
                 android:textColor="@color/gray"
                 />
 
 
             <RelativeLayout
+                android:id="@+id/rlMsgCount"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
                 android:gravity="center"
-                android:padding="4dp"
+                android:layout_gravity="right"
                 android:layout_marginTop="4dp"
-                android:layout_gravity="center_vertical"
                 android:background="@drawable/bg_blue_circle"
                 >
 
@@ -118,16 +178,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:fontFamily="@font/roboto_regular"
+                android:fontFamily="@font/nunito_regular"
                 android:textSize="12sp"
-                android:textColor="@color/chatbox_gray"
+                android:textColor="@color/text_color"
                 android:layout_marginTop="4dp"
                 android:layout_gravity="right"
                 />
 
         </LinearLayout>
 
-
     </RelativeLayout>
 
-</RelativeLayout>
+    <View
+        android:id="@+id/vBottom"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
+        android:visibility="gone"
+        android:background="@color/light_gray_shadow"
+        />
+
+
+</LinearLayout>

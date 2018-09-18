@@ -335,8 +335,8 @@
     <string name="following">Following</string>
     <string name="follow">Follow</string>
     <string name="no_like_yet">No like yet</string>
-    <!--<string name="no_data_found">No data found.</string>-->
-    <string name="no_data_found">No results found…</string>
+    <string name="no_res_found">No data found</string>
+    <string name="no_data_found">No results found</string>
     <string name="next">Next</string>
 
 
@@ -425,4 +425,13 @@
     <string name="send">Send</string>
     <string name="enter_text">Please enter text</string>
     <string name="write_message">Write a message</string>
+    <string name="clear_chat">Clear Chat</string>
+    <string name="add_to_favourite">Add To Favourite</string>
+    <string name="mute_chat">Mute Chat</string>
+    <string name="block_user">Block User</string>
+    <string name="report_user">Report User</string>
+    <string name="delete_conversation">Delete Conversation?</string>
+    <string name="you_will_be_not_able_to_recover_this_converstion">You will be not able to recover \nthis converstion</string>
+    <string name="are_you_want_to_block">Are you want to block</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

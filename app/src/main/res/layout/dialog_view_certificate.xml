@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/white_back_ico"
+            android:layout_marginLeft="5dp"
+            />
+
+        <TextView
+            android:id="@+id/tvCertiTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_certificate"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            android:fontFamily="@font/roboto_bold"
+            />
+
+    </RelativeLayout>
+
+    <views.zoomage.ZoomageView
+        android:id="@+id/post_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:transitionName="image"
+        tools:ignore="UnusedAttribute"/>
+
+
+
+</RelativeLayout>

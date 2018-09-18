@@ -231,7 +231,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                         @Override
                         public void onPageSelected(int pos) {
-                         //   onImageSwipeListener
+                            //   onImageSwipeListener
                             Feeds feed = feedItems.get(imageHolder.getAdapterPosition());
                             feed.viewPagerlastPos = pos;
                             addBottomDots(imageHolder.ll_Dot, feed.feed.size(), pos);

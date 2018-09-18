@@ -67,7 +67,7 @@ import java.util.Map;
 public class PeopleTagActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView mRecyclerViewSomeOneToBeTagged;
     private LinearLayout mHeaderSearchSomeOne,llSearchPeople;
-   // private RelativeLayout mHeaderSomeOneToBeTagged;
+    // private RelativeLayout mHeaderSomeOneToBeTagged;
     private int mAddTagInX, mAddTagInY;
     private PeopleAdapter mSomeOneAdapter;
     private List<String> images;
@@ -91,7 +91,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+        //  StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
 
         setContentView(R.layout.activity_people_tag);
         list = new ArrayList<>();
@@ -110,7 +110,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         progress_bar = findViewById(R.id.progress_bar);
         tv_msg = findViewById(R.id.tv_msg);
         ll_Dot = findViewById(R.id.ll_Dot);
-      //  topLayout = findViewById(R.id.topLayout);
+        //  topLayout = findViewById(R.id.topLayout);
 
         TextView tvCancel = findViewById(R.id.tvCancel);
 
@@ -127,7 +127,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
         SearchView searchview = findViewById(R.id.searchview);
 
         RecyclerView rycTags = findViewById(R.id.rycTags);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         rycTags.setLayoutManager(layoutManager);
         taggedArrayList = new ArrayList<>();
         tagListAdapter = new TagListAdapter(PeopleTagActivity.this, taggedArrayList,taggedImgMap);
@@ -510,7 +510,7 @@ public class PeopleTagActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onPeopleClicked(final ExSearchTag someOne, final int position) {
-           // mHeaderSomeOneToBeTagged.setVisibility(View.VISIBLE);
+            // mHeaderSomeOneToBeTagged.setVisibility(View.VISIBLE);
 //            topLayout.setVisibility(View.VISIBLE);
             runOnUiThread(new Runnable() {
                 @Override
