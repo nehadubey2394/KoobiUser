@@ -1,33 +1,26 @@
 package com.mualab.org.user.activity.chat.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.feeds.adapter.CommentAdapter;
-import com.mualab.org.user.data.model.feeds.Feeds;
 
 import java.util.ArrayList;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private Context context;
     private ArrayList<String> arrayList;
-    private LayoutInflater inflter;
     private Listener listener;
 
     public MenuAdapter(Context context, ArrayList<String> arrayList,Listener listener) {
         this.arrayList = arrayList;
         this.context = context;
         this.listener=listener;
-        inflter = (LayoutInflater.from(context));
 
     }
     public interface Listener{

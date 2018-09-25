@@ -3,36 +3,30 @@ package com.mualab.org.user.activity.chat.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ablanco.zoomy.Zoomy;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.chat.ChatActivity;
+import com.mualab.org.user.activity.chat.ShowZoomImageActivity;
 import com.mualab.org.user.activity.chat.listner.DateTimeScrollListner;
 import com.mualab.org.user.activity.chat.model.Chat;
-import com.mualab.org.user.activity.feeds.PreviewImageActivity;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +53,6 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
-
         if(viewType == VIEW_TYPE_ME){
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_right_side_view,parent,false);
             return new MyViewHolder(view);
@@ -169,6 +162,19 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            switch (chat.readStatus){
+                case 0:
+                    iv_msg_status.setImageResource(R.drawable.ico_msg_received);
+                    break;
+                case 1:
+                    iv_msg_status.setImageResource(R.drawable.ic_ico_msg_sent);
+                    break;
+                case 2:
+                    iv_msg_status.setImageResource(R.drawable.ico_msg_read);
+                    break;
+            }
+
             if (listener!=null)
                 listener.onScrollChange(position,chat.timestamp);
 
@@ -180,13 +186,9 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 case R.id.iv_for_sender:
                     Chat chat = chatList.get(getAdapterPosition());
                     if(chat.messageType == 1) {
-                       /* List<String>urlList = new ArrayList<>();
-                        urlList.add(chat.message);
-                        Intent intent = new Intent(context, PreviewImageActivity.class);
-                        intent.putExtra("imageArray", (Serializable) urlList);
-                        intent.putExtra("startIndex", 0);
-                        context.startActivity(intent);*/
-                        showZoomImage(chat);
+                        Intent intent = new Intent(context, ShowZoomImageActivity.class);
+                        intent.putExtra("url", chat.message);
+                        context.startActivity(intent);
                     }
                     break;
             }
@@ -218,6 +220,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 progress_bar.setVisibility(View.VISIBLE);
                 iv_other_img.setVisibility(View.VISIBLE);
                 tv_other_msg.setVisibility(View.GONE);
+                progress_bar.setVisibility(View.VISIBLE);
 
                 Picasso.with(context)
                         .load(chat.message).fit().into(iv_other_img, new Callback() {
@@ -263,6 +266,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             if (listener!=null)
                 listener.onScrollChange(position,chat.timestamp);
 
@@ -274,7 +278,9 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 case R.id.iv_other_img:
                     Chat chat = chatList.get(getAdapterPosition());
                     if(chat.messageType == 1) {
-                        showZoomImage(chat);
+                        Intent intent = new Intent(context, ShowZoomImageActivity.class);
+                        intent.putExtra("url", chat.message);
+                        context.startActivity(intent);
                     }
                     break;
             }
@@ -290,16 +296,22 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         final ProgressBar progress_bar = dialog.findViewById(R.id.progress_bar);
         final ImageView photoView = dialog.findViewById(R.id.photo_view);
+        final RelativeLayout rlImage = dialog.findViewById(R.id.rlImage);
+
+        Zoomy.Builder builder = new Zoomy.Builder((ChatActivity)context).target(rlImage);
+        builder.register();
+
         final ImageView btnBack = dialog.findViewById(R.id.btnBack);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.cancel();
+                Zoomy.unregister(rlImage);
             }
         });
 
-        Picasso.with(context).load(chat.message).resize(300, 300).into(photoView, new Callback() {
+        Picasso.with(context).load(chat.message).into(photoView, new Callback() {
             @Override
             public void onSuccess() {
                 progress_bar.setVisibility(View.GONE);
@@ -308,7 +320,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             public void onError() {
                 Picasso.with(context).load(chat.message)
                         .fit().placeholder(R.drawable.gallery_placeholder)
-                        .error(R.drawable.gallery_placeholder).resize(300, 300).
+                        .error(R.drawable.gallery_placeholder).
                         into(photoView);
                 progress_bar.setVisibility(View.GONE);
             }

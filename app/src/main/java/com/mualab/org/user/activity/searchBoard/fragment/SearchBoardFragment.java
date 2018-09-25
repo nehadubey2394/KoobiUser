@@ -85,7 +85,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
     private String subServiceId = "", mainServId = "", searchKeyword = "", sortType = "0", sortSearch = "distance", serviceType = "", lat = "", lng = "", time = "", day = "", date;
     private RjRefreshLayout mRefreshLayout;
 
-    public static SearchBoardFragment newInstance(RefineSearchBoard item, String param2) {
+    public static SearchBoardFragment newInstance(RefineSearchBoard item) {
         SearchBoardFragment fragment = new SearchBoardFragment();
         Bundle args = new Bundle();
         args.putSerializable("param1", item);
@@ -171,17 +171,20 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
         rvSearchBoard.setHasFixedSize(true);
         searchKeyword = "";
         KeyboardUtil.hideKeyboard(searchview, mContext);
+
         apiForDeleteAllPendingBooking();
 
         if (scrollListener == null)
             scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
                 @Override
                 public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                    // if (page==1 && totalItemsCount>5){
                     listAdapter.showLoading(true);
                     if (isFavClick)
                         apiForGetFavArtist(page, true);
                     else
                         apiForGetArtist(page, true);
+                    //  }
                 }
             };
 
@@ -284,6 +287,11 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
                 break;
 
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -689,11 +697,21 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
 
     }
 
-    @Override
+   /* @Override
     public void onDestroyView() {
         super.onDestroyView();
         Mualab.getInstance().getRequestQueue().cancelAll(TAG);
+    }*/
+
+   /* @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
     }
-
-
+*/
+   /* @Override
+    public void onDetach() {
+        super.onDetach();
+        Mualab.getInstance().getRequestQueue().cancelAll(TAG);
+    }*/
 }

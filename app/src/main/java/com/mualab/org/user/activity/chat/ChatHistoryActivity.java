@@ -58,9 +58,9 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
     private DatabaseReference databaseReference,isOppTypingRef,blockUsersRef;
     private Thread thread,blockThread;
     private String myId;
-    private ImageView ic_add_chat,ivFavChat;
+    private ImageView ic_add_chat,ivFavChat,ivChatFilter;
     private long mLastClickTime = 0;
-    private boolean isFavFilter = false;
+    private boolean isFavFilter = false,isReadFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +90,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         progress_bar = findViewById(R.id.progress_bar);
         ImageView btnBack = findViewById(R.id.btnBack);
         ivFavChat = findViewById(R.id.ivFavChat);
+        ivChatFilter = findViewById(R.id.ivChatFilter);
         ic_add_chat = findViewById(R.id.ic_add_chat);
         ImageView ivChatReq = findViewById(R.id.ivChatReq);
         ic_add_chat.setVisibility(View.VISIBLE);
@@ -118,6 +119,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         btnBack.setOnClickListener(this);
         ic_add_chat.setOnClickListener(this);
         ivFavChat.setOnClickListener(this);
+        ivChatFilter.setOnClickListener(this);
 
         getHistoryList();
 
@@ -169,6 +171,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                                                 ChatHistory chatHistory = chatHistories.get(i);
                                                 if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
                                                         equals(chatHistory.reciverId)){
+                                                    chatHistory.isTyping = true;
                                                     historyAdapter.setTyping(true,i);
                                                     break;
                                                 }
@@ -206,6 +209,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                                                 ChatHistory chatHistory = chatHistories.get(i);
                                                 if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
                                                         equals(chatHistory.reciverId)){
+                                                    chatHistory.isTyping = true;
                                                     historyAdapter.setTyping(true,i);
                                                     break;
                                                 }
@@ -231,6 +235,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                             ChatHistory chatHistory = chatHistories.get(i);
                             if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
                                     equals(chatHistory.reciverId)){
+                                chatHistory.isTyping = false;
                                 historyAdapter.setTyping(false,i);
                                 break;
                             }
@@ -398,6 +403,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
     private void getChatDataInMap(String key, ChatHistory messageOutput) {
         if (messageOutput != null) {
             if (messageOutput.type.equals("user")){
+                messageOutput.isTyping = false;
                 messageOutput.banner_date = CommonUtils.getDateBanner((Long) messageOutput.timestamp);
                 listmap.put(key, messageOutput);
                 tv_no_chat.setVisibility(View.GONE);
@@ -426,7 +432,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        historyAdapter.setTyping(false);
+        //   historyAdapter.setTyping(false);
 
         progress_bar.setVisibility(View.GONE);
         historyAdapter.notifyDataSetChanged();
@@ -471,6 +477,27 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 favouriteFilter();
                 break;
 
+            case R.id.ivChatFilter:
+                KeyboardUtil.hideKeyboard(searchview,ChatHistoryActivity.this);
+                //rlOptionMenu.setVisibility(View.VISIBLE);
+
+                int[] point = new int[2];
+
+                // Get the x, y location and store it in the location[] array
+                // location[0] = x, location[1] = y.
+                ivChatFilter.getLocationOnScreen(point);
+
+                //Initialize the Point with x, and y positions
+                Display display = getWindowManager().getDefaultDisplay();
+                Point p = new Point();
+                display.getSize(p);
+                p.x = point[0];
+                p.y = point[1];
+
+                popupForHisyory(p);
+
+                break;
+
             case R.id.ic_add_chat:
                 KeyboardUtil.hideKeyboard(searchview,ChatHistoryActivity.this);
                 //rlOptionMenu.setVisibility(View.VISIBLE);
@@ -482,13 +509,13 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 ic_add_chat.getLocationOnScreen(location);
 
                 //Initialize the Point with x, and y positions
-                Display display = getWindowManager().getDefaultDisplay();
-                Point p = new Point();
-                display.getSize(p);
-                p.x = location[0];
-                p.y = location[1];
+                Display display2 = getWindowManager().getDefaultDisplay();
+                Point p2 = new Point();
+                display2.getSize(p2);
+                p2.x = location[0];
+                p2.y = location[1];
 
-                initiatePopupWindow(p);
+                popupWindowForAdd(p2);
 
                 break;
         }
@@ -522,7 +549,46 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void initiatePopupWindow(Point p) {
+    private void readUnreadFilter(){
+        if (isReadFilter){
+            isReadFilter = false;
+            List<ChatHistory> tempArrayList = new ArrayList<>();
+
+            for (ChatHistory history : chatHistories) {
+                //if the existing elements contains the search input
+                if (history.unreadMessage==0) {
+                    tempArrayList.add(history);
+                }
+            }
+
+            if (tempArrayList.size()==0)
+                tv_no_chat.setVisibility(View.VISIBLE);
+            else
+                tv_no_chat.setVisibility(View.GONE);
+            //calling a method of the adapter class and passing the filtered list
+            historyAdapter.filterList(tempArrayList);
+
+        }else {
+            isReadFilter = true;
+            List<ChatHistory> tempArrayList = new ArrayList<>();
+
+            for (ChatHistory history : chatHistories) {
+                //if the existing elements contains the search input
+                if (history.unreadMessage>0) {
+                    tempArrayList.add(history);
+                }
+            }
+
+            if (tempArrayList.size()==0)
+                tv_no_chat.setVisibility(View.VISIBLE);
+            else
+                tv_no_chat.setVisibility(View.GONE);
+            //calling a method of the adapter class and passing the filtered list
+            historyAdapter.filterList(tempArrayList);
+        }
+    }
+
+    private void popupWindowForAdd(Point p) {
 
         try {
             LayoutInflater inflater = (LayoutInflater) ChatHistoryActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -555,6 +621,69 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                             break;
 
                         case "Join new group":
+                            break;
+
+                    }
+                }
+            });
+
+            LinearLayoutManager layoutManager=new LinearLayoutManager(ChatHistoryActivity.this);
+            recycler_view.setLayoutManager(layoutManager);
+            recycler_view.setAdapter(menuAdapter);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void popupForHisyory(Point p) {
+
+        try {
+            LayoutInflater inflater = (LayoutInflater) ChatHistoryActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            assert inflater != null;
+            View layout = inflater.inflate(R.layout.layout_popup_menu,(ViewGroup) findViewById(R.id.parent));
+            final PopupWindow popupWindow = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    true);
+            int OFFSET_X = 480;
+            int OFFSET_Y = 100;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                popupWindow.setElevation(5);
+            }
+            final ArrayList<String>arrayList = new ArrayList<>();
+            arrayList.add("All");
+            arrayList.add("All Group");
+            arrayList.add("My Group");
+            arrayList.add("Read");
+            arrayList.add("Unread");
+
+            popupWindow.showAtLocation(layout, Gravity.NO_GRAVITY, p.x + OFFSET_X, p.y + OFFSET_Y);
+            RecyclerView recycler_view = layout.findViewById(R.id.recycler_view);
+            MenuAdapter menuAdapter=new MenuAdapter(ChatHistoryActivity.this, arrayList, new MenuAdapter.Listener() {
+                @Override
+                public void onMenuClick(int pos) {
+                    String data=arrayList.get(pos);
+                    switch (data){
+                        case "All":
+                            popupWindow.dismiss();
+                            historyAdapter.filterList(chatHistories);
+                            break;
+
+                        case "All Group":
+                            break;
+
+                        case "My Group":
+                            break;
+
+                        case "Read":
+                            isReadFilter = true;
+                            popupWindow.dismiss();
+                            readUnreadFilter();
+                            break;
+
+                        case "Unread":
+                            isReadFilter = false;
+                            popupWindow.dismiss();
+                            readUnreadFilter();
                             break;
 
                     }

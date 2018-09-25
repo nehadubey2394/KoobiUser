@@ -235,6 +235,7 @@ public class LoginActivity extends AppCompatActivity {
                                 session.createSession(user);
                                 session.setPassword(user.password);
                                 checkUserRember(user);
+
                                 writeNewUser(user);
                                 /*Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -307,7 +308,7 @@ public class LoginActivity extends AppCompatActivity {
     private void writeNewUser(User user) {
         DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
         FirebaseUser firebaseUser = new FirebaseUser();
-        firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();;
+        firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();
         firebaseUser.isOnline = 1;
         firebaseUser.lastActivity = ServerValue.TIMESTAMP;
         if (user.profileImage.isEmpty())
@@ -322,6 +323,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseUser.banAdmin = 0;
 
         mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("user", user);

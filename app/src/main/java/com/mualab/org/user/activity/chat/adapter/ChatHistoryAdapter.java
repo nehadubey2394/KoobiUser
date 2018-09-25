@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.ChatActivity;
+import com.mualab.org.user.activity.chat.ChatHistoryActivity;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
 import com.mualab.org.user.application.Mualab;
 import com.squareup.picasso.Picasso;
@@ -33,7 +34,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private Context context;
     private List<ChatHistory> chatHistories;
-    private boolean isTyping = false;
+    //  private boolean isTyping = false;
     private long mLastClickTime = 0;
 
     public ChatHistoryAdapter(Context context, List<ChatHistory> chatHistories) {
@@ -109,11 +110,11 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
 
-        void myBindData(final ChatHistory chat,int position,int tempPos){
+        synchronized void myBindData(final ChatHistory chat,int position,int tempPos){
 
             tvUname.setText(chat.userName);
 
-            if (isTyping){
+            if (chat.isTyping){
                 tvMsg.setText("typing...");
                 tvMsg.setTextColor(context.getResources().getColor(R.color.chatbox_blue));
             }else {
@@ -191,8 +192,9 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         otherId = chatHistory.senderId;
 
                     Intent chat_intent = new Intent(context, ChatActivity.class);
-                    chat_intent.putExtra("userId",otherId);
+                    chat_intent.putExtra("opponentChatId",otherId);
                     context.startActivity(chat_intent);
+                    ((ChatHistoryActivity)context).finish();
                     break;
             }
         }
@@ -227,7 +229,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         fit().into(ivProfile);
             }
 
-            if (isTyping){
+            if (chat.isTyping){
                 tvMsg.setText("typing...");
                 tvMsg.setTextColor(context.getResources().getColor(R.color.chatbox_blue));
             }else {
@@ -307,12 +309,12 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void setTyping(boolean isTyping,int position){
-        this.isTyping = isTyping;
+        // this.isTyping = isTyping;
         notifyItemChanged(position);
     }
 
     public void setTyping(boolean isTyping){
-        this.isTyping = isTyping;
+        ///  this.isTyping = isTyping;
     }
 
     public void filterList(List<ChatHistory> filterdNames) {

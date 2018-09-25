@@ -51,6 +51,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -68,6 +69,8 @@ import com.mualab.org.user.activity.chat.model.Chat;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.chat.model.Typing;
+import com.mualab.org.user.activity.chat.model.WebNotification;
+import com.mualab.org.user.activity.chat.notification_builder.FcmNotificationBuilder;
 import com.mualab.org.user.activity.story.camera.util.ImageUtil;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
@@ -110,12 +113,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private PopupWindow popupWindow;
     private ArrayList<String>arrayList;
     private SoftKeyboard softKeyboard;
-    private Boolean isTyping = false,isLoading = false;
+    private Boolean isTyping = false,isOtherTypping = false;
     private Handler handler = new Handler();
     private Bitmap bmChatImg;
-    private DatabaseReference mFirebaseDatabaseReference,chatRef,chatRef1,chatRef2,isOppTypingRef,
-            blockUsersRef,myChatHistoryRef,otherChatHistoryRef;
-    private Thread thread1,thread2,thread3;
+    private DatabaseReference mFirebaseDatabaseReference,chatRef,otherChatRef,myChatRef,isOppTypingRef,
+            blockUsersRef,myChatHistoryRef,otherChatHistoryRef,chatRefWebnotif;
+    private Thread thread1;
+    private Thread thread2;
+    private Thread thread3;
     private long mLastClickTime = 0;
     private LinearLayoutManager layoutManager;
     private int unreadMsgCount = 1,isMyFavourite = 0,isOtherFavourite = 0;
@@ -125,7 +130,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         Intent intent = getIntent();
-        otherUserId = intent.getStringExtra("userId");
+        otherUserId = intent.getStringExtra("opponentChatId");
         myUid = String.valueOf(Mualab.currentUser.id);
 
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -134,6 +139,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         String myChild = myUid+"_"+otherUserId;
 
+        chatRefWebnotif = mFirebaseDatabaseReference.child("webnotification");
         isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING).child(myChild);
 
         otherChatHistoryRef = mFirebaseDatabaseReference.child("chat_history").
@@ -141,8 +147,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         myChatHistoryRef = mFirebaseDatabaseReference.child("chat_history").
                 child(myUid).child(otherUserId);
+
         init();
-        initKeyboard();
+
     }
 
     private void initKeyboard() {
@@ -155,45 +162,70 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         final String myChild = otherUserId+"_"+myUid;
         //Log.e("node",myChild);
 
-        mFirebaseDatabaseReference.child(Constant.IS_TYPING).child(myChild).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (!dataSnapshot.getKey().contains("broadcast_") | !dataSnapshot.getKey().contains("broadcast_group")) {
-                    if (dataSnapshot.exists()){
-                        tvOnlineStatus.setText("typing...");
-                        tvOnlineStatus.setTextColor(getResources().getColor(R.color.chatbox_blue));
-                    }else {
-                        tvOnlineStatus.setTextColor(getResources().getColor(R.color.grey));
+        mFirebaseDatabaseReference.child(Constant.IS_TYPING).child(myChild).
+                addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if (!dataSnapshot.getKey().contains("broadcast_") ||
+                                !dataSnapshot.getKey().contains("broadcast_group")) {
+
+                            System.out.println("typping............");
+
+                            if (dataSnapshot.exists()){
+                                isOtherTypping = true;
+                                // = "typing...";
+                                tvOnlineStatus.setText("typing...");
+                                tvOnlineStatus.setTextColor(getResources().getColor(R.color.chatbox_blue));
+                            }else {
+                                isOtherTypping = false;
+                                tvOnlineStatus.setTextColor(getResources().getColor(R.color.grey));
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists()){
-                    tvOnlineStatus.setText("typing...");
-                    tvOnlineStatus.setTextColor(getResources().getColor(R.color.chatbox_blue));
-                }
-            }
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        if (dataSnapshot.exists()){
+                            System.out.println("typping............");
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    tvOnlineStatus.setText(onlineStatus);
-                    tvOnlineStatus.setTextColor(getResources().getColor(R.color.gray));
-                }
-            }
+                            isOtherTypping = true;
+                            //   onlineStatus = "typing...";
+                            tvOnlineStatus.setText("typing...");
+                            tvOnlineStatus.setTextColor(getResources().getColor(R.color.chatbox_blue));
+                        }else {
+                            isOtherTypping = false;
+                            tvOnlineStatus.setTextColor(getResources().getColor(R.color.grey));
+                        }
+                    }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            isOtherTypping = false;
+                            tvOnlineStatus.setText("Online");
+                            tvOnlineStatus.setTextColor(getResources().getColor(R.color.gray));
+                        }
+                    }
 
-            }
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        if (dataSnapshot.exists()){
+                            System.out.println("typping............");
+                            isOtherTypping = true;
+                            //   onlineStatus = "typing...";
+                            tvOnlineStatus.setText("typing...");
+                            tvOnlineStatus.setTextColor(getResources().getColor(R.color.chatbox_blue));
+                        }else {
+                            isOtherTypping = false;
+                            tvOnlineStatus.setTextColor(getResources().getColor(R.color.grey));
+                        }
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                    }
+                });
 
     }
 
@@ -227,11 +259,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recycler_view.setLayoutManager(layoutManager);
         recycler_view.setAdapter(chattingAdapter);
 
-        chatRef1 = chatRef.child(myUid).child(otherUserId);
-        chatRef2 = chatRef.child(otherUserId).child(myUid);
+        myChatRef = chatRef.child(myUid).child(otherUserId);
+        otherChatRef = chatRef.child(otherUserId).child(myUid);
 
         getNodeInfo();
+
         getMessageList();
+
+        Thread thread4 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getOpponentChatInfo();
+            }
+        });
+        thread4.start();
 
         if (Integer.parseInt(myUid)>Integer.parseInt(otherUserId)){
             blockUserNode = otherUserId+"_"+myUid;
@@ -312,6 +353,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        initKeyboard();
+
         iv_pickImage.setOnClickListener(this);
         iv_capture_image.setOnClickListener(this);
         tv_for_send.setOnClickListener(this);
@@ -329,6 +372,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             try {
                                 otherUser = dataSnapshot.getValue(FirebaseUser.class);
                                 if (otherUser != null) {
+
+                                    System.out.println("typping other user data ====");
+
                                     CircleImageView ivUserProfile = findViewById(R.id.ivUserProfile);
                                     tvUserName.setText(otherUser.userName);
 
@@ -337,18 +383,21 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                                 fit().into(ivUserProfile);
                                         // SimpleDateFormat sd = new SimpleDateFormat("hh:mm a");
                                         // onlineStatus = sd.format(new Date((Long) otherUser.lastActivity));
-                                        if (otherUser.isOnline==1) {
-                                            onlineStatus = "Online";
-                                            tvOnlineStatus.setText(onlineStatus);
+                                        if (otherUser.isOnline==1 && !isOtherTypping) {
+                                            //   onlineStatus = "Online";
+                                            tvOnlineStatus.setText("Online");
                                         }
 
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
+                                                tvOnlineStatus.setTextColor(getResources().getColor(R.color.grey));
                                                 onlineStatus = TimeAgo.getTimeAgo((Long) otherUser.lastActivity);
-                                                if (otherUser.isOnline==1) {
-                                                    onlineStatus = "Online";
-                                                    tvOnlineStatus.setText(onlineStatus);
+                                                if (otherUser.isOnline==1 && !isOtherTypping) {
+                                                    //  onlineStatus = "Online";
+                                                    tvOnlineStatus.setText("Online");
+                                                }else if (otherUser.isOnline==1){
+                                                    tvOnlineStatus.setText("Online");
                                                 }
                                                 else {
                                                     tvOnlineStatus.setText(onlineStatus);
@@ -362,12 +411,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             }
 
                         }
-
-                       /* chatRef1 = chatRef.child(myUid).child(otherUserId);
-                        chatRef2 = chatRef.child(otherUserId).child(myUid);
-                        getNodeInfo();
-
-                        getMessageList();*/
 
                     }
 
@@ -423,19 +466,51 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void getOpponentChatInfo() {
+        otherChatRef.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Chat messageOutput = dataSnapshot.getValue(Chat.class);
+                if (messageOutput != null && (messageOutput.readStatus == 0 || messageOutput.readStatus == 1)) {
+                    otherChatRef.child(dataSnapshot.getKey()).child("readStatus").setValue(2);
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Chat messageOutput = dataSnapshot.getValue(Chat.class);
+                if (messageOutput != null && (messageOutput.readStatus == 0 || messageOutput.readStatus == 1)) {
+                    otherChatRef.child(dataSnapshot.getKey()).child("readStatus").setValue(2);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getMessageList(){
 
-        chatRef1.orderByKey().addChildEventListener(new ChildEventListener() {
+        myChatRef.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Chat messageOutput = dataSnapshot.getValue(Chat.class);
                 // map.put(dataSnapshot.getKey(),messageOutput);
                 getChatDataInmap(dataSnapshot.getKey(),messageOutput);
 
-                /*if (messageOutput != null) {
-                    chatList.add(messageOutput);
-                    map.put(dataSnapshot.getKey(),messageOutput);
-                }*/
                 if (chatList.size()==0) {
                     progress_bar.setVisibility(View.GONE);
                     //  tv_no_chat.setVisibility(View.VISIBLE);
@@ -536,8 +611,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.iv_capture_image:
+                isFromGallery = false;
+
                 KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
-                isFromGallery = true;
                 if (blockedById.equals(myUid)) {
                     showAlert("You have blocked this user, you can't send messages");
                     // Toast.makeText(ChatActivity.this,"You have blocked this user, you can't send messages",Toast.LENGTH_SHORT).show();
@@ -554,7 +630,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.iv_pickImage:
                 KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
-                isFromGallery = false;
+                isFromGallery = true;
+
                 if (blockedById.equals(myUid)) {
                     showAlert("You have blocked this user, you can't send messages");
                     //  MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
@@ -585,49 +662,54 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 else {
                     String txt = et_for_sendTxt.getText().toString().trim();
                     if (!txt.equals("")) {
-                        Chat chatModel1 = new Chat();
-                        chatModel1.message = txt;
-                        chatModel1.timestamp = ServerValue.TIMESTAMP;
-                        chatModel1.reciverId = otherUserId;
-                        chatModel1.senderId = myUid;
-                        chatModel1.messageType = 0;
-                        chatModel1.readStatus = 0;
+                        if (otherUser!=null){
+                            Chat chatModel1 = new Chat();
+                            chatModel1.message = txt;
+                            chatModel1.timestamp = ServerValue.TIMESTAMP;
+                            chatModel1.reciverId = otherUserId;
+                            chatModel1.senderId = myUid;
+                            chatModel1.messageType = 0;
+                            chatModel1.readStatus = 2;
 
-                        Chat chatModel2 = new Chat();
-                        chatModel2.message = txt;
-                        chatModel2.timestamp = ServerValue.TIMESTAMP;
-                        chatModel2.reciverId = otherUserId;
-                        chatModel2.senderId = myUid;
-                        chatModel2.messageType = 0;
-                        chatModel2.readStatus = 2;
+                            Chat chatModel2 = new Chat();
+                            chatModel2.message = txt;
+                            chatModel2.timestamp = ServerValue.TIMESTAMP;
+                            chatModel2.reciverId = otherUserId;
+                            chatModel2.senderId = myUid;
+                            chatModel2.messageType = 0;
+                            if (tvOnlineStatus.getText().equals("Online"))
+                                chatModel2.readStatus = 0;
+                            else
+                                chatModel2.readStatus = 1;
 
-                        ChatHistory chatHistory = new ChatHistory();
-                        chatHistory.favourite = isMyFavourite;
-                        chatHistory.memberCount = 0;
-                        chatHistory.message = txt;
-                        chatHistory.messageType = 0;
-                        chatHistory.profilePic = otherUser.profilePic;
-                        chatHistory.reciverId = otherUserId;
-                        chatHistory.senderId = myUid;
-                        chatHistory.type = "user";
-                        chatHistory.unreadMessage = 0;
-                        chatHistory.userName = otherUser.userName;
-                        chatHistory.timestamp = ServerValue.TIMESTAMP;
+                            ChatHistory chatHistory = new ChatHistory();
+                            chatHistory.favourite = isMyFavourite;
+                            chatHistory.memberCount = 0;
+                            chatHistory.message = txt;
+                            chatHistory.messageType = 0;
+                            chatHistory.profilePic = otherUser.profilePic;
+                            chatHistory.reciverId = otherUserId;
+                            chatHistory.senderId = myUid;
+                            chatHistory.type = "user";
+                            chatHistory.unreadMessage = 0;
+                            chatHistory.userName = otherUser.userName;
+                            chatHistory.timestamp = ServerValue.TIMESTAMP;
 
-                        ChatHistory chatHistory2 = new ChatHistory();
-                        chatHistory2.favourite = isOtherFavourite;
-                        chatHistory2.memberCount = 0;
-                        chatHistory2.message = txt;
-                        chatHistory2.messageType = 0;
-                        chatHistory2.profilePic = Mualab.currentUser.profileImage;
-                        chatHistory2.reciverId = otherUserId;
-                        chatHistory2.senderId = myUid;
-                        chatHistory2.type = "user";
-                        chatHistory2.userName = Mualab.currentUser.userName;
-                        chatHistory2.timestamp = ServerValue.TIMESTAMP;
-                        chatHistory2.unreadMessage = unreadMsgCount;
+                            ChatHistory chatHistory2 = new ChatHistory();
+                            chatHistory2.favourite = isOtherFavourite;
+                            chatHistory2.memberCount = 0;
+                            chatHistory2.message = txt;
+                            chatHistory2.messageType = 0;
+                            chatHistory2.profilePic = Mualab.currentUser.profileImage;
+                            chatHistory2.reciverId = otherUserId;
+                            chatHistory2.senderId = myUid;
+                            chatHistory2.type = "user";
+                            chatHistory2.userName = Mualab.currentUser.userName;
+                            chatHistory2.timestamp = ServerValue.TIMESTAMP;
+                            chatHistory2.unreadMessage = unreadMsgCount;
 
-                        writeToDBProfiles(chatModel1,chatModel2,chatHistory,chatHistory2);
+                            writeToDBProfiles(chatModel1,chatModel2,chatHistory,chatHistory2);
+                        }
                         //  tv_no_chat.setVisibility(View.GONE);
 
                     }
@@ -642,8 +724,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                    ChatHistory chatHistory1, final ChatHistory chatHistory2) {
 
 
-        chatRef1.push().setValue(chatModel1);
-        chatRef2.push().setValue(chatModel2);
+        otherChatRef.push().setValue(chatModel1);
+        myChatRef.push().setValue(chatModel2);
 
         mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
                 setValue(chatHistory1);
@@ -653,11 +735,35 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         //    FirebaseDatabase.getInstance().getReference().child("history").child(session.getUser().id).child(uID).setValue(chatModel);
         //  FirebaseDatabase.getInstance().getReference().child("history").child(uID).child(session.getUser().id).setValue(chatModel2);
         et_for_sendTxt.setText("");
-        et_for_sendTxt.clearFocus();
+
         isTyping = false;
         handler.removeCallbacks(runnable);
         isOppTypingRef.setValue(null);
 
+        if (chatHistory1.messageType == 0)
+            sendPushNotificationToReceiver(chatModel1.message,"chat");//type = chat/groupChat
+        else
+            sendPushNotificationToReceiver("Image","chat");
+
+    }
+
+    private void sendPushNotificationToReceiver(String message,String type) {
+
+        if (otherUser.firebaseToken.isEmpty()){
+            WebNotification webNotification = new WebNotification();
+            webNotification.body = message;
+            webNotification.title = Mualab.currentUser.userName;
+            webNotification.url = "'/chat?uId="+myUid;
+            chatRefWebnotif.child(otherUserId).push().setValue(webNotification);
+        }else {
+            FcmNotificationBuilder.initialize()
+                    .title(Mualab.currentUser.userName)
+                    .message(message).uid(myUid)
+                    .username(Mualab.currentUser.userName)
+                    .type(type)
+                    .firebaseToken(FirebaseInstanceId.getInstance().getToken())
+                    .receiverFirebaseToken(otherUser.firebaseToken).send();
+        }
     }
 
     private void initiatePopupWindow(Point p) {
@@ -772,7 +878,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         popupWindow.dismiss();
-                        chatRef1.removeValue();
+                        myChatRef.removeValue();
                         //mapKey.put(dataSnapshot.getKey(),dataSnapshot.getKey());
                         mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
                                 removeValue();
@@ -993,7 +1099,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             chatModel1.reciverId = otherUserId;
                             chatModel1.senderId = myUid;
                             chatModel1.messageType = 1;
-                            chatModel1.readStatus = 0;
+                            chatModel1.readStatus = 2;
 
                             Chat chatModel2 = new Chat();
                             chatModel2.message = fireBaseUri.toString();
@@ -1001,7 +1107,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             chatModel2.reciverId = otherUserId;
                             chatModel2.senderId = myUid;
                             chatModel2.messageType = 1;
-                            chatModel2.readStatus = 2;
+                            if (onlineStatus.equals("Online"))
+                                chatModel2.readStatus = 0;
+                            else
+                                chatModel2.readStatus = 1;
 
                             ChatHistory chatHistory = new ChatHistory();
                             chatHistory.favourite = isMyFavourite;
@@ -1181,6 +1290,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onBackPressed();
         finish();
+
+        startActivity(new Intent(ChatActivity.this,ChatHistoryActivity.class));
     }
 
     @Override
@@ -1207,7 +1318,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
                 if (layoutManager.findFirstVisibleItemPosition() != -1) {
                     tv_chat_date.setText(chatList.get(firstVisiblePosition).banner_date);
-                    tv_chat_date.setVisibility(View.VISIBLE);
+                    if (!chatList.get(firstVisiblePosition).banner_date.equals(""))
+                        tv_chat_date.setVisibility(View.VISIBLE);
                 }
             }
         });

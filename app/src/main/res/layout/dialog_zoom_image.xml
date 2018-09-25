@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:fitsSystemWindows="true"
+    android:id="@+id/rlImage"
     tools:context=".activity.feeds.PreviewImageActivity">
 
     <RelativeLayout
@@ -27,17 +28,12 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rlTop">
 
-        <views.zoomage.ZoomageView
+        <ImageView
             android:id="@+id/photo_view"
-            app:zoomage_zoomable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             />
 
         <ProgressBar
@@ -47,8 +43,6 @@
             android:layout_centerInParent="true"
             style="?android:attr/progressBarStyleSmall"
             android:visibility="visible" />
-
-    </RelativeLayout>
 
 
 </RelativeLayout>

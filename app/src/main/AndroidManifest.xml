@@ -18,6 +18,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- All nesassery hardware -->
     <uses-feature
@@ -226,9 +228,7 @@
             android:name=".activity.chat.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="adjustResize">
-
-        </activity>
+            android:windowSoftInputMode="adjustResize"></activity>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -241,13 +241,13 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
 
-        <activity android:name=".activity.chat.ChatHistoryActivity"
+        <activity
+            android:name=".activity.chat.ChatHistoryActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait">
-
-        </activity>
-
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity android:name=".activity.base.BaseActivity" />
+        <activity android:name=".activity.chat.ShowZoomImageActivity"></activity>
     </application>
 
 </manifest>
