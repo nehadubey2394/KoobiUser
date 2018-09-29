@@ -25,7 +25,7 @@
         android:layout_marginRight="6dp"
         android:layout_marginLeft="6dp"
         android:visibility="gone"
-       >
+        >
 
         <View
             android:id="@+id/v1"
@@ -125,10 +125,9 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:id="@+id/llCount"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:padding="4dp"
@@ -142,33 +141,57 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
+                android:text=""
                 android:layout_gravity="right"
                 android:fontFamily="@font/nunito_regular"
                 android:textSize="13sp"
                 android:textColor="@color/gray"
                 />
 
-
             <RelativeLayout
-                android:id="@+id/rlMsgCount"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:gravity="center"
-                android:layout_gravity="right"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/bg_blue_circle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 >
 
-                <TextView
-                    android:id="@+id/tvUnReadCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_centerInParent="true"
+                <ImageView
+                    android:id="@+id/ivMuteIcon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/mute_icon"
+                    android:layout_marginRight="4dp"
+                    android:visibility="gone"
+                    android:layout_toLeftOf="@+id/rlMsgCount"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical">
+
+                </ImageView>
+
+                <RelativeLayout
+                    android:id="@+id/rlMsgCount"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:gravity="center"
-                    android:textColor="@color/white"
-                    android:text="0"
-                    />
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_blue_circle"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvUnReadCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:maxLength="3"
+                        android:textColor="@color/white"
+                        android:text="0"
+                        />
+
+                </RelativeLayout>
 
             </RelativeLayout>
 

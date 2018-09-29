@@ -1,5 +1,6 @@
 package com.mualab.org.user.activity.chat;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
@@ -32,9 +33,13 @@ import com.mualab.org.user.activity.chat.adapter.ChatHistoryAdapter;
 import com.mualab.org.user.activity.chat.adapter.MenuAdapter;
 import com.mualab.org.user.activity.chat.model.BlockUser;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
+import com.mualab.org.user.activity.chat.model.MuteUser;
 import com.mualab.org.user.activity.chat.model.Typing;
 import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.utils.CommonUtils;
+import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.constants.Constant;
 
@@ -55,7 +60,8 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
     private List<ChatHistory> chatHistories,newList;
     private Map<String, ChatHistory> listmap;
     private Map<String, BlockUser> blockUsersMap;
-    private DatabaseReference databaseReference,isOppTypingRef,blockUsersRef;
+    private Map<String, MuteUser> muteUsersMap;
+    private DatabaseReference databaseReference,isOppTypingRef,blockUsersRef,chatRefMuteUser;
     private Thread thread,blockThread;
     private String myId;
     private ImageView ic_add_chat,ivFavChat,ivChatFilter;
@@ -74,7 +80,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 child(String.valueOf(Mualab.currentUser.id));
         isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING);
         blockUsersRef = mFirebaseDatabaseReference.child("block_users");
-
+        chatRefMuteUser = mFirebaseDatabaseReference.child("mute_user").child(myId);
         init();
     }
 
@@ -83,6 +89,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         chatHistories = new ArrayList<>();
         listmap = new HashMap<>();
         blockUsersMap = new HashMap<>();
+        muteUsersMap = new HashMap<>();
 
         historyAdapter = new ChatHistoryAdapter(ChatHistoryActivity.this,chatHistories);
 
@@ -121,6 +128,17 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         ivFavChat.setOnClickListener(this);
         ivChatFilter.setOnClickListener(this);
 
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(ChatHistoryActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
+                    }
+                }
+            }).show();
+        }
+
         getHistoryList();
 
         thread = new Thread(new Runnable(){
@@ -139,6 +157,13 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             }
         });
         blockThread.start();
+
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                getMutedUser();
+            }
+        }).start();
 
     }
 
@@ -400,10 +425,92 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
+    private void getMutedUser(){
+        chatRefMuteUser.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.exists()) {
+                    MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
+                    muteUsersMap.put(dataSnapshot.getKey(),muteUser);
+
+                    String key = dataSnapshot.getKey();
+                    if (chatHistories!=null && chatHistories.size()!=0){
+                        for (int i=0;i<chatHistories.size();i++){
+                            ChatHistory chatHistory = chatHistories.get(i);
+                            if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
+                                    equals(key) ){
+                                chatHistory.isMute = true;
+                                historyAdapter.setMute(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.exists()) {
+                    MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
+                    muteUsersMap.put(dataSnapshot.getKey(),muteUser);
+                    String key = dataSnapshot.getKey();
+                    if (chatHistories!=null && chatHistories.size()!=0){
+                        for (int i=0;i<chatHistories.size();i++){
+                            ChatHistory chatHistory = chatHistories.get(i);
+                            if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
+                                    equals(key) ){
+                                chatHistory.isMute = true;
+                                historyAdapter.setMute(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    String key = dataSnapshot.getKey();
+                    muteUsersMap.remove(key);
+                    if (chatHistories!=null && chatHistories.size()!=0){
+                        for (int i=0;i<chatHistories.size();i++){
+                            ChatHistory chatHistory = chatHistories.get(i);
+                            if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
+                                    equals(key) ){
+                                chatHistory.isMute = false;
+                                historyAdapter.setMute(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void getChatDataInMap(String key, ChatHistory messageOutput) {
         if (messageOutput != null) {
             if (messageOutput.type.equals("user")){
                 messageOutput.isTyping = false;
+
+                if (muteUsersMap.containsKey(messageOutput.senderId) || muteUsersMap.
+                        containsKey(messageOutput.reciverId)){
+                    messageOutput.isMute = true;
+                }else
+                    messageOutput.isMute = false;
+
                 messageOutput.banner_date = CommonUtils.getDateBanner((Long) messageOutput.timestamp);
                 listmap.put(key, messageOutput);
                 tv_no_chat.setVisibility(View.GONE);
@@ -500,7 +607,6 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
             case R.id.ic_add_chat:
                 KeyboardUtil.hideKeyboard(searchview,ChatHistoryActivity.this);
-                //rlOptionMenu.setVisibility(View.VISIBLE);
 
                 int[] location = new int[2];
 
@@ -526,6 +632,10 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             isFavFilter = false;
             historyAdapter.filterList(chatHistories);
             ivFavChat.setImageResource(R.drawable.star_ico);
+            if (chatHistories.size()==0)
+                tv_no_chat.setVisibility(View.VISIBLE);
+            else
+                tv_no_chat.setVisibility(View.GONE);
         }else {
             isFavFilter = true;
             List<ChatHistory> tempArrayList = new ArrayList<>();
@@ -596,8 +706,22 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             View layout = inflater.inflate(R.layout.layout_popup_menu,(ViewGroup) findViewById(R.id.parent));
             PopupWindow popupWindow = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                     true);
-            int OFFSET_X = 500;
-            int OFFSET_Y = 110;
+
+            String reqString = Build.MANUFACTURER
+                    + " " + Build.MODEL + " " + Build.VERSION.RELEASE
+                    + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
+
+            int OFFSET_X;
+            int OFFSET_Y;
+
+            if (reqString.equals("motorola Moto G (4) 7.0 M")){
+                OFFSET_X = 500;
+                OFFSET_Y = 96;
+            }else {
+                OFFSET_X = 500;
+                OFFSET_Y = 60;
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 popupWindow.setElevation(5);
             }
@@ -613,6 +737,18 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onMenuClick(int pos) {
                     String data=arrayList.get(pos);
+
+                    if (!ConnectionDetector.isConnected()) {
+                        new NoConnectionDialog(ChatHistoryActivity.this, new NoConnectionDialog.Listner() {
+                            @Override
+                            public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                                if(isConnected){
+                                    dialog.dismiss();
+                                }
+                            }
+                        }).show();
+                    }
+
                     switch (data){
                         case "Create new chat":
 
@@ -644,11 +780,27 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             View layout = inflater.inflate(R.layout.layout_popup_menu,(ViewGroup) findViewById(R.id.parent));
             final PopupWindow popupWindow = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                     true);
-            int OFFSET_X = 480;
-            int OFFSET_Y = 100;
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 popupWindow.setElevation(5);
             }
+
+            String reqString = Build.MANUFACTURER
+                    + " " + Build.MODEL + " " + Build.VERSION.RELEASE
+                    + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
+
+
+            int OFFSET_X;
+            int OFFSET_Y;
+
+            if (reqString.equals("motorola Moto G (4) 7.0 M")){
+                OFFSET_X = 480;
+                OFFSET_Y = 70;
+            }else {
+                OFFSET_X = 480;
+                OFFSET_Y = 50;
+            }
+
             final ArrayList<String>arrayList = new ArrayList<>();
             arrayList.add("All");
             arrayList.add("All Group");
@@ -661,7 +813,19 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             MenuAdapter menuAdapter=new MenuAdapter(ChatHistoryActivity.this, arrayList, new MenuAdapter.Listener() {
                 @Override
                 public void onMenuClick(int pos) {
-                    String data=arrayList.get(pos);
+                    final String data=arrayList.get(pos);
+                    popupWindow.dismiss();
+
+                    if (!ConnectionDetector.isConnected()) {
+                        new NoConnectionDialog(ChatHistoryActivity.this, new NoConnectionDialog.Listner() {
+                            @Override
+                            public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                                if(isConnected){
+                                    dialog.dismiss();
+                                }
+                            }
+                        }).show();
+                    }
                     switch (data){
                         case "All":
                             popupWindow.dismiss();
@@ -687,6 +851,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                             break;
 
                     }
+
                 }
             });
 

@@ -159,7 +159,8 @@ public class Session {
             e.printStackTrace();
         }*/
 
-        NotificationManager notifManager= (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notifManager= (NotificationManager) _context.
+                getSystemService(Context.NOTIFICATION_SERVICE);
         assert notifManager != null;
         notifManager.cancelAll();
 

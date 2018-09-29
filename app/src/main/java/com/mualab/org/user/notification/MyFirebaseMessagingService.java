@@ -1,9 +1,11 @@
 package com.mualab.org.user.notification;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -63,14 +65,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             if (notifincationType.equals("15")){
                 String userId = remoteMessage.getData().get("opponentChatId");
-               // scheduleJob();
-                chatNotification(body,title,notifincationType,userId);
+                ActivityManager am = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+                assert am != null;
+                ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+                if (!am.getRunningTasks(1).get(0).topActivity.getClassName().
+                        equals("com.mualab.org.user.activity.chat.ChatActivity")){
+                    chatNotification(body,title,notifincationType,userId);
+                }
+                // scheduleJob();
+
             }else {
                 userType = remoteMessage.getData().get("userType");
                 notifyId = remoteMessage.getData().get("notifyId");
                 urlImageString = remoteMessage.getData().get("urlImageString");
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-              //  scheduleJob();
+                //  scheduleJob();
                 handleNow(urlImageString,body,title,notifincationType,notifyId,userName,userType);
             }
         }
@@ -135,7 +144,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setTicker(body)
                 .setContentTitle(title)
                 .setContentIntent(resultIntent)
-                .setSound(defaultSoundUri)
+                .setSound(defaultSoundUri).
+                        setCustomBigContentView(remoteViews)
                 .setContent(remoteViews);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

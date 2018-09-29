@@ -434,7 +434,7 @@ public class SearchBoardFragment extends BaseFragment implements View.OnClickLis
             @Override
             public void ErrorListener(VolleyError error) {
                 progress_bar.setVisibility(View.GONE);
-                tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
+//                tv_msg.setText(getString(R.string.msg_some_thing_went_wrong));
                 if(isPulltoRefrash){
                     isPulltoRefrash = false;
                     mRefreshLayout.stopRefresh(false, 500);

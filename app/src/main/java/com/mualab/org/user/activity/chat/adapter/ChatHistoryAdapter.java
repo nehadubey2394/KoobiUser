@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -90,6 +91,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         CircleImageView ivProfile;
         RelativeLayout rlChatHistory,llHistoryDate,rlMsgCount;
         View vBottom,viewTop;
+        ImageView ivMuteIcon;
 
         SingleChatViewHolder(View itemView) {
             super(itemView);
@@ -105,6 +107,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             vBottom = itemView.findViewById(R.id.vBottom);
             viewTop = itemView.findViewById(R.id.viewTop);
             rlMsgCount = itemView.findViewById(R.id.rlMsgCount);
+            ivMuteIcon = itemView.findViewById(R.id.ivMuteIcon);
 
             rlChatHistory.setOnClickListener(this);
 
@@ -130,13 +133,24 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         fit().into(ivProfile);
             }
 
+            String num = String.valueOf(chat.unreadMessage);
 
             if (chat.unreadMessage!=0){
                 rlMsgCount.setVisibility(View.VISIBLE);
-                tvUnReadCount.setText(""+chat.unreadMessage);
+                if (num.length()>2)
+                    tvUnReadCount.setText(num.charAt(0)+num.charAt(1)+"+");
+                else
+                    tvUnReadCount.setText(num);
             }else {
                 rlMsgCount.setVisibility(View.GONE);
             }
+
+            if (chat.isMute){
+                ivMuteIcon.setVisibility(View.VISIBLE);
+            }else {
+                ivMuteIcon.setVisibility(View.GONE);
+            }
+
 
             if (!chat.banner_date.equals(chatHistories.get(tempPos).banner_date)) {
                 tvHistoryTime.setText(chat.banner_date);
@@ -205,6 +219,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         CircleImageView ivProfile;
         RelativeLayout rlChatHistory,llHistoryDate,rlMsgCount;
         View vBottom,viewTop;
+        ImageView ivMuteIcon;
 
         GroupChatViewHolder(View itemView) {
             super(itemView);
@@ -219,6 +234,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             vBottom = itemView.findViewById(R.id.vBottom);
             viewTop = itemView.findViewById(R.id.viewTop);
             rlMsgCount = itemView.findViewById(R.id.rlMsgCount);
+            ivMuteIcon = itemView.findViewById(R.id.ivMuteIcon);
         }
 
         void otherBindData(final ChatHistory chat,int position,int tempPos){
@@ -247,6 +263,11 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 rlMsgCount.setVisibility(View.GONE);
             }
 
+            if (chat.isMute){
+                ivMuteIcon.setVisibility(View.VISIBLE);
+            }else {
+                ivMuteIcon.setVisibility(View.GONE);
+            }
 
             if (!chat.banner_date.equals(chatHistories.get(tempPos).banner_date)) {
                 tvHistoryTime.setText(chat.banner_date);
@@ -313,8 +334,9 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemChanged(position);
     }
 
-    public void setTyping(boolean isTyping){
-        ///  this.isTyping = isTyping;
+    public void setMute(int position){
+        // this.isTyping = isTyping;
+        notifyItemChanged(position);
     }
 
     public void filterList(List<ChatHistory> filterdNames) {

@@ -282,6 +282,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                                 Gson gson = new Gson();
                                 JSONObject userObj = js.getJSONObject("users");
                                 User user = gson.fromJson(String.valueOf(userObj), User.class);
+                                user.id = userObj.getInt("_id");
                                 session.createSession(user);
                                 session.setPassword(user.password);
                                 checkUserRember(user);

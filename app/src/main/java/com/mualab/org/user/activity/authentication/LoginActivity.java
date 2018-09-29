@@ -227,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
                             Gson gson = new Gson();
                             JSONObject userObj = js.getJSONObject("users");
                             User user = gson.fromJson(String.valueOf(userObj), User.class);
-
+                            user.id = userObj.getInt("_id");
                             if (user.status.equals("0")){
                                 showToast("You are currenlty inactive by admin");
                             }else {

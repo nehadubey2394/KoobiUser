@@ -1,5 +1,6 @@
 package com.mualab.org.user.activity.chat;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.app.Service;
@@ -17,7 +18,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,6 +42,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -68,29 +69,29 @@ import com.mualab.org.user.activity.chat.model.BlockUser;
 import com.mualab.org.user.activity.chat.model.Chat;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
+import com.mualab.org.user.activity.chat.model.MuteUser;
 import com.mualab.org.user.activity.chat.model.Typing;
 import com.mualab.org.user.activity.chat.model.WebNotification;
 import com.mualab.org.user.activity.chat.notification_builder.FcmNotificationBuilder;
 import com.mualab.org.user.activity.story.camera.util.ImageUtil;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.utils.CommonUtils;
+import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.SoftKeyboard;
 import com.mualab.org.user.utils.constants.Constant;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -102,7 +103,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tv_no_chat, tvOnlineStatus,tv_chat_date,tvUserName;
     private ProgressBar progress_bar;
     private RecyclerView recycler_view;
-    private RelativeLayout rlOptionMenu;
     private ChattingAdapter chattingAdapter;
     private List<Chat> chatList;
     private Map<String, Chat> map;
@@ -117,13 +117,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Handler handler = new Handler();
     private Bitmap bmChatImg;
     private DatabaseReference mFirebaseDatabaseReference,chatRef,otherChatRef,myChatRef,isOppTypingRef,
-            blockUsersRef,myChatHistoryRef,otherChatHistoryRef,chatRefWebnotif;
+            blockUsersRef,myChatHistoryRef,otherChatHistoryRef,chatRefWebnotif,chatRefMuteUser;
     private Thread thread1;
     private Thread thread2;
     private Thread thread3;
     private long mLastClickTime = 0;
     private LinearLayoutManager layoutManager;
-    private int unreadMsgCount = 1,isMyFavourite = 0,isOtherFavourite = 0;
+    private int unreadMsgCount = 1,isMyFavourite = 0,isOtherFavourite = 0,isMute=0,
+            isOtherMute=0;
+    private ValueEventListener otherUserDetail;
+    private ChildEventListener childEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +150,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         myChatHistoryRef = mFirebaseDatabaseReference.child("chat_history").
                 child(myUid).child(otherUserId);
+
+        chatRefMuteUser = mFirebaseDatabaseReference.child("mute_user");
 
         init();
 
@@ -251,7 +256,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tv_chat_date = findViewById(R.id.tv_chat_date);
 
         llDots = findViewById(R.id.llDots);
-        rlOptionMenu = findViewById(R.id.rlOptionMenu);
         //  TextView tvClearChat = findViewById(R.id.tvClearChat);
 
         layoutManager = new LinearLayoutManager(ChatActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -262,98 +266,206 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         myChatRef = chatRef.child(myUid).child(otherUserId);
         otherChatRef = chatRef.child(otherUserId).child(myUid);
 
-        getNodeInfo();
 
-        getMessageList();
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(ChatActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
 
-        Thread thread4 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getOpponentChatInfo();
-            }
-        });
-        thread4.start();
+                        getNodeInfo();
 
-        if (Integer.parseInt(myUid)>Integer.parseInt(otherUserId)){
-            blockUserNode = otherUserId+"_"+myUid;
-        }else {
-            blockUserNode = myUid+"_"+otherUserId;
-        }
+                        getMessageList();
 
-        //getting user data from user table
-        thread1 = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                getOtherUserDetail();
-                //code to do the HTTP request
-            }
-        });
-        thread1.start();
-
-        thread2 = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                myChatHistoryRef.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        if (dataSnapshot.exists()){
-                            String key = dataSnapshot.getKey();
-                            if (!key.contains("group_")) {
-                                ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
-                                assert messageOutput != null;
-                                myChatHistoryRef.child("unreadMessage").setValue(0);
-                                isMyFavourite = messageOutput.favourite;
-
+                        Thread thread4 = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getOpponentChatInfo();
                             }
+                        });
+                        thread4.start();
+
+                        if (Integer.parseInt(myUid)>Integer.parseInt(otherUserId)){
+                            blockUserNode = otherUserId+"_"+myUid;
+                        }else {
+                            blockUserNode = myUid+"_"+otherUserId;
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        progress_bar.setVisibility(View.GONE);
-                        tv_no_chat.setVisibility(View.VISIBLE);
-                    }
-                });
-                //code to do the HTTP request
-            }
-        });
-        thread2.start();
+                        //getting user data from user table
+                        thread1 = new Thread(new Runnable(){
+                            @Override
+                            public void run(){
+                                getOtherUserDetail();
+                                //code to do the HTTP request
+                            }
+                        });
+                        thread1.start();
 
+                        thread2 = new Thread(new Runnable(){
+                            @Override
+                            public void run(){
+                                myChatHistoryRef.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-        thread3 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getBlockUser();
-            }
-        });
-        thread3.start();
+                                        if (dataSnapshot.exists()){
+                                            String key = dataSnapshot.getKey();
+                                            if (!key.contains("group_")) {
+                                                ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                                                assert messageOutput != null;
+                                                myChatHistoryRef.child("unreadMessage").setValue(0);
+                                                isMyFavourite = messageOutput.favourite;
 
-        otherChatHistoryRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+                                            }
+                                        }
+                                    }
 
-                if (dataSnapshot.exists()){
-                    String key = dataSnapshot.getKey();
-                    if (!key.contains("group_")) {
-                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
-                        assert messageOutput != null;
-                        unreadMsgCount = messageOutput.unreadMessage+1;
-                        isOtherFavourite = messageOutput.favourite;
-                        //chatHistory2.unreadMessage = messageOutput.unreadMessage+1;
-                        //  otherChatHistoryRef.child("unreadMessage").setValue(count);
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        progress_bar.setVisibility(View.GONE);
+                                        tv_no_chat.setVisibility(View.VISIBLE);
+                                    }
+                                });
+                                //code to do the HTTP request
+                            }
+                        });
+                        thread2.start();
+
+                        thread3 = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getBlockUser();
+                            }
+                        });
+                        thread3.start();
+
+                        getMutedUser();
+
+                        otherChatHistoryRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (dataSnapshot.exists()){
+                                    String key = dataSnapshot.getKey();
+                                    if (!key.contains("group_")) {
+                                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                                        assert messageOutput != null;
+                                        unreadMsgCount = messageOutput.unreadMessage+1;
+                                        isOtherFavourite = messageOutput.favourite;
+                                        //chatHistory2.unreadMessage = messageOutput.unreadMessage+1;
+                                        //  otherChatHistoryRef.child("unreadMessage").setValue(count);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                progress_bar.setVisibility(View.GONE);
+                                tv_no_chat.setVisibility(View.VISIBLE);
+                            }
+                        });
+
+                        initKeyboard();
                     }
                 }
+            }).show();
+        }else {
+            getNodeInfo();
+
+            getMessageList();
+
+            Thread thread4 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    getOpponentChatInfo();
+                }
+            });
+            thread4.start();
+
+            if (Integer.parseInt(myUid)>Integer.parseInt(otherUserId)){
+                blockUserNode = otherUserId+"_"+myUid;
+            }else {
+                blockUserNode = myUid+"_"+otherUserId;
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                progress_bar.setVisibility(View.GONE);
-                tv_no_chat.setVisibility(View.VISIBLE);
-            }
-        });
+            //getting user data from user table
+            thread1 = new Thread(new Runnable(){
+                @Override
+                public void run(){
+                    getOtherUserDetail();
+                    //code to do the HTTP request
+                }
+            });
+            thread1.start();
 
-        initKeyboard();
+            thread2 = new Thread(new Runnable(){
+                @Override
+                public void run(){
+                    myChatHistoryRef.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.exists()){
+                                String key = dataSnapshot.getKey();
+                                if (!key.contains("group_")) {
+                                    ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                                    assert messageOutput != null;
+                                    myChatHistoryRef.child("unreadMessage").setValue(0);
+                                    isMyFavourite = messageOutput.favourite;
+
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            progress_bar.setVisibility(View.GONE);
+                            tv_no_chat.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    //code to do the HTTP request
+                }
+            });
+            thread2.start();
+
+            thread3 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    getBlockUser();
+                }
+            });
+            thread3.start();
+
+            getMutedUser();
+
+            otherChatHistoryRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()){
+                        String key = dataSnapshot.getKey();
+                        if (!key.contains("group_")) {
+                            ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                            assert messageOutput != null;
+                            unreadMsgCount = messageOutput.unreadMessage+1;
+                            isOtherFavourite = messageOutput.favourite;
+                            //chatHistory2.unreadMessage = messageOutput.unreadMessage+1;
+                            //  otherChatHistoryRef.child("unreadMessage").setValue(count);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    progress_bar.setVisibility(View.GONE);
+                    tv_no_chat.setVisibility(View.VISIBLE);
+                }
+            });
+
+            initKeyboard();
+        }
+
 
         iv_pickImage.setOnClickListener(this);
         iv_capture_image.setOnClickListener(this);
@@ -364,7 +476,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getOtherUserDetail(){
-        mFirebaseDatabaseReference.child("users").child(otherUserId).
+        otherUserDetail = mFirebaseDatabaseReference.child("users").child(otherUserId).
                 addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -404,6 +516,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                                 }
                                             }
                                         }, 1600);
+
+                                        if (otherUser.isOnline==1){
+                                            for (int i = 0; i<chatList.size();i++){
+                                                Chat chat = chatList.get(i);
+                                                if (chat.readStatus==1) {
+                                                    chat.readStatus = 0;
+                                                    chattingAdapter.notifyItemChanged(i);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }catch (Exception e){
@@ -444,6 +566,52 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    private void getMutedUser(){
+
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                chatRefMuteUser.child(myUid).child(otherUserId)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    if (dataSnapshot.getValue() != null) {
+                                        MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
+                                        assert muteUser != null;
+                                        isMute = muteUser.mute;
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+
+                chatRefMuteUser.child(otherUserId).child(myUid)
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    if (dataSnapshot.getValue() != null) {
+                                        MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
+                                        assert muteUser != null;
+                                        isOtherMute = muteUser.mute;
+                                    }
+                                }else
+                                    isOtherMute = 0;
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                //code to do the HTTP request
+            }
+
+
+        }).start();
+    }
+
     private void getNodeInfo() {
         chatList.clear();
 
@@ -467,7 +635,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getOpponentChatInfo() {
-        otherChatRef.addChildEventListener(new ChildEventListener() {
+        childEventListener = otherChatRef.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -503,7 +671,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getMessageList(){
-
         myChatRef.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -603,7 +770,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 p.x = location[0];
                 p.y = location[1];
                 arrayList.clear();
+
                 initiatePopupWindow(p);
+
                 break;
 
             case R.id.btnBack:
@@ -611,49 +780,98 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.iv_capture_image:
-                isFromGallery = false;
+                if (!ConnectionDetector.isConnected()) {
+                    new NoConnectionDialog(ChatActivity.this, new NoConnectionDialog.Listner() {
+                        @Override
+                        public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                            if(isConnected){
+                                dialog.dismiss();
+                            }
+                        }
+                    }).show();
+                }else {
+                    isFromGallery = false;
 
-                KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
-                if (blockedById.equals(myUid)) {
-                    showAlert("You have blocked this user, you can't send messages");
-                    // Toast.makeText(ChatActivity.this,"You have blocked this user, you can't send messages",Toast.LENGTH_SHORT).show();
-                    // MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
-                }else if (blockedById.equals(otherUserId)) {
-                    showAlert("You have blocked this user, you can't send messages");
-                }else if (blockedById.equalsIgnoreCase("Both")){
-                    showAlert("You have blocked this user, you can't send messages");
-                }
-                else {
-                    getPermissionAndPicImage("Camera");
+                    KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
+                    if (blockedById.equals(myUid)) {
+                        showAlert("You have blocked this user, you can't send messages");
+                        // Toast.makeText(ChatActivity.this,"You have blocked this user, you can't send messages",Toast.LENGTH_SHORT).show();
+                        // MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
+                    }else if (blockedById.equals(otherUserId)) {
+                        showAlert("You have blocked this user, you can't send messages");
+                    }else if (blockedById.equalsIgnoreCase("Both")){
+                        showAlert("You have blocked this user, you can't send messages");
+                    }
+                    else {
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            if (checkSelfPermission(android.Manifest.permission.CAMERA) !=
+                                    PackageManager.PERMISSION_GRANTED){
+                                requestPermissions(new String[]{android.Manifest.permission.CAMERA,
+                                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                                android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                                        Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY);
+                            }
+                            else {
+                                takePhotoFromCamera();
+                            }
+                        }else {
+                            takePhotoFromCamera();
+                        }
+                    }
                 }
                 break;
 
             case R.id.iv_pickImage:
-                KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
-                isFromGallery = true;
+                if (!ConnectionDetector.isConnected()) {
+                    new NoConnectionDialog(ChatActivity.this, new NoConnectionDialog.Listner() {
+                        @Override
+                        public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                            if(isConnected){
+                                dialog.dismiss();
+                            }
+                        }
+                    }).show();
+                }else {
 
-                if (blockedById.equals(myUid)) {
-                    showAlert("You have blocked this user, you can't send messages");
-                    //  MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
+                    KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
+                    isFromGallery = true;
 
-                }else if (blockedById.equals(otherUserId)) {
-                    showAlert("You are blocked by this user, you can't send messages");
-                    //  MyToast.getInstance(ChatActivity.this).showCustomAlert("You are blocked by this user, you can't send messages");
+                    if (blockedById.equals(myUid)) {
+                        showAlert("You have blocked this user, you can't send messages");
+                        //  MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
 
-                }else if (blockedById.equalsIgnoreCase("Both")){
-                    showAlert("You have blocked this user, you can't send messages");
-                    // MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
+                    }else if (blockedById.equals(otherUserId)) {
+                        showAlert("You are blocked by this user, you can't send messages");
+                        //  MyToast.getInstance(ChatActivity.this).showCustomAlert("You are blocked by this user, you can't send messages");
+
+                    }else if (blockedById.equalsIgnoreCase("Both")){
+                        showAlert("You have blocked this user, you can't send messages");
+                        // MyToast.getInstance(ChatActivity.this).showCustomAlert("You have blocked this user, you can't send messages");
+                    }
+                    else {
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED){
+                                requestPermissions(new String[]{
+                                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                                        Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY);
+                            }else {
+                                choosePhotoFromGallary();
+                            }
+                        }else {
+                            choosePhotoFromGallary();
+                        }
+                        getPermissionAndPicImage("Gallery");
+                    }
                 }
-                else {
-                    getPermissionAndPicImage("Gallery");
-                }
+
                 break;
 
             case R.id.tv_for_send:
                 assert blockedById != null;
                 if (blockedById.equals(myUid)) {
                     showAlert("You have blocked this user, you can't send messages");
-                }else if (blockedById!=null && blockedById.equals(otherUserId)) {
+                }else if (blockedById.equals(otherUserId)) {
                     showAlert("You are blocked by this user, you can't send messages");
                 }else if (blockedById.equalsIgnoreCase("Both")){
                     showAlert("You have blocked this user, you can't send messages");
@@ -720,30 +938,65 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void writeToDBProfiles(Chat chatModel1, Chat chatModel2,
-                                   ChatHistory chatHistory1, final ChatHistory chatHistory2) {
+    private void writeToDBProfiles(final Chat chatModel1, final Chat chatModel2,
+                                   final ChatHistory chatHistory1, final ChatHistory chatHistory2) {
 
+        if (!ConnectionDetector.isConnected()) {
+            new NoConnectionDialog(ChatActivity.this, new NoConnectionDialog.Listner() {
+                @Override
+                public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                    if(isConnected){
+                        dialog.dismiss();
 
-        otherChatRef.push().setValue(chatModel1);
-        myChatRef.push().setValue(chatModel2);
+                        otherChatRef.push().setValue(chatModel1);
+                        myChatRef.push().setValue(chatModel2);
 
-        mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
-                setValue(chatHistory1);
-        // mFirebaseDatabaseReference.child("chat_history").child(otherUserId).child(myUid).setValue(chatHistory2);
+                        mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
+                                setValue(chatHistory1);
+                        // mFirebaseDatabaseReference.child("chat_history").child(otherUserId).child(myUid).setValue(chatHistory2);
 
-        otherChatHistoryRef.setValue(chatHistory2);
-        //    FirebaseDatabase.getInstance().getReference().child("history").child(session.getUser().id).child(uID).setValue(chatModel);
-        //  FirebaseDatabase.getInstance().getReference().child("history").child(uID).child(session.getUser().id).setValue(chatModel2);
-        et_for_sendTxt.setText("");
+                        otherChatHistoryRef.setValue(chatHistory2);
+                        //    FirebaseDatabase.getInstance().getReference().child("history").child(session.getUser().id).child(uID).setValue(chatModel);
+                        //  FirebaseDatabase.getInstance().getReference().child("history").child(uID).child(session.getUser().id).setValue(chatModel2);
+                        et_for_sendTxt.setText("");
 
-        isTyping = false;
-        handler.removeCallbacks(runnable);
-        isOppTypingRef.setValue(null);
+                        isTyping = false;
+                        handler.removeCallbacks(runnable);
+                        isOppTypingRef.setValue(null);
 
-        if (chatHistory1.messageType == 0)
-            sendPushNotificationToReceiver(chatModel1.message,"chat");//type = chat/groupChat
-        else
-            sendPushNotificationToReceiver("Image","chat");
+                        if (isOtherMute!=1){
+                            if (chatHistory1.messageType == 0)
+                                sendPushNotificationToReceiver(chatModel1.message,"chat");//type = chat/groupChat
+                            else
+                                sendPushNotificationToReceiver("Image","chat");
+                        }
+                    }
+                }
+            }).show();
+        }else {
+            otherChatRef.push().setValue(chatModel1);
+            myChatRef.push().setValue(chatModel2);
+
+            mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
+                    setValue(chatHistory1);
+            // mFirebaseDatabaseReference.child("chat_history").child(otherUserId).child(myUid).setValue(chatHistory2);
+
+            otherChatHistoryRef.setValue(chatHistory2);
+            //    FirebaseDatabase.getInstance().getReference().child("history").child(session.getUser().id).child(uID).setValue(chatModel);
+            //  FirebaseDatabase.getInstance().getReference().child("history").child(uID).child(session.getUser().id).setValue(chatModel2);
+            et_for_sendTxt.setText("");
+
+            isTyping = false;
+            handler.removeCallbacks(runnable);
+            isOppTypingRef.setValue(null);
+
+            if (isOtherMute!=1){
+                if (chatHistory1.messageType == 0)
+                    sendPushNotificationToReceiver(chatModel1.message,"chat");//type = chat/groupChat
+                else
+                    sendPushNotificationToReceiver("Image","chat");
+            }
+        }
 
     }
 
@@ -774,8 +1027,21 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             View layout = inflater.inflate(R.layout.layout_popup_menu,(ViewGroup) findViewById(R.id.parent));
             popupWindow = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                     true);
-            int OFFSET_X = 450;
-            int OFFSET_Y = 62;
+
+            String reqString = Build.MANUFACTURER
+                    + " " + Build.MODEL + " " + Build.VERSION.RELEASE
+                    + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
+
+            int OFFSET_X;
+            int OFFSET_Y;
+
+            if (reqString.equals("motorola Moto G (4) 7.0 M")){
+                OFFSET_X = 450;
+                OFFSET_Y = 110;
+            }else {
+                OFFSET_X = 450;
+                OFFSET_Y = 70;
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 popupWindow.setElevation(5);
@@ -785,8 +1051,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 arrayList.add("Add To Favourite");
             else
                 arrayList.add("Unfavourite");
+
             arrayList.add("Clear Chat");
-            arrayList.add("Mute Chat");
+
+            if (isMute==0)
+                arrayList.add("Mute Chat");
+            else
+                arrayList.add("Unmute Chat");
+
             arrayList.add("Block User");
 
             popupWindow.showAtLocation(layout, Gravity.NO_GRAVITY, p.x + OFFSET_X, p.y + OFFSET_Y);
@@ -802,8 +1074,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             MenuAdapter menuAdapter=new MenuAdapter(ChatActivity.this, arrayList, new MenuAdapter.Listener() {
                 @Override
-                public void onMenuClick(int pos) {
-                    String data=arrayList.get(pos);
+                public void onMenuClick( int pos) {
+                    final String data=arrayList.get(pos);
+                    popupWindow.dismiss();
+
+                    if (!ConnectionDetector.isConnected()) {
+                        new NoConnectionDialog(ChatActivity.this, new NoConnectionDialog.Listner() {
+                            @Override
+                            public void onNetworkChange(Dialog dialog, boolean isConnected) {
+                                if(isConnected){
+                                    dialog.dismiss();
+                                }
+                            }
+                        }).show();
+                    }
                     switch (data){
                         case "Add To Favourite":
                         case "Unfavourite":
@@ -818,6 +1102,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             popupWindow.dismiss();
                             break;
                         case "Mute Chat":
+                        case "Unmute Chat":
+                            popupWindow.dismiss();
+                            if (isMute==0) {
+                                isMute = 1;
+                                chatRefMuteUser.child(myUid).child(otherUserId).child("mute").
+                                        setValue(1);
+                            }else {
+                                isMute = 0;
+                                chatRefMuteUser.child(myUid).child(otherUserId).removeValue();
+                            }
 
                             break;
                         case "Clear Chat":
@@ -885,7 +1179,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         map.clear();
                         chatList.clear();
                         chattingAdapter.notifyDataSetChanged();
-                        rlOptionMenu.setVisibility(View.GONE);
                         progress_bar.setVisibility(View.GONE);
                         //    tv_no_chat.setVisibility(View.VISIBLE);
                     }
@@ -1174,10 +1467,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     public void getPermissionAndPicImage(String pickFrom) {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY);
-            } else {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED){
+                if (checkSelfPermission(android.Manifest.permission.CAMERA) !=
+                        PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{android.Manifest.permission.CAMERA,
+                                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                            Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY);
+                }
+            }
+            else {
                 if (pickFrom.equals("Gallery"))
                     choosePhotoFromGallary();
                 else
@@ -1195,13 +1495,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (requestCode) {
 
             case Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     if (isFromGallery)
                         choosePhotoFromGallary();
                     else
                         takePhotoFromCamera();
                 } else
-                    MyToast.getInstance(ChatActivity.this).showDasuAlert("YOUR  PERMISSION DENIED");
+                    MyToast.getInstance(ChatActivity.this).showDasuAlert("Your  Permission Denied");
 
             }
             break;
@@ -1256,6 +1558,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         thread3 = null;
         softKeyboard.unRegisterSoftKeyboardCallback();
         KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
+
+        FirebaseDatabase.getInstance().getReference().removeEventListener(otherUserDetail);
+        FirebaseDatabase.getInstance().getReference().removeEventListener(childEventListener);
+
+        Glide.get(this).clearMemory();
     }
 
     @Override

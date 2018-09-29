@@ -20,6 +20,9 @@ public class ChatHistory implements Serializable {
 
     @Exclude
     public boolean isTyping = false;
+    @Exclude
+    public boolean isMute = false;
+
     public String banner_date;
 
 }

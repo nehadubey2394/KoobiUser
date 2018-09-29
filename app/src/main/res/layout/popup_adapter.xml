@@ -18,8 +18,18 @@
 
     <View
         android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/txt_item"
+        android:id="@+id/line2"
+        android:visibility="gone"
+        />
+
+
+    <View
+        android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/txt_item"
+        android:id="@+id/line"
         android:background="@color/light_gray_shadow" />
 
 </RelativeLayout>
