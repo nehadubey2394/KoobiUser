@@ -1,5 +1,7 @@
 package com.mualab.org.user.activity.chat.model;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 
 public class ChatHistory implements Serializable {
@@ -15,6 +17,11 @@ public class ChatHistory implements Serializable {
     public String userName;
     public String type;//user,group,broadcast
     public Object timestamp;
+
+    @Exclude
+    public boolean isTyping = false;
+    @Exclude
+    public boolean isMute = false;
 
     public String banner_date;
 

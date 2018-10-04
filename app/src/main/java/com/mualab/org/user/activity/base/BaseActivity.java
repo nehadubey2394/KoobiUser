@@ -137,8 +137,6 @@ public class BaseActivity extends AppCompatActivity implements BaseListner, Base
         getSupportActionBar().setTitle(title);
     }*/
 
-
-
     protected void setStatusbarColor(){
         Window window = this.getWindow();
         // clear FLAG_TRANSLUCENT_STATUS flag:

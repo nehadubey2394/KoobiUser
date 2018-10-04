@@ -379,7 +379,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
             case R.id.ivChat:
                 if (profileData!=null){
                     Intent chat_intent = new Intent(ArtistProfileActivity.this, ChatActivity.class);
-                    chat_intent.putExtra("userId",profileData._id);
+                    chat_intent.putExtra("opponentChatId",profileData._id);
                     startActivity(chat_intent);
                 }
                 break;

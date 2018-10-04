@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <gradient
+        android:startColor="@color/colorPrimary"
+        android:endColor="@color/chatbox_blue"
+        android:angle="0" />
+
+</shape>-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
+        <shape android:shape="oval" >
+            <gradient
+                android:startColor="@color/colorPrimary"
+                android:endColor="@color/chatbox_blue"
+                android:angle="0"
+                 />
+
+            <!--<stroke
+                android:width="2dp"
+                android:color="#ff207d94" />-->
+        </shape>
+    </item>
+    <item
+        android:bottom="2dp"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp">
+        <shape android:shape="oval" >
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+
+</layer-list>

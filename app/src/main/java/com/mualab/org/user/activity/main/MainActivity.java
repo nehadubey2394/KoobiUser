@@ -18,14 +18,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
+import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.chat.ChatHistoryActivity;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.explore.ExploreFragment;
@@ -72,6 +75,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ArrayList<LiveUserInfo> liveUserList;
     private boolean doubleBackToExitPressedOnce;
     private Runnable runnable;
+    private DatabaseReference reference;
+    private User user;
+    private Session session;
 
     public void setBgColor(int color) {
         if (rlHeader1 != null)
@@ -90,15 +96,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         // FirebaseCrash.logcat(Log.ERROR, "Build Date:", "16/04/2018");
         // FirebaseCrash.report(new Throwable("Build Date: 16/04/2018"));
 
-        Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
-        Mualab.feedBasicInfo.put("userId", "" + Mualab.currentUser.id);
-        Mualab.feedBasicInfo.put("age", "25");
-        Mualab.feedBasicInfo.put("gender", "male");
-        Mualab.feedBasicInfo.put("city", "indore");
-        Mualab.feedBasicInfo.put("state", "MP");
-        Mualab.feedBasicInfo.put("country", "India");
+        session = Mualab.getInstance().getSessionManager();
+        user = session.getUser();
 
-        getUserDetail();
+        if (user!=null){
+            Mualab.currentUser = Mualab.getInstance().getSessionManager().getUser();
+            Mualab.feedBasicInfo.put("userId", "" + user.id);
+            Mualab.feedBasicInfo.put("age", "25");
+            Mualab.feedBasicInfo.put("gender", "male");
+            Mualab.feedBasicInfo.put("city", "indore");
+            Mualab.feedBasicInfo.put("state", "MP");
+            Mualab.feedBasicInfo.put("country", "India");
+        }
 
         final NoConnectionDialog network = new NoConnectionDialog(MainActivity.this, new NoConnectionDialog.Listner() {
             @Override
@@ -125,18 +134,39 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         initView();
-        addFragment(SearchBoardFragment.newInstance(item, ""), false);
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                replaceFragment(SearchBoardFragment.newInstance(item), false);
+            }
+        });
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (user!=null) {
+                    String myUid = String.valueOf(Mualab.currentUser.id);
+                    reference =  FirebaseDatabase.getInstance().getReference().child("users").child(myUid);
+                    //getUserDetail();
+                }
+            }
+        },400);
+
 
         /*Manage Notification*/
         Intent intent = getIntent();
         if (intent != null) {
-            if (intent.getStringExtra("notifyId") != null) {
+            if (intent.getStringExtra("notifyId") != null ) {
                 String type = intent.getStringExtra("type");
                 String notifyId = intent.getStringExtra("notifyId");
                 String userName = intent.getStringExtra("userName");
                 String urlImageString = intent.getStringExtra("urlImageString");
                 String userType = intent.getStringExtra("userType");
-                String notifincationType = (intent.hasExtra("notifincationType")) ? intent.getStringExtra("notifincationType") : intent.getStringExtra("notificationType");
+                String notifincationType = (intent.hasExtra("notifincationType")) ?
+                        intent.getStringExtra("notifincationType") : intent.getStringExtra("notificationType");
+
                 switch (notifincationType) {
                     case "13":
                         ibtnFeed.callOnClick();
@@ -269,6 +299,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                         startActivity(booking6);
                         break;
+
+                }
+            }else if (intent.hasExtra("notifincationType")){
+
+                if (intent.getStringExtra("notifincationType").equals("15")){
+                    Intent chatIntent = new Intent(this, ChatActivity.class);
+                    chatIntent.putExtra("opponentChatId",intent.getStringExtra("opponentChatId"));
+                    chatIntent.putExtra("body",intent.getStringExtra("body"));
+                    chatIntent.putExtra("userName",intent.getStringExtra("userName"));
+                    startActivity(chatIntent);
                 }
             }
 
@@ -285,6 +325,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 replaceFragment(FeedsFragment.newInstance(1), false);
             }
 
+        }else {
+            addFragment(SearchBoardFragment.newInstance(item), false);
         }
     }
 
@@ -420,7 +462,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tvHeaderTitle.setVisibility(View.VISIBLE);
                     ibtnChat.setVisibility(View.GONE);
                     ivAppIcon.setVisibility(View.GONE);
-                    replaceFragment(SearchBoardFragment.newInstance(item, ""), false);
+                    replaceFragment(SearchBoardFragment.newInstance(item), false);
                 }
                 break;
 
@@ -565,34 +607,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getUserDetail(){
-        final Session session = Mualab.getInstance().getSessionManager();
-        final User user = session.getUser();
-        String  myUid = String.valueOf(Mualab.currentUser.id);
+        reference.addValueEventListener(new ValueEventListener() {
 
-        FirebaseDatabase.getInstance().getReference().child("users").child(myUid).
-                addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getValue() != null) {
-                            try {
-                                FirebaseUser firebaseUser = dataSnapshot.getValue(FirebaseUser.class);
-                                if (firebaseUser != null) {
-                                    if (!firebaseUser.authToken.equals(user.authToken)){
-                                        session.logout();
-                                    }
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try {
+                    FirebaseUser firebaseUser = dataSnapshot.getValue(FirebaseUser.class);
+                    if (firebaseUser != null) {
+                        if (!firebaseUser.authToken.equals(user.authToken)){
+                            session.logout();
+                            finish();
                         }
-
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println(databaseError.getMessage());
+            }
+        });
     }
 
     @Override

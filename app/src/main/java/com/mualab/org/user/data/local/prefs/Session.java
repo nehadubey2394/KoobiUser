@@ -1,12 +1,16 @@
 package com.mualab.org.user.data.local.prefs;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Base64;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.mualab.org.user.activity.authentication.LoginActivity;
+import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.data.model.User;
 
 import java.io.UnsupportedEncodingException;
@@ -144,6 +148,9 @@ public class Session {
 
 
     public void logout() {
+       // FirebaseDatabase.getInstance().getReference().child("users").
+        //        child(String.valueOf(Mualab.currentUser.id)).child("authToken").setValue("");
+
         editor.clear();
         editor.apply();
        /* try {
@@ -151,6 +158,14 @@ public class Session {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
+
+        NotificationManager notifManager= (NotificationManager) _context.
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        assert notifManager != null;
+        notifManager.cancelAll();
+
+        FirebaseAuth.getInstance().signOut();
+
         Intent showLogin = new Intent(_context, LoginActivity.class);
         showLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         showLogin.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

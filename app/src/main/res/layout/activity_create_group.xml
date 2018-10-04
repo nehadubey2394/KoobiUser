@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activity.chat.CreateGroupActivity">
+
+    <include
+        android:id="@+id/create_group_header"
+        layout="@layout/chat_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true" />
+
+    <LinearLayout
+        android:id="@+id/llGroupInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/create_group_header"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rlGroupImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/group_chat_circle_bg">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/chatbox_blue"
+                android:layout_centerInParent="true"
+                android:src="@drawable/comment_camera_ico"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivGroupPic"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="2dp"
+                android:layout_centerInParent="true"
+                app:civ_border_width="0dp" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="4dp"
+            android:padding="2dp"
+            >
+
+            <EditText
+                android:id="@+id/etGroupName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:ems="14"
+                android:maxLength="25"
+                android:padding="4dp"
+                android:textColorHint="@color/gray"
+                android:hint="@string/type_group_name"
+                android:fontFamily="@font/nunito_regular"
+                android:textColor="@color/text_color"
+                android:textSize="15sp"
+                android:maxLines="2" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray_shadow"
+                android:layout_marginTop="6dp"/>
+
+            <EditText
+                android:id="@+id/etGroupDescr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:ems="15"
+                android:maxLength="200"
+                android:textColorHint="@color/gray"
+                android:hint="Group description"
+                android:fontFamily="@font/nunito_regular"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:padding="4dp"
+                android:layout_marginTop="8dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray_shadow"
+                android:layout_marginTop="6dp"/>
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/gray"
+                android:gravity="center"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/nunito_regular"
+                android:text="@string/select_people_you_want_to_add_group"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rycUserList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/llGroupInfo"
+        android:layout_above="@+id/btnCreate"
+        android:layout_margin="5dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/chatbox_blue"
+        />
+
+    <TextView
+        android:id="@+id/tv_no_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/nunito_regular"
+        android:text="@string/no_data_found"
+        android:textColor="@color/text_color"
+        android:visibility="gone"
+        android:textSize="14sp" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnCreate"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:layout_margin="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:fontFamily="@font/nunito_regular"
+        android:background="@drawable/bg_new_btn_green"
+        android:text="@string/create_group" />
+
+</RelativeLayout>

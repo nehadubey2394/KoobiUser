@@ -45,7 +45,6 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
-import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
@@ -882,7 +881,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
                         DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
                         FirebaseUser firebaseUser = new FirebaseUser();
-                        firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();
+                        firebaseUser.firebaseToken = "";
 
                         firebaseUser.isOnline = 0;
 
@@ -898,12 +897,11 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
                         firebaseUser.userType = user.userType;
                         mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
 
-                        NotificationManager notificationManager = (NotificationManager) UserProfileActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
+                      /*  NotificationManager notificationManager = (NotificationManager) UserProfileActivity.this.getSystemService(Context.NOTIFICATION_SERVICE);
                         assert notificationManager != null; notificationManager.cancelAll();
                         FirebaseAuth.getInstance().signOut();
+*/
                         Mualab.getInstance().getSessionManager().logout();
-
-
 
                     }else {
                         MyToast.getInstance(UserProfileActivity.this).showDasuAlert(message);
