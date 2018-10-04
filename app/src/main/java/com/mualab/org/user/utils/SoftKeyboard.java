@@ -1,11 +1,5 @@
 package com.mualab.org.user.utils;
 
-/**
- * Created by hemant.
- * Date: 28/8/18
- * Time: 12:59 PM
- */
-
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;

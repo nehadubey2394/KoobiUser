@@ -434,4 +434,7 @@
     <string name="you_will_be_not_able_to_recover_this_converstion">You will be not able to recover \nthis converstion</string>
     <string name="are_you_want_to_block">Are you want to block</string>
     <string name="yesterday">Yesterday</string>
+    <string name="type_group_name">Type group name</string>
+    <string name="select_people_you_want_to_add_group">Select people you want to add in this group</string>
+    <string name="create_group">Create Group</string>
 </resources>

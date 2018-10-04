@@ -98,7 +98,7 @@ public class ArtistServicesActivity extends AppCompatActivity implements OnServi
             }
         });
 
-        // Listview Group collasped listener
+        // Listview Groups collasped listener
         lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
             @Override

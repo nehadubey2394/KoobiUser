@@ -175,7 +175,7 @@ public class RefineArtistActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-        // Listview Group collasped listener
+        // Listview Groups collasped listener
         lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
             @Override

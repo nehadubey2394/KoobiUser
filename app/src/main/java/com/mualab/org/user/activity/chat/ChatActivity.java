@@ -113,7 +113,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private PopupWindow popupWindow;
     private ArrayList<String>arrayList;
     private SoftKeyboard softKeyboard;
-    private Boolean isTyping = false,isOtherTypping = false;
+    private Boolean isTyping = false,isOtherTypping = false,isActivityOpen = false;
     private Handler handler = new Handler();
     private Bitmap bmChatImg;
     private DatabaseReference mFirebaseDatabaseReference,chatRef,otherChatRef,myChatRef,isOppTypingRef,
@@ -127,6 +127,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             isOtherMute=0;
     private ValueEventListener otherUserDetail;
     private ChildEventListener childEventListener;
+    public static String currentChatUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
         otherUserId = intent.getStringExtra("opponentChatId");
         myUid = String.valueOf(Mualab.currentUser.id);
+
+        currentChatUserId = otherUserId;
+
+        isActivityOpen = true;
 
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         chatRef = mFirebaseDatabaseReference.child("chat");
@@ -260,6 +265,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         layoutManager = new LinearLayoutManager(ChatActivity.this, LinearLayoutManager.VERTICAL, false);
         // layoutManager.scrollToPositionWithOffset(0, 0);
+        layoutManager.setStackFromEnd(true);
         recycler_view.setLayoutManager(layoutManager);
         recycler_view.setAdapter(chattingAdapter);
 
@@ -549,14 +555,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 blockedById = "";
-                if (dataSnapshot.exists()) {
-                    //if (dataSnapshot.hasChild("6_3")) {
-                    blockedById = dataSnapshot.getValue(String.class);
+                try {
+                    if (dataSnapshot.exists()) {
+                        //if (dataSnapshot.hasChild("6_3")) {
+                        blockedById = dataSnapshot.getValue(String.class);
 
-                    tvOnlineStatus.setVisibility(View.GONE);
+                        tvOnlineStatus.setVisibility(View.GONE);
 
-                    //  }
-                }else tvOnlineStatus.setVisibility(View.VISIBLE);
+                        //  }
+                    }else tvOnlineStatus.setVisibility(View.VISIBLE);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -575,12 +585,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    if (dataSnapshot.getValue() != null) {
-                                        MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
-                                        assert muteUser != null;
-                                        isMute = muteUser.mute;
+                                try {
+                                    if (dataSnapshot.exists()) {
+                                        if (dataSnapshot.getValue() != null) {
+                                            MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
+                                            assert muteUser != null;
+                                            isMute = muteUser.mute;
+                                        }
                                     }
+                                }catch (Exception e){
+                                    e.printStackTrace();
                                 }
                             }
                             @Override
@@ -639,18 +653,32 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Chat messageOutput = dataSnapshot.getValue(Chat.class);
-                if (messageOutput != null && (messageOutput.readStatus == 0 || messageOutput.readStatus == 1)) {
-                    otherChatRef.child(dataSnapshot.getKey()).child("readStatus").setValue(2);
+                try {
+                    if (isActivityOpen){
+                        Chat messageOutput = dataSnapshot.getValue(Chat.class);
+                        if (messageOutput != null && (messageOutput.readStatus == 0 || messageOutput.readStatus == 1)) {
+                            otherChatRef.child(dataSnapshot.getKey()).child("readStatus").setValue(2);
+                        }
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Chat messageOutput = dataSnapshot.getValue(Chat.class);
-                if (messageOutput != null && (messageOutput.readStatus == 0 || messageOutput.readStatus == 1)) {
-                    otherChatRef.child(dataSnapshot.getKey()).child("readStatus").setValue(2);
+                try {
+                    if (isActivityOpen){
+                        Chat messageOutput = dataSnapshot.getValue(Chat.class);
+                        if (messageOutput != null && (messageOutput.readStatus == 0 || messageOutput.readStatus == 1)) {
+                            otherChatRef.child(dataSnapshot.getKey()).child("readStatus").setValue(2);
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
             }
 
             @Override
@@ -674,27 +702,36 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         myChatRef.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Chat messageOutput = dataSnapshot.getValue(Chat.class);
-                // map.put(dataSnapshot.getKey(),messageOutput);
-                getChatDataInmap(dataSnapshot.getKey(),messageOutput);
+                try {
+                    Chat messageOutput = dataSnapshot.getValue(Chat.class);
+                    // map.put(dataSnapshot.getKey(),messageOutput);
+                    getChatDataInmap(dataSnapshot.getKey(),messageOutput);
 
-                if (chatList.size()==0) {
-                    progress_bar.setVisibility(View.GONE);
-                    //  tv_no_chat.setVisibility(View.VISIBLE);
-                }else {
-                    progress_bar.setVisibility(View.GONE);
-                    //   tv_no_chat.setVisibility(View.GONE);
+                    if (chatList.size()==0) {
+                        progress_bar.setVisibility(View.GONE);
+                        //  tv_no_chat.setVisibility(View.VISIBLE);
+                    }else {
+                        progress_bar.setVisibility(View.GONE);
+                        //   tv_no_chat.setVisibility(View.GONE);
+                    }
+                    recycler_view.scrollToPosition(chatList.size() - 1);
+                    // chattingAdapter.notifyDataSetChanged();
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                recycler_view.scrollToPosition(chatList.size() - 1);
-                // chattingAdapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //  recycler_view.scrollToPosition(chatList.size() - 1);
-                Chat messageOutput = dataSnapshot.getValue(Chat.class);
-                getChatDataInmap(dataSnapshot.getKey(),messageOutput);
-                // map.put(dataSnapshot.getKey(),messageOutput);
+                try {
+                    //  recycler_view.scrollToPosition(chatList.size() - 1);
+                    Chat messageOutput = dataSnapshot.getValue(Chat.class);
+                    getChatDataInmap(dataSnapshot.getKey(),messageOutput);
+                    // map.put(dataSnapshot.getKey(),messageOutput);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -861,7 +898,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         }else {
                             choosePhotoFromGallary();
                         }
-                        getPermissionAndPicImage("Gallery");
                     }
                 }
 
@@ -951,8 +987,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         otherChatRef.push().setValue(chatModel1);
                         myChatRef.push().setValue(chatModel2);
 
-                        mFirebaseDatabaseReference.child("chat_history").child(myUid).child(otherUserId).
-                                setValue(chatHistory1);
+                        mFirebaseDatabaseReference.child("chat_history").child(myUid).
+                                child(otherUserId).setValue(chatHistory1);
                         // mFirebaseDatabaseReference.child("chat_history").child(otherUserId).child(myUid).setValue(chatHistory2);
 
                         otherChatHistoryRef.setValue(chatHistory2);
@@ -1032,14 +1068,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     + " " + Build.MODEL + " " + Build.VERSION.RELEASE
                     + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
 
-            int OFFSET_X;
+            int OFFSET_X = 450;
             int OFFSET_Y;
 
             if (reqString.equals("motorola Moto G (4) 7.0 M")){
-                OFFSET_X = 450;
                 OFFSET_Y = 110;
             }else {
-                OFFSET_X = 450;
                 OFFSET_Y = 70;
             }
 
@@ -1495,9 +1529,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         switch (requestCode) {
 
             case Constant.MY_PERMISSIONS_REQUEST_CEMERA_OR_GALLERY: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (isFromGallery)
                         choosePhotoFromGallary();
                     else
@@ -1548,6 +1580,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         isOppTypingRef.setValue(null);
+        isActivityOpen = false;
     }
 
     @Override
@@ -1556,9 +1589,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         thread1 = null;
         thread2 = null;
         thread3 = null;
+        isActivityOpen = false;
         softKeyboard.unRegisterSoftKeyboardCallback();
         KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
-
         FirebaseDatabase.getInstance().getReference().removeEventListener(otherUserDetail);
         FirebaseDatabase.getInstance().getReference().removeEventListener(childEventListener);
 
@@ -1568,7 +1601,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         KeyboardUtil.hideKeyboard(et_for_sendTxt,ChatActivity.this);
-
+        isActivityOpen = false;
         isTyping = false;
         handler.removeCallbacks(runnable);
         isOppTypingRef.setValue(null);
@@ -1594,6 +1627,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 tv_no_chat.setVisibility(View.VISIBLE);
             }
         });
+
+      /*  mFirebaseDatabaseReference.removeEventListener(otherUserDetail);
+        mFirebaseDatabaseReference.removeEventListener(childEventListener);
+
+        otherChatRef = null;*/
 
         super.onBackPressed();
         finish();
@@ -1630,7 +1668,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-
 
     }
 }

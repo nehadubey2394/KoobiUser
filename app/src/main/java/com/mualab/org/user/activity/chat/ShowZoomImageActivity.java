@@ -14,18 +14,18 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.mualab.org.user.R;
+import com.mualab.org.user.dialogs.MyToast;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 public class ShowZoomImageActivity extends AppCompatActivity {
-    private  String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_zoom_image);
         Intent intent = getIntent();
-        url = intent.getStringExtra("url");
+        final String url = intent.getStringExtra("url");
 
         final ProgressBar progress_bar = findViewById(R.id.progress_bar);
         final ImageView photoView = findViewById(R.id.photo_view);
@@ -49,7 +49,11 @@ public class ShowZoomImageActivity extends AppCompatActivity {
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                     //   MyToast.getInstance(ShowZoomImageActivity.this).showCustomAlert("Failed to load this image");
                         progress_bar.setVisibility(View.GONE);
+
+                        Glide.with(ShowZoomImageActivity.this).load(url).placeholder(R.drawable.gallery_placeholder).into(photoView);
+
                         return false;
                     }
 

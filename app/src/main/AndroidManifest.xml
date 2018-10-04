@@ -235,12 +235,12 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_launcher" />
+        <!--              Set color used with incoming notification messages. This is used when no color is set for the incoming -->
         <!--
-             Set color used with incoming notification messages. This is used when no color is set for the incoming
-        -->
-        <!--<meta-data
+            <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorPrimary" />-->
+            android:resource="@color/colorPrimary" />
+        -->
 
         <activity
             android:name=".activity.chat.ChatHistoryActivity"
@@ -249,11 +249,18 @@
             android:windowSoftInputMode="stateHidden">
 
         </activity>
-        <activity android:name=".activity.base.BaseActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".activity.chat.ShowZoomImageActivity"
+        <activity
+            android:name=".activity.base.BaseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.chat.ShowZoomImageActivity"
             android:screenOrientation="portrait">
+
+        </activity>
+        <activity android:name=".activity.chat.CreateGroupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="adjustPan">
 
         </activity>
     </application>

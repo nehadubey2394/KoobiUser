@@ -78,6 +78,7 @@
                     android:layout_height="180dp"
                     android:scaleType="center"
                     android:visibility="gone"
+                    android:src="@drawable/ic_gallery_placeholder"
                     />
 
 
@@ -85,8 +86,8 @@
 
             <ImageView
                 android:id="@+id/corner"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
                 android:layout_alignParentLeft="true"
                 android:src="@drawable/ic_chat_corner_left" />
 

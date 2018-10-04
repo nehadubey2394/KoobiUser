@@ -139,7 +139,7 @@ public class BookingFragment2 extends Fragment implements View.OnClickListener{
             }
         });
 
-        // Listview Group collasped listener
+        // Listview Groups collasped listener
         lvExpandable.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
 
             @Override

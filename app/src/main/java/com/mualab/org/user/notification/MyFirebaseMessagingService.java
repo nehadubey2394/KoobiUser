@@ -19,7 +19,6 @@ import android.graphics.RectF;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -32,13 +31,11 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.main.MainActivity;
-import com.mualab.org.user.activity.splash.SplashActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -68,8 +65,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 ActivityManager am = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
                 assert am != null;
                 ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-                if (!am.getRunningTasks(1).get(0).topActivity.getClassName().
-                        equals("com.mualab.org.user.activity.chat.ChatActivity")){
+                if (am.getRunningTasks(1).get(0).topActivity.getClassName().
+                        equals("com.mualab.org.user.activity.chat.ChatActivity") ||
+                        am.getRunningTasks(1).get(0).topActivity.getClassName().
+                                equals("com.mualab.org.user.activity.chat.ShowZoomImageActivity")){
+                    if (!userId.equals(ChatActivity.currentChatUserId))
+                        chatNotification(body,title,notifincationType,userId);
+                }else {
                     chatNotification(body,title,notifincationType,userId);
                 }
                 // scheduleJob();

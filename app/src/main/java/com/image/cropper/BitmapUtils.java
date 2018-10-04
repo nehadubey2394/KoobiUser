@@ -451,7 +451,7 @@ final class BitmapUtils {
     /**
      * Decode image from uri using "inJustDecodeBounds" to get the image dimensions.
      */
-    private static BitmapFactory.Options decodeImageForOption(ContentResolver resolver, Uri uri) throws FileNotFoundException {
+    public static BitmapFactory.Options decodeImageForOption(ContentResolver resolver, Uri uri) throws FileNotFoundException {
         InputStream stream = null;
         try {
             stream = resolver.openInputStream(uri);

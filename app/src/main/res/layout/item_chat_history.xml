@@ -158,8 +158,8 @@
 
                 <ImageView
                     android:id="@+id/ivMuteIcon"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:background="@drawable/mute_icon"
                     android:layout_marginRight="4dp"
                     android:visibility="gone"

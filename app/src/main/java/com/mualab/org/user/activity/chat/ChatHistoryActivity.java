@@ -2,7 +2,11 @@ package com.mualab.org.user.activity.chat;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -176,97 +180,113 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 System.out.println("typping===");
 
-                if (!dataSnapshot.getKey().contains(myChild)){
+                try {
 
-                    if (!dataSnapshot.getKey().contains("broadcast_") ||
-                            !dataSnapshot.getKey().contains("broadcast_group")){
+                    if (!dataSnapshot.getKey().contains(myChild)){
 
-                        final Typing typing = dataSnapshot.getValue(Typing.class);
-                        String node = dataSnapshot.getKey();
+                        if (!dataSnapshot.getKey().contains("broadcast_") ||
+                                !dataSnapshot.getKey().contains("broadcast_group")){
 
-                        assert typing != null;
-                        String blockNode = typing.senderId+"_"+myId;
-                        if (!blockUsersMap.containsKey(blockNode)){
-                            if (node.contains(myId)){
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (chatHistories.size()!=0 ){
-                                            for (int i=0;i<chatHistories.size();i++){
-                                                ChatHistory chatHistory = chatHistories.get(i);
-                                                if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
-                                                        equals(chatHistory.reciverId)){
-                                                    chatHistory.isTyping = true;
-                                                    historyAdapter.setTyping(true,i);
-                                                    break;
+                            final Typing typing = dataSnapshot.getValue(Typing.class);
+                            String node = dataSnapshot.getKey();
+
+                            assert typing != null;
+                            String blockNode = typing.senderId+"_"+myId;
+                            if (!blockUsersMap.containsKey(blockNode)){
+                                if (typing.senderId.equals(myId) || typing.reciverId.equals(myId)){
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (chatHistories.size()!=0 ){
+                                                for (int i=0;i<chatHistories.size();i++){
+                                                    ChatHistory chatHistory = chatHistories.get(i);
+                                                    if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
+                                                            equals(chatHistory.reciverId)){
+                                                        chatHistory.isTyping = true;
+                                                        historyAdapter.setTyping(true,i);
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                }, 400);
+                                    }, 400);
+                                }
                             }
                         }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                try {
+                    if (!dataSnapshot.getKey().contains(myChild)){
 
-                if (!dataSnapshot.getKey().contains(myChild)){
+                        if (!dataSnapshot.getKey().contains("broadcast_") ||
+                                !dataSnapshot.getKey().contains("broadcast_group")){
 
-                    if (!dataSnapshot.getKey().contains("broadcast_") ||
-                            !dataSnapshot.getKey().contains("broadcast_group")){
+                            final Typing typing = dataSnapshot.getValue(Typing.class);
+                            String node = dataSnapshot.getKey();
 
-                        final Typing typing = dataSnapshot.getValue(Typing.class);
-                        String node = dataSnapshot.getKey();
+                            assert typing != null;
+                            String blockNode = typing.senderId+"_"+myId;
 
-                        assert typing != null;
-                        String blockNode = typing.senderId+"_"+myId;
-
-                        if (!blockUsersMap.containsKey(blockNode)){
-                            if (node.contains(myId)){
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (chatHistories.size()!=0 ){
-                                            for (int i=0;i<chatHistories.size();i++){
-                                                ChatHistory chatHistory = chatHistories.get(i);
-                                                if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
-                                                        equals(chatHistory.reciverId)){
-                                                    chatHistory.isTyping = true;
-                                                    historyAdapter.setTyping(true,i);
-                                                    break;
+                            if (!blockUsersMap.containsKey(blockNode)){
+                                if (typing.senderId.equals(myId) || typing.reciverId.equals(myId)){
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (chatHistories.size()!=0 ){
+                                                for (int i=0;i<chatHistories.size();i++){
+                                                    ChatHistory chatHistory = chatHistories.get(i);
+                                                    if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
+                                                            equals(chatHistory.reciverId)){
+                                                        chatHistory.isTyping = true;
+                                                        historyAdapter.setTyping(true,i);
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                }, 400);
+                                    }, 400);
+                                }
                             }
                         }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
 
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                // thread.interrupt();
-                Typing typing = dataSnapshot.getValue(Typing.class);
-                if (dataSnapshot.exists()){
-                    assert typing != null;
-                    if (listmap.containsKey(typing.senderId)&& chatHistories.size()!=0){
-                        for (int i=0;i<chatHistories.size();i++){
-                            ChatHistory chatHistory = chatHistories.get(i);
-                            if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
-                                    equals(chatHistory.reciverId)){
-                                chatHistory.isTyping = false;
-                                historyAdapter.setTyping(false,i);
-                                break;
+
+
+                try {
+                    // thread.interrupt();
+                    Typing typing = dataSnapshot.getValue(Typing.class);
+                    if (dataSnapshot.exists()){
+                        assert typing != null;
+                        if (listmap.containsKey(typing.senderId)&& chatHistories.size()!=0){
+                            for (int i=0;i<chatHistories.size();i++){
+                                ChatHistory chatHistory = chatHistories.get(i);
+                                if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
+                                        equals(chatHistory.reciverId)){
+                                    chatHistory.isTyping = false;
+                                    historyAdapter.setTyping(false,i);
+                                    break;
+                                }
                             }
                         }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
             }
 
             @Override
@@ -287,15 +307,20 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.getValue()== null){
-                    if (!dataSnapshot.exists()){
+                try {
+                    if(dataSnapshot.getValue()== null){
+                        if (!dataSnapshot.exists()){
+                            tv_no_chat.setVisibility(View.VISIBLE);
+                        }else{
+                            tv_no_chat.setVisibility(View.GONE);
+                        }
+                        progress_bar.setVisibility(View.GONE);
                         tv_no_chat.setVisibility(View.VISIBLE);
-                    }else{
-                        tv_no_chat.setVisibility(View.GONE);
                     }
-                    progress_bar.setVisibility(View.GONE);
-                    tv_no_chat.setVisibility(View.VISIBLE);
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
             }
 
             @Override
@@ -312,66 +337,77 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String key = dataSnapshot.getKey();
+                try {
+                    if (!key.contains("group_")){
+                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
 
-                if (!key.contains("group_")){
-                    ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
-
-                    if (messageOutput != null) {
-                        getChatDataInMap(key,messageOutput);
+                        if (messageOutput != null) {
+                            getChatDataInMap(key,messageOutput);
+                        }
+                    }else {
+                        progress_bar.setVisibility(View.GONE);
+                        tv_no_chat.setVisibility(View.VISIBLE);
                     }
-                }else {
-                    progress_bar.setVisibility(View.GONE);
-                    tv_no_chat.setVisibility(View.VISIBLE);
-                }
 
-                if(chatHistories.size() == 0){
-                    tv_no_chat.setVisibility(View.VISIBLE);
-                }else{
-                    tv_no_chat.setVisibility(View.GONE);
-                }
+                    if(chatHistories.size() == 0){
+                        tv_no_chat.setVisibility(View.VISIBLE);
+                    }else{
+                        tv_no_chat.setVisibility(View.GONE);
+                    }
 
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String key = dataSnapshot.getKey();
-                if (!key.contains("group_")){
-                    ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
-                    if (messageOutput != null) {
-                        getChatDataInMap(key,messageOutput);
+                try {
+                    String key = dataSnapshot.getKey();
+                    if (!key.contains("group_")){
+                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                        if (messageOutput != null) {
+                            getChatDataInMap(key,messageOutput);
+                        }
+                    }else {
+                        progress_bar.setVisibility(View.GONE);
+                        tv_no_chat.setVisibility(View.VISIBLE);
                     }
-                }else {
-                    progress_bar.setVisibility(View.GONE);
-                    tv_no_chat.setVisibility(View.VISIBLE);
-                }
 
-                if(chatHistories.size() == 0){
-                    tv_no_chat.setVisibility(View.VISIBLE);
-                }else{
-                    tv_no_chat.setVisibility(View.GONE);
-                }
+                    if(chatHistories.size() == 0){
+                        tv_no_chat.setVisibility(View.VISIBLE);
+                    }else{
+                        tv_no_chat.setVisibility(View.GONE);
+                    }
 
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getKey();
+                try {
+                    String key = dataSnapshot.getKey();
 
-                if (!key.contains("group_")){
-                    ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
-                    listmap.remove(dataSnapshot.getKey());
+                    if (!key.contains("group_")){
+                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                        listmap.remove(dataSnapshot.getKey());
 
-                    for(int i = 0 ; i<chatHistories.size();i++){
-                        if(chatHistories.get(i).senderId.equals(dataSnapshot.getKey()) | chatHistories.get(i).reciverId.equals(dataSnapshot.getKey())){
-                            chatHistories.remove(i);
-                            historyAdapter.notifyItemRemoved(i);
-                            break;
+                        for(int i = 0 ; i<chatHistories.size();i++){
+                            if(chatHistories.get(i).senderId.equals(dataSnapshot.getKey()) | chatHistories.get(i).reciverId.equals(dataSnapshot.getKey())){
+                                chatHistories.remove(i);
+                                historyAdapter.notifyItemRemoved(i);
+                                break;
+                            }
                         }
+
                     }
+                    progress_bar.setVisibility(View.GONE);
 
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                progress_bar.setVisibility(View.GONE);
-
             }
 
             @Override
@@ -430,61 +466,74 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists()) {
-                    MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
-                    muteUsersMap.put(dataSnapshot.getKey(),muteUser);
+                try {
+                    if (dataSnapshot.exists()) {
+                        MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
+                        muteUsersMap.put(dataSnapshot.getKey(),muteUser);
 
-                    String key = dataSnapshot.getKey();
-                    if (chatHistories!=null && chatHistories.size()!=0){
-                        for (int i=0;i<chatHistories.size();i++){
-                            ChatHistory chatHistory = chatHistories.get(i);
-                            if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
-                                    equals(key) ){
-                                chatHistory.isMute = true;
-                                historyAdapter.setMute(i);
-                                break;
+                        String key = dataSnapshot.getKey();
+                        if (chatHistories!=null && chatHistories.size()!=0){
+                            for (int i=0;i<chatHistories.size();i++){
+                                ChatHistory chatHistory = chatHistories.get(i);
+                                if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
+                                        equals(key) ){
+                                    chatHistory.isMute = true;
+                                    historyAdapter.setMute(i);
+                                    break;
+                                }
                             }
                         }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists()) {
-                    MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
-                    muteUsersMap.put(dataSnapshot.getKey(),muteUser);
-                    String key = dataSnapshot.getKey();
-                    if (chatHistories!=null && chatHistories.size()!=0){
-                        for (int i=0;i<chatHistories.size();i++){
-                            ChatHistory chatHistory = chatHistories.get(i);
-                            if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
-                                    equals(key) ){
-                                chatHistory.isMute = true;
-                                historyAdapter.setMute(i);
-                                break;
+                try {
+                    if (dataSnapshot.exists()) {
+                        MuteUser muteUser = dataSnapshot.getValue(MuteUser.class);
+                        muteUsersMap.put(dataSnapshot.getKey(),muteUser);
+                        String key = dataSnapshot.getKey();
+                        if (chatHistories!=null && chatHistories.size()!=0){
+                            for (int i=0;i<chatHistories.size();i++){
+                                ChatHistory chatHistory = chatHistories.get(i);
+                                if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
+                                        equals(key) ){
+                                    chatHistory.isMute = true;
+                                    historyAdapter.setMute(i);
+                                    break;
+                                }
                             }
                         }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
+
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    String key = dataSnapshot.getKey();
-                    muteUsersMap.remove(key);
-                    if (chatHistories!=null && chatHistories.size()!=0){
-                        for (int i=0;i<chatHistories.size();i++){
-                            ChatHistory chatHistory = chatHistories.get(i);
-                            if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
-                                    equals(key) ){
-                                chatHistory.isMute = false;
-                                historyAdapter.setMute(i);
-                                break;
+                try {
+                    if (dataSnapshot.exists()){
+                        String key = dataSnapshot.getKey();
+                        muteUsersMap.remove(key);
+                        if (chatHistories!=null && chatHistories.size()!=0){
+                            for (int i=0;i<chatHistories.size();i++){
+                                ChatHistory chatHistory = chatHistories.get(i);
+                                if (chatHistory.senderId.equals(key) || chatHistory.reciverId.
+                                        equals(key) ){
+                                    chatHistory.isMute = false;
+                                    historyAdapter.setMute(i);
+                                    break;
+                                }
                             }
                         }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
 
@@ -698,14 +747,36 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private void allGroup(){
+        List<ChatHistory> tempArrayList = new ArrayList<>();
+
+        for (ChatHistory history : chatHistories) {
+            //if the existing elements contains the search input
+            if (history.type.equals("group")) {
+                tempArrayList.add(history);
+            }
+        }
+
+        if (tempArrayList.size()==0)
+            tv_no_chat.setVisibility(View.VISIBLE);
+        else
+            tv_no_chat.setVisibility(View.GONE);
+        //calling a method of the adapter class and passing the filtered list
+        historyAdapter.filterList(tempArrayList);
+    }
+
     private void popupWindowForAdd(Point p) {
 
         try {
             LayoutInflater inflater = (LayoutInflater) ChatHistoryActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             assert inflater != null;
             View layout = inflater.inflate(R.layout.layout_popup_menu,(ViewGroup) findViewById(R.id.parent));
-            PopupWindow popupWindow = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+            final PopupWindow popupWindow = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                     true);
+
+            popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            popupWindow.setOutsideTouchable(true);
+
 
             String reqString = Build.MANUFACTURER
                     + " " + Build.MODEL + " " + Build.VERSION.RELEASE
@@ -715,11 +786,11 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             int OFFSET_Y;
 
             if (reqString.equals("motorola Moto G (4) 7.0 M")){
-                OFFSET_X = 500;
+                OFFSET_X = 200;
                 OFFSET_Y = 96;
             }else {
-                OFFSET_X = 500;
-                OFFSET_Y = 60;
+                OFFSET_X = 200;
+                OFFSET_Y = 58;
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -729,7 +800,6 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             arrayList.add("Create new chat");
             arrayList.add("Create new group");
             arrayList.add("Join new group");
-
 
             popupWindow.showAtLocation(layout, Gravity.NO_GRAVITY, p.x + OFFSET_X, p.y + OFFSET_Y);
             RecyclerView recycler_view = layout.findViewById(R.id.recycler_view);
@@ -748,12 +818,13 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                             }
                         }).show();
                     }
+                    popupWindow.dismiss();
 
                     switch (data){
                         case "Create new chat":
-
                             break;
                         case "Create new group":
+                            startActivity(new Intent(ChatHistoryActivity.this,CreateGroupActivity.class));
                             break;
 
                         case "Join new group":
@@ -790,6 +861,10 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                     + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
 
 
+            popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setFocusable(true);
+
             int OFFSET_X;
             int OFFSET_Y;
 
@@ -798,13 +873,13 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 OFFSET_Y = 70;
             }else {
                 OFFSET_X = 480;
-                OFFSET_Y = 50;
+                OFFSET_Y = 48;
             }
 
             final ArrayList<String>arrayList = new ArrayList<>();
             arrayList.add("All");
-            arrayList.add("All Group");
-            arrayList.add("My Group");
+            arrayList.add("All Groups");
+            arrayList.add("My Groups");
             arrayList.add("Read");
             arrayList.add("Unread");
 
@@ -830,12 +905,21 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                         case "All":
                             popupWindow.dismiss();
                             historyAdapter.filterList(chatHistories);
+                            if (chatHistories.size()==0)
+                                tv_no_chat.setVisibility(View.VISIBLE);
+                            else
+                                tv_no_chat.setVisibility(View.GONE);
+
                             break;
 
-                        case "All Group":
+                        case "All Groups":
+                            popupWindow.dismiss();
+                            allGroup();
                             break;
 
-                        case "My Group":
+                        case "My Groups":
+                            popupWindow.dismiss();
+                            allGroup();
                             break;
 
                         case "Read":
