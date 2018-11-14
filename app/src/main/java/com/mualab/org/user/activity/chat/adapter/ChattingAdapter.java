@@ -190,14 +190,14 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public class OtherViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView tv_other_msg,tv_other_name,tv_other_msg_time,tv_my_date_label;
+        TextView tv_other_msg,tvSenderName,tv_other_msg_time,tv_my_date_label;
         ImageView iv_other_img,iv_othr_msg_status;
         ProgressBar progress_bar;
 
         OtherViewHolder(View itemView) {
             super(itemView);
             tv_other_msg = itemView.findViewById(R.id.tv_other_msg);
-            tv_other_name = itemView.findViewById(R.id.tv_other_name);
+            tvSenderName = itemView.findViewById(R.id.tvSenderName);
             tv_other_msg_time = itemView.findViewById(R.id.tv_other_msg_time);
             iv_other_img = itemView.findViewById(R.id.iv_other_img);
             iv_other_img.setEnabled(false);
@@ -209,7 +209,7 @@ public class ChattingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         void otherBindData(final Chat chat, int position,int tempPos){
-            tv_other_name.setVisibility(View.GONE);
+            tvSenderName.setVisibility(View.GONE);
 
             if(chat.messageType == 1){
                 progress_bar.setVisibility(View.VISIBLE);

@@ -1166,7 +1166,7 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
     boolean isShow = false;
     private void showLargeImage(Feeds feeds, int index){
         View dialogView = View.inflate(mContext, R.layout.dialog_large_image_view, null);
-        final Dialog dialog = new Dialog(mContext,android.R.style.Theme_Holo_Light_NoActionBar_Fullscreen);
+        final Dialog dialog = new Dialog(mContext,R.style.InOutAnimation);
         //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.InOutAnimation;
@@ -1174,8 +1174,8 @@ public class FeedsFragment extends FeedBaseFragment implements View.OnClickListe
         final InstaTag postImage = dialogView.findViewById(R.id.post_image);
         //. postImage.setTouchListnerDisable();
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
-        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
-        tvCertiTitle.setText("Images");
+        TextView tvHeaderTitle = dialogView.findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle.setText("Images");
 
 
         postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);

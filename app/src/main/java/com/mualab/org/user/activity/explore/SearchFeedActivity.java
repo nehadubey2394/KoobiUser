@@ -5,15 +5,21 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.artist_profile.activity.ArtistProfileActivity;
 import com.mualab.org.user.activity.base.BaseFragment;
 import com.mualab.org.user.activity.explore.fragment.SearchFeedFragment;
 import com.mualab.org.user.activity.explore.model.ExSearchTag;
+import com.mualab.org.user.activity.my_profile.activity.UserProfileActivity;
 import com.mualab.org.user.application.Mualab;
 import com.mualab.org.user.utils.FragmentHistory;
 import com.mualab.org.user.utils.StatusBarUtil;
+import com.squareup.picasso.Picasso;
+
+import java.util.Objects;
 
 import views.fragnev.FragNavController;
 
@@ -29,13 +35,51 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_feed);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+        //StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
 
         Intent intent = getIntent();
         if (intent != null) {
-            exSearchTag = (ExSearchTag) intent.getExtras().getSerializable("searchKey");
+            exSearchTag = (ExSearchTag) Objects.requireNonNull(intent.getExtras()).getSerializable("searchKey");
         }
 
+        ImageView ivUserProfile = findViewById(R.id.ivUserProfile);
+        ivUserProfile.setVisibility(View.VISIBLE);
+        TextView tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle.setText(getString(R.string.explore));
+
+        if (exSearchTag.imageUrl!=null) {
+            Picasso.with(SearchFeedActivity.this).load(exSearchTag.imageUrl).placeholder(R.drawable.defoult_user_img).
+                    fit().into(ivUserProfile);
+        }else {
+            ivUserProfile.setVisibility(View.GONE);
+        }
+
+       /* if (exSearchTag.userType.equals("artist") && exSearchTag.id==Mualab.currentUser.id)
+            ivUserProfile.setVisibility(View.GONE);
+        else
+            ivUserProfile.setVisibility(View.VISIBLE);
+*/
+
+        ivUserProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (exSearchTag.userType.equals("user")) {
+                    Intent intent = new Intent(SearchFeedActivity.this, UserProfileActivity.class);
+                    intent.putExtra("userId", String.valueOf(exSearchTag.id));
+                    startActivity(intent);
+                }else if (exSearchTag.userType.equals("artist") &&
+                        exSearchTag.id==Mualab.currentUser.id){
+                    Intent intent = new Intent(SearchFeedActivity.this, UserProfileActivity.class);
+                    intent.putExtra("userId", String.valueOf(exSearchTag.id));
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(SearchFeedActivity.this, ArtistProfileActivity.class);
+                    intent.putExtra("artistId", String.valueOf(exSearchTag.id));
+                    startActivity(intent);
+                }
+            }
+        });
 
         findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,14 +94,15 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
                 .rootFragmentListener(this, 1)
                 .build();
 
-       // switchTab(0);
+        // switchTab(0);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        TextView tvTitle = findViewById(R.id.tvTitle);
+        TextView tvTitle = findViewById(R.id.tvHeaderTitle);
+
         if(exSearchTag.title!=null)
             tvTitle.setText(exSearchTag.type==ExSearchTag.SearchType.HASH_TAG?
                     "#"+exSearchTag.title.replace("#",""):exSearchTag.title);
@@ -128,7 +173,6 @@ public class SearchFeedActivity extends AppCompatActivity implements BaseFragmen
             mNavController.pushFragment(fragment);
         }
     }
-
 
     @Override
     public void onTabTransaction(Fragment fragment, int index) {

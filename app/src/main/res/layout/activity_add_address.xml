@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:onClick="hideKeyboard">
+
+        <LinearLayout
+            android:id="@+id/ll_picAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:selectableItemBackground"
+            android:padding="5dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/location"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                style="@style/TextView"
+                android:textSize="16sp"
+                android:text="@string/pick_your_place"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            style="@style/TextView"
+            android:layout_gravity="center_horizontal"
+            android:textSize="16sp"
+            android:text="OR"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical">
+
+
+            <EditText
+                android:id="@+id/edInputPostcode"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                style="@style/My_Edittext"
+                android:textSize="16sp"
+                android:hint="@string/enter_post_code"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:maxLength="10"
+                android:imeOptions="actionSearch"
+                android:inputType="textPostalAddress|textCapCharacters"
+                android:gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_locality"
+            android:theme="@style/tvStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:errorTextAppearance="@style/txtinputError_appearance">
+
+            <EditText
+                android:id="@+id/ed_locality"
+                style="@style/My_Edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="3"
+                android:scrollbars="vertical"
+                android:maxLines="3"
+                android:hint="@string/line_of_address1"
+                android:inputType="textMultiLine" />
+        </android.support.design.widget.TextInputLayout>
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

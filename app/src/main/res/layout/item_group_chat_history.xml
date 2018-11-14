@@ -73,10 +73,10 @@
             android:id="@+id/ivProfile"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            app:civ_border_width="1.6dp"
+            app:civ_border_width="1.8dp"
             android:layout_centerVertical="true"
+            android:background="@drawable/chat_history_circle_border"
             android:src="@drawable/defoult_user_img"
-            android:background="@drawable/gradient_new_circle_img"
             app:civ_border_color="@color/transparent"
             android:layout_marginLeft="5dp"
             />
@@ -128,12 +128,13 @@
         <LinearLayout
             android:id="@+id/llCount"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:padding="4dp"
             android:orientation="vertical"
             android:layout_alignParentRight="true"
             android:layout_marginRight="4dp"
+            android:layout_marginTop="4dp"
             >
 
             <TextView
@@ -144,6 +145,7 @@
                 android:layout_gravity="right"
                 android:fontFamily="@font/nunito_regular"
                 android:textSize="13sp"
+                android:layout_marginTop="4dp"
                 android:textColor="@color/gray"
                 />
 
@@ -174,6 +176,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/bg_blue_circle"
@@ -195,19 +198,24 @@
 
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/tvChatType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"
-                android:fontFamily="@font/nunito_regular"
-                android:textSize="12sp"
-                android:textColor="@color/text_color"
-                android:layout_marginTop="4dp"
-                android:layout_gravity="right"
-                />
-
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvChatType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:text="Group"
+            android:gravity="center"
+            android:fontFamily="@font/nunito_regular"
+            android:textSize="12sp"
+            android:textColor="@color/text_color"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+
+            />
 
     </RelativeLayout>
 

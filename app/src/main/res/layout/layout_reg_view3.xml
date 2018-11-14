@@ -123,6 +123,19 @@
                 android:text="@string/date_of_birth"
                 android:background="@drawable/underline_white"/>
 
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8sp"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                style="@style/TextView"
+                android:text="@string/address"
+                android:minHeight="40dp"
+                android:background="@drawable/underline_white"/>
+
+
             <RadioGroup
                 android:id="@+id/radioGroup"
                 android:layout_width="match_parent"

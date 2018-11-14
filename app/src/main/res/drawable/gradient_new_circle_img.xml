@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <gradient
-        android:startColor="@color/colorPrimary"
-        android:endColor="@color/chatbox_blue"
+        android:startColor="@color/chatbox_blue"
+        android:endColor="@color/colorPrimaryPink"
         android:angle="0" />
 </shape>

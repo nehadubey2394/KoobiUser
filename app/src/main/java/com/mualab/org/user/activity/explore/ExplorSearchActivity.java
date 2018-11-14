@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.explore.fragment.ExploreTopFragment;
@@ -57,12 +59,19 @@ public class ExplorSearchActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explor_search);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+      //  StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
         searchKeyword = "";
         searchview = findViewById(R.id.searchview);
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = findViewById(R.id.viewpager);
         tabLayout  = findViewById(R.id.tablayout);
+
+
+        ImageView btnBack = findViewById(R.id.btnBack);
+        btnBack.setVisibility(View.GONE);
+        TextView tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle.setText(getString(R.string.explore));
+
 
         views.add(new MyViews("Top", ExploreTopFragment.newInstance("top")));
         views.add(new MyViews("People",ExploreTopFragment.newInstance("people")));

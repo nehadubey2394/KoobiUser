@@ -28,7 +28,6 @@
         android:id="@+id/rl_right"
         android:gravity="right"
         >
-
         <RelativeLayout
             android:id="@+id/rl_other"
             android:layout_width="wrap_content"
@@ -45,13 +44,15 @@
                 android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/tv_other_name"
+                    android:id="@+id/tvSenderName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_regular"
+                    android:fontFamily="@font/nunito_semibold"
                     android:textColor="@color/chatbox_blue"
                     android:maxLines="1"
-                    android:textSize="12sp" />
+                    android:layout_marginBottom="4dp"
+                    android:visibility="gone"
+                    android:textSize="17sp" />
 
                 <ProgressBar
                     android:id="@+id/progress_bar"
@@ -68,6 +69,7 @@
                     android:id="@+id/tv_other_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvSenderName"
                     android:fontFamily="@font/nunito_regular"
                     android:textColor="@color/text_color"
                     android:textSize="16sp" />
@@ -78,7 +80,8 @@
                     android:layout_height="180dp"
                     android:scaleType="center"
                     android:visibility="gone"
-                    android:src="@drawable/ic_gallery_placeholder"
+                    android:layout_below="@+id/tvSenderName"
+                    android:src="@drawable/gallery_placeholder"
                     />
 
 

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusableInTouchMode="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activity.chat.AddMemberActivity">
+
+    <include
+        android:id="@+id/add_member_header"
+        layout="@layout/chat_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_member_header"
+        android:layout_above="@+id/rlBtn"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/searchView"
+            app:cardUseCompatPadding="true"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="18dp"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:orientation="horizontal"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            app:cardElevation="2dp"
+            android:background="@drawable/bg_chat_circle"
+            >
+
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchview"
+                android:theme="@style/SearchboardSearchView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:iconifiedByDefault="false"
+                app:searchIcon="@null"
+                android:background="@null"
+                app:queryBackground="@color/white"
+                android:lineSpacingExtra="0dp"
+                android:lineSpacingMultiplier="0"
+                android:textColor="@color/text_color"
+                android:fontFamily="@font/nunito_regular"
+                android:textSize="18sp"
+                android:layout_gravity="center"
+                app:queryHint="Search People.."/>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvSelectedMember"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            >
+        </android.support.v7.widget.RecyclerView>
+
+        <View
+            android:id="@+id/vSaperater"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"
+            android:background="@color/light_gray_shadow"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvMembers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp">
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnAddMem"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
+            android:layout_centerInParent="true"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/nunito_semibold"
+            android:background="@drawable/bg_new_btn_green"
+            android:text="@string/add_members" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btnRemoveMem"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
+            android:layout_centerInParent="true"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/nunito_semibold"
+            android:background="@drawable/bg_new_btn_green"
+            android:text="@string/remove_members" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_no_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/nunito_regular"
+        android:text="@string/no_data_found"
+        android:textColor="@color/text_color"
+        android:visibility="gone"
+        android:textSize="14sp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/chatbox_blue"
+        />
+
+</RelativeLayout>

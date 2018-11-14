@@ -243,8 +243,7 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     if (item.businessType.equals("independent")){
                         if (fromConfirmBooking){
-                            ((BookingActivity)context).addFragment(
-                                    BookingFragment4.newInstance(subServices.subServiceName,true,bookingInfo), true, R.id.flBookingContainer);
+                            ((BookingActivity)context).addFragment(BookingFragment4.newInstance(subServices.subServiceName,true,bookingInfo), true, R.id.flBookingContainer);
                         }else {
                             ((BookingActivity)context).addFragment(
                                     BookingFragment4.newInstance(subServices.subServiceName,false,bookingInfo), true, R.id.flBookingContainer);
@@ -254,16 +253,6 @@ public class Booking3ServiceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     }else {
                         ((BookingActivity) context).addFragment(
                                 BookingFragment1.newInstance(serviceTitle, item, bookingInfo, fromConfirmBooking), true, R.id.flBookingContainer);
-
-                      /*  List<StaffInfo> staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
-                        if (staffList.size()!=0) {
-
-                            ((BookingActivity) context).addFragment(
-                                    BookingFragment1.newInstance(serviceTitle, item, bookingInfo, fromConfirmBooking), true, R.id.flBookingContainer);
-                        }else {
-                            ((BookingActivity)context).addFragment(
-                                    BookingFragment4.newInstance(subServices.subServiceName,false,bookingInfo), true, R.id.flBookingContainer);
-                        }*/
                     }
                     break;
 

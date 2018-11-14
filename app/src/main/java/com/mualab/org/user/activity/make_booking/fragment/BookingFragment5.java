@@ -133,6 +133,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mContext = context;
+        ((BookingActivity) mContext).setReviewPostVisibility(8);
     }
 
     private void initView(){
@@ -254,6 +255,7 @@ public class BookingFragment5 extends Fragment implements View.OnClickListener{
         super.onDestroy();
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setLyArtistDetailVisibility(0);
+            ((BookingActivity) mContext).setReviewPostVisibility(0);
             ((BookingActivity) mContext).setBuisnessNameVisibility(8,"");
         }
     }

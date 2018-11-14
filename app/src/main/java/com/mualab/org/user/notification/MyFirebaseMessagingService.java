@@ -29,8 +29,8 @@ import com.firebase.jobdispatcher.Job;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.mualab.org.user.R;
-import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.main.MainActivity;
+import com.mualab.org.user.application.Mualab;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,11 +65,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 ActivityManager am = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
                 assert am != null;
                 ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-                if (am.getRunningTasks(1).get(0).topActivity.getClassName().
-                        equals("com.mualab.org.user.activity.chat.ChatActivity") ||
-                        am.getRunningTasks(1).get(0).topActivity.getClassName().
-                                equals("com.mualab.org.user.activity.chat.ShowZoomImageActivity")){
-                    if (!userId.equals(ChatActivity.currentChatUserId))
+                if (cn.getClassName().equals("com.mualab.org.user.activity.chat.ChatActivity")
+                        || cn.getClassName().equals("com.mualab.org.user.activity.chat.ShowZoomImageActivity")
+                        || cn.getClassName().equals("com.mualab.org.user.activity.chat.GroupChatActivity") ||
+                        cn.getClassName().equals("com.mualab.org.user.activity.chat.GroupDetailActivity")){
+
+                    if (!userId.equals(Mualab.currentChatUserId) && !userId.equals(Mualab.currentGroupId))
                         chatNotification(body,title,notifincationType,userId);
                 }else {
                     chatNotification(body,title,notifincationType,userId);
@@ -130,7 +131,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         int num = (int) System.currentTimeMillis();
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.customnotification);
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.custom_chat_notification);
         PendingIntent resultIntent = PendingIntent.getActivity(this, num, intent, PendingIntent.FLAG_ONE_SHOT);
 
         remoteViews.setViewVisibility(R.id.iv_for_profile,8);
@@ -143,11 +144,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.logo_small)
-                .setTicker(body)
-                .setContentTitle(title)
+                .setTicker(body).setContentTitle(title)
                 .setContentIntent(resultIntent)
-                .setSound(defaultSoundUri).
-                        setCustomBigContentView(remoteViews)
+                .setSound(defaultSoundUri).setCustomBigContentView(remoteViews)
                 .setContent(remoteViews);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

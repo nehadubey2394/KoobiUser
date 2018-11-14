@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -81,7 +82,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
     private boolean alreadyAddedFound = false,isEdit = false,isRemoved = false;
     private MyFlexibleCalendar viewCalendar;
     private  View rootView;
-
+    private boolean isTodayClicked = false;
     public BookingFragment4() {
         // Required empty public constructor
     }
@@ -327,6 +328,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 bookingInfo.selectedDate = selectedDate;
                 viewCalendar.isFirstimeLoad = true;
                 if (selectedDate.contains("-")){
+                    isTodayClicked = true;
                     int year,month,day;
                     String[] separated = selectedDate.split("-");
                     year = Integer.parseInt(separated[0]);
@@ -365,10 +367,16 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
         }
     }
 
+    private   long mLastClickTime = 0;
     private void setCalenderClickListner(){
         viewCalendar.setCalendarListener(new MyFlexibleCalendar.CalendarListener() {
             @Override
             public void onDaySelect() {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 Day day = viewCalendar.getSelectedDay();
                 viewCalendar.isFirstimeLoad = false;
                 Log.i(getClass().getName(), "Selected Day: "
@@ -394,8 +402,10 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
                 }else {
                     sDay = String.valueOf(day.getDay());
                 }
-                selectedDate = day.getYear()+"-"+sMonth+"-"+sDay;
-                bookingInfo.selectedDate = selectedDate;
+                if (!isTodayClicked) {
+                    selectedDate = day.getYear() + "-" + sMonth + "-" + sDay;
+                    bookingInfo.selectedDate = selectedDate;
+                }
 
                 if (viewCalendar.isSelectedDay(day)) {
                     Calendar todayCal = Calendar.getInstance();
@@ -434,6 +444,7 @@ public class BookingFragment4 extends Fragment implements View.OnClickListener,T
             @Override
             public void onItemClick(View v) {
                 viewCalendar.isFirstimeLoad = false;
+                isTodayClicked = false;
                 Day day = viewCalendar.getSelectedDay();
                 Log.i(getClass().getName(), "The Day of Clicked View: "
                         + day.getYear() + "/" + (day.getMonth() + 1) + "/" + day.getDay());

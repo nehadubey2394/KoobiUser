@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +29,7 @@ import com.mualab.org.user.activity.base.BaseActivity;
 import com.mualab.org.user.activity.booking_histories.activity.BookingDetailActivity;
 import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.chat.ChatHistoryActivity;
+import com.mualab.org.user.activity.chat.GroupChatActivity;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.explore.ExploreFragment;
 import com.mualab.org.user.activity.feeds.FeedSingleActivity;
@@ -78,6 +78,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private DatabaseReference reference;
     private User user;
     private Session session;
+    private String isFromFeedPost = "";
 
     public void setBgColor(int color) {
         if (rlHeader1 != null)
@@ -138,7 +139,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                replaceFragment(SearchBoardFragment.newInstance(item), false);
+                if (!isFromFeedPost.equals("FeedPostActivity"))
+                    replaceFragment(SearchBoardFragment.newInstance(item), false);
             }
         });
 
@@ -230,7 +232,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                         } else {
                             Intent intent_user_profile = new Intent(MainActivity.this, ArtistProfileActivity.class);
-                            intent_user_profile.putExtra("feedId", notifyId);
+                            intent_user_profile.putExtra("artistId", notifyId);
                             startActivityForResult(intent_user_profile, Constant.FEED_FRAGMENT);
                         }
 
@@ -304,8 +306,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }else if (intent.hasExtra("notifincationType")){
 
                 if (intent.getStringExtra("notifincationType").equals("15")){
-                    Intent chatIntent = new Intent(this, ChatActivity.class);
-                    chatIntent.putExtra("opponentChatId",intent.getStringExtra("opponentChatId"));
+                    String  opponentChatId =  intent.getStringExtra("opponentChatId");
+                    Intent chatIntent;
+                    if (opponentChatId.contains("group")){
+                        chatIntent = new Intent(this, GroupChatActivity.class);
+                        chatIntent.putExtra("groupId",opponentChatId);
+                    }else {
+                        chatIntent = new Intent(this, ChatActivity.class);
+                        chatIntent.putExtra("opponentChatId",opponentChatId);
+                    }
                     chatIntent.putExtra("body",intent.getStringExtra("body"));
                     chatIntent.putExtra("userName",intent.getStringExtra("userName"));
                     startActivity(chatIntent);
@@ -314,6 +323,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             if (intent.hasExtra("FeedPostActivity")) {
                 setInactiveTab();
+                isFromFeedPost = "FeedPostActivity";
                 clickedId = 2;
                 tvHeaderTitle.setText(getString(R.string.app_name));
                 ibtnFeed.setImageResource(R.drawable.active_feeds_ico);

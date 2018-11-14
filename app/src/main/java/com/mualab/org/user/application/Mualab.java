@@ -44,6 +44,7 @@ public class Mualab extends Application implements LifeCycleDelegateListner {
     public static Location currentLocationForBooking;
     // public static DatabaseReference ref;
     public static boolean isStoryUploaded;
+    public static String currentChatUserId = "",currentGroupId = "";
 
     private Session session;
     private RequestQueue mRequestQueue;

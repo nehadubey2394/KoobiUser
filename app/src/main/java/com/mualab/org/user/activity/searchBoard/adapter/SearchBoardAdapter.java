@@ -153,7 +153,9 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             switch (v.getId()){
                 case R.id.btnBook:
                     Intent intent = new Intent(context, BookingActivity.class);
-                    intent.putExtra("item",item);
+                 //  intent.putExtra("item",item);
+                    intent.putExtra("artistId",item._id);
+                    intent.putExtra("businessType",item.businessType);
                     context.startActivity(intent);
                     break;
 
@@ -166,7 +168,7 @@ public class SearchBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 case R.id.lyContainer:
                     Intent intent3 = new Intent(context, ArtistProfileActivity.class);
                     intent3.putExtra("item",item);
-                    //intent2.putExtra("artistId",item._id);
+                    intent3.putExtra("artistId",item._id);
                     context.startActivity(intent3);
                     break;
             }

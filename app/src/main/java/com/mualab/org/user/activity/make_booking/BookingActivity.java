@@ -75,7 +75,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private AdapterBusinessDays adapter;
     private RatingBar rating;
     private ImageView ivHeaderProfile;
-    private String businessType;
+    private String businessType,artistId;
     private  CountDownTimer countDownTimer;
     public static AppCompatActivity mcontext;
     private  long mLastClickTime = 0;
@@ -105,7 +105,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-
     @Override
     public void onServiceAdded(boolean isShow) {
         BookingFragment2 frag = ((BookingFragment2) getSupportFragmentManager().findFragmentByTag("com.mualab.org.user.activity.make_booking.fragment.BookingFragment2"));
@@ -118,8 +117,11 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_booking);
 
         Intent i = getIntent();
-        item = (ArtistsSearchBoard) i.getSerializableExtra("item");
-        businessType = item.businessType;
+        artistId = i.getStringExtra("artistId");
+        businessType = i.getStringExtra("businessType");
+        item = new ArtistsSearchBoard();
+        // item = (ArtistsSearchBoard) i.getSerializableExtra("item");
+        // businessType = item.businessType;
         mcontext = BookingActivity.this;
         initView();
     }
@@ -194,7 +196,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     public  void showDialog() {
         View DialogView = View.inflate(BookingActivity.this, R.layout.fragment_business_hours, null);
 
-        final Dialog alertDailog = new Dialog(BookingActivity.this, android.R.style.Theme_Light);
+        final Dialog alertDailog = new Dialog(BookingActivity.this, R.style.TopBottomAnimation);
         alertDailog.setCanceledOnTouchOutside(true);
         alertDailog.setCancelable(true);
 
@@ -311,13 +313,13 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         Map<String, String> params = new HashMap<>();
-        if (item.businessType.equals("independent")){
+        if (businessType.equals("independent")){
             params.put("businessType", "independent");
         }else {
             params.put("businessType", "business");
         }
 
-        params.put("artistId", item._id);
+        params.put("artistId", artistId);
         params.put("userId", String.valueOf(user.id));
         // params.put("appType", "user");
 

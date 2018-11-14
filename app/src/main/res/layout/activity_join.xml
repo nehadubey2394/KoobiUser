@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:context=".activity.chat.JoinGroupActivity">
+
+    <include
+        android:id="@+id/join_group_header"
+        layout="@layout/chat_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cvSearchView"
+        app:cardUseCompatPadding="true"
+        android:layout_below="@+id/join_group_header"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="18dp"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:orientation="horizontal"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        app:cardElevation="2dp"
+        android:background="@drawable/bg_chat_circle"
+        >
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchview"
+            android:theme="@style/SearchboardSearchView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:iconifiedByDefault="false"
+            app:searchIcon="@null"
+            android:background="@null"
+            app:queryBackground="@color/white"
+            android:lineSpacingExtra="0dp"
+            android:lineSpacingMultiplier="0"
+            android:textColor="@color/text_color"
+            android:fontFamily="@font/nunito_regular"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            app:queryHint="Search People.."/>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvJoinGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cvSearchView"
+        android:layout_margin="5dp"
+        >
+
+    </android.support.v7.widget.RecyclerView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/chatbox_blue"
+        />
+
+</RelativeLayout>

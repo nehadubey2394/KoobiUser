@@ -1,12 +1,21 @@
 package com.mualab.org.user.activity.chat.notification_builder;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -24,7 +33,11 @@ public class FcmNotificationBuilder {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
     private static final String AUTHORIZATION = "Authorization";
+    //live key
     private static final String AUTH_KEY = "key=" + "AAAAK1vRFPE:APA91bFDJlGE-pK5f7JarrELoglCDCZl2Bnnm495IBiYjWXte8BInV8ZSdNT9fcW-xx96LQFIQAAGiwvMXYpK8ap6uJX6qfiPXfMCEwbGbfd7KMXtSSm9MLdfpD6AhdpbHbzSQbew5wF";
+
+    //dev key
+  //  private static final String AUTH_KEY = "key=" + "AAAAohAm9co:APA91bHNZDmtwzyLIdcjl4P7Vw7uoq7YwtKiuRsF5Ld5DHkXJBUZmmT4_Wcj6wXeKonhIorQEbivo3nILXfescBWH01HCmoQiOKUhwQgyP1mKByn43xpFTfXKU74E43TWkePKjaRjE7hHtsBh-FgSHTWk43xMPzFew";
 
     private static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     // json related keys
@@ -40,9 +53,10 @@ public class FcmNotificationBuilder {
     private String mTitle;
     private String mMessage;
     private String mUsername;
-    private String mUid,type;
+    private String mUid,type,clickAction,adminId;
     private String mFirebaseToken;
     private String mReceiverFirebaseToken;
+    private List<String> registrationId = new ArrayList<>();
 
     private FcmNotificationBuilder() {
 
@@ -54,6 +68,11 @@ public class FcmNotificationBuilder {
 
     public FcmNotificationBuilder title(String title) {
         mTitle = title;
+        return this;
+    }
+
+    public FcmNotificationBuilder registrationId(List<String>registrationId) {
+        this.registrationId = registrationId;
         return this;
     }
 
@@ -72,8 +91,18 @@ public class FcmNotificationBuilder {
         return this;
     }
 
+    public FcmNotificationBuilder clickAction(String clickAction) {
+        this.clickAction = clickAction;
+        return this;
+    }
+
     public FcmNotificationBuilder uid(String uid) {
         mUid = uid;
+        return this;
+    }
+
+    public FcmNotificationBuilder adminId(String adminId) {
+        adminId = adminId;
         return this;
     }
 
@@ -106,12 +135,13 @@ public class FcmNotificationBuilder {
         Call call = new OkHttpClient().newCall(request);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, IOException e) {
                 Log.e(TAG, "onGetAllUsersFailure: " + e.getMessage());
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                assert response.body() != null;
                 Log.e(TAG, "onResponse: " + response.body().string());
             }
         });
@@ -121,37 +151,7 @@ public class FcmNotificationBuilder {
         JSONObject jsonObjectBody = new JSONObject();
         JSONObject data = new JSONObject();
         //JSONObject notificationDict = new JSONObject();
-
-        /*  //IOS
-            let notificationDict = ["body": checkForNULL(obj: self.strTextNotification),
-                                    "title": checkForNULL(obj: strName ),
-                                    "icon": "icon",
-                                    "sound": "default",
-                                    "badge": "1",
-                                    "message": self.strTextNotification,
-                                    "notifincationType": "15",
-                                    "type": "chat",
-                                    "click_action": "ChatActivity",
-                                    "opponentChatId": checkForNULL(obj: self.strMyChatId)]
-
-            let finalDict = ["to":checkForNULL(obj:self.objChatHistoryModel.strOpponentFireBaseToken),
-                             "data": checkForNULL(obj:messageDict),
-                             "priority" : "high",
-                             "notification": checkForNULL(obj:notificationDict),
-                             "sound": "default"] as [String : Any]*/
-
-        data.put("body",mMessage);
-        data.put(KEY_TITLE, mUsername);
-        data.put("icon","icon");
-        data.put("sound", "default");
-        data.put("badge", "1");
-        data.put("notifincationType", "15");
-        data.put("click_action","ChatActivity");
-        data.put("opponentChatId", mUid);
-        data.put("type", type);
-        data.put(KEY_TEXT, mMessage);
-
-       /* data.put(KEY_USERNAME, mUsername);
+         /* data.put(KEY_USERNAME, mUsername);
         data.put(KEY_UID, mUid);
         data.put(KEY_FCM_TOKEN, mFirebaseToken);
         data.put("ChatTitle", mTitle);
@@ -159,12 +159,30 @@ public class FcmNotificationBuilder {
         data.put("title",mTitle);*/
         //data.put("priority","high");
 
+
+        data.put("body",mMessage);
+        data.put(KEY_TITLE, mUsername);
+        data.put("icon","icon");
+        data.put("sound", "default");
+        data.put("badge", "1");
+        data.put("notifincationType", "15");
+        data.put("click_action",clickAction);
+        data.put("opponentChatId", mUid);
+        data.put(KEY_TEXT, mMessage);
         data.put("other_key", true);
         data.put("content_available", true);
 
+        if (type.equals("groupChat"))
+            data.put("adminId", adminId);
+        else
+            data.put("type", type);
 
         Map<String,Object> params = new HashMap<>();
-        params.put("to", mReceiverFirebaseToken);
+        if (registrationId.size()!=0)
+            params.put("registration_ids", registrationId);
+        else
+            params.put("to", mReceiverFirebaseToken);
+
         params.put("title", mTitle);
         params.put("sound", "default");
         params.put("priority", "high");

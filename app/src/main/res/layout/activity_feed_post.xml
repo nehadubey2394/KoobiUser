@@ -11,46 +11,13 @@
     android:background="@color/white"
     tools:context=".activity.feeds.FeedPostActivity">
 
-    <RelativeLayout
+    <include
         android:id="@+id/header"
+        layout="@layout/new_header_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/leader_board_header_bg"
-            android:layout_alignParentTop="true" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp">
-
-            <ImageView
-                android:id="@+id/iv_back"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:padding="5dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerInParent="true"
-                android:tint="@color/white"
-                android:src="@drawable/back_icon" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/TextView.Bold"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:text="@string/new_post"
-                android:textSize="18sp" />
-
-        </RelativeLayout>
-
-    </RelativeLayout>
-
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="top"
+        android:layout_alignParentTop="true" />
 
     <ScrollView
         android:layout_width="match_parent"

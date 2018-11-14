@@ -55,8 +55,6 @@ import views.refreshview.CircleHeaderView;
 import views.refreshview.OnRefreshListener;
 import views.refreshview.RjRefreshLayout;
 
-
-/*Dharmraj Acarya*/
 public class ExploreFragment extends BaseFragment implements View.OnClickListener,
         ExploreGridViewAdapter.Listener, LiveUserAdapter.Listner {
 

@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    >
+
+    <ImageView
+        android:id="@+id/iv_for_profile"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:paddingTop="5dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_launcher" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="14dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp">
+
+        <ImageView
+            android:id="@+id/iv_user_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_launcher"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:fontFamily="@font/nunito_regular" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:fontFamily="@font/nunito_regular"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvOtherText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:visibility="gone"
+                android:ellipsize="end"
+                android:fontFamily="@font/nunito_regular"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

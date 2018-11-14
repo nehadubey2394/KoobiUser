@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.chat.ChatHistoryActivity;
+import com.mualab.org.user.activity.chat.GroupChatActivity;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
 import com.mualab.org.user.application.Mualab;
 import com.squareup.picasso.Picasso;
@@ -235,17 +236,19 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             viewTop = itemView.findViewById(R.id.viewTop);
             rlMsgCount = itemView.findViewById(R.id.rlMsgCount);
             ivMuteIcon = itemView.findViewById(R.id.ivMuteIcon);
+            rlChatHistory = itemView.findViewById(R.id.rlChatHistory);
+            rlChatHistory.setOnClickListener(this);
+
         }
 
         void otherBindData(final ChatHistory chat,int position,int tempPos){
             tvUname.setText(chat.userName);
 
             if (chat.profilePic !=null && !chat.profilePic.isEmpty()) {
-                Picasso.with(context).load(chat.profilePic).placeholder(R.drawable.defoult_user_img).
+                Picasso.with(context).load(chat.profilePic).placeholder(R.drawable.group_defoult_icon).
                         fit().into(ivProfile);
             }
-
-            if (chat.isTyping){
+            /* if (chat.isTyping){
                 tvMsg.setText("typing...");
                 tvMsg.setTextColor(context.getResources().getColor(R.color.chatbox_blue));
             }else {
@@ -254,7 +257,12 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }else
                     tvMsg.setText(chat.message);
                 tvMsg.setTextColor(context.getResources().getColor(R.color.grey));
-            }
+            }*/
+            if (chat.message.contains("https://firebasestorage.googleapis.com") | chat.messageType==1){
+                tvMsg.setText("Image");
+            }else
+                tvMsg.setText(chat.message);
+            tvMsg.setTextColor(context.getResources().getColor(R.color.grey));
 
             if (chat.unreadMessage!=0){
                 rlMsgCount.setVisibility(View.VISIBLE);
@@ -314,22 +322,17 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             switch (v.getId()){
                 case R.id.rlChatHistory:
-                    /*ChatHistory chatHistory = chatHistories.get(getAdapterPosition());
-                    String otherId = "";
-                    if (!chatHistory.reciverId.equals(String.valueOf(Mualab.currentUser.id)))
-                        otherId = chatHistory.reciverId;
-                    else
-                        otherId = chatHistory.senderId;
-
-                    Intent chat_intent = new Intent(context, ChatActivity.class);
-                    chat_intent.putExtra("userId",otherId);
-                    context.startActivity(chat_intent);*/
+                    ChatHistory chatHistory = chatHistories.get(getAdapterPosition());
+                    Intent chat_intent = new Intent(context, GroupChatActivity.class);
+                    chat_intent.putExtra("groupId",chatHistory.reciverId);
+                    context.startActivity(chat_intent);
+                    ((ChatHistoryActivity)context).finish();
                     break;
             }
         }
     }
 
-    public void setTyping(boolean isTyping,int position){
+    public void setTyping(int position){
         // this.isTyping = isTyping;
         notifyItemChanged(position);
     }

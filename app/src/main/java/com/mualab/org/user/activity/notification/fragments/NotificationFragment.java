@@ -324,7 +324,8 @@ public class NotificationFragment extends BaseFragment implements NotificationAd
 
                 } else {
                     Intent intent_user_profile = new Intent(mContext, ArtistProfileActivity.class);
-                    intent_user_profile.putExtra("feedId", notifyId);
+                    intent_user_profile.putExtra("artistId", notifyId);
+                   // intent_user_profile.putExtra("feedId", notifyId);
                     startActivity(intent_user_profile);
 
                 }

@@ -77,7 +77,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink));
         //if(ScreenUtils.hasSoftKeys(getWindowManager(), this)) findViewById(R.id.nevSoftBar).setVisibility(View.VISIBLE);
         initViews();
         countries = JsonUtils.loadCountries(this);
@@ -365,7 +365,6 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.tv_9).setOnClickListener(this);
     }
 
-
     private void nextScreen(){
         resetProgressView();
         switch (CURRENT_VIEW_STATE){
@@ -488,6 +487,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         header.put("countryCode", user.countryCode);
         header.put("contactNo", user.contactNo);
         header.put("email", user.email);
+        header.put("userType", "user");
         header.put("socialId", TextUtils.isEmpty(user.socialId)?"":user.socialId);
 
         new HttpTask(new HttpTask.Builder(this, "phonVerification", new HttpResponceListner.Listener() {
@@ -542,7 +542,6 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
 
     }
-
 
     private void startTimear(){
         final AppCompatButton btnResendOtp = findViewById(R.id.tv_resend_otp);

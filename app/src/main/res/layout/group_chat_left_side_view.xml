@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:orientation="vertical"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
+
+
+    <TextView
+        android:id="@+id/tv_my_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/nunito_regular"
+        android:background="@drawable/bg_chat_date_banner"
+        android:padding="4dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_right"
+        android:gravity="right"
+        >
+        <RelativeLayout
+            android:id="@+id/rl_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/corner"
+                android:background="@drawable/bg_reciver"
+                android:orientation="vertical"
+                android:minWidth="100dp"
+                android:paddingLeft="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                >
+
+                <TextView
+                    android:id="@+id/tvSenderName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito_semibold"
+                    android:textColor="@color/chatbox_blue"
+                    android:maxLines="1"
+                    android:layout_marginBottom="2dp"
+                    android:visibility="visible"
+                    android:textSize="17sp" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/white"/>
+
+
+                <TextView
+                    android:id="@+id/tv_other_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvSenderName"
+                    android:fontFamily="@font/nunito_regular"
+                    android:textColor="@color/text_color"
+                    android:layout_centerVertical="true"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/iv_other_img"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:scaleType="center"
+                    android:visibility="gone"
+                    android:layout_below="@+id/tvSenderName"
+                    android:src="@drawable/gallery_placeholder"
+                    />
+
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/corner"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_chat_corner_left" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="1dp"
+            android:layout_alignRight="@+id/rl_other"
+            android:layout_below="@+id/rl_other"
+            >
+
+            <TextView
+                android:id="@+id/tv_other_msg_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nunito_regular"
+                android:maxLines="1"
+                android:layout_gravity="start"
+                android:textColor="@color/chatting_time_gray"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/iv_othr_msg_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:background="@drawable/ic_ico_msg_sent" />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

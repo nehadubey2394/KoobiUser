@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,10 +36,12 @@ import com.mualab.org.user.activity.chat.adapter.ChatHistoryAdapter;
 import com.mualab.org.user.activity.chat.adapter.MenuAdapter;
 import com.mualab.org.user.activity.chat.model.BlockUser;
 import com.mualab.org.user.activity.chat.model.ChatHistory;
+import com.mualab.org.user.activity.chat.model.FirebaseUser;
+import com.mualab.org.user.activity.chat.model.GroupMember;
+import com.mualab.org.user.activity.chat.model.Groups;
 import com.mualab.org.user.activity.chat.model.MuteUser;
 import com.mualab.org.user.activity.chat.model.Typing;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.utils.CommonUtils;
 import com.mualab.org.user.utils.ConnectionDetector;
@@ -65,9 +66,11 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
     private Map<String, ChatHistory> listmap;
     private Map<String, BlockUser> blockUsersMap;
     private Map<String, MuteUser> muteUsersMap;
-    private DatabaseReference databaseReference,isOppTypingRef,blockUsersRef,chatRefMuteUser;
+    //private Map<String, FirebaseUser> firebaseUsersMap;
+    private DatabaseReference databaseReference,isOppTypingRef,blockUsersRef,chatRefMuteUser,
+            mFirebaseOtherUserRef,groupRef;
     private Thread thread,blockThread;
-    private String myId;
+    private String myId,filterType="";
     private ImageView ic_add_chat,ivFavChat,ivChatFilter;
     private long mLastClickTime = 0;
     private boolean isFavFilter = false,isReadFilter;
@@ -85,6 +88,8 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         isOppTypingRef = mFirebaseDatabaseReference.child(Constant.IS_TYPING);
         blockUsersRef = mFirebaseDatabaseReference.child("block_users");
         chatRefMuteUser = mFirebaseDatabaseReference.child("mute_user").child(myId);
+        mFirebaseOtherUserRef = mFirebaseDatabaseReference.child("users");
+        groupRef = FirebaseDatabase.getInstance().getReference().child("group");
         init();
     }
 
@@ -92,6 +97,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         newList = new ArrayList<>();
         chatHistories = new ArrayList<>();
         listmap = new HashMap<>();
+        // firebaseUsersMap = new HashMap<>();
         blockUsersMap = new HashMap<>();
         muteUsersMap = new HashMap<>();
 
@@ -169,6 +175,178 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             }
         }).start();
 
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                getOtherUserDetail("");
+            }
+        }).start();
+
+    }
+
+    private void getChatDataInMap(final String key, final ChatHistory messageOutput) {
+        if (messageOutput != null) {
+            //if (messageOutput.type.equals("user")){
+            messageOutput.isTyping = false;
+
+            if (key.contains("group_")){
+                FirebaseDatabase.getInstance().getReference().child("group").child(key).
+                        child("member").child(myId).addListenerForSingleValueEvent
+                        (new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                //  Groups group = dataSnapshot.getValue(Groups.class);
+                                // Map<String,GroupMember> hashMap = (Map<String, GroupMember>) group.member.get(myId);
+                                if (dataSnapshot.exists()){
+                                    GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
+                                    assert groupMember != null;
+                                    String mute= String.valueOf(groupMember.mute);
+                                    messageOutput.isMute = mute.equals("1");
+                                }
+                                messageOutput.banner_date = CommonUtils.getDateBanner((Long) messageOutput.timestamp);
+                                listmap.put(key, messageOutput);
+                                tv_no_chat.setVisibility(View.GONE);
+                                Collection<ChatHistory> demoValues = listmap.values();
+                                newList.clear();
+                                chatHistories.clear();
+                                newList.addAll(demoValues);
+                                chatHistories.addAll(newList);
+                                shorting();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+            }else {
+                if (muteUsersMap.containsKey(messageOutput.senderId) || muteUsersMap.
+                        containsKey(messageOutput.reciverId)){
+                    messageOutput.isMute = true;
+                }else
+                    messageOutput.isMute = false;
+
+                messageOutput.banner_date = CommonUtils.getDateBanner((Long) messageOutput.timestamp);
+                listmap.put(key, messageOutput);
+                tv_no_chat.setVisibility(View.GONE);
+                Collection<ChatHistory> demoValues = listmap.values();
+                newList.clear();
+                chatHistories.clear();
+                newList.addAll(demoValues);
+                chatHistories.addAll(newList);
+                shorting();
+
+            }
+            //  }
+        }
+    }
+
+    public void shorting() {
+
+        Collections.sort(chatHistories, new Comparator<ChatHistory>() {
+            @Override
+            public int compare(ChatHistory a1, ChatHistory a2) {
+                if (a1.timestamp == null || a2.timestamp == null) {
+                    return -1;
+                } else {
+                    Long long1 = Long.parseLong(String.valueOf(a1.timestamp));
+                    Long long2 = Long.parseLong(String.valueOf(a2.timestamp));
+                    return long2.compareTo(long1);
+                }
+            }
+        });
+
+        //   historyAdapter.setTyping(false);
+
+        progress_bar.setVisibility(View.GONE);
+        historyAdapter.notifyDataSetChanged();
+    }
+
+    private void getOtherUserDetail(String userId){
+        mFirebaseOtherUserRef.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.getValue() != null) {
+                    try {
+                        FirebaseUser otherUser = dataSnapshot.getValue(FirebaseUser.class);
+                        if (otherUser != null) {
+                            String uid = String.valueOf(otherUser.uId);
+                            //  firebaseUsersMap.put(String.valueOf(otherUser.uId),otherUser);
+                            if (!uid.equals(myId)){
+                                if (chatHistories.size()!=0 && listmap.size()!=0) {
+                                    if (listmap.containsKey(uid)) {
+                                        for (int i = 0; i < chatHistories.size(); i++) {
+                                            ChatHistory chatHistory = chatHistories.get(i);
+                                            if (!chatHistory.reciverId.contains("group_")){
+                                                if (uid.equals(chatHistory.senderId) || uid.equals(chatHistory.reciverId)) {
+                                                    if (!chatHistory.profilePic.equals(otherUser.profilePic)) {
+                                                        chatHistory.profilePic = otherUser.profilePic;
+                                                        historyAdapter.notifyItemChanged(i);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.getValue() != null) {
+                    try {
+                        FirebaseUser otherUser = dataSnapshot.getValue(FirebaseUser.class);
+                        if (otherUser != null) {
+                            String uid = String.valueOf(otherUser.uId);
+                            //  firebaseUsersMap.put(String.valueOf(otherUser.uId),otherUser);
+                            if (!uid.equals(myId)){
+                                if (chatHistories.size()!=0 && listmap.size()!=0) {
+                                    if (listmap.containsKey(uid)) {
+                                        for (int i = 0; i < chatHistories.size(); i++) {
+                                            ChatHistory chatHistory = chatHistories.get(i);
+                                            if (!chatHistory.reciverId.contains("group_")){
+                                                if (uid.equals(chatHistory.senderId) || uid.equals(chatHistory.reciverId)) {
+                                                    if (!chatHistory.profilePic.equals(otherUser.profilePic)) {
+                                                        chatHistory.profilePic = otherUser.profilePic;
+                                                        historyAdapter.notifyItemChanged(i);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void getTyppingUser(){
@@ -185,7 +363,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                     if (!dataSnapshot.getKey().contains(myChild)){
 
                         if (!dataSnapshot.getKey().contains("broadcast_") ||
-                                !dataSnapshot.getKey().contains("broadcast_group")){
+                                !dataSnapshot.getKey().contains("broadcast_group") && !dataSnapshot.getKey().contains("group")){
 
                             final Typing typing = dataSnapshot.getValue(Typing.class);
                             String node = dataSnapshot.getKey();
@@ -203,7 +381,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                                                     if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
                                                             equals(chatHistory.reciverId)){
                                                         chatHistory.isTyping = true;
-                                                        historyAdapter.setTyping(true,i);
+                                                        historyAdapter.setTyping(i);
                                                         break;
                                                     }
                                                 }
@@ -225,8 +403,9 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 try {
                     if (!dataSnapshot.getKey().contains(myChild)){
 
-                        if (!dataSnapshot.getKey().contains("broadcast_") ||
-                                !dataSnapshot.getKey().contains("broadcast_group")){
+                        if (!dataSnapshot.getKey().contains("broadcast_") &&
+                                !dataSnapshot.getKey().contains("broadcast_group") &&
+                                !dataSnapshot.getKey().contains("group")){
 
                             final Typing typing = dataSnapshot.getValue(Typing.class);
                             String node = dataSnapshot.getKey();
@@ -245,7 +424,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                                                     if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
                                                             equals(chatHistory.reciverId)){
                                                         chatHistory.isTyping = true;
-                                                        historyAdapter.setTyping(true,i);
+                                                        historyAdapter.setTyping(i);
                                                         break;
                                                     }
                                                 }
@@ -277,7 +456,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                                 if (typing.senderId.equals(chatHistory.senderId) || typing.senderId.
                                         equals(chatHistory.reciverId)){
                                     chatHistory.isTyping = false;
-                                    historyAdapter.setTyping(false,i);
+                                    historyAdapter.setTyping(i);
                                     break;
                                 }
                             }
@@ -303,7 +482,7 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
     private void getHistoryList() {
 
-        databaseReference.orderByKey().addValueEventListener(new ValueEventListener() {
+        databaseReference.orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -311,10 +490,11 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                     if(dataSnapshot.getValue()== null){
                         if (!dataSnapshot.exists()){
                             tv_no_chat.setVisibility(View.VISIBLE);
+                            progress_bar.setVisibility(View.GONE);
                         }else{
+                            progress_bar.setVisibility(View.VISIBLE);
                             tv_no_chat.setVisibility(View.GONE);
                         }
-                        progress_bar.setVisibility(View.GONE);
                         tv_no_chat.setVisibility(View.VISIBLE);
                     }
                 }catch (Exception e){
@@ -338,15 +518,11 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String key = dataSnapshot.getKey();
                 try {
-                    if (!key.contains("group_")){
-                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                    //  if (!key.contains("group_")){
+                    ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
 
-                        if (messageOutput != null) {
-                            getChatDataInMap(key,messageOutput);
-                        }
-                    }else {
-                        progress_bar.setVisibility(View.GONE);
-                        tv_no_chat.setVisibility(View.VISIBLE);
+                    if (messageOutput != null) {
+                        getChatDataInMap(key,messageOutput);
                     }
 
                     if(chatHistories.size() == 0){
@@ -363,15 +539,11 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 try {
-                    String key = dataSnapshot.getKey();
-                    if (!key.contains("group_")){
-                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
-                        if (messageOutput != null) {
-                            getChatDataInMap(key,messageOutput);
-                        }
-                    }else {
-                        progress_bar.setVisibility(View.GONE);
-                        tv_no_chat.setVisibility(View.VISIBLE);
+                    final String key = dataSnapshot.getKey();
+                    // if (!key.contains("group_")){
+                    ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                    if (messageOutput != null) {
+                        getChatDataInMap(key,messageOutput);
                     }
 
                     if(chatHistories.size() == 0){
@@ -390,19 +562,20 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                 try {
                     String key = dataSnapshot.getKey();
 
-                    if (!key.contains("group_")){
-                        ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
-                        listmap.remove(dataSnapshot.getKey());
+                    //    if (!key.contains("group_")){
+                    ChatHistory messageOutput = dataSnapshot.getValue(ChatHistory.class);
+                    listmap.remove(key);
 
-                        for(int i = 0 ; i<chatHistories.size();i++){
-                            if(chatHistories.get(i).senderId.equals(dataSnapshot.getKey()) | chatHistories.get(i).reciverId.equals(dataSnapshot.getKey())){
-                                chatHistories.remove(i);
-                                historyAdapter.notifyItemRemoved(i);
-                                break;
-                            }
+                    for(int i = 0 ; i<chatHistories.size();i++){
+                        if(chatHistories.get(i).senderId.equals(key) ||
+                                chatHistories.get(i).reciverId.equals(key)){
+                            chatHistories.remove(i);
+                            historyAdapter.notifyItemRemoved(i);
+                            break;
                         }
-
                     }
+
+                    //   }
                     progress_bar.setVisibility(View.GONE);
 
                 }catch (Exception e){
@@ -549,51 +722,6 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
-    private void getChatDataInMap(String key, ChatHistory messageOutput) {
-        if (messageOutput != null) {
-            if (messageOutput.type.equals("user")){
-                messageOutput.isTyping = false;
-
-                if (muteUsersMap.containsKey(messageOutput.senderId) || muteUsersMap.
-                        containsKey(messageOutput.reciverId)){
-                    messageOutput.isMute = true;
-                }else
-                    messageOutput.isMute = false;
-
-                messageOutput.banner_date = CommonUtils.getDateBanner((Long) messageOutput.timestamp);
-                listmap.put(key, messageOutput);
-                tv_no_chat.setVisibility(View.GONE);
-                Collection<ChatHistory> demoValues = listmap.values();
-                newList.clear();
-                chatHistories.clear();
-                newList.addAll(demoValues);
-                chatHistories.addAll(newList);
-                shorting();
-            }
-        }
-    }
-
-    public void shorting() {
-
-        Collections.sort(chatHistories, new Comparator<ChatHistory>() {
-            @Override
-            public int compare(ChatHistory a1, ChatHistory a2) {
-                if (a1.timestamp == null || a2.timestamp == null) {
-                    return -1;
-                } else {
-                    Long long1 = Long.parseLong(String.valueOf(a1.timestamp));
-                    Long long2 = Long.parseLong(String.valueOf(a2.timestamp));
-                    return long2.compareTo(long1);
-                }
-            }
-        });
-
-        //   historyAdapter.setTyping(false);
-
-        progress_bar.setVisibility(View.GONE);
-        historyAdapter.notifyDataSetChanged();
-    }
-
     private void filter(String text) {
         //new array list that will hold the filtered data
         List<ChatHistory> filterdNames = new ArrayList<>();
@@ -603,7 +731,42 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             //if the existing elements contains the search input
             if (s.userName.toLowerCase(Locale.getDefault()).contains(text)) {
                 //adding the element to filtered list
-                filterdNames.add(s);
+                switch (filterType){
+                    case "":
+                        filterdNames.add(s);
+                        break;
+
+                    case "All":
+                        filterdNames.add(s);
+                        break;
+
+                    case "My Groups":
+                        if (s.type.equals("group")) {
+                            if (s.memberType.equals("admin")){
+                                filterdNames.add(s);
+                            }
+                        }
+                        break;
+
+                    case "All Groups":
+                        if (s.type.equals("group")) {
+                            filterdNames.add(s);
+                        }
+                        break;
+
+                    case "Read":
+                        if (s.unreadMessage==0) {
+                            filterdNames.add(s);
+                        }
+                        break;
+
+                    case "Unread":
+                        if (s.unreadMessage>0) {
+                            filterdNames.add(s);
+                        }
+                        break;
+                }
+                // filterdNames.add(s);
             }
         }
 
@@ -747,13 +910,19 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void allGroup(){
+    private void allGroup(String type){
         List<ChatHistory> tempArrayList = new ArrayList<>();
 
         for (ChatHistory history : chatHistories) {
             //if the existing elements contains the search input
             if (history.type.equals("group")) {
-                tempArrayList.add(history);
+                if (type.equals("My Groups")){
+                    if (history.memberType.equals("admin")){
+                        tempArrayList.add(history);
+                    }
+                }else {
+                    tempArrayList.add(history);
+                }
             }
         }
 
@@ -806,7 +975,9 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
             MenuAdapter menuAdapter=new MenuAdapter(ChatHistoryActivity.this, arrayList, new MenuAdapter.Listener() {
                 @Override
                 public void onMenuClick(int pos) {
-                    String data=arrayList.get(pos);
+                    final String data=arrayList.get(pos);
+
+                    popupWindow.dismiss();
 
                     if (!ConnectionDetector.isConnected()) {
                         new NoConnectionDialog(ChatHistoryActivity.this, new NoConnectionDialog.Listner() {
@@ -814,23 +985,13 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                             public void onNetworkChange(Dialog dialog, boolean isConnected) {
                                 if(isConnected){
                                     dialog.dismiss();
+                                    AddOptionMenuClicks(data);
                                 }
                             }
                         }).show();
-                    }
-                    popupWindow.dismiss();
+                    }else
+                        AddOptionMenuClicks(data);
 
-                    switch (data){
-                        case "Create new chat":
-                            break;
-                        case "Create new group":
-                            startActivity(new Intent(ChatHistoryActivity.this,CreateGroupActivity.class));
-                            break;
-
-                        case "Join new group":
-                            break;
-
-                    }
                 }
             });
 
@@ -897,43 +1058,12 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
                             public void onNetworkChange(Dialog dialog, boolean isConnected) {
                                 if(isConnected){
                                     dialog.dismiss();
+                                    popupWindowOptionClicks(data);
                                 }
                             }
                         }).show();
-                    }
-                    switch (data){
-                        case "All":
-                            popupWindow.dismiss();
-                            historyAdapter.filterList(chatHistories);
-                            if (chatHistories.size()==0)
-                                tv_no_chat.setVisibility(View.VISIBLE);
-                            else
-                                tv_no_chat.setVisibility(View.GONE);
-
-                            break;
-
-                        case "All Groups":
-                            popupWindow.dismiss();
-                            allGroup();
-                            break;
-
-                        case "My Groups":
-                            popupWindow.dismiss();
-                            allGroup();
-                            break;
-
-                        case "Read":
-                            isReadFilter = true;
-                            popupWindow.dismiss();
-                            readUnreadFilter();
-                            break;
-
-                        case "Unread":
-                            isReadFilter = false;
-                            popupWindow.dismiss();
-                            readUnreadFilter();
-                            break;
-
+                    }else {
+                        popupWindowOptionClicks(data);
                     }
 
                 }
@@ -945,6 +1075,57 @@ public class ChatHistoryActivity extends AppCompatActivity implements View.OnCli
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void AddOptionMenuClicks(String option){
+        switch (option){
+            case "Create new chat":
+                break;
+            case "Create new group":
+                startActivity(new Intent(ChatHistoryActivity.this,CreateGroupActivity.class));
+                break;
+            case "Join new group":
+                break;
+
+        }
+    }
+
+    private void popupWindowOptionClicks(String option){
+
+        switch (option){
+            case "All":
+                filterType = "All";
+                historyAdapter.filterList(chatHistories);
+                if (chatHistories.size()==0)
+                    tv_no_chat.setVisibility(View.VISIBLE);
+                else
+                    tv_no_chat.setVisibility(View.GONE);
+
+                break;
+
+            case "All Groups":
+                filterType = "All Groups";
+                allGroup("All Groups");
+                break;
+
+            case "My Groups":
+                filterType = "My Groups";
+                allGroup("My Groups");
+                break;
+
+            case "Read":
+                filterType = "Read";
+                isReadFilter = true;
+                readUnreadFilter();
+                break;
+
+            case "Unread":
+                filterType = "Unread";
+                isReadFilter = false;
+                readUnreadFilter();
+                break;
+
         }
     }
 

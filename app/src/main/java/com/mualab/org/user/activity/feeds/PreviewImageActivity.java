@@ -17,6 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.mualab.org.user.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
@@ -142,7 +146,7 @@ public class PreviewImageActivity extends AppCompatActivity {
             //Picasso.with(context).load(imagesList.get(position)).into(new ImageViewTarget(photoView, progress_bar));
 
             final String url = String.valueOf(imagesList.get(position));
-            Picasso.with(context)
+         /*   Picasso.with(context)
                     .load(url)
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.OFFLINE)
@@ -160,7 +164,29 @@ public class PreviewImageActivity extends AppCompatActivity {
                                     .error(R.drawable.gallery_placeholder).into(photoView);
                             progress_bar.setVisibility(View.GONE);
                         }
-                    });
+                    });*/
+
+            Glide.with(context)
+                    .load(url)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            Picasso.with(context).load(url)
+                                    .fit()
+                                    .placeholder(R.drawable.gallery_placeholder)
+                                    .error(R.drawable.gallery_placeholder).into(photoView);
+                            progress_bar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            progress_bar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .into(photoView)
+            ;
 
             container.addView(itemView);
             return itemView;

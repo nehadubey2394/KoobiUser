@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.make_booking.adapter;
 
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
     private List<StaffInfo> artistsList;
     private BookingInfo bookingInfo;
     private boolean isEdit;
+    private   long mLastClickTime = 0;
 
     // Constructor of the class
     public BookingSelectStaffAdapter(Context context, List<StaffInfo> artistsList, BookingInfo bookingInfo, boolean isEdit) {
@@ -41,7 +43,6 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         return artistsList.size();
     }
 
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,7 +50,6 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
         return new ViewHolder(view);
 
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, int position) {
@@ -122,6 +122,11 @@ public class BookingSelectStaffAdapter extends RecyclerView.Adapter<RecyclerView
 
         @Override
         public void onClick(View view) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
             final StaffInfo item = artistsList.get(getAdapterPosition());
             Util utility  = new Util(context);
 

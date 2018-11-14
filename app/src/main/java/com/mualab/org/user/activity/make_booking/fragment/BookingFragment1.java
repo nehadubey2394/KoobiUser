@@ -81,7 +81,8 @@ public class BookingFragment1 extends Fragment {
     private void initView(){
 
         staffList = new ArrayList<>();
-        staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId));
+        staffList = item.findArtistByServiceId(Integer.parseInt(bookingInfo.msId),
+                bookingInfo.isOutCallSelect);
 
         //  staffAdapter = new BookingSelectStaffAdapter(mContext, staffList,bookingInfo,isEdit);
         StaffInfo staffInfo = new StaffInfo();
@@ -123,7 +124,7 @@ public class BookingFragment1 extends Fragment {
         if(mContext instanceof BookingActivity) {
             ((BookingActivity) mContext).setTitleVisibility(mParam1);
 
-                ((BookingActivity) mContext).setTitleVisibility(mParam1);
+            ((BookingActivity) mContext).setTitleVisibility(mParam1);
         }
     }
 

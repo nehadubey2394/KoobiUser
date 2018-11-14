@@ -140,7 +140,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_post);
-        setStatusbarColor();
+        //setStatusbarColor();
         Intent intent = getIntent();
         if (intent!= null) {
             caption = intent.getStringExtra("caption");
@@ -156,6 +156,9 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
         viewDidLoad();
 
         updateUi();
+
+        TextView tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle.setText(getString(R.string.new_post));
 
         ivShareFbOn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -315,7 +318,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
 
         //findViewById(R.id.iv_feedPost).setOnClickListener(this);
         findViewById(R.id.ly_location).setOnClickListener(this);
-        findViewById(R.id.iv_back).setOnClickListener(this);
+        findViewById(R.id.btnBack).setOnClickListener(this);
         findViewById(R.id.ll_tagPepole).setOnClickListener(this);
         findViewById(R.id.ll_tagService).setOnClickListener(this);
         findViewById(R.id.tv_post).setOnClickListener(this);
@@ -463,7 +466,7 @@ public class FeedPostActivity extends AppCompatActivity implements View.OnClickL
                 feedPostPrerareData();
                 break;
 
-            case R.id.iv_back:
+            case R.id.btnBack:
                 onBackPressed();
                 break;
 

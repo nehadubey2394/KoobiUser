@@ -26,7 +26,7 @@ public class ImageUtils {
         try {
             fos = new FileOutputStream(savedImage.getPath());
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (!bitmap.isRecycled()) {

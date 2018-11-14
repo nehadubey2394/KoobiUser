@@ -137,4 +137,9 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

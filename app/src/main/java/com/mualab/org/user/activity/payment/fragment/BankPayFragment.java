@@ -31,6 +31,7 @@ import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.Helper;
+import com.mualab.org.user.utils.KeyboardUtil;
 
 import org.json.JSONObject;
 
@@ -105,6 +106,10 @@ public class BankPayFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.payBtn:
+                KeyboardUtil.hideKeyboard(accNo, mContext);
+                KeyboardUtil.hideKeyboard(holderName, mContext);
+                KeyboardUtil.hideKeyboard(routNo, mContext);
+
                 if (isValidData()) {
                     apiForPaymentByBank();
                 }
@@ -236,5 +241,11 @@ public class BankPayFragment extends Fragment implements View.OnClickListener {
         task.execute(this.getClass().getName());
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KeyboardUtil.hideKeyboard(accNo, mContext);
+        KeyboardUtil.hideKeyboard(holderName, mContext);
+        KeyboardUtil.hideKeyboard(routNo, mContext);
+    }
 }

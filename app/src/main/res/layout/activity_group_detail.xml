@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:id="@+id/ivGroupImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/gallery_placeholder"
+                />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="@color/chatbox_blue"
+                />
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/white_back_ico"
+                android:tint="@color/white"
+                android:padding="5dp"
+                />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tvGroupName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:fontFamily="@font/nunito_bold"
+            android:textSize="18sp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/text_color"
+            android:layout_marginTop="4dp"
+            />
+
+        <TextView
+            android:id="@+id/tvGroupDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:fontFamily="@font/nunito_regular"
+            android:textSize="14sp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:textColor="@color/gray"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/light_gray_shadow">
+
+        </View>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            >
+
+            <TextView
+                android:id="@+id/tvMuteGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView"
+                android:layout_gravity="center"
+                android:text="@string/mute_group"
+                android:layout_centerVertical="true"
+                android:textSize="16sp"
+                android:fontFamily="@font/nunito_semibold"
+                android:textColor="@color/text_color" />
+
+            <ImageView
+                android:id="@+id/ivMuteToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_switch_off" />
+
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/light_gray_shadow">
+
+        </View>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView"
+                android:layout_gravity="center"
+                android:text="@string/clear_chat_hitory"
+                android:textSize="16sp"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/nunito_semibold"
+                android:textColor="@color/text_color" />
+
+            <ImageView
+                android:id="@+id/ivClearHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/white_back_ico"
+                android:tint="@color/chatting_time_gray"
+                android:padding="2dp"
+                android:rotation="180"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/light_gray_shadow">
+
+        </View>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextView"
+                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:text="@string/leave_group"
+                android:textSize="16sp"
+                android:fontFamily="@font/nunito_semibold"
+                android:textColor="@color/chatbox_red" />
+
+            <ImageView
+                android:id="@+id/ivLeaveGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/white_back_ico"
+                android:tint="@color/chatting_time_gray"
+                android:padding="2dp"
+                android:rotation="180"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/light_gray_shadow">
+
+        </View>
+
+        <TextView
+            android:id="@+id/tvGroupMembers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:gravity="center_vertical"
+            android:fontFamily="@font/nunito_semibold"
+            android:textSize="16sp"
+            android:text="0 members"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:textColor="@color/gray"
+            android:layout_marginTop="2dp"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rycGroupMembers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="8dp"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+
+</android.support.v4.widget.NestedScrollView>
+

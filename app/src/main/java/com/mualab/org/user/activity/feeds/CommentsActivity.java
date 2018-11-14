@@ -125,8 +125,8 @@ public class CommentsActivity extends AppCompatActivity {
         });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
+        //linearLayoutManager.setReverseLayout(true);
+        // linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
@@ -335,7 +335,8 @@ public class CommentsActivity extends AppCompatActivity {
                         }
                         //recyclerView.smoothScrollToPosition(0);
                         commentAdapter.notifyDataSetChanged();
-                        recyclerView.scrollToPosition(0);
+                        //  recyclerView.scrollToPosition(0);
+                        recyclerView.scrollToPosition(commentList.size() - 1);
                     } else {
 
                         if (commentList.size() == 0) {
@@ -441,7 +442,8 @@ public class CommentsActivity extends AppCompatActivity {
                         comment.commentLikeCount = 0;
                         comment.isLike = 0;
 
-                        commentList.add(0, comment);
+                        // commentList.add(0, comment);
+                        commentList.add(comment);
 
                     }
                     if (commentList.size() == 0) {
@@ -451,7 +453,7 @@ public class CommentsActivity extends AppCompatActivity {
                     }
 
                     commentAdapter.notifyDataSetChanged();
-                    recyclerView.smoothScrollToPosition(commentList.size() - 1);
+                    recyclerView.scrollToPosition(commentList.size() - 1);
 
 
                 } catch (JSONException e) {

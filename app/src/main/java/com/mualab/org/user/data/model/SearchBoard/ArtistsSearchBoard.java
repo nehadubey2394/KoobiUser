@@ -16,7 +16,6 @@ import java.util.List;
 public class ArtistsSearchBoard implements Serializable {
     public  String _id,reviewCount,profileImage,userName,firstName,postCount,businessName,bankStatus,
             lastName,distance,ratingCount,businessType,serviceType,inCallpreprationTime,outCallpreprationTime,address,categoryName,radius;
-    public  boolean isOutCallSelected = false;
     public  boolean isFav;
     public  ArrayList<ArtistServices>service;
     public  ArrayList<Services>allService = new ArrayList<>();
@@ -24,13 +23,24 @@ public class ArtistsSearchBoard implements Serializable {
 
     public ArrayList<StaffInfo>staffInfo = new ArrayList<>();
 
-    public List<StaffInfo> findArtistByServiceId(int serviceId){
+    public List<StaffInfo> findArtistByServiceId(int serviceId,boolean isOutCall){
         List<StaffInfo> list = new ArrayList<>();
 
         for(StaffInfo tmpArtist : staffInfo){
             StaffServices service = tmpArtist.findServces(serviceId);
-            if(service!=null)
-                list.add(new StaffInfo(tmpArtist).setSerVice(service));
+
+            if(service!=null){
+                double inPrice = Double.parseDouble(service.inCallPrice);
+                double outPrice = Double.parseDouble(service.outCallPrice);
+
+                if (!isOutCall )
+                {
+                    if (inPrice!=0.0)
+                        list.add(new StaffInfo(tmpArtist).setSerVice(service));
+                }
+                else  if (outPrice!=0.0)
+                    list.add(new StaffInfo(tmpArtist).setSerVice(service));
+            }
         }
         return list;
     }

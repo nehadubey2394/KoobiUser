@@ -2,6 +2,7 @@ package com.mualab.org.user.activity.story.camera.util;
 
 
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.Deflater;
 
 import static com.mualab.org.user.activity.story.camera.util.Degrees.DEGREES_270;
@@ -234,5 +236,67 @@ public class ImageUtil {
     inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
     String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
     return Uri.parse(path);
+  }
+
+  public static Bitmap getBitmap(Context ct,Uri uri ) {
+
+    InputStream in = null;
+    try {
+      final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
+      ContentResolver mContentResolver = ct.getContentResolver();
+      in = mContentResolver.openInputStream(uri);
+
+      // Decode image size
+      BitmapFactory.Options options = new BitmapFactory.Options();
+      options.inJustDecodeBounds = true;
+      BitmapFactory.decodeStream(in, null, options);
+      in.close();
+
+
+
+      int scale = 1;
+      while ((options.outWidth == options.outHeight) || (1 / Math.pow(scale, 2)) >
+              IMAGE_MAX_SIZE) {
+        scale++;
+      }
+
+
+      Bitmap resultBitmap = null;
+      in = mContentResolver.openInputStream(uri);
+      if (scale > 1) {
+        scale--;
+        // scale to max possible inSampleSize that still yields an image
+        // larger than target
+        options = new BitmapFactory.Options();
+        options.inSampleSize = scale;
+        resultBitmap = BitmapFactory.decodeStream(in, null, options);
+
+        // resize to desired dimensions
+        int height = resultBitmap.getHeight();
+        int width = resultBitmap.getWidth();
+
+
+        double y = Math.sqrt(IMAGE_MAX_SIZE
+                / (((double) width) / height));
+        double x = (y / height) * width;
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(resultBitmap, (int) x,
+                (int) y, true);
+        resultBitmap.recycle();
+        resultBitmap = scaledBitmap;
+
+        System.gc();
+      } else {
+        resultBitmap = BitmapFactory.decodeStream(in);
+      }
+      in.close();
+
+      Log.d(TAG, "bitmap size - width: " +resultBitmap.getWidth() + ", height: " +
+              resultBitmap.getHeight());
+      return resultBitmap;
+    } catch (IOException e) {
+      Log.e(TAG, e.getMessage(),e);
+      return null;
+    }
   }
 }

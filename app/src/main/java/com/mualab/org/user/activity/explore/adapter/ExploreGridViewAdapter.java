@@ -16,7 +16,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * Created by dharmraj on 2/4/18.
  **/
 
 public class ExploreGridViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Mualab</string>
     <string name="API_KEY">AIzaSyBVpYLTSZi0em7DxrEZJDVwYyRINa03i5c</string>
+    <!--
+    <string name="API_KEY">AIzaSyD_uX3hbydbD0BEhcaMqKlOs0xQH7jf1FM</string>
+-->
     <string name="fb_app_id">1950251375263506</string>
     <string name="fb_app_secret">565aa2c50ec9a753713890245f08fb8f</string>
     <string name="consumer_key">7z5xrHH8AgQieg4JxUavnu434</string>
@@ -437,4 +440,21 @@
     <string name="type_group_name">Type group name</string>
     <string name="select_people_you_want_to_add_group">Select people you want to add in this group</string>
     <string name="create_group">Create Group</string>
+    <string name="group_description">Group Description</string>
+    <string name="mute_group">Mute Group</string>
+    <string name="clear_chat_hitory">Clear Chat History</string>
+    <string name="leave_group">Leave Group</string>
+    <string name="add_members">Add Members</string>
+    <string name="remove_members">Remove Members</string>
+    <string name="you_can_t_send_message">You can\'t send messages to this group because you\'re no longer a participant</string>
+    <string name="messege">Messege</string>
+    <string name="join">Join</string>
+    <string name="address">Address</string>
+
+    <string name="pick_your_business_place">Pick Your Business Place</string>
+    <string name="pick_your_place">Pick Your Place</string>
+    <string name="enter_post_code">Enter post code</string>
+    <string name="line_of_address1">1st line of address*</string>
+    <string name="save">Save</string>
+    <string name="address_activity">Add Location</string>
 </resources>

@@ -4,9 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -24,22 +27,23 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.application.Mualab;
-import com.mualab.org.user.dialogs.ForgotPassword;
-import com.mualab.org.user.dialogs.NoConnectionDialog;
-import com.mualab.org.user.utils.constants.Constant;
-import com.mualab.org.user.dialogs.MySnackBar;
-import com.mualab.org.user.dialogs.MyToast;
-import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.local.prefs.Session;
 import com.mualab.org.user.data.local.prefs.SharedPreferanceUtils;
+import com.mualab.org.user.data.model.User;
 import com.mualab.org.user.data.remote.HttpResponceListner;
 import com.mualab.org.user.data.remote.HttpTask;
+import com.mualab.org.user.dialogs.ForgotPassword;
+import com.mualab.org.user.dialogs.MySnackBar;
+import com.mualab.org.user.dialogs.MyToast;
+import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.StatusBarUtil;
+import com.mualab.org.user.utils.constants.Constant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink));
         sp = new SharedPreferanceUtils(this);
         session = Mualab.getInstance().getSessionManager();
         initView();
@@ -213,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
             params.put("deviceToken",deviceToken);
             params.put("firebaseToken", deviceToken);
             params.put("deviceType", "2");
-            params.put("appType", "user");
+            params.put("appType", "social");
             params.put("userType", "user");
 
             new HttpTask(new HttpTask.Builder(this, "userLogin", new HttpResponceListner.Listener() {
@@ -305,8 +309,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void writeNewUser(User user) {
-        DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
+    private void writeNewUser(final User user) {
+        final DatabaseReference mDatabase  = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mMyGroupRef = mDatabase.child("myGroup").child(String.valueOf(user.id));
         FirebaseUser firebaseUser = new FirebaseUser();
         firebaseUser.firebaseToken = FirebaseInstanceId.getInstance().getToken();
         firebaseUser.isOnline = 1;
@@ -323,6 +328,37 @@ public class LoginActivity extends AppCompatActivity {
         firebaseUser.banAdmin = 0;
 
         mDatabase.child("users").child(String.valueOf(user.id)).setValue(firebaseUser);
+
+        ChildEventListener childEventListener = mMyGroupRef.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String myGroupId = String.valueOf(dataSnapshot.getValue());
+                mDatabase.child("group").child(myGroupId).child("member").
+                        child(String.valueOf(user.id)).child("firebaseToken").
+                        setValue(FirebaseInstanceId.getInstance().getToken());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -388,71 +424,10 @@ public class LoginActivity extends AppCompatActivity {
         //Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-
-   /* public void firebaseLoginRegistration(final User user) {
-
-        mAuth.signInWithEmailAndPassword(user.email, "123456")
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            user.fireBaseId = task.getResult().getUser().getUid();
-                            session.createSession(user, true);
-                            goNextActivity();
-                        } else if (!task.isSuccessful()) {
-                            fireBaseRegistrationTask(user);
-                        }
-
-                    }
-                });
-
+    @Override
+    protected void onDestroy() {
+        // mMyGroupRef.removeEventListener(childEventListener);
+        super.onDestroy();
     }
 
-    public void fireBaseRegistrationTask(final User user) {
-
-        mAuth.createUserWithEmailAndPassword(user.email, "123456")
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            user.fireBaseId = task.getResult().getUser().getUid();
-                            session.createSession(user, true);
-                            session.setPassword(ed_password.getText().toString().trim());
-                            mDatabase.child("users").child(user.fireBaseId).setValue(user);
-                            goNextActivity();
-
-                        } *//*else {
-                            Toast.makeText(LoginActivity.this, "in firebase already register with this email id.", Toast.LENGTH_SHORT).show();
-                        }*//*
-                    }
-                });
-    }*/
-
-   /* private class MyTextWatcher implements TextWatcher {
-
-        private View view;
-
-        private MyTextWatcher(View view) {
-            this.view = view;
-        }
-
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.ed_username:
-                    validateName();
-                    break;
-                case R.id.ed_password:
-                    validatePassword();
-                    break;
-            }
-        }
-    }*/
 }

@@ -3,7 +3,7 @@ apply plugin: 'com.google.firebase.firebase-crash'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.mualab.org.user"
@@ -84,6 +84,7 @@ dependencies {
     implementation 'cn.pedant.sweetalert:library:1.3'
     implementation 'com.github.florent37:camerafragment:1.0.9'
     implementation 'com.ablanco.zoomy:zoomy:1.1.0'
+
     /*implementation 'com.intuit.sdp:sdp-android:1.0.5'*/
 }
 apply plugin: 'com.google.gms.google-services'

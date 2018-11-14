@@ -103,8 +103,9 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_profile);
         Intent i = getIntent();
-        item = (ArtistsSearchBoard) i.getSerializableExtra("item");
-        artistId =  item._id;
+        //  item = (ArtistsSearchBoard) i.getSerializableExtra("item");
+        //  artistId =  item._id;
+        artistId = i.getStringExtra("artistId");
         init();
     }
 
@@ -112,6 +113,7 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         Session session = Mualab.getInstance().getSessionManager();
         user = session.getUser();
         feeds = new ArrayList<>();
+        item = new ArtistsSearchBoard();
 
         tvImages = findViewById(R.id.tv_image);
         tvVideos = findViewById(R.id.tv_videos);
@@ -344,7 +346,8 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
 
             case R.id.btnBook:
                 Intent intent = new Intent(ArtistProfileActivity.this, BookingActivity.class);
-                intent.putExtra("item",item);
+                intent.putExtra("artistId",artistId);
+                intent.putExtra("businessType",item.businessType);
                 startActivity(intent);
                 break;
 
@@ -1091,8 +1094,8 @@ public class ArtistProfileActivity extends AppCompatActivity implements View.OnC
         dialog.setContentView(dialogView);
         final InstaTag postImage = dialogView.findViewById(R.id.post_image);
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
-        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
-        tvCertiTitle.setText("Images");
+        TextView tvHeaderTitle = dialogView.findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle.setText("Images");
 
         postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         postImage.setRootWidth(postImage.getMeasuredWidth());

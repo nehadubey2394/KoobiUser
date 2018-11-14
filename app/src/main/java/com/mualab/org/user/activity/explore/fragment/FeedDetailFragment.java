@@ -183,7 +183,6 @@ public class FeedDetailFragment extends Fragment {
         // getUpdatedFeed();
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -217,7 +216,6 @@ public class FeedDetailFragment extends Fragment {
             adapter.notifyItemChanged(pos);*/
     }
 
-
     boolean isShow = false;
     private void showLargeImage(Feeds feeds, int index){
         View dialogView = View.inflate(mContext, R.layout.dialog_large_image_view, null);
@@ -229,8 +227,8 @@ public class FeedDetailFragment extends Fragment {
         final InstaTag postImage = dialogView.findViewById(R.id.post_image);
         //. postImage.setTouchListnerDisable();
         ImageView btnBack = dialogView.findViewById(R.id.btnBack);
-        TextView tvCertiTitle = dialogView.findViewById(R.id.tvCertiTitle);
-        tvCertiTitle.setText("Images");
+        TextView tvHeaderTitle = dialogView.findViewById(R.id.tvHeaderTitle);
+        tvHeaderTitle.setText("Images");
 
 
         postImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -301,7 +299,6 @@ public class FeedDetailFragment extends Fragment {
         public void onSinglePress(MotionEvent e) {
         }
     };
-
 
     private void getUpdatedFeed(){
         Map<String, String> map = new HashMap<>();

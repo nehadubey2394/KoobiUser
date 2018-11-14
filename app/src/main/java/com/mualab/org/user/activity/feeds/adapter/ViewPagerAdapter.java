@@ -147,6 +147,7 @@ public class ViewPagerAdapter extends PagerAdapter implements OnImageSwipeListen
                                     item._id = tagDetail.tagId;
                                     Intent intent2 = new Intent(context, ArtistProfileActivity.class);
                                     intent2.putExtra("item",item);
+                                    intent2.putExtra("artistId",item._id);
                                     context.startActivity(intent2);
                                 }
                             }

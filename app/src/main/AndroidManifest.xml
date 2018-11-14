@@ -92,7 +92,7 @@
         <activity
             android:name=".activity.make_booking.BookingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FullScreen" />
+            android:theme="@style/StatusBarBlack" />
         <activity
             android:name=".activity.AddStoryActivity"
             android:screenOrientation="portrait"
@@ -107,7 +107,8 @@
             android:theme="@style/AppTheme.Camera" />
         <activity
             android:name=".activity.feeds.FeedPostActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
         <activity android:name=".activity.story.camera.CaptureActivity" />
         <activity android:name=".activity.story.camera.CaptureActivity2" />
         <activity android:name=".activity.story.NewStoryActivity" />
@@ -121,7 +122,8 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.explore.ExplorSearchActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
 
         <!-- Meta data -->
         <meta-data
@@ -167,10 +169,12 @@
 
         <activity
             android:name=".activity.explore.SearchFeedActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
         <activity
             android:name=".activity.explore.FeedDetailActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack" />
         <activity
             android:name=".activity.artist_profile.activity.ArtistProfileActivity"
             android:screenOrientation="portrait"
@@ -228,14 +232,12 @@
             android:name=".activity.chat.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="adjustResize">
-
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_launcher" />
-        <!--              Set color used with incoming notification messages. This is used when no color is set for the incoming -->
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming -->
         <!--
             <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
@@ -246,20 +248,43 @@
             android:name=".activity.chat.ChatHistoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
-            android:windowSoftInputMode="stateHidden">
-
-        </activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.base.BaseActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.chat.ShowZoomImageActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
-        <activity android:name=".activity.chat.CreateGroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.chat.CreateGroupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.chat.GroupChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.chat.GroupDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.chat.AddMemberActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="stateHidden|adjustNothing" />
+        <activity
+            android:name=".activity.chat.RemoveMemberActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StatusBarBlack"
+            android:windowSoftInputMode="stateHidden|adjustNothing" />
+        <activity android:name=".activity.chat.JoinGroupActivity" />
+
+        <activity android:name=".activity.authentication.AddAddressActivity"
+            android:label="@string/address_activity"
+            android:theme="@style/AppTheme.DarkActionBar"
             android:windowSoftInputMode="adjustPan">
 
         </activity>

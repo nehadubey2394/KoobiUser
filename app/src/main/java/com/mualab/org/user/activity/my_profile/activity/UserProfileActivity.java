@@ -45,6 +45,7 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.artist_profile.activity.FollowersActivity;
 import com.mualab.org.user.activity.artist_profile.adapter.ArtistFeedAdapter;
 import com.mualab.org.user.activity.artist_profile.model.UserProfileData;
+import com.mualab.org.user.activity.chat.ChatActivity;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.feeds.CommentsActivity;
 import com.mualab.org.user.activity.feeds.adapter.ViewPagerAdapter;
@@ -101,7 +102,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
     private  long mLastClickTime = 0;
     private UserProfileData profileData = null;
     private List<NavigationItem> navigationItems;
-    private AppCompatButton btnFollow;
+    private AppCompatButton btnFollow,btnChat;
     private ViewPagerAdapter.LongPressListner longPressListner;
 
     @Override
@@ -134,21 +135,24 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         tv_dot2 =  findViewById(R.id.tv_dot2);
 
         ImageView btnBack = findViewById(R.id.btnBack);
-        ImageView ivChat = findViewById(R.id.ivChat);
+        // ImageView ivChat = findViewById(R.id.ivChat);
         // ivChat.setVisibility(View.VISIBLE);
         ImageView ivUserProfile = findViewById(R.id.ivUserProfile);
         ImageView ivDrawer = findViewById(R.id.btnNevMenu);
         ivUserProfile.setVisibility(View.GONE);
 
         btnFollow = findViewById(R.id.btnFollow);
+        btnChat = findViewById(R.id.btnChat);
         //   final AppBarLayout mainView = findViewById(R.id.appbar);
         if (userId.equals(String.valueOf(user.id))) {
             ivDrawer.setVisibility(View.VISIBLE);
             btnFollow.setVisibility(View.GONE);
+            btnChat.setVisibility(View.GONE);
         }
         else {
             ivDrawer.setVisibility(View.GONE);
             btnFollow.setVisibility(View.VISIBLE);
+            btnChat.setVisibility(View.VISIBLE);
         }
 
         NavigationView navigationView =  findViewById(R.id.nav_view);
@@ -269,7 +273,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         llPost.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         ivUserProfile.setOnClickListener(this);
-        ivChat.setOnClickListener(this);
+        btnChat.setOnClickListener(this);
         ivDrawer.setOnClickListener(this);
         btnFollow.setOnClickListener(this);
 
@@ -777,6 +781,12 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
 
             case R.id.btnBack:
                 onBackPressed();
+                break;
+
+            case R.id.btnChat:
+                Intent chat_intent = new Intent(UserProfileActivity.this, ChatActivity.class);
+                chat_intent.putExtra("opponentChatId",userId);
+                startActivity(chat_intent);
                 break;
 
             case R.id.btnFollow:

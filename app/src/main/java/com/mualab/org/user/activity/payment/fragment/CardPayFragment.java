@@ -35,6 +35,7 @@ import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.Progress;
 import com.mualab.org.user.utils.ConnectionDetector;
 import com.mualab.org.user.utils.Helper;
+import com.mualab.org.user.utils.KeyboardUtil;
 
 import org.json.JSONObject;
 
@@ -47,9 +48,8 @@ import static android.app.Activity.RESULT_OK;
 public class CardPayFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "CardPayFragment";
-    private EditText /*cardHolderName,*/ oneTxt, twoTxt, threeTxt, fourTxt;
+    private EditText /*cardHolderName,*/ oneTxt, twoTxt, threeTxt, fourTxt,cvv;
     private TextView expireDate;
-    private EditText cvv;
     private Context mContext;
     private String expireMnth,expireYear,number,totalPrice,bookingId;
     // private Bundle bundle;
@@ -172,6 +172,11 @@ public class CardPayFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.addCardBtn:
+                KeyboardUtil.hideKeyboard(cvv, mContext);
+                KeyboardUtil.hideKeyboard(oneTxt, mContext);
+                KeyboardUtil.hideKeyboard(twoTxt, mContext);
+                KeyboardUtil.hideKeyboard(threeTxt, mContext);
+
                 number = oneTxt.getText().toString().trim() + twoTxt.getText().toString().trim() + threeTxt.getText().toString().trim() + fourTxt.getText().toString().trim();
                 if (isValidData()) {
                     apiForPaymentByCard();
@@ -356,4 +361,12 @@ public class CardPayFragment extends Fragment implements View.OnClickListener {
         task.execute(this.getClass().getName());
     }
 
+    @Override
+    public void onDestroy() {
+        KeyboardUtil.hideKeyboard(cvv, mContext);
+        KeyboardUtil.hideKeyboard(oneTxt, mContext);
+        KeyboardUtil.hideKeyboard(twoTxt, mContext);
+        KeyboardUtil.hideKeyboard(threeTxt, mContext);
+        super.onDestroy();
+    }
 }

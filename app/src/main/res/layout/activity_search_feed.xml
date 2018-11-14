@@ -8,47 +8,57 @@
     android:fitsSystemWindows="true"
     tools:context="com.mualab.org.user.activity.explore.SearchFeedActivity">
 
-    <RelativeLayout
+    <include
+        android:id="@+id/topLayout"
+        layout="@layout/new_header_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/ivHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/leader_board_header_bg"
-            tools:ignore="ContentDescription" />
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:layout_alignParentTop="true" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:gravity="center_vertical">
+    <!--
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:gravity="center_vertical">
 
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="12dp"
-                android:layout_centerVertical="true"
-                android:tint="@color/white"
-                android:src="@drawable/back_icon"
-                tools:ignore="ContentDescription" />
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:layout_centerVertical="true"
+                    android:tint="@color/white"
+                    android:src="@drawable/back_icon"
+                    tools:ignore="ContentDescription" />
 
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="80dp"
-                style="@style/TextView.Bold"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:layout_centerInParent="true"
-                android:textSize="18sp"
-                android:text="@string/explore"/>
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="80dp"
+                    style="@style/TextView.Bold"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_centerInParent="true"
+                    android:textSize="18sp"
+                    android:text="@string/explore"/>
 
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/ivUserProfile"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:src="@drawable/user_ico"
+                    android:visibility="visible"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true" />
 
-    </RelativeLayout>
+
+            </RelativeLayout>
+    -->
 
 
     <FrameLayout

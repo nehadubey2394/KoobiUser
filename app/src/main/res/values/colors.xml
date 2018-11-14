@@ -1,148 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#f83272</color>
-    <color name="colorPrimaryDark">#f83272</color>
-    <color name="colorAccent">#3f8efc</color>
+  <color name="colorPrimary">#f83272</color>
+  <color name="colorPrimaryDark">#f83272</color>
+  <color name="colorAccent">#3f8efc</color>
 
-    <color name="colorPrimaryTransprent1">#30860309</color>
-    <color name="colorPrimaryTransprent2">#50b26800</color>
-    <color name="colorPrimaryTransprent3">#90860309</color>
-    <color name="colorPrimaryTransprent4">#80ffffff</color>
-    <color name="textColorPrimary">#212121</color>
-    <color name="textColorSecondary">#757575</color>
-    <color name="shadow_green">#00bb27</color>
+<!-- <color name="colorPrimary">#1bd3c9</color>
+ <color name="colorPrimaryDark">#04cec4</color>
+ <color name="colorAccent">#f83272</color>-->
 
-    <color name="text_color_yellow">#f2a92a </color>
-    <color name="text_color_green">#00bb27  </color>
+ <color name="colorPrimaryPink">#f83272</color>
+ <color name="colorPrimaryTransprent1">#30860309</color>
+ <color name="colorPrimaryTransprent2">#50b26800</color>
+ <color name="colorPrimaryTransprent3">#90860309</color>
+ <color name="colorPrimaryTransprent4">#80ffffff</color>
+ <color name="textColorPrimary">#212121</color>
+ <color name="textColorSecondary">#757575</color>
+ <color name="shadow_green">#00bb27</color>
 
-    <color name="colorInitial">#FFC107</color>
-    <color name="colorProgress">#00796B</color>
+ <color name="text_color_yellow">#f2a92a </color>
+ <color name="text_color_green">#00bb27  </color>
 
-    <color name="gredienTop">#8c054e</color>
-    <color name="gredienBottom">#ca3586</color>
-    <color name="profileBorder">#a4035a</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
-    <color name="dark_transperant">#66000000</color>
-    <color name="transparent">#00000000</color>
-    <color name="white_transperent">#50FFFFFF</color>
-    <color name="colorPrimary_alpha10">#1003A7E9</color>
-    <color name="light_gray_shadow">#D3D3D3</color>
+ <color name="colorInitial">#FFC107</color>
+ <color name="colorProgress">#00796B</color>
 
-    <color name="gray">#999999</color>
-    <color name="grey1">#f5f5f5</color>
-    <color name="gray2">#E0E0E0</color>
-    <color name="gray3">#ececec</color>
-    <color name="dark_gray">#FF595959</color>
-    <color name="grey">#828282</color>
-    <color name="dark_grey">#434343</color>
-    <color name="light_gray">#ffefefef</color>
+ <color name="gredienTop">#8c054e</color>
+ <color name="gredienBottom">#ca3586</color>
+ <color name="profileBorder">#a4035a</color>
+ <color name="white">#FFFFFF</color>
+ <color name="black">#000000</color>
+ <color name="dark_transperant">#66000000</color>
+ <color name="transparent">#00000000</color>
+ <color name="white_transperent">#50FFFFFF</color>
+ <color name="colorPrimary_alpha10">#1003A7E9</color>
+ <color name="light_gray_shadow">#D3D3D3</color>
 
-
-    <color name="chatbox_gray">#eeeeee</color>
-    <color name="chatbox_blue">#1bd3c9</color>
-    <color name="chatting_time_gray">#a1a1a1</color>
-
-
-    <color name="light_blue">#ff0d8cd1</color>
-    <color name="yellow">#ffff00</color>
-    <color name="dark_yellow">#fdc301</color>
-    <color name="btn_active">#C65E97</color>
-    <color name="bg_chat">#ECECEC</color>
-
-    <color name="picker_background">#3F51B5</color>
-    <color name="picker_button_background_selected">#3F51B5</color>
-    <color name="picker_button_background">@android:color/white</color>
-    <color name="picker_button_background_innactive">#BDBDBD</color>
-    <color name="picker_default_text_color">#999</color>
-    <color name="picker_default_selected_text_color">@android:color/black</color>
-    <color name="picker_default_selector_color">#646464</color>
-
-    <color name="rippelColor">@color/white</color>
-
-    <color name="day_disabled_background_color">#F1F5F8</color>
-    <color name="day_disabled_text_color">#DEDEDE</color>
-    <color name="selected_day_background">#03A7E9</color>
-    <color name="current_day_of_month">#03A7E9</color>
-
-    <color name="summer">#44eebd82</color>
-    <color name="fall">#44d8d27e</color>
-    <color name="winter">#44a1c1da</color>
-    <color name="spring">#448da64b</color>
+ <color name="gray">#999999</color>
+ <color name="grey1">#f5f5f5</color>
+ <color name="gray2">#E0E0E0</color>
+ <color name="gray3">#ececec</color>
+ <color name="dark_gray">#FF595959</color>
+ <color name="grey">#828282</color>
+ <color name="dark_grey">#434343</color>
+ <color name="light_gray">#ffefefef</color>
 
 
-    <item name="blue" type="color">#FF33B5E5</item>
-    <item name="purple" type="color">#FFAA66CC</item>
-    <item name="green" type="color">#FF99CC00</item>
-    <item name="orange" type="color">#FFFFBB33</item>
-    <item name="red" type="color">#FFFF4444</item>
-    <item name="darkblue" type="color">#FF0099CC</item>
-    <item name="darkpurple" type="color">#FF9933CC</item>
-    <item name="darkgreen" type="color">#FF669900</item>
-    <item name="darkorange" type="color">#FFFF8800</item>
-    <item name="darkred" type="color">#FFCC0000</item>
+ <color name="chatbox_gray">#eeeeee</color>
+ <color name="chatbox_blue">#1bd3c9</color>
+ <color name="chatbox_red">#e53935</color>
+ <color name="chatting_time_gray">#a1a1a1</color>
 
 
-    <!--My Story-->
-    <color name="progress_primary">@color/white</color>
-    <color name="progress_secondary">@color/gray_scale</color>
-    <color name="progress_max_active">@color/white</color>
-    <color name="gray_scale">#8affffff</color>
+ <color name="light_blue">#ff0d8cd1</color>
+ <color name="yellow">#ffff00</color>
+ <color name="dark_yellow">#fdc301</color>
+ <color name="btn_active">#C65E97</color>
+ <color name="bg_chat">#ECECEC</color>
 
-    <color name="fab_color_pressed">#007787</color>
-    <color name="fab_color_shadow">#44000000</color>
+ <color name="picker_background">#3F51B5</color>
+ <color name="picker_button_background_selected">#3F51B5</color>
+ <color name="picker_button_background">@android:color/white</color>
+ <color name="picker_button_background_innactive">#BDBDBD</color>
+ <color name="picker_default_text_color">#999</color>
+ <color name="picker_default_selected_text_color">@android:color/black</color>
+ <color name="picker_default_selector_color">#646464</color>
 
-    <color name="btn_default_light_normal">#00000000</color>
-    <color name="btn_default_light_pressed">#40ffffff</color>
-    <color name="btn_send_normal">#02c754</color>
-    <color name="btn_send_pressed">#006633</color>
-    <color name="btn_default_shadow">#99000000</color>
-    <color name="btn_context_menu_normal">#ffffff</color>
-    <color name="btn_context_menu_pressed">#40000000</color>
-    <color name="btn_context_menu_text_red">#ffff0000</color>
-    <color name="text_like_counter">#2b5a83</color>
-    <color name="screen_bg_color">#f2f2f2</color>
-    <color name="text_color">#333</color>
-    <color name="bg_edit_color">#e5e5e5</color>
-    <color name="custom_alert_bg_color">#B34c3549</color>
+ <color name="rippelColor">@color/white</color>
 
-    <color name="circle_gredient_start_color">#583272</color>
-    <color name="circle_gredient_end_color">#358efc</color>
+ <color name="day_disabled_background_color">#F1F5F8</color>
+ <color name="day_disabled_text_color">#DEDEDE</color>
+ <color name="selected_day_background">#03A7E9</color>
+ <color name="current_day_of_month">#03A7E9</color>
 
-    <color name="primary_blue">#3f8efc</color>
-    <color name="primary_green">#00bb27</color>
-
-    <color name="primary_pink">#F59293</color>
-    <color name="primary_orange">#FBAF3F</color>
+ <color name="summer">#44eebd82</color>
+ <color name="fall">#44d8d27e</color>
+ <color name="winter">#44a1c1da</color>
+ <color name="spring">#448da64b</color>
 
 
+ <item name="blue" type="color">#FF33B5E5</item>
+ <item name="purple" type="color">#FFAA66CC</item>
+ <item name="green" type="color">#FF99CC00</item>
+ <item name="orange" type="color">#FFFFBB33</item>
+ <item name="red" type="color">#FFFF4444</item>
+ <item name="darkblue" type="color">#FF0099CC</item>
+ <item name="darkpurple" type="color">#FF9933CC</item>
+ <item name="darkgreen" type="color">#FF669900</item>
+ <item name="darkorange" type="color">#FFFF8800</item>
+ <item name="darkred" type="color">#FFCC0000</item>
 
 
-    <color name="ss_colorPrimary">#9E9E9E</color>
-    <color name="ss_colorPrimaryDark">#616161</color>
-    <color name="ss_colorAccent">#95ff00</color>
+ <!--My Story-->
+ <color name="progress_primary">@color/white</color>
+ <color name="progress_secondary">@color/gray_scale</color>
+ <color name="progress_max_active">@color/white</color>
+ <color name="gray_scale">#8affffff</color>
 
-    <color name="ss_progress_startColor">#fff83272</color>
-    <color name="ss_progress_endColor">#fff83272</color>
-    <color name="ss_progress_centerColor">#fff83272</color>
+ <color name="fab_color_pressed">#007787</color>
+ <color name="fab_color_shadow">#44000000</color>
 
-    <color name="ss_secondaryProgress_startColor">#80f83272</color>
-    <color name="ss_secondaryProgress_endColor">#a0f83272</color>
-    <color name="ss_secondaryProgress_centerColor">#80f83272</color>
+ <color name="btn_default_light_normal">#00000000</color>
+ <color name="btn_default_light_pressed">#40ffffff</color>
+ <color name="btn_send_normal">#02c754</color>
+ <color name="btn_send_pressed">#006633</color>
+ <color name="btn_default_shadow">#99000000</color>
+ <color name="btn_context_menu_normal">#ffffff</color>
+ <color name="btn_context_menu_pressed">#40000000</color>
+ <color name="btn_context_menu_text_red">#ffff0000</color>
+ <color name="text_like_counter">#2b5a83</color>
+ <color name="screen_bg_color">#f2f2f2</color>
+ <color name="text_color">#333</color>
+ <color name="bg_edit_color">#e5e5e5</color>
+ <color name="custom_alert_bg_color">#B34c3549</color>
 
-    <color name="ss_background_startColor">#ff9d9e9d</color>
-    <color name="ss_background_endColor">#ff747674</color>
-    <color name="ss_background_centerColor">#ff5a5d5a</color>
+ <color name="circle_gredient_start_color">#583272</color>
+ <color name="circle_gredient_end_color">#358efc</color>
 
-    <color name="black_p50">#7f000000</color>
+ <color name="primary_blue">#3f8efc</color>
+ <color name="primary_green">#00bb27</color>
 
-    <color name="link_blue">#4d94ff</color>
-    <color name="darkRed">#cc0000</color>
-    <color name="colordarkRed">#cc0000</color>
+ <color name="primary_pink">#F59293</color>
+ <color name="primary_orange">#FBAF3F</color>
 
-    <color name="mcam_color_light">#FAFAFA</color>
-    <color name="mcam_color_dark">#424242</color>
+ <color name="ss_colorPrimary">#9E9E9E</color>
+ <color name="ss_colorPrimaryDark">#616161</color>
+ <color name="ss_colorAccent">#95ff00</color>
 
-    <color name="blue_btn_bg_color">#f83272</color>
+ <color name="ss_progress_startColor">#fff83272</color>
+ <color name="ss_progress_endColor">#fff83272</color>
+ <color name="ss_progress_centerColor">#fff83272</color>
+
+ <color name="ss_secondaryProgress_startColor">#80f83272</color>
+ <color name="ss_secondaryProgress_endColor">#a0f83272</color>
+ <color name="ss_secondaryProgress_centerColor">#80f83272</color>
+
+ <color name="ss_background_startColor">#ff9d9e9d</color>
+ <color name="ss_background_endColor">#ff747674</color>
+ <color name="ss_background_centerColor">#ff5a5d5a</color>
+
+ <color name="black_p50">#7f000000</color>
+
+ <color name="link_blue">#4d94ff</color>
+ <color name="darkRed">#cc0000</color>
+ <color name="colordarkRed">#cc0000</color>
+
+ <color name="mcam_color_light">#FAFAFA</color>
+ <color name="mcam_color_dark">#424242</color>
+
+ <color name="blue_btn_bg_color">#f83272</color>
 
 </resources>

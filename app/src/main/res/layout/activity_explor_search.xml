@@ -10,34 +10,13 @@
     android:id="@+id/activityRoot"
     tools:context="com.mualab.org.user.activity.explore.ExplorSearchActivity">
 
-    <RelativeLayout
+    <include
+        android:id="@+id/topLayout"
+        layout="@layout/new_header_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/ivHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/leader_board_header_bg"
-            tools:ignore="ContentDescription" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/TextView.Bold"
-                android:layout_centerInParent="true"
-                android:textSize="18sp"
-                android:text="@string/explore"/>
-
-        </RelativeLayout>
-
-    </RelativeLayout>
-
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:layout_alignParentTop="true" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -35,6 +35,7 @@ import com.image.cropper.CropImage;
 import com.image.cropper.CropImageView;
 import com.image.picker.ImagePicker;
 import com.mualab.org.user.R;
+import com.mualab.org.user.activity.authentication.modle.Address;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.main.MainActivity;
 import com.mualab.org.user.utils.constants.Constant;
@@ -68,7 +69,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
     private CircleImageView profile_image;
     //private TextInputLayout input_layout_firstName, input_layout_lastName, input_layout_userName;
     private EditText ed_firstName, ed_lastName, ed_userName;
-    private TextView tv_dob;
+    private TextView tv_dob,tv_address;
     private RadioGroup radioGroup;
 
     //Reg_View2
@@ -81,13 +82,14 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
     private Session session;
     private boolean isRemind = true;
+    private Address address;
     //private WebServiceAPI api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration2);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink));
         initViews();
 
         Intent intent = getIntent();
@@ -134,9 +136,11 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         ed_lastName = findViewById(R.id.ed_lastName);
         ed_userName = findViewById(R.id.ed_userName);
         tv_dob = findViewById(R.id.tv_dob);
+        tv_address = findViewById(R.id.tv_address);
         radioGroup = findViewById(R.id.radioGroup);
         findViewById(R.id.btnContinue1).setOnClickListener(this);
         tv_dob.setOnClickListener(this);
+        tv_address.setOnClickListener(this);
 
         /* view 1 */
        /* input_layout_pwd = findViewById(R.id.input_layout_pwd);
@@ -174,9 +178,11 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 user.password = edPwd.getText().toString().trim();
                 user.dob = tv_dob.getText().toString().trim();
                 user.gender = radioSexButton.getText().toString();
+                user.gender = user.gender.toLowerCase();
 
                 final Map<String, String> params = new HashMap<>();
                 params.put("userName", user.userName);
+                params.put("userType", "user");
                 new HttpTask(new HttpTask.Builder(this, "checkUser", new HttpResponceListner.Listener() {
                     @Override
                     public void onResponse(String response, String apiName) {
@@ -225,6 +231,13 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 //  setDateField();
                 break;
 
+            case R.id.tv_address:
+                Intent intent = new Intent(Registration2Activity.this, AddAddressActivity.class);
+                if(address!=null)
+                    intent.putExtra("address",address);
+                startActivityForResult(intent,1001);
+                break;
+
         }
     }
 
@@ -268,6 +281,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 params.put("socialId", "");
                 params.put("socialType", "");
                 params.put("firebaseToken", deviceToken);
+                params.put("appType", "social");
 
                 //api.signUpTask(params, profileImageBitmap);
                 HttpTask task = new HttpTask(new HttpTask.Builder(this, "userRegistration", new HttpResponceListner.Listener() {
@@ -380,6 +394,14 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                     e.printStackTrace();
                 }
 
+            }else if (requestCode == 1001){
+                {
+                    address = (Address) data.getSerializableExtra("address");
+                    if(address!=null){
+                        tv_address.setText(address.stAddress1);
+                       // tv_address.setText(String.format("%s",TextUtils.isEmpty(address.placeName)?address.stAddress1:address.placeName));
+                    }
+                }
             }
         }
     }
@@ -431,7 +453,6 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         }*/
         return true;
     }
-
 
     private boolean matchPassword(){
         if(!edPwd.getText().toString().equals(edConfirmPwd.getText().toString())){

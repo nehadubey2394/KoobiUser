@@ -87,6 +87,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="2dp"
                 android:layout_weight="1"
+                android:textColor="@color/white"
                 android:textAllCaps="false"
                 android:layout_marginRight="3dp"
                 android:background="@drawable/bg_left_bottom_corner_round"
@@ -105,6 +106,7 @@
                 android:layout_gravity="center_vertical"
                 android:padding="2dp"
                 android:textSize="12sp"
+                android:textColor="@color/white"
                 />
 
         </LinearLayout>

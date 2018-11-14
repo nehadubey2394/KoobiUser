@@ -43,7 +43,7 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_detail);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
+        //  StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimary));
         Intent intent = getIntent();
         Bundle args = intent.getBundleExtra("BUNDLE");
         if (args != null) {
@@ -53,7 +53,7 @@ public class FeedDetailActivity extends AppCompatActivity implements FeedsListne
             //feeds = (Feeds) intent.getExtras().getSerializable(" feed");
         }
 
-        tvTitle = findViewById(R.id.tvTitle);
+        tvTitle = findViewById(R.id.tvHeaderTitle);
         // list = (List<Feeds>) args.getParcelableArrayList("feeds");
 
 

@@ -67,6 +67,7 @@
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 
+
     <style name="DefaultNumberPickerTheme" parent="AppTheme">
         <item name="colorControlNormal">@color/colorPrimary</item>
     </style>
@@ -108,6 +109,16 @@
         <item name="android:maxHeight">28dip</item>
     </style>
 
+    <style name="RatingBarSmallGray" parent="android:style/Widget.Material.RatingBar.Small">
+        <item name="android:progressDrawable">@drawable/ratingbar_gray_selector</item>
+        <!-- <item name="colorAccent">#f9a825</item>
+         <item name="android:colorControlNormal">#f9a825</item>-->
+        <item name="android:minHeight">24dip</item>
+        <item name="android:minWidth">24dip</item>
+        <item name="android:maxWidth">28dip</item>
+        <item name="android:maxHeight">28dip</item>
+    </style>
+
     <style name="RatingBarGray" parent="android:style/Widget.Material.RatingBar.Small">
         <item name="android:progressDrawable">@drawable/ratingbar_gray_selector</item>
         <!-- <item name="colorAccent">#f9a825</item>
@@ -139,6 +150,10 @@
     <style name="TopBottomAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_bottom</item>
+    </style>
+
+    <style name="DialogTheme" parent="@style/Base.Theme.AppCompat.Light.Dialog">
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="DialogAnimation">

@@ -130,6 +130,20 @@
 
                         </RelativeLayout>
 
+                        <android.support.v7.widget.AppCompatButton
+                            style="@style/My_Button_Small.Invert"
+                            android:layout_width="85dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/btnChat"
+                            android:text="@string/messege"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:textSize="12sp"
+                            android:visibility="visible"
+                            android:layout_marginLeft="12dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            />
 
                     </RelativeLayout>
 
