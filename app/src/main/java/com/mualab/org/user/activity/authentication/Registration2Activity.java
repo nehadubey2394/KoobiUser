@@ -38,6 +38,8 @@ import com.mualab.org.user.R;
 import com.mualab.org.user.activity.authentication.modle.Address;
 import com.mualab.org.user.activity.chat.model.FirebaseUser;
 import com.mualab.org.user.activity.main.MainActivity;
+import com.mualab.org.user.application.Mualab;
+import com.mualab.org.user.utils.Helper;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.DateDialogFragment;
 import com.mualab.org.user.dialogs.MyToast;
@@ -89,7 +91,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration2);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink));
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink2));
         initViews();
 
         Intent intent = getIntent();
@@ -124,7 +126,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
         viewSwitcher = findViewById(R.id.viewSwitcher);
         progressView3 = findViewById(R.id.progressView3);
         progressView4 = findViewById(R.id.progressView4);
-        progressView3.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent));
+        progressView3.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
 
         /* view 1 */
         profile_image = findViewById(R.id.profile_image);
@@ -183,7 +185,8 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 final Map<String, String> params = new HashMap<>();
                 params.put("userName", user.userName);
                 params.put("userType", "user");
-                new HttpTask(new HttpTask.Builder(this, "checkUser", new HttpResponceListner.Listener() {
+                new HttpTask(new HttpTask.Builder(this, "checkUser",
+                        new HttpResponceListner.Listener() {
                     @Override
                     public void onResponse(String response, String apiName) {
                         Log.d("hfjas", response);
@@ -203,6 +206,13 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
 
                     @Override
                     public void ErrorListener(VolleyError error) {
+                        try{
+                            Helper helper = new Helper();
+                            MyToast.getInstance(Registration2Activity.this).showSmallCustomToast(helper.error_Messages(error));
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }}).setBody(params, HttpTask.ContentType.APPLICATION_JSON)
                         .setMethod(Request.Method.POST)
                         .setProgress(true))
@@ -250,7 +260,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 CURRENT_VIEW_STATE = 4;
                 viewSwitcher.showNext();
                 ((ImageView)findViewById(R.id.iv_bg)).setImageResource(R.drawable.bg_registration3);
-                progressView4.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent));
+                progressView4.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
                 break;
 
             case 4:
@@ -267,6 +277,9 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                 params.put("businessName", user.businessName);
                 params.put("gender", user.gender);
                 params.put("dob", CalendarHelper.getStringYMDformatter(user.dob));
+                params.put("address", address.stAddress1);
+                params.put("latitude", address.latitude);
+                params.put("longitude", address.longitude);
                /* params.put("address", address.stAddress1);
                 params.put("city", address.city);
                 params.put("state", address.state);
@@ -399,7 +412,7 @@ public class Registration2Activity extends AppCompatActivity implements View.OnC
                     address = (Address) data.getSerializableExtra("address");
                     if(address!=null){
                         tv_address.setText(address.stAddress1);
-                       // tv_address.setText(String.format("%s",TextUtils.isEmpty(address.placeName)?address.stAddress1:address.placeName));
+                        // tv_address.setText(String.format("%s",TextUtils.isEmpty(address.placeName)?address.stAddress1:address.placeName));
                     }
                 }
             }

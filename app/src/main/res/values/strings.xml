@@ -19,7 +19,7 @@
     <string name="email_or_username">Email Or Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="forgot_password">Forgot password?</string>
+    <string name="forgot_password">Forgotten your Username or Password?</string>
     <string name="or">OR</string>
     <string name="don_t_have_an_account">Don\'t have an account? <b>Sign up</b></string>
     <string name="already_have_an_account">Already have an account ? <b>Login</b></string>
@@ -455,6 +455,7 @@
     <string name="pick_your_place">Pick Your Place</string>
     <string name="enter_post_code">Enter post code</string>
     <string name="line_of_address1">1st line of address*</string>
+    <string name="postal_code">Postal Code*</string>
     <string name="save">Save</string>
     <string name="address_activity">Add Location</string>
 </resources>

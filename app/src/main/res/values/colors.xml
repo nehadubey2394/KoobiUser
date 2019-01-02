@@ -4,11 +4,14 @@
   <color name="colorPrimaryDark">#f83272</color>
   <color name="colorAccent">#3f8efc</color>
 
+ <color name="colorPrimaryDark2">#1bd3c9</color>
+
 <!-- <color name="colorPrimary">#1bd3c9</color>
  <color name="colorPrimaryDark">#04cec4</color>
  <color name="colorAccent">#f83272</color>-->
 
  <color name="colorPrimaryPink">#f83272</color>
+ <color name="colorPrimaryPink2">#1bd3c9</color>
  <color name="colorPrimaryTransprent1">#30860309</color>
  <color name="colorPrimaryTransprent2">#50b26800</color>
  <color name="colorPrimaryTransprent3">#90860309</color>

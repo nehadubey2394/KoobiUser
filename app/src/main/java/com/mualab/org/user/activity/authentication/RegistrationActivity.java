@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.mualab.org.user.R;
 import com.mualab.org.user.broadcast.OnSmsCatchListener;
 import com.mualab.org.user.broadcast.SmsVerifyCatcher;
+import com.mualab.org.user.utils.Helper;
 import com.mualab.org.user.utils.constants.Constant;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.dialogs.MyToast;
@@ -72,12 +73,11 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private CountDownTimer countDownTimer;
     private boolean timerIsRunning;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink));
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink2));
         //if(ScreenUtils.hasSoftKeys(getWindowManager(), this)) findViewById(R.id.nevSoftBar).setVisibility(View.VISIBLE);
         initViews();
         countries = JsonUtils.loadCountries(this);
@@ -330,7 +330,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         viewSwitcher = findViewById(R.id.viewSwitcher);
         progressView1 = findViewById(R.id.progressView1);
         progressView2 = findViewById(R.id.progressView2);
-        progressView1.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent));
+        progressView1.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
 
         /* view 1 */
        /* input_layout_email = findViewById(R.id.input_layout_email);
@@ -371,7 +371,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             case 1:
                 CURRENT_VIEW_STATE = 2;
                 viewSwitcher.showNext();
-                progressView2.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent));
+                progressView2.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
                 break;
 
             case 2:
@@ -393,13 +393,13 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         resetProgressView();
         switch (CURRENT_VIEW_STATE){
             case 1:
-                progressView1.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent));
+                progressView1.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
                 super.onBackPressed();
                 break;
 
             case 2:
                 CURRENT_VIEW_STATE = 1;
-                progressView1.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent));
+                progressView1.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
                 viewSwitcher.showPrevious();
                 break;
         }
@@ -498,6 +498,13 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void ErrorListener(VolleyError error) {
+                try{
+                    Helper helper = new Helper();
+                    MyToast.getInstance(RegistrationActivity.this).showSmallCustomToast(helper.error_Messages(error));
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }})
                 .setBody(header, HttpTask.ContentType.APPLICATION_JSON)
                 .setProgress(true))

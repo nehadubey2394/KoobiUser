@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.mualab.org.user.R;
 import com.mualab.org.user.data.model.Country;
 import com.mualab.org.user.utils.JsonUtils;
+import com.mualab.org.user.utils.StatusBarUtil;
 import com.mualab.org.user.utils.decorator.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ public class ChooseCountryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_country);
+
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink2));
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar!=null){
@@ -84,7 +87,6 @@ public class ChooseCountryActivity extends AppCompatActivity {
         });
         return super.onCreateOptionsMenu(menu);
     }
-
 
     private void setResultCountry(Country country){
         Intent resultIntent = new Intent();

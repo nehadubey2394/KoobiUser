@@ -31,6 +31,7 @@ import com.mualab.org.user.data.remote.HttpTask;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.utils.Helper;
 import com.mualab.org.user.utils.KeyboardUtil;
+import com.mualab.org.user.utils.StatusBarUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +45,7 @@ public class AddAddressActivity extends AppCompatActivity {
     private int PLACE_PICKER_REQUEST = 1;
     private EditText ed_locality;
     private EditText edInputPostcode;
+    private EditText ed_pinCode;
 
     private String country,state, city, stAddress1, stAddress2, postalCode, placeName, houseNumber;// fullAddress;
     private String latitude, longitude;
@@ -56,6 +58,8 @@ public class AddAddressActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_address);
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink2));
+
         ActionBar actionBar = getSupportActionBar();
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -63,6 +67,7 @@ public class AddAddressActivity extends AppCompatActivity {
         }
 
         ed_locality = findViewById(R.id.ed_locality);
+        ed_pinCode = findViewById(R.id.ed_locality);
         edInputPostcode = findViewById(R.id.edInputPostcode);
 
 
@@ -160,6 +165,8 @@ public class AddAddressActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 stAddress1 = ed_locality.getText().toString().trim();
+                postalCode = ed_pinCode.getText().toString().trim();
+
                /* city = ed_city.getText().toString().trim();
                 state = ed_state.getText().toString().trim();
                 country = ed_country.getText().toString().trim();
@@ -210,6 +217,8 @@ public class AddAddressActivity extends AppCompatActivity {
                 placeName = place.getName().toString();
 
                 ed_locality.setText(stAddress1);
+                ed_pinCode.setText(postalCode);
+
                 new GioAddress(AddAddressActivity.this, place.getLatLng().latitude,
                         place.getLatLng().longitude).execute();
             }

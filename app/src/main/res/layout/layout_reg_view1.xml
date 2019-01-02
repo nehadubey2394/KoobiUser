@@ -20,9 +20,9 @@
             android:gravity="center_horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/app_logo_450x450" />
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/app_logo" />
 
             <TextView
                 android:id="@+id/tvHeader"

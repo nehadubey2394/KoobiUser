@@ -37,6 +37,7 @@ import com.mualab.org.user.dialogs.MySnackBar;
 import com.mualab.org.user.dialogs.MyToast;
 import com.mualab.org.user.dialogs.NoConnectionDialog;
 import com.mualab.org.user.utils.ConnectionDetector;
+import com.mualab.org.user.utils.Helper;
 import com.mualab.org.user.utils.KeyboardUtil;
 import com.mualab.org.user.utils.StatusBarUtil;
 import com.mualab.org.user.utils.constants.Constant;
@@ -79,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink));
+        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.colorPrimaryPink2));
         sp = new SharedPreferanceUtils(this);
         session = Mualab.getInstance().getSessionManager();
         initView();
@@ -257,6 +258,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void ErrorListener(VolleyError error) {
+                    try{
+                        Helper helper = new Helper();
+                        MyToast.getInstance(LoginActivity.this).showSmallCustomToast(helper.error_Messages(error));
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }})
                     .setBody(params, HttpTask.ContentType.APPLICATION_JSON)
                     .setProgress(true))

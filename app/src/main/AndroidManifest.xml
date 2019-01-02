@@ -285,6 +285,7 @@
         <activity android:name=".activity.authentication.AddAddressActivity"
             android:label="@string/address_activity"
             android:theme="@style/AppTheme.DarkActionBar"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
 
         </activity>
